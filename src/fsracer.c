@@ -1,22 +1,74 @@
 #include "dr_api.h"
 #include "drmgr.h"
 #include "drwrap.h"
+#include "drsyms.h"
+
+
+typedef void (*pre_clb)(void *wrapctx, OUT void **user_data);
+typedef void (*post_clb)(void *wrapctx, void *user_data);
 
 
 static void
 wrap_pre_uv_fs_open(void *wrapcxt, OUT void **user_data);
 
 
+/**
+ * This function retrieves the entry point a function.
+ *
+ * It looks up the entry point by symbol.
+ * Initially, it lookups the dynamic symbol table through the invocation
+ * of `dr_get_prc_address()`.
+ *
+ * However, the documentation states, global functions and variables
+ * in an executable are not exported by default in the dynamic symbol table.
+ *
+ * For that purpose, we use the "drsym" extension to locate symbols
+ * by searcing the debug symbol table.
+ */
+static app_pc
+get_pc_by_symbol(const module_data_t *mod, const char *symbol)
+{
+    if (mod == NULL || symbol == NULL)
+        return NULL;
+
+    // Try to find the symbol in the dynamic symbol table.
+    app_pc pc = (app_pc) dr_get_proc_address(mod->handle, symbol);
+    if (pc != NULL) {
+        return pc;
+    } else {
+        size_t offset;
+        // Search symbol by omitting its parameters' signature.
+        drsym_error_t err =
+            drsym_lookup_symbol(mod->full_path, symbol, &offset,
+                                DRSYM_DEMANGLE);
+        if (err == DRSYM_SUCCESS) {
+            pc = mod->start + offset;
+            return pc;
+        } else {
+            return NULL;
+        }
+    }
+}
+
+
+static void
+wrap_func(const module_data_t *mod, const char *func_name,
+          pre_clb pre, post_clb post)
+{
+    app_pc towrap = get_pc_by_symbol(mod, func_name);
+    if (towrap != NULL) {
+        bool wrapped = drwrap_wrap(towrap, pre, post);
+        if (!wrapped) {
+            dr_fprintf(STDERR, "Couldn't wrap the %s function\n", func_name);
+        }
+    }
+}
+
+
 static void
 module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
 {
-    app_pc towrap = (app_pc) dr_get_proc_address(mod->handle, "uv_fs_open");
-    if (towrap != NULL) {
-        bool wrapped = drwrap_wrap(towrap, wrap_pre_uv_fs_open, NULL);
-        if (!wrapped) {
-            dr_printf("Couldn't wrap our the uv_fs_open function\n");
-        }
-    }
+    wrap_func(mod, "uv_fs_open", wrap_pre_uv_fs_open, NULL);
 }
 
 
@@ -26,6 +78,7 @@ event_exit(void)
     dr_printf("Stopping the FSRacer Client...\n");
     drwrap_exit();
     drmgr_exit();
+    drsym_exit();
 }
 
 
@@ -36,6 +89,7 @@ dr_client_main(client_id_t client_id, int argc, const char *argv[])
     dr_printf("Starting the FSRacer Client...\n");
     drmgr_init();
     drwrap_init();
+    drsym_init(0);
     dr_register_exit_event(event_exit);
     drmgr_register_module_load_event(module_load_event);
 }
@@ -44,7 +98,7 @@ dr_client_main(client_id_t client_id, int argc, const char *argv[])
 static void
 wrap_pre_uv_fs_open(void *wrapcxt, OUT void **user_data)
 {
-    dr_printf("The uv_fs_open function is going to be invoked\n");
+    dr_printf("Calling: ");
     // We get the third argument of the uv_fs_open()
     // that corresponds to the path.
     const char *path = drwrap_get_arg(wrapcxt, 2);

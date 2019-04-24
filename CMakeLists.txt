@@ -6,5 +6,6 @@ find_package(DynamoRIO REQUIRED HINTS ${DynamoRIO_BUILD_DIR})
 
 use_DynamoRIO_extension(fsracer "drwrap")
 use_DynamoRIO_extension(fsracer "drmgr")
+use_DynamoRIO_extension(fsracer "drsyms")
 
 configure_DynamoRIO_client(fsracer)
