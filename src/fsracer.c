@@ -181,7 +181,7 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
      *
      * Get the value of the second argument that is stored
      * in the SSE registers. */
-    dr_printf("Start: %f\n", *(double *) ctx->ymm);
+    dr_printf("Start: %d\n", (int) *(double *) ctx->ymm);
 }
 
 
@@ -190,7 +190,7 @@ wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
 {
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
     // EmitAfter(Environment*, double)
-    dr_printf("End: %f\n", *(double *) ctx->ymm);
+    dr_printf("End: %d\n", (int) *(double *) ctx->ymm);
 }
 
 
@@ -198,8 +198,8 @@ static void
 wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
 {
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
-    double async_id = *(double *) ctx->ymm; // xmm0 register
-    double trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
-    dr_printf("newEvent: %f\n", async_id);
-    dr_printf("link: %f %f\n", trigger_async_id, async_id);
+    int async_id = *(double *) ctx->ymm; // xmm0 register
+    int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
+    dr_printf("newEvent: %d\n", async_id);
+    dr_printf("link: %d %d\n", trigger_async_id, async_id);
 }
