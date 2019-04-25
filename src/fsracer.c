@@ -3,7 +3,7 @@
 #include "drwrap.h"
 #include "drsyms.h"
 
-#include <stdint.h>
+#include <errno.h>
 
 
 typedef void (*pre_clb_t)(void *wrapctx, OUT void **user_data);
@@ -11,6 +11,8 @@ typedef void (*post_clb_t)(void *wrapctx, void *user_data);
 
 
 bool top_stopped = false;
+
+FILE *logfile;
 
 
 static void
@@ -30,6 +32,49 @@ wrap_pre_emit_after(void *wrapctx, OUT void **user_data);
 
 static void
 wrap_pre_emit_init(void *wrapctx, OUT void **user_data);
+
+
+static bool
+setup_log_file(const char *path)
+{
+    logfile = fopen(path, "w");
+    if (logfile == NULL) {
+        return false;
+    }
+    return true;
+}
+
+
+static bool
+close_log_file()
+{
+    if (logfile == NULL) {
+        dr_fprintf(STDERR, "Cannot close logfile\n");
+        return false;
+    }
+    fclose(logfile);
+    return true;
+}
+
+
+/**
+ * Just a wrapper to vfprintf that checks that the logfile points
+ * to a file stream.
+ */
+static int
+write_log(const char *fmt, ...)
+{
+    if (logfile == NULL) {
+        dr_fprintf(STDERR, "FSRacer Error: Cannot write to log file\n");
+        return -1;
+    }
+    va_list ap;
+    ssize_t res;
+    va_start(ap, fmt);
+    res = vfprintf(logfile, fmt, ap);
+    va_end(ap);
+    return res;
+}
 
 
 /**
@@ -79,7 +124,8 @@ wrap_func(const module_data_t *mod, const char *func_name,
     if (towrap != NULL) {
         bool wrapped = drwrap_wrap(towrap, pre, post);
         if (!wrapped) {
-            dr_fprintf(STDERR, "Couldn't wrap the %s function\n", func_name);
+            dr_fprintf(STDERR,
+                "FSRacer Error: Couldn't wrap the %s function\n", func_name);
         }
     }
 }
@@ -107,6 +153,7 @@ event_exit(void)
     drwrap_exit();
     drmgr_exit();
     drsym_exit();
+    close_log_file();
 }
 
 
@@ -120,13 +167,14 @@ dr_client_main(client_id_t client_id, int argc, const char *argv[])
     drsym_init(0);
     dr_register_exit_event(event_exit);
     drmgr_register_module_load_event(module_load_event);
-    dr_printf("Start: 1\n");
+    setup_log_file("fsracer.log");
+    write_log("Start: 1\n");
 }
 
 
 static void
 wrap_pre_uv_fs_access(void *wrapctx, OUT void **user_data) {
-    const char *path = drwrap_get_arg(wrapctx, 2);
+    const char *path = (char *)drwrap_get_arg(wrapctx, 2);
     void *clb = drwrap_get_arg(wrapctx, 4);
 
     // If not callback is provided, we presume that the call
@@ -134,9 +182,9 @@ wrap_pre_uv_fs_access(void *wrapctx, OUT void **user_data) {
     //
     // FIXME: Remove duplicate code.
     if (clb == NULL) {
-        dr_printf("triggerOpSync (hpath %s consumed)\n", path);
+        write_log("triggerOpSync (hpath %s consumed)\n", path);
     } else {
-        dr_printf("triggerOpAsync (hpath %s consumed)\n", path);
+        write_log("triggerOpAsync (hpath %s consumed)\n", path);
     }
 }
 
@@ -144,13 +192,13 @@ wrap_pre_uv_fs_access(void *wrapctx, OUT void **user_data) {
 static void
 wrap_pre_uv_fs_open(void *wrapctx, OUT void **user_data)
 {
-    const char *path = drwrap_get_arg(wrapctx, 2);
+    const char *path = (char *) drwrap_get_arg(wrapctx, 2);
     void *clb = drwrap_get_arg(wrapctx, 5);
 
     if (clb == NULL) {
-        dr_printf("triggerOpSync (open %s)\n", path);
+        write_log("triggerOpSync (open %s)\n", path);
     } else {
-        dr_printf("triggerOpAsync (open %s)\n", path);
+        write_log("triggerOpAsync (open %s)\n", path);
     }
 }
 
@@ -158,13 +206,13 @@ wrap_pre_uv_fs_open(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_uv_fs_unlink(void *wrapctx, OUT void **user_data)
 {
-    const char *path = drwrap_get_arg(wrapctx, 2);
+    const char *path = (char *) drwrap_get_arg(wrapctx, 2);
     void *clb = drwrap_get_arg(wrapctx, 3);
 
     if (clb == NULL) {
-        dr_printf("triggerOpSync (hpath %s expunged)\n", path);
+        write_log("triggerOpSync (hpath %s expunged)\n", path);
     } else {
-        dr_printf("triggerOpAsync (hpath %s expunged)\n", path);
+        write_log("triggerOpAsync (hpath %s expunged)\n", path);
     }
 }
 
@@ -174,14 +222,14 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
 {
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
     if (!top_stopped) {
-        dr_printf("Stop: 1\n");
+        write_log("Stop: 1\n");
         top_stopped = true;
     }
     /* EmitBefore(Environment*, double)
      *
      * Get the value of the second argument that is stored
      * in the SSE registers. */
-    dr_printf("Start: %d\n", (int) *(double *) ctx->ymm);
+    write_log("Start: %d\n", (int) *(double *) ctx->ymm);
 }
 
 
@@ -190,7 +238,7 @@ wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
 {
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
     // EmitAfter(Environment*, double)
-    dr_printf("End: %d\n", (int) *(double *) ctx->ymm);
+    write_log("End: %d\n", (int) *(double *) ctx->ymm);
 }
 
 
@@ -200,6 +248,6 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
     int async_id = *(double *) ctx->ymm; // xmm0 register
     int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
-    dr_printf("newEvent: %d\n", async_id);
-    dr_printf("link: %d %d\n", trigger_async_id, async_id);
+    write_log("newEvent: %d\n", async_id);
+    write_log("link: %d %d\n", trigger_async_id, async_id);
 }
