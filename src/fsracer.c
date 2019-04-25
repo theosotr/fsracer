@@ -3,6 +3,8 @@
 #include "drwrap.h"
 #include "drsyms.h"
 
+#include <stdint.h>
+
 
 typedef void (*pre_clb)(void *wrapctx, OUT void **user_data);
 typedef void (*post_clb)(void *wrapctx, void *user_data);
@@ -10,6 +12,9 @@ typedef void (*post_clb)(void *wrapctx, void *user_data);
 
 static void
 wrap_pre_uv_fs_open(void *wrapcxt, OUT void **user_data);
+
+static void
+wrap_pre_emit_before(void *wrapctx, OUT void **user_data);
 
 
 /**
@@ -69,6 +74,7 @@ static void
 module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
 {
     wrap_func(mod, "uv_fs_open", wrap_pre_uv_fs_open, NULL);
+    wrap_func(mod, "node::AsyncWrap::EmitBefore", wrap_pre_emit_before, NULL);
 }
 
 
@@ -103,4 +109,16 @@ wrap_pre_uv_fs_open(void *wrapcxt, OUT void **user_data)
     // that corresponds to the path.
     const char *path = drwrap_get_arg(wrapcxt, 2);
     dr_printf("uv_fs_open(%s)\n", path);
+}
+
+
+static void
+wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
+{
+    dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
+    /* EmitBefore(Environment*, double)
+     *
+     * Get the value of the second argument that is stored
+     * in the SSE registers. */
+    dr_printf("Start: %f\n", *(double *) ctx->ymm);
 }
