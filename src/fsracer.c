@@ -6,8 +6,8 @@
 #include <stdint.h>
 
 
-typedef void (*pre_clb)(void *wrapctx, OUT void **user_data);
-typedef void (*post_clb)(void *wrapctx, void *user_data);
+typedef void (*pre_clb_t)(void *wrapctx, OUT void **user_data);
+typedef void (*post_clb_t)(void *wrapctx, void *user_data);
 
 
 static void
@@ -61,7 +61,7 @@ get_pc_by_symbol(const module_data_t *mod, const char *symbol)
 
 static void
 wrap_func(const module_data_t *mod, const char *func_name,
-          pre_clb pre, post_clb post)
+          pre_clb_t pre, post_clb_t post)
 {
     app_pc towrap = get_pc_by_symbol(mod, func_name);
     if (towrap != NULL) {
