@@ -34,26 +34,27 @@ static void
 wrap_pre_emit_init(void *wrapctx, OUT void **user_data);
 
 
-static bool
+static void
 setup_log_file(const char *path)
 {
     logfile = fopen(path, "w");
     if (logfile == NULL) {
-        return false;
+        dr_fprintf(STDERR,
+            "FSRacer Error: Could not open log file. Errno: %d\n", errno);
     }
-    return true;
 }
 
 
-static bool
+static void
 close_log_file()
 {
     if (logfile == NULL) {
-        dr_fprintf(STDERR, "Cannot close logfile\n");
-        return false;
+        return;
     }
-    fclose(logfile);
-    return true;
+    if (fclose(logfile)) {
+        dr_fprintf(STDERR,
+            "FSRacer Error: Cannot close log file. Errno %d\n", errno);
+    }
 }
 
 
@@ -65,7 +66,8 @@ static int
 write_log(const char *fmt, ...)
 {
     if (logfile == NULL) {
-        dr_fprintf(STDERR, "FSRacer Error: Cannot write to log file\n");
+        dr_fprintf(STDERR,
+            "FSRacer Error: Cannot write to log file. Errno: %d\n", errno);
         return -1;
     }
     va_list ap;
