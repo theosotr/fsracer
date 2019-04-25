@@ -10,8 +10,17 @@ typedef void (*pre_clb_t)(void *wrapctx, OUT void **user_data);
 typedef void (*post_clb_t)(void *wrapctx, void *user_data);
 
 
+bool top_stopped = false;
+
+
+static void
+wrap_pre_uv_fs_access(void *wrapctx, OUT void **user_data);
+
 static void
 wrap_pre_uv_fs_open(void *wrapcxt, OUT void **user_data);
+
+static void
+wrap_pre_uv_fs_unlink(void *wrapcxt, OUT void **user_data);
 
 static void
 wrap_pre_emit_before(void *wrapctx, OUT void **user_data);
@@ -79,7 +88,12 @@ wrap_func(const module_data_t *mod, const char *func_name,
 static void
 module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
 {
+    // Wrappers for the libuv functions
+    wrap_func(mod, "uv_fs_access", wrap_pre_uv_fs_access, NULL);
     wrap_func(mod, "uv_fs_open", wrap_pre_uv_fs_open, NULL);
+    wrap_func(mod, "uv_fs_unlink", wrap_pre_uv_fs_unlink, NULL);
+
+    // Wrappers for the Node.js functions
     wrap_func(mod, "node::AsyncWrap::EmitBefore", wrap_pre_emit_before, NULL);
     wrap_func(mod, "node::AsyncWrap::EmitAfter", wrap_pre_emit_after, NULL);
     wrap_func(mod, "node::AsyncWrap::EmitAsyncInit", wrap_pre_emit_init, NULL);
@@ -106,17 +120,52 @@ dr_client_main(client_id_t client_id, int argc, const char *argv[])
     drsym_init(0);
     dr_register_exit_event(event_exit);
     drmgr_register_module_load_event(module_load_event);
+    dr_printf("Start: 1\n");
 }
 
 
 static void
-wrap_pre_uv_fs_open(void *wrapcxt, OUT void **user_data)
+wrap_pre_uv_fs_access(void *wrapctx, OUT void **user_data) {
+    const char *path = drwrap_get_arg(wrapctx, 2);
+    void *clb = drwrap_get_arg(wrapctx, 4);
+
+    // If not callback is provided, we presume that the call
+    // is synchronous.
+    //
+    // FIXME: Remove duplicate code.
+    if (clb == NULL) {
+        dr_printf("triggerOpSync (hpath %s consumed)\n", path);
+    } else {
+        dr_printf("triggerOpAsync (hpath %s consumed)\n", path);
+    }
+}
+
+
+static void
+wrap_pre_uv_fs_open(void *wrapctx, OUT void **user_data)
 {
-    dr_printf("Calling: ");
-    // We get the third argument of the uv_fs_open()
-    // that corresponds to the path.
-    const char *path = drwrap_get_arg(wrapcxt, 2);
-    dr_printf("uv_fs_open(%s)\n", path);
+    const char *path = drwrap_get_arg(wrapctx, 2);
+    void *clb = drwrap_get_arg(wrapctx, 5);
+
+    if (clb == NULL) {
+        dr_printf("triggerOpSync (open %s)\n", path);
+    } else {
+        dr_printf("triggerOpAsync (open %s)\n", path);
+    }
+}
+
+
+static void
+wrap_pre_uv_fs_unlink(void *wrapctx, OUT void **user_data)
+{
+    const char *path = drwrap_get_arg(wrapctx, 2);
+    void *clb = drwrap_get_arg(wrapctx, 3);
+
+    if (clb == NULL) {
+        dr_printf("triggerOpSync (hpath %s expunged)\n", path);
+    } else {
+        dr_printf("triggerOpAsync (hpath %s expunged)\n", path);
+    }
 }
 
 
@@ -124,6 +173,10 @@ static void
 wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
 {
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
+    if (!top_stopped) {
+        dr_printf("Stop: 1\n");
+        top_stopped = true;
+    }
     /* EmitBefore(Environment*, double)
      *
      * Get the value of the second argument that is stored
