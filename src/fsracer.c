@@ -224,7 +224,7 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
 {
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
     if (!top_stopped) {
-        write_trace("Stop: 1\n");
+        write_trace("End: 1\n");
         top_stopped = true;
     }
     /* EmitBefore(Environment*, double)
