@@ -112,6 +112,7 @@ void
 reset_event(struct State *state)
 {
     if (state != NULL) {
+        clear_ev(state->last_ev_created);
         state->last_ev_created = NULL;
         state->current_ev = 0;
     }
