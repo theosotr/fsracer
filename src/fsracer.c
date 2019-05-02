@@ -5,14 +5,16 @@
 
 #include <errno.h>
 
+#include "state.h"
+
 
 typedef void (*pre_clb_t)(void *wrapctx, OUT void **user_data);
 typedef void (*post_clb_t)(void *wrapctx, void *user_data);
 
 
-bool top_stopped = false;
-
 FILE *tracefile;
+
+struct State *state;
 
 
 static void
@@ -32,6 +34,9 @@ wrap_pre_emit_after(void *wrapctx, OUT void **user_data);
 
 static void
 wrap_pre_emit_init(void *wrapctx, OUT void **user_data);
+
+static void
+wrap_pre_start(void *wrapctx, OUT void **user_data);
 
 
 static void
@@ -145,6 +150,7 @@ module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
     wrap_func(mod, "node::AsyncWrap::EmitBefore", wrap_pre_emit_before, NULL);
     wrap_func(mod, "node::AsyncWrap::EmitAfter", wrap_pre_emit_after, NULL);
     wrap_func(mod, "node::AsyncWrap::EmitAsyncInit", wrap_pre_emit_init, NULL);
+    wrap_func(mod, "node::Start", wrap_pre_start, NULL);
 }
 
 
@@ -156,6 +162,7 @@ event_exit(void)
     drmgr_exit();
     drsym_exit();
     close_trace_file();
+    clear_state(state);
 }
 
 
@@ -168,9 +175,9 @@ dr_client_main(client_id_t client_id, int argc, const char *argv[])
     drwrap_init();
     drsym_init(0);
     dr_register_exit_event(event_exit);
+    state = init_state();
     drmgr_register_module_load_event(module_load_event);
     setup_trace_file("fsracer.trace");
-    write_trace("Start: 1\n");
 }
 
 
@@ -223,15 +230,17 @@ static void
 wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
 {
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
-    if (!top_stopped) {
-        write_trace("End: 1\n");
-        top_stopped = true;
+    if (state->current_ev) {
+        write_trace("End %d\n", state->current_ev);
+        reset_event(state);
     }
+    int async_id = *(double *) ctx->ymm; // xmm0 register
+    set_current_ev(state, async_id);
     /* EmitBefore(Environment*, double)
      *
      * Get the value of the second argument that is stored
      * in the SSE registers. */
-    write_trace("Start: %d\n", (int) *(double *) ctx->ymm);
+    write_trace("Start: %d\n", async_id);
 }
 
 
@@ -241,6 +250,7 @@ wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
     // EmitAfter(Environment*, double)
     write_trace("End: %d\n", (int) *(double *) ctx->ymm);
+    reset_event(state);
 }
 
 
@@ -252,4 +262,15 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
     int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
     write_trace("newEvent: %d\n", async_id);
     write_trace("link: %d %d\n", trigger_async_id, async_id);
+}
+
+
+static void
+wrap_pre_start(void *wrapctx, OUT void **user_data)
+{
+    enum EventType event_type = S;
+    struct Event *event = create_ev(event_type);
+    set_current_ev(state, 1);
+    set_last_ev(state, event);
+    write_trace("Start %d\n", state->current_ev);
 }
