@@ -38,6 +38,12 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data);
 static void
 wrap_pre_start(void *wrapctx, OUT void **user_data);
 
+static void
+wrap_pre_timerwrap(void *wrapctx, OUT void **user_data);
+
+static void
+wrap_pre_fsreq(void *wrapctx, OUT void **user_data);
+
 
 static void
 setup_trace_file(const char *path)
@@ -151,6 +157,8 @@ module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
     wrap_func(mod, "node::AsyncWrap::EmitAfter", wrap_pre_emit_after, NULL);
     wrap_func(mod, "node::AsyncWrap::EmitAsyncInit", wrap_pre_emit_init, NULL);
     wrap_func(mod, "node::Start", wrap_pre_start, NULL);
+    wrap_func(mod, "node::(anonymous namespace)::TimerWrap::New", wrap_pre_timerwrap, NULL);
+    wrap_func(mod, "node::fs::NewFSReqWrap", wrap_pre_fsreq, NULL);
 }
 
 
@@ -240,7 +248,7 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
      *
      * Get the value of the second argument that is stored
      * in the SSE registers. */
-    write_trace("Start: %d\n", async_id);
+    write_trace("Start %d\n", async_id);
 }
 
 
@@ -249,7 +257,7 @@ wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
 {
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
     // EmitAfter(Environment*, double)
-    write_trace("End: %d\n", (int) *(double *) ctx->ymm);
+    write_trace("End %d\n", (int) *(double *) ctx->ymm);
     reset_event(state);
 }
 
@@ -260,8 +268,16 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
     int async_id = *(double *) ctx->ymm; // xmm0 register
     int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
-    write_trace("newEvent: %d\n", async_id);
-    write_trace("link: %d %d\n", trigger_async_id, async_id);
+
+    if (last_event(state)) {
+        size_t size = 10 * sizeof(char);
+        char *str = event_to_str(last_event(state), size);
+        if (str) {
+            write_trace("newEvent %d, %s\n", async_id, str);
+            dr_global_free(str, size);
+        }
+    }
+    write_trace("link %d %d\n", trigger_async_id, async_id);
 }
 
 
@@ -269,8 +285,28 @@ static void
 wrap_pre_start(void *wrapctx, OUT void **user_data)
 {
     enum EventType event_type = S;
-    struct Event *event = create_ev(event_type);
+    struct Event *event = create_ev(event_type, 0);
     set_current_ev(state, 1);
     set_last_ev(state, event);
     write_trace("Start %d\n", state->current_ev);
+}
+
+
+static void
+wrap_pre_timerwrap(void *wrapctx, OUT void **user_data)
+{
+    enum EventType event_type = W;
+    update_or_create_ev(state->last_ev_created, event_type, 1);
+}
+
+
+static void
+wrap_pre_fsreq(void *wrapctx, OUT void **user_data)
+{
+    enum EventType event_type = W;
+    if (!last_event(state)) {
+        set_last_ev(state, create_ev(event_type, 2));
+    } else {
+        update_or_create_ev(state->last_ev_created, event_type, 2);
+    }
 }
