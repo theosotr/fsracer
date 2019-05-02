@@ -5,7 +5,7 @@ A client that detects data races in file system resources
 on top of the [DynamoRIO](https://www.dynamorio.org) framework.
 
 
-# Setup
+## Setup
 
 First, download the binary package of the DynamoRIO core:
 
@@ -32,7 +32,7 @@ After the build, a file named `libfsracer.so` is created
 inside the `build` directory.
 
 
-# Example
+## Example
 
 Run the FSracer client in an example JavaScript program:
 
