@@ -1,27 +1,56 @@
 #include "dr_api.h"
 
+#include <string.h>
+
 #include "state.h"
 
 
 struct Event*
-create_ev(enum EventType event_type)
+create_ev(enum EventType event_type, unsigned int event_value)
 {
     struct Event *ev;
     ev = dr_global_alloc(sizeof(struct Event));
-    ev->event_value = 0;
+    ev->event_value = event_value;
     ev->event_type = event_type;
     return ev;
 }
 
 
 void
-update_or_create_ev(struct Event *event, enum EventType event_type)
+update_or_create_ev(struct Event *event, enum EventType event_type,
+                    unsigned int event_value)
 {
     if (event == NULL) {
-        event = create_ev(event_type);
+        event = create_ev(event_type, event_value);
         return;
     }
     event->event_type = event_type;
+    event->event_value = event_value;
+}
+
+
+char *
+event_to_str(struct Event *event)
+{
+    if (event == NULL) {
+        return NULL;
+    }
+
+    char *str;
+    str = dr_global_alloc(10 * sizeof(char));
+    switch (event->event_type) {
+        case S:
+            sprintf(str, "S %d", event->event_value);
+            return str;
+        case M:
+            sprintf(str, "M %d", event->event_value);
+            return str;
+        case W:
+            sprintf(str, "W %d", event->event_value);
+            return str;
+
+    }
+    return NULL;
 }
 
 

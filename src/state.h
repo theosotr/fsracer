@@ -17,9 +17,12 @@ struct State {
 };
 
 
-struct Event *create_ev(enum EventType event_type);
+struct Event *create_ev(enum EventType event_type, unsigned int event_value);
 
-void update_or_create_ev(struct Event *event, enum EventType event_type);
+void update_or_create_ev(struct Event *event, enum EventType event_type,
+                         unsigned int event_value);
+
+char *event_to_str(struct Event *event);
 
 void clear_ev(struct Event *event);
 
