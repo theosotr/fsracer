@@ -24,6 +24,7 @@ of this repository:
 
 ```
 mkdir build
+cd build
 cmake -DDynamoRIO_DIR=${Dynamo_BUILD_DIR}/cmake ..
 make
 ```
