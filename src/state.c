@@ -4,7 +4,7 @@
 
 
 struct Event*
-create_event(enum EventType event_type)
+create_ev(enum EventType event_type)
 {
     struct Event *ev;
     ev = dr_global_alloc(sizeof(struct Event));
@@ -18,7 +18,7 @@ void
 update_or_create_ev(struct Event *event, enum EventType event_type)
 {
     if (event == NULL) {
-        event = create_event(event_type);
+        event = create_ev(event_type);
         return;
     }
     event->event_type = event_type;
@@ -35,7 +35,7 @@ clear_ev(struct Event *event)
 
 
 struct State *
-init_state()
+init_state(void)
 {
     struct State *state;
     state = dr_global_alloc(sizeof(struct State));
@@ -60,4 +60,30 @@ struct Event *
 last_event(struct State *state)
 {
     return state->last_ev_created;
+}
+
+
+void
+set_current_ev(struct State *state, int current_ev)
+{
+    if (state != NULL) {
+        state->current_ev = current_ev;
+    }
+}
+
+
+void
+set_last_ev(struct State *state, struct Event *event)
+{
+    state->last_ev_created = event;
+}
+
+
+void
+reset_event(struct State *state)
+{
+    if (state != NULL) {
+        state->last_ev_created = NULL;
+        state->current_ev = 0;
+    }
 }
