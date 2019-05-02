@@ -30,14 +30,14 @@ update_or_create_ev(struct Event *event, enum EventType event_type,
 
 
 char *
-event_to_str(struct Event *event)
+event_to_str(struct Event *event, size_t len)
 {
     if (event == NULL) {
         return NULL;
     }
 
     char *str;
-    str = dr_global_alloc(10 * sizeof(char));
+    str = dr_global_alloc(len);
     switch (event->event_type) {
         case S:
             sprintf(str, "S %d", event->event_value);
