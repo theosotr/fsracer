@@ -1,6 +1,8 @@
-#include "dr_api.h"
-
+#include <errno.h>
 #include <string.h>
+#include <stdio.h>
+
+#include "dr_api.h"
 
 #include "state.h"
 
@@ -60,6 +62,63 @@ clear_ev(struct Event *event)
     if (event != NULL) {
         dr_global_free(event, sizeof(struct Event));
     }
+}
+
+
+void
+setup_trace_file(struct State *state, const char *path)
+{
+    if (state == NULL) {
+        return;
+    }
+
+    state->tracer = fopen(path, "w");
+    if (state->tracer == NULL) {
+        dr_fprintf(STDERR,
+            "FSRacer Error: Could not open trace file. Errno: %d\n", errno);
+    }
+}
+
+
+void
+close_trace_file(struct State *state)
+{
+    if (state == NULL) {
+        return;
+    }
+
+    if (state->tracer == NULL) {
+        return;
+    }
+    if (fclose(state->tracer)) {
+        dr_fprintf(STDERR,
+            "FSRacer Error: Cannot close trace file. Errno %d\n", errno);
+    }
+}
+
+
+/**
+ * Just a wrapper to vfprintf that checks that the state->tracer points
+ * to a file stream.
+ */
+int
+write_trace(struct State *state, const char *fmt, ...)
+{
+    if (state == NULL) {
+        return -1;
+    }
+
+    if (state->tracer == NULL) {
+        dr_fprintf(STDERR,
+            "FSRacer Error: Cannot write to trace file. Errno: %d\n", errno);
+        return -1;
+    }
+    va_list ap;
+    ssize_t res;
+    va_start(ap, fmt);
+    res = vfprintf(state->tracer, fmt, ap);
+    va_end(ap);
+    return res;
 }
 
 
