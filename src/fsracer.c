@@ -45,6 +45,9 @@ wrap_pre_timerwrap(void *wrapctx, OUT void **user_data);
 static void
 wrap_pre_fsreq(void *wrapctx, OUT void **user_data);
 
+static void
+wrap_pre_promise_resolve(void *wrapctx, OUT void **user_data);
+
 
 /**
  * This function retrieves the entry point a function.
@@ -115,6 +118,7 @@ module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
     wrap_func(mod, "node::Start", wrap_pre_start, NULL);
     wrap_func(mod, "node::(anonymous namespace)::TimerWrap::New", wrap_pre_timerwrap, NULL);
     wrap_func(mod, "node::fs::NewFSReqWrap", wrap_pre_fsreq, NULL);
+    wrap_func(mod, "node::AsyncWrap::EmitPromiseResolve", wrap_pre_promise_resolve, NULL);
 }
 
 
@@ -264,5 +268,24 @@ wrap_pre_fsreq(void *wrapctx, OUT void **user_data)
         set_last_ev(state, create_ev(event_type, 2));
     } else {
         update_or_create_ev(state->last_ev_created, event_type, 2);
+    }
+}
+
+
+static void
+wrap_pre_promise_resolve(void *wrapctx, OUT void **user_data)
+{
+    dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
+    int async_id = *(double *) ctx->ymm; // xmm0 register
+    
+    // Every promise has type S.
+    enum EventType event_type = S;
+    struct Event *event = create_ev(event_type, 0);
+    set_last_ev(state, event);
+    size_t size = 10 * sizeof(char);
+    char *str = event_to_str(last_event(state), size);
+    if (str) {
+        write_trace(state, "newEvent %d, %s\n", async_id, str);
+        dr_global_free(str, size);
     }
 }
