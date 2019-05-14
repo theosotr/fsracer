@@ -51,6 +51,17 @@ wrap_pre_promise_resolve(void *wrapctx, OUT void **user_data);
 static void
 wrap_pre_promise_wrap(void *wrapctx, OUT void **user_data);
 
+static void
+wrap_pre(void *wrapctx, OUT void **user_data);
+
+static void
+wrap_imm(void *wrapctx, OUT void **user_data);
+
+static void
+wrap_push(void *wrapctx, OUT void **user_data);
+
+static void
+wrap_post(void *wrapctx, void *user_data);
 
 /**
  * This function retrieves the entry point a function.
@@ -123,6 +134,9 @@ module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
     wrap_func(mod, "node::fs::NewFSReqWrap", wrap_pre_fsreq, NULL);
     wrap_func(mod, "node::AsyncWrap::EmitPromiseResolve", wrap_pre_promise_resolve, NULL);
     wrap_func(mod, "node::PromiseWrap::PromiseWrap", wrap_pre_promise_wrap, NULL);
+    wrap_func(mod, "node::(anonymous namespace)::TimerWrap::Now", wrap_pre, NULL);
+    wrap_func(mod, "node::AliasedBuffer<>::SetValue", wrap_imm, NULL);
+    wrap_func(mod, "v8::internal::FixedTypedArray<>::set", wrap_push, wrap_post);
 }
 
 
@@ -283,7 +297,6 @@ wrap_pre_fsreq(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_promise_resolve(void *wrapctx, OUT void **user_data)
 {
-    write_trace(state, "here\n");
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
     int async_id = *(double *) ctx->ymm; // xmm0 register
     
@@ -308,4 +321,40 @@ wrap_pre_promise_wrap(void *wrapctx, OUT void **user_data)
 {
     enum EventType event_type = S;
     update_or_create_ev(state->last_ev_created, event_type, 0, true);
+}
+
+
+static void
+wrap_pre(void *wrapctx, OUT void **user_data)
+{
+    write_trace(state, "timer\n");
+}
+
+
+static void
+wrap_imm(void *wrapctx, OUT void **user_data)
+{
+    dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
+    int async_id = *(double *) ctx->ymm; // xmm0 register
+    int index = * ((int *)  ctx->xsp + 8);
+    //write_trace(state, "IMMEDIATE[%d]: %d\n", index, async_id);
+}
+
+
+static void
+wrap_push(void *wrapctx, OUT void **user_data)
+{
+    dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
+    int async_id = *(double *) ctx->ymm; // xmm0 register
+    write_trace(state, "SETVALUE: %d\n", async_id);
+    //int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
+    //write_trace(state, "%d->%d\n", trigger_async_id, async_id);
+}
+
+
+static void
+wrap_post(void *wrapctx, void *user_data)
+{
+    int async_id = * (double *) drwrap_get_retval(wrapctx);
+    write_trace(state, "RETVAL: %d\n", async_id);
 }
