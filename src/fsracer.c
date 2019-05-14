@@ -48,6 +48,9 @@ wrap_pre_fsreq(void *wrapctx, OUT void **user_data);
 static void
 wrap_pre_promise_resolve(void *wrapctx, OUT void **user_data);
 
+static void
+wrap_pre_promise_wrap(void *wrapctx, OUT void **user_data);
+
 
 /**
  * This function retrieves the entry point a function.
@@ -119,6 +122,7 @@ module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
     wrap_func(mod, "node::(anonymous namespace)::TimerWrap::New", wrap_pre_timerwrap, NULL);
     wrap_func(mod, "node::fs::NewFSReqWrap", wrap_pre_fsreq, NULL);
     wrap_func(mod, "node::AsyncWrap::EmitPromiseResolve", wrap_pre_promise_resolve, NULL);
+    wrap_func(mod, "node::PromiseWrap::PromiseWrap", wrap_pre_promise_wrap, NULL);
 }
 
 
@@ -229,7 +233,11 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
     int async_id = *(double *) ctx->ymm; // xmm0 register
     int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
 
-    if (last_event(state)) {
+    struct Event *event = last_event(state);
+    if (event != NULL && event->is_promise) {
+        return;
+    }
+    if (event) {
         size_t size = 10 * sizeof(char);
         char *str = event_to_str(last_event(state), size);
         if (str) {
@@ -245,7 +253,7 @@ static void
 wrap_pre_start(void *wrapctx, OUT void **user_data)
 {
     enum EventType event_type = S;
-    struct Event *event = create_ev(event_type, 0);
+    struct Event *event = create_ev(event_type, 0, false);
     set_current_ev(state, 1);
     set_last_ev(state, event);
     write_trace(state, "Start %d\n", state->current_ev);
@@ -256,7 +264,7 @@ static void
 wrap_pre_timerwrap(void *wrapctx, OUT void **user_data)
 {
     enum EventType event_type = W;
-    update_or_create_ev(state->last_ev_created, event_type, 1);
+    update_or_create_ev(state->last_ev_created, event_type, 1, false);
 }
 
 
@@ -265,9 +273,9 @@ wrap_pre_fsreq(void *wrapctx, OUT void **user_data)
 {
     enum EventType event_type = W;
     if (!last_event(state)) {
-        set_last_ev(state, create_ev(event_type, 2));
+        set_last_ev(state, create_ev(event_type, 2, false));
     } else {
-        update_or_create_ev(state->last_ev_created, event_type, 2);
+        update_or_create_ev(state->last_ev_created, event_type, 2, false);
     }
 }
 
@@ -275,17 +283,29 @@ wrap_pre_fsreq(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_promise_resolve(void *wrapctx, OUT void **user_data)
 {
+    write_trace(state, "here\n");
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
     int async_id = *(double *) ctx->ymm; // xmm0 register
     
     // Every promise has type S.
     enum EventType event_type = S;
-    struct Event *event = create_ev(event_type, 0);
-    set_last_ev(state, event);
+    if (last_event(state)) {
+        update_or_create_ev(state->last_ev_created, event_type, 0, true);
+    } else {
+        set_last_ev(state, create_ev(event_type, 0, true));
+    }
     size_t size = 10 * sizeof(char);
     char *str = event_to_str(last_event(state), size);
     if (str) {
         write_trace(state, "newEvent %d, %s\n", async_id, str);
         dr_global_free(str, size);
     }
+}
+
+
+static void
+wrap_pre_promise_wrap(void *wrapctx, OUT void **user_data)
+{
+    enum EventType event_type = S;
+    update_or_create_ev(state->last_ev_created, event_type, 0, true);
 }

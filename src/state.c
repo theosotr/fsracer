@@ -8,26 +8,28 @@
 
 
 struct Event*
-create_ev(enum EventType event_type, unsigned int event_value)
+create_ev(enum EventType event_type, unsigned int event_value, bool is_promise)
 {
     struct Event *ev;
     ev = dr_global_alloc(sizeof(struct Event));
     ev->event_value = event_value;
     ev->event_type = event_type;
+    ev->is_promise = is_promise;
     return ev;
 }
 
 
 void
 update_or_create_ev(struct Event *event, enum EventType event_type,
-                    unsigned int event_value)
+                    unsigned int event_value, bool is_promise)
 {
     if (event == NULL) {
-        event = create_ev(event_type, event_value);
+        event = create_ev(event_type, event_value, is_promise);
         return;
     }
     event->event_type = event_type;
     event->event_value = event_value;
+    event->is_promise = is_promise;
 }
 
 

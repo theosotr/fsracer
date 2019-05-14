@@ -12,6 +12,7 @@ enum EventType {
 struct Event {
   enum EventType event_type;
   unsigned int event_value;
+  bool is_promise;
 };
 
 
@@ -22,10 +23,10 @@ struct State {
 };
 
 
-struct Event *create_ev(enum EventType event_type, unsigned int event_value);
+struct Event *create_ev(enum EventType event_type, unsigned int event_value, bool is_promise);
 
 void update_or_create_ev(struct Event *event, enum EventType event_type,
-                         unsigned int event_value);
+                         unsigned int event_value, bool is_promise);
 
 char *event_to_str(struct Event *event, size_t len);
 
