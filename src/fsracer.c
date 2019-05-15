@@ -7,7 +7,6 @@
 
 
 // TODO:
-// * Handle setImmediate
 // * Handle nextTick
 
 
@@ -118,7 +117,7 @@ module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
     wrap_func(mod, "uv_fs_unlink", wrap_pre_uv_fs_unlink, NULL);
 
     // Wrappers for the Node.js functions
-    wrap_func(mod, "node::AsyncWrap::EmitBefore", wrap_pre_emit_before, NULL);
+    wrap_func(mod, "node::Environment::AsyncHooks::push_async_ids", wrap_pre_emit_before, NULL);
     wrap_func(mod, "node::AsyncWrap::EmitAfter", wrap_pre_emit_after, NULL);
     wrap_func(mod, "node::AsyncWrap::EmitAsyncInit", wrap_pre_emit_init, NULL);
     wrap_func(mod, "node::Start", wrap_pre_start, NULL);
@@ -206,13 +205,17 @@ static void
 wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
 {
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
+    int async_id = *(double *) ctx->ymm; // xmm0 register
+    if (async_id == 0 || async_id == 1) {
+        return;
+    }
+
     if (state->current_ev) {
         write_trace(state, "End %d\n", state->current_ev);
         reset_event(state);
     }
-    int async_id = *(double *) ctx->ymm; // xmm0 register
     set_current_ev(state, async_id);
-    /* EmitBefore(Environment*, double)
+    /* node::Environment::AsyncHooks::push_async_ids(double, double)
      *
      * Get the value of the second argument that is stored
      * in the SSE registers. */
@@ -277,7 +280,6 @@ wrap_pre_timerwrap(void *wrapctx, OUT void **user_data)
         write_trace(state, "newEvent %d, %s\n", state->next_ev_id, str);
         dr_global_free(str, size);
     }
-    reset_event(state);
 }
 
 
