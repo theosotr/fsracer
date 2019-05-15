@@ -130,6 +130,7 @@ init_state(void)
     struct State *state;
     state = dr_global_alloc(sizeof(struct State));
     state->current_ev = 1;
+    state->next_ev_id = 0;
     state->last_ev_created = NULL;
     return state;
 }
@@ -168,6 +169,15 @@ set_last_ev(struct State *state, struct Event *event)
     state->last_ev_created = event;
 }
 
+
+void
+incr_ev_id(struct State *state)
+{
+    if (!state) {
+        return;
+    }
+    state->next_ev_id++;
+}
 
 void
 reset_event(struct State *state)

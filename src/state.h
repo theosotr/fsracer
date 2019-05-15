@@ -18,6 +18,7 @@ struct Event {
 
 struct State {
   int current_ev;
+  int next_ev_id;
   struct Event *last_ev_created;
   FILE *tracer;
 };
@@ -47,5 +48,7 @@ struct Event *last_event(struct State *state);
 void set_current_ev(struct State *state, int current_event);
 
 void set_last_ev(struct State *state, struct Event *event);
+
+void incr_ev_id(struct State *state);
 
 void reset_event(struct State *state);
