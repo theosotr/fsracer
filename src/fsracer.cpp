@@ -3,18 +3,21 @@
 #include "drwrap.h"
 #include "drsyms.h"
 
-#include "state.h"
+#include "tracer.h"
 
 
 // TODO:
 // * Handle nextTick
+//
+
+using namespace tracer;
 
 
 typedef void (*pre_clb_t)(void *wrapctx, OUT void **user_data);
 typedef void (*post_clb_t)(void *wrapctx, void *user_data);
 
 
-struct State *state;
+Tracer *trace_gen;
 
 
 static void
@@ -136,8 +139,8 @@ event_exit(void)
     drwrap_exit();
     drmgr_exit();
     drsym_exit();
-    close_trace_file(state);
-    clear_state(state);
+    trace_gen->ClearTracer();
+    delete trace_gen;
 }
 
 
@@ -150,9 +153,8 @@ dr_client_main(client_id_t client_id, int argc, const char *argv[])
     drwrap_init();
     drsym_init(0);
     dr_register_exit_event(event_exit);
-    state = init_state();
     drmgr_register_module_load_event(module_load_event);
-    setup_trace_file(state, "fsracer.trace");
+    trace_gen = new Tracer("fsracer.trace");
 }
 
 
@@ -166,9 +168,9 @@ wrap_pre_uv_fs_access(void *wrapctx, OUT void **user_data) {
     //
     // FIXME: Remove duplicate code.
     if (clb == NULL) {
-        write_trace(state, "triggerOpSync (hpath %s consumed)\n", path);
+        trace_gen->EmitTriggerOpSync("hpath consumed", 0);
     } else {
-        write_trace(state, "triggerOpAsync (hpath %s consumed)\n", path);
+        trace_gen->EmitTriggerOpAsync("hpath consumed", 0);
     }
 }
 
@@ -180,9 +182,9 @@ wrap_pre_uv_fs_open(void *wrapctx, OUT void **user_data)
     void *clb = drwrap_get_arg(wrapctx, 5);
 
     if (clb == NULL) {
-        write_trace(state, "triggerOpSync (open %s)\n", path);
+        trace_gen->EmitTriggerOpSync("open", 0);
     } else {
-        write_trace(state, "triggerOpAsync (open %s)\n", path);
+        trace_gen->EmitTriggerOpAsync("open", 0);
     }
 }
 
@@ -194,9 +196,9 @@ wrap_pre_uv_fs_unlink(void *wrapctx, OUT void **user_data)
     void *clb = drwrap_get_arg(wrapctx, 3);
 
     if (clb == NULL) {
-        write_trace(state, "triggerOpSync (hpath %s expunged)\n", path);
+        trace_gen->EmitTriggerOpSync("hpath expunged", 0);
     } else {
-        write_trace(state, "triggerOpAsync (hpath %s expunged)\n", path);
+        trace_gen->EmitTriggerOpAsync("hpath expunged", 0);
     }
 }
 
@@ -215,84 +217,52 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
         return;
     }
 
-    if (state->current_ev) {
-        write_trace(state, "End %d\n", state->current_ev);
-        reset_event(state);
-    }
-    set_current_ev(state, async_id);
-    write_trace(state, "Start %d\n", async_id);
-    write_trace(state, "link %d %d\n", trigger_async_id, async_id);
+    trace_gen->EmitNewEventTrace(async_id);
+    trace_gen->EmitLinkTrace(async_id, trigger_async_id);
 }
 
 
 static void
 wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
 {
-    dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
-    // EmitAfter(Environment*, double)
-    write_trace(state, "End %d\n", (int) *(double *) ctx->ymm);
-    reset_event(state);
+  trace_gen->ClearLastEvent();
+  trace_gen->EmitEndTrace();
 }
 
 
 static void
 wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
 {
-    incr_ev_id(state);
+    trace_gen->IncrEventCount();
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
     int async_id = *(double *) ctx->ymm; // xmm0 register
     int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
-
-    struct Event *event = last_event(state);
-    if (event != NULL && event->is_promise) {
-        return;
-    }
-    if (event) {
-        size_t size = 10 * sizeof(char);
-        char *str = event_to_str(event, size);
-        if (str) {
-            write_trace(state, "newEvent %d, %s\n", async_id, str);
-            dr_global_free(str, size);
-        }
-    }
+    trace_gen->EmitNewEventTrace(async_id);
+    trace_gen->IncrEventCount();
 }
 
 
 static void
 wrap_pre_start(void *wrapctx, OUT void **user_data)
 {
-    enum EventType event_type = S;
-    struct Event *event = create_ev(event_type, 0, false);
-    set_current_ev(state, 1);
-    set_last_ev(state, event);
-    incr_ev_id(state);
-    write_trace(state, "Start %d\n", state->current_ev);
+  trace_gen->IncrEventCount();
+  trace_gen->EmitBeginTrace(trace_gen->GetEventCount());
 }
 
 
 static void
 wrap_pre_timerwrap(void *wrapctx, OUT void **user_data)
 {
-    enum EventType event_type = W;
-    update_or_create_ev(state->last_ev_created, event_type, 1, false);
-    size_t size = 10 * sizeof(char);
-    char *str = event_to_str(last_event(state), size);
-    if (str) {
-        write_trace(state, "newEvent %d, %s\n", state->next_ev_id, str);
-        dr_global_free(str, size);
-    }
+  trace_gen->ConstructWEvent(1);
+  trace_gen->EmitNewEventTrace(trace_gen->GetEventCount());
+  trace_gen->IncrEventCount();
 }
 
 
 static void
 wrap_pre_fsreq(void *wrapctx, OUT void **user_data)
 {
-    enum EventType event_type = W;
-    if (!last_event(state)) {
-        set_last_ev(state, create_ev(event_type, 2, false));
-    } else {
-        update_or_create_ev(state->last_ev_created, event_type, 2, false);
-    }
+  trace_gen->ConstructWEvent(2);
 }
 
 
@@ -301,33 +271,22 @@ wrap_pre_promise_resolve(void *wrapctx, OUT void **user_data)
 {
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
     int async_id = *(double *) ctx->ymm; // xmm0 register
-    
-    // Every promise has type S.
-    enum EventType event_type = S;
-    if (last_event(state)) {
-        update_or_create_ev(state->last_ev_created, event_type, 0, true);
-    } else {
-        set_last_ev(state, create_ev(event_type, 0, true));
-    }
-    size_t size = 10 * sizeof(char);
-    char *str = event_to_str(last_event(state), size);
-    if (str) {
-        write_trace(state, "newEvent %d, %s\n", async_id, str);
-        dr_global_free(str, size);
-    }
+
+    trace_gen->ConstructSEvent();
+    trace_gen->EmitNewEventTrace(async_id);
+    trace_gen->IncrEventCount();
 }
 
 
 static void
 wrap_pre_promise_wrap(void *wrapctx, OUT void **user_data)
 {
-    enum EventType event_type = S;
-    update_or_create_ev(state->last_ev_created, event_type, 0, true);
+    // TODO: revisit. This might not be needed.
 }
 
 
 static void
 wrap_pre_new_async_id(void *wrapctx, OUT void **user_data)
 {
-    incr_ev_id(state);
+  trace_gen->IncrEventCount();
 }
