@@ -204,8 +204,13 @@ wrap_pre_uv_fs_unlink(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
 {
+    /* node::Environment::AsyncHooks::push_async_ids(double, double)
+     *
+     * Get the value of the second argument that is stored
+     * in the SSE registers. */
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
     int async_id = *(double *) ctx->ymm; // xmm0 register
+    int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
     if (async_id == 0 || async_id == 1) {
         return;
     }
@@ -215,11 +220,8 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
         reset_event(state);
     }
     set_current_ev(state, async_id);
-    /* node::Environment::AsyncHooks::push_async_ids(double, double)
-     *
-     * Get the value of the second argument that is stored
-     * in the SSE registers. */
     write_trace(state, "Start %d\n", async_id);
+    write_trace(state, "link %d %d\n", trigger_async_id, async_id);
 }
 
 
@@ -253,7 +255,6 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
             dr_global_free(str, size);
         }
     }
-    write_trace(state, "link %d %d\n", trigger_async_id, async_id);
 }
 
 
