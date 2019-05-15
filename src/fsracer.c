@@ -52,16 +52,8 @@ static void
 wrap_pre_promise_wrap(void *wrapctx, OUT void **user_data);
 
 static void
-wrap_pre(void *wrapctx, OUT void **user_data);
+wrap_pre_new_async_id(void *wrapctx, OUT void **user_data);
 
-static void
-wrap_imm(void *wrapctx, OUT void **user_data);
-
-static void
-wrap_push(void *wrapctx, OUT void **user_data);
-
-static void
-wrap_post(void *wrapctx, void *user_data);
 
 /**
  * This function retrieves the entry point a function.
@@ -130,13 +122,11 @@ module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
     wrap_func(mod, "node::AsyncWrap::EmitAfter", wrap_pre_emit_after, NULL);
     wrap_func(mod, "node::AsyncWrap::EmitAsyncInit", wrap_pre_emit_init, NULL);
     wrap_func(mod, "node::Start", wrap_pre_start, NULL);
-    wrap_func(mod, "node::(anonymous namespace)::TimerWrap::New", wrap_pre_timerwrap, NULL);
+    wrap_func(mod, "node::(anonymous namespace)::TimerWrap::Now", wrap_pre_timerwrap, NULL);
     wrap_func(mod, "node::fs::NewFSReqWrap", wrap_pre_fsreq, NULL);
     wrap_func(mod, "node::AsyncWrap::EmitPromiseResolve", wrap_pre_promise_resolve, NULL);
     wrap_func(mod, "node::PromiseWrap::PromiseWrap", wrap_pre_promise_wrap, NULL);
-    wrap_func(mod, "node::(anonymous namespace)::TimerWrap::Now", wrap_pre, NULL);
-    wrap_func(mod, "node::AliasedBuffer<>::SetValue", wrap_imm, NULL);
-    wrap_func(mod, "v8::internal::FixedTypedArray<>::set", wrap_push, wrap_post);
+    wrap_func(mod, "node::AsyncWrap::NewAsyncId", wrap_pre_new_async_id, NULL);
 }
 
 
@@ -243,6 +233,7 @@ wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
 {
+    incr_ev_id(state);
     dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
     int async_id = *(double *) ctx->ymm; // xmm0 register
     int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
@@ -253,7 +244,7 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
     }
     if (event) {
         size_t size = 10 * sizeof(char);
-        char *str = event_to_str(last_event(state), size);
+        char *str = event_to_str(event, size);
         if (str) {
             write_trace(state, "newEvent %d, %s\n", async_id, str);
             dr_global_free(str, size);
@@ -270,6 +261,7 @@ wrap_pre_start(void *wrapctx, OUT void **user_data)
     struct Event *event = create_ev(event_type, 0, false);
     set_current_ev(state, 1);
     set_last_ev(state, event);
+    incr_ev_id(state);
     write_trace(state, "Start %d\n", state->current_ev);
 }
 
@@ -279,6 +271,13 @@ wrap_pre_timerwrap(void *wrapctx, OUT void **user_data)
 {
     enum EventType event_type = W;
     update_or_create_ev(state->last_ev_created, event_type, 1, false);
+    size_t size = 10 * sizeof(char);
+    char *str = event_to_str(last_event(state), size);
+    if (str) {
+        write_trace(state, "newEvent %d, %s\n", state->next_ev_id, str);
+        dr_global_free(str, size);
+    }
+    reset_event(state);
 }
 
 
@@ -325,36 +324,7 @@ wrap_pre_promise_wrap(void *wrapctx, OUT void **user_data)
 
 
 static void
-wrap_pre(void *wrapctx, OUT void **user_data)
+wrap_pre_new_async_id(void *wrapctx, OUT void **user_data)
 {
-    write_trace(state, "timer\n");
-}
-
-
-static void
-wrap_imm(void *wrapctx, OUT void **user_data)
-{
-    dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
-    int async_id = *(double *) ctx->ymm; // xmm0 register
-    int index = * ((int *)  ctx->xsp + 8);
-    //write_trace(state, "IMMEDIATE[%d]: %d\n", index, async_id);
-}
-
-
-static void
-wrap_push(void *wrapctx, OUT void **user_data)
-{
-    dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
-    int async_id = *(double *) ctx->ymm; // xmm0 register
-    write_trace(state, "SETVALUE: %d\n", async_id);
-    //int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
-    //write_trace(state, "%d->%d\n", trigger_async_id, async_id);
-}
-
-
-static void
-wrap_post(void *wrapctx, void *user_data)
-{
-    int async_id = * (double *) drwrap_get_retval(wrapctx);
-    write_trace(state, "RETVAL: %d\n", async_id);
+    incr_ev_id(state);
 }
