@@ -10,7 +10,7 @@ on top of the [DynamoRIO](https://www.dynamorio.org) framework.
 First, download the binary package of the DynamoRIO core:
 
 ```
-wget -O dynamo.tar.gz https://github.com/DynamoRIO/dynamorio/releases/download/release_7.1.0/DynamoRIO-Linux-7.1.0-1.tar.gz
+wget -O dynamo.tar.gz https://github.com/DynamoRIO/dynamorio/releases/download/cronbuild-7.90.17998/DynamoRIO-x86_64-Linux-7.90.17998-0.tar.gz
 tar -xvf dynamo.tar.gz
 ```
 
