@@ -234,7 +234,6 @@ wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
 {
-  trace_gen->IncrEventCount();
   dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
   int async_id = *(double *) ctx->ymm; // xmm0 register
   int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
