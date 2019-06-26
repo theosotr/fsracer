@@ -91,12 +91,17 @@ void Tracer::EmitLinkTrace(unsigned int source, unsigned int target) {
 
 
 void Tracer::EmitBeginTrace(unsigned int event_id) {
+  if (current_block) {
+    EmitEndTrace();
+  }
   trace_file << "begin " << event_id << "\n";
+  current_block = event_id;
 }
 
 
 void Tracer::EmitEndTrace() {
   trace_file << "end\n";
+  current_block = 0;
 } 
 
 

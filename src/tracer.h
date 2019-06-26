@@ -70,7 +70,8 @@ class Tracer {
   public:
     Tracer(std::string trace_file_name):
     last_event(NULL),
-    event_count(0) {
+    event_count(0),
+    current_block(0) {
       SetupTraceFile(trace_file_name);
     }
 
@@ -125,6 +126,8 @@ class Tracer {
     Event *last_event;
 
     size_t event_count;
+
+    unsigned int current_block;
 
     std::ofstream trace_file;
 
