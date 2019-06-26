@@ -78,7 +78,10 @@ void Tracer::EmitNewEventTrace(unsigned int event_id) {
     return;
   }
 
-  trace_file << "newEvent " << event_id << "\n";
+  size_t buff_size = 20;
+  char *event_str = last_event->ToString(buff_size);
+  trace_file << "newEvent " << event_id << " " << event_str << "\n";
+  dr_global_free(event_str, buff_size);
 }
 
 
