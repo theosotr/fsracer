@@ -218,8 +218,8 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
     return;
   }
 
-  trace_gen->EmitNewEventTrace(async_id);
   trace_gen->EmitLinkTrace(async_id, trigger_async_id);
+  trace_gen->EmitBeginTrace(async_id);
 }
 
 
