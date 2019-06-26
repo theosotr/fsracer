@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
-add_library(fsracer SHARED src/fsracer.cpp src/tracer.cpp)
+file(GLOB src_files src/*.cpp)
+add_library(fsracer SHARED ${src_files})
 
 find_package(DynamoRIO REQUIRED HINTS ${DynamoRIO_BUILD_DIR})
 
