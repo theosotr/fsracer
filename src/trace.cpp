@@ -24,11 +24,8 @@ string Event::ToString() {
 
 
 string NewEventExpr::ToString() {
-  if (!event) {
-    return "";
-  }
   string str = to_string(event_id);
-  return "newEvent " + str + " " + event->Event::ToString();
+  return "newEvent " + str + " " + event.ToString();
 }
 
 void NewEventExpr::Accept(interpreter::Interpreter *interpreter) {
@@ -43,6 +40,14 @@ string LinkExpr::ToString() {
 
 void LinkExpr::Accept(interpreter::Interpreter *interpreter) {
   interpreter->InterpretLink(this);
+}
+
+
+void Block::ClearExprs() {
+  for (size_t i = 0; i < exprs.size(); i++) {
+    delete exprs[i];
+  }
+  exprs.clear();
 }
 
 
@@ -64,6 +69,14 @@ void Block::Accept(interpreter::Interpreter *interpreter) {
 }
 
 
+void Trace::ClearBlocks() {
+  for (size_t i = 0; i < blocks.size(); i++) {
+    delete blocks[i];
+  }
+  blocks.clear();
+}
+
+
 string Trace::ToString() {
   string str = "";
   for (auto const &block : blocks) {
@@ -77,5 +90,6 @@ string Trace::ToString() {
 void Trace::Accept(interpreter::Interpreter *interpreter) {
   interpreter->InterpretTrace(this);
 }
+
 
 }

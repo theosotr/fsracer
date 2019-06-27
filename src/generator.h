@@ -28,7 +28,13 @@ class Generator {
     Generator() {
       trace = new Trace();
       current_block = NULL;
-      last_event = NULL;
+      event_pending = false;
+    }
+
+    ~Generator() {
+      if (trace) {
+        delete trace; 
+      }
     }
 
     Trace *GetTrace() {
@@ -39,7 +45,7 @@ class Generator {
       return current_block;
     } 
 
-    Event *GetLastEvent() {
+    Event GetLastEvent() {
       return last_event;
     }
 
@@ -51,8 +57,14 @@ class Generator {
       current_block = block;
     }
 
-    void SetLastEvent(Event *event) {
-      last_event = event;
+    bool IsEventPending() {
+      return event_pending;
+    }
+
+    void NewLastEvent(Event::EventType event_type,
+                      unsigned int event_value) {
+      last_event = Event(event_type, event_value);
+      event_pending = true;
     }
 
     void RegisterFunc(const module_data_t *mod, string func_name, pre_clb_t pre,
@@ -64,7 +76,8 @@ class Generator {
   private:
     Trace *trace;
     Block *current_block;
-    Event *last_event;
+    bool event_pending;
+    Event last_event;
 };
 
 

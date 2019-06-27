@@ -20,15 +20,16 @@ namespace trace {
 /** A generic class that represents a node of of the AST of traces. */
 class TraceNode {
   public:
-    virtual ~TraceNode();
+    virtual ~TraceNode() {  };
     virtual string ToString();
     virtual void Accept(interpreter::Interpreter *interpreter);
 };
 
 
 /** A class that represents a trace expression. */ 
-class Expr : public TraceNode {
+class Expr {
   public:
+    virtual ~Expr() {  };
     virtual void Accept(interpreter::Interpreter *interpreter);
     virtual string ToString();
 };
@@ -46,6 +47,10 @@ class Event : public TraceNode {
     Event(enum EventType event_type_, unsigned int event_value_):
       event_type(event_type_),
       event_value(event_value_) {  }
+
+    Event() {  }
+
+    ~Event() {  }
 
     void SetEventValue(unsigned int event_value_) {
       event_value = event_value_;
@@ -77,21 +82,17 @@ class Event : public TraceNode {
 /** This class represents the "newEvent" construct. */
 class NewEventExpr : public Expr {
   public:
-    NewEventExpr(unsigned int event_id_, Event *event):
+    NewEventExpr(unsigned int event_id_, Event event_):
       event_id(event_id_),
-      event(event) {  }
+      event(event_) {  }
 
-    ~NewEventExpr() {
-      if (event) {
-        delete event;
-      }
-    }
+    ~NewEventExpr() {  }
 
     unsigned int GetEventId() {
       return event_id;
     }
 
-    Event *GetEvent() {
+    Event &GetEvent() {
       return event;
     }
 
@@ -101,7 +102,7 @@ class NewEventExpr : public Expr {
 
   private:
     unsigned int event_id;
-    Event *event;
+    Event event;
 };
 
 

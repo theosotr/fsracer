@@ -162,7 +162,7 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
   dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
   int async_id = *(double *) ctx->ymm; // xmm0 register
   int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
-  if (trace_gen->GetLastEvent() && trace_gen->GetCurrentBlock()) {
+  if (trace_gen->IsEventPending() && trace_gen->GetCurrentBlock()) {
     trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
         async_id, trace_gen->GetLastEvent()));
     trace_gen->IncrEventCount();
@@ -190,7 +190,7 @@ wrap_pre_timerwrap(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_fsreq(void *wrapctx, OUT void **user_data)
 {
-  trace_gen->SetLastEvent(new Event(Event::W, 2));
+  trace_gen->NewLastEvent(Event::W, 2);
 }
 
 
