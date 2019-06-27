@@ -20,6 +20,7 @@ namespace trace {
 /** A generic class that represents a node of of the AST of traces. */
 class TraceNode {
   public:
+    virtual ~TraceNode();
     virtual string ToString();
     virtual void Accept(interpreter::Interpreter *interpreter);
 };
@@ -80,6 +81,12 @@ class NewEventExpr : public Expr {
       event_id(event_id_),
       event(event) {  }
 
+    ~NewEventExpr() {
+      if (event) {
+        delete event;
+      }
+    }
+
     unsigned int GetEventId() {
       return event_id;
     }
@@ -129,6 +136,10 @@ class Block : public TraceNode {
     Block(unsigned int block_id_):
       block_id(block_id_) {  }
 
+    ~Block() {
+      ClearExprs();
+    }
+
     vector<Expr*> GetExprs() {
       return exprs;
     }
@@ -148,6 +159,8 @@ class Block : public TraceNode {
   private:
     vector<Expr*> exprs;
     unsigned int block_id;
+
+    void ClearExprs();
 };
 
 
@@ -157,6 +170,10 @@ class Block : public TraceNode {
  */
 class Trace : public TraceNode {
   public:
+    ~Trace() {
+      ClearBlocks();
+    }
+
     vector<Block*> GetBlocks() {
       return blocks;
     };
@@ -171,6 +188,8 @@ class Trace : public TraceNode {
 
   private:
     vector<Block*> blocks;
+
+    void ClearBlocks();
 };
 
 
