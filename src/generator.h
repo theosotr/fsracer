@@ -1,8 +1,9 @@
 #ifndef GENERATOR_H
 #define GENERATOR_H
 
-
 #include <iostream>
+#include <map>
+#include <utility>
 
 #include "dr_api.h"
 #include "drmgr.h"
@@ -14,6 +15,7 @@
 
 
 using namespace trace;
+using namespace std;
 
 
 typedef void (*pre_clb_t)(void *wrapctx, OUT void **user_data);
@@ -83,6 +85,11 @@ class Generator {
 
 class NodeTraceGenerator : public Generator {
   public:
+    NodeTraceGenerator():
+      Generator() {
+        event_count = 0;
+      }
+
     void IncrEventCount() {
       event_count++;
     }
@@ -91,8 +98,34 @@ class NodeTraceGenerator : public Generator {
       return event_count;
     }
 
+    void AddIncompleteOp(string key, Operation *op) {
+      incomplete_ops[key] = op;
+    }
+
+    Operation *GetIncompleteOp(string key) {
+      map<string, Operation*>::iterator it;
+      it = incomplete_ops.find(key);
+      if (it == incomplete_ops.end()) {
+        return nullptr;
+      } else {
+        return it->second;
+      }
+    }
+
+    void SetLastEventId(unsigned int last_event_id_) {
+      last_event_id = last_event_id_;
+    }
+
+    unsigned int GetLastEventId() {
+      return last_event_id;
+    }
+
   private:
     size_t event_count;
+
+    unsigned int last_event_id;
+
+    map<string, Operation*> incomplete_ops; 
 
 };
 

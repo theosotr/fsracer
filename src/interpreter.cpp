@@ -4,6 +4,7 @@
 #include "interpreter.h"
 
 
+using namespace operation;
 using namespace trace;
 
 namespace interpreter {
@@ -48,6 +49,22 @@ void DumpInterpreter::InterpretExpr(Expr *expr) {
 }
 
 
+void DumpInterpreter::InterpretSyncOp(SyncOp *sync_op) {
+  if (!sync_op) {
+    return;
+  }
+  cout << sync_op->ToString() << "\n";
+}
+
+
+void DumpInterpreter::InterpretAsyncOp(AsyncOp *async_op) {
+  if (!async_op) {
+    return;
+  }
+  cout << async_op->ToString() << "\n";
+}
+
+
 void DumpInterpreter::InterpretNewEvent(NewEventExpr *new_ev_expr) {
   if (!new_ev_expr) {
     return;
@@ -63,6 +80,22 @@ void DumpInterpreter::InterpretLink(LinkExpr *link_expr) {
   }
   string str = link_expr->ToString();
   cout << str << "\n";
+}
+
+
+// Operations
+
+void DumpInterpreter::InterpretNewFd(NewFd *new_fd) {
+  if (new_fd) {
+    cout << new_fd->NewFd::ToString() << "\n";
+  }
+}
+
+
+void DumpInterpreter::InterpretDelFd(DelFd *del_fd) {
+  if (del_fd) {
+    cout << del_fd->DelFd::ToString() << "\n";
+  }
 }
 
 

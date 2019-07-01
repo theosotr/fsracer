@@ -1,9 +1,11 @@
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
 
-
+#include "operation.h"
 #include "trace.h"
 
+
+using namespace operation;
 using namespace trace;
 
 namespace interpreter {
@@ -15,8 +17,14 @@ class Interpreter {
     virtual void InterpretTrace(Trace *trace);
     virtual void InterpretBlock(Block *block);
     virtual void InterpretExpr(Expr *expr);
+    virtual void InterpretSyncOp(SyncOp *sync_op);
+    virtual void InterpretAsyncOp(AsyncOp *async_op);
     virtual void InterpretNewEvent(NewEventExpr *new_ev_expr);
     virtual void InterpretLink(LinkExpr *link_expr);
+
+    //Operations
+    virtual void InterpretNewFd(NewFd *new_fd);
+    virtual void InterpretDelFd(DelFd *del_fd);
 };
 
 
@@ -36,8 +44,13 @@ class DumpInterpreter : public Interpreter {
     void InterpretTrace(Trace *trace);
     void InterpretBlock(Block *block);
     void InterpretExpr(Expr *expr);
+    void InterpretSyncOp(SyncOp *sync_op);
+    void InterpretAsyncOp(AsyncOp *async_op);
     void InterpretNewEvent(NewEventExpr *new_ev_expr);
     void InterpretLink(LinkExpr *link_expr);
+
+    void InterpretNewFd(NewFd *new_fd);
+    void InterpretDelFd(DelFd *del_fd);
 
     enum DumpOption GetDumpOption() {
       return dump_option;

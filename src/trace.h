@@ -5,8 +5,12 @@
 #include <iostream>
 #include <vector>
 
+#include "operation.h"
+
 
 using namespace std;
+using namespace operation;
+
 
 namespace interpreter {
 
@@ -76,6 +80,46 @@ class Event : public TraceNode {
     enum EventType event_type;
     unsigned int event_value;
 
+};
+
+
+class SyncOp : public Expr {
+  public:
+    SyncOp(Operation *operation_):
+      operation(operation_) {  }
+    SyncOp() {  }
+    ~SyncOp() {
+      delete operation;
+    }
+
+    Operation *GetOperation() {
+      return operation;
+    }
+
+    void Accept(interpreter::Interpreter *interpreter);
+    virtual string ToString();
+
+  protected:
+    Operation *operation;
+};
+
+
+class AsyncOp : public SyncOp {
+  public:
+    AsyncOp(Operation *operation_, unsigned int event_id_):
+      SyncOp(operation_),
+      event_id(event_id_) {  }
+    ~AsyncOp() {  }
+
+    Operation *GetOperation() {
+      return operation;
+    }
+
+    void Accept(interpreter::Interpreter *interpreter);
+    string ToString();
+
+  private:
+    unsigned int event_id;
 };
 
 
@@ -183,6 +227,14 @@ class Trace : public TraceNode {
       blocks.push_back(block);
     };
 
+    size_t GetThreadId() {
+      return thread_id;
+    }
+    
+    void SetThreadId(size_t thread_id_) {
+      thread_id = thread_id_;
+    }
+
     void Accept(interpreter::Interpreter *interpreter);
 
     string ToString();
@@ -191,6 +243,8 @@ class Trace : public TraceNode {
     vector<Block*> blocks;
 
     void ClearBlocks();
+
+    size_t thread_id;
 };
 
 

@@ -23,10 +23,37 @@ string Event::ToString() {
 }
 
 
+string SyncOp::ToString() {
+  if (operation) {
+    return "SyncOp " + operation->ToString();
+  }
+  return "";
+}
+
+
+
+void SyncOp::Accept(interpreter::Interpreter *interpreter) {
+  interpreter->InterpretSyncOp(this);
+}
+
+
+string AsyncOp::ToString() {
+  if (operation) {
+    return "AsyncOp " + to_string(event_id) + " "+ operation->ToString();
+  }
+  return "";
+}
+
+void AsyncOp::Accept(interpreter::Interpreter *interpreter) {
+  interpreter->InterpretAsyncOp(this);
+}
+
+
 string NewEventExpr::ToString() {
   string str = to_string(event_id);
   return "newEvent " + str + " " + event.ToString();
 }
+
 
 void NewEventExpr::Accept(interpreter::Interpreter *interpreter) {
   interpreter->InterpretNewEvent(this);
