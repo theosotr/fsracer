@@ -139,11 +139,15 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
   }
 
 
-  //trace_gen->EmitLinkTrace(async_id, trigger_async_id);
   if (trace_gen->GetCurrentBlock()) {
+    // If this values does not point to NULL, we can infer
+    // that we did not close the previous block.
+    //
+    // So we do it right now.
     trace_gen->GetTrace()->AddBlock(trace_gen->GetCurrentBlock());
     trace_gen->SetCurrentBlock(NULL);
   }
+  // This hook occurs just before the execution of an event-related callback.
   trace_gen->SetCurrentBlock(new Block(async_id));
 }
 
@@ -165,8 +169,8 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
   if (trace_gen->IsEventPending() && trace_gen->GetCurrentBlock()) {
     trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
         async_id, trace_gen->GetLastEvent()));
-    trace_gen->IncrEventCount();
   }
+  trace_gen->IncrEventCount();
 }
 
 
@@ -181,9 +185,11 @@ wrap_pre_start(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_timerwrap(void *wrapctx, OUT void **user_data)
 {
-  //trace_gen->ConstructWEvent(1);
-  //trace_gen->EmitNewEventTrace(trace_gen->GetEventCount());
-  //trace_gen->IncrEventCount();
+  trace_gen->NewLastEvent(Event::W, 1);
+  trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
+      trace_gen->GetEventCount(),
+      trace_gen->GetLastEvent()));
+  trace_gen->IncrEventCount();
 }
 
 
@@ -216,5 +222,9 @@ wrap_pre_promise_wrap(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_new_async_id(void *wrapctx, OUT void **user_data)
 {
+  trace_gen->NewLastEvent(Event::W, 3);
+  trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
+      trace_gen->GetEventCount(),
+      trace_gen->GetLastEvent()));
   trace_gen->IncrEventCount();
 }
