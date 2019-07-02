@@ -31,7 +31,7 @@ wrap_post_open(void *wrapctx, void *user_data)
   }
 
   string path = (const char *) trace_gen->PopFromStore(FUNC_ARGS + "open");
-  string key = INCOMPLETE_OPERATIONS + "newFd" + path;
+  string key = INCOMPLETE_OPERATIONS + NewFd(path).ToString();
   // We search whether there is an incomplete operation named `newFd`
   // that affects the same path as `open`.
   Operation *operation = (Operation *) trace_gen->PopFromStore(key);
@@ -43,7 +43,7 @@ wrap_post_open(void *wrapctx, void *user_data)
   // We set the `fd` value of the found `newFd` operation.
   int ret_val = (int)(ptr_int_t) drwrap_get_retval(wrapctx);
   NewFd *new_fd = dynamic_cast<NewFd*>(operation);
-  new_fd->SetFd(to_string(ret_val));
+  new_fd->SetFd(ret_val);
 }
 
 
@@ -59,7 +59,7 @@ wrap_pre_uv_fs_open(void *wrapctx, OUT void **user_data)
   string path = (const char *) drwrap_get_arg(wrapctx, 2);
   void *clb = drwrap_get_arg(wrapctx, 5);
 
-  NewFd *new_fd = new NewFd(path, "");
+  NewFd *new_fd = new NewFd(path);
   trace_gen->AddToStore(FUNC_ARGS + "uv_fs_open", new_fd);
 }
 
@@ -81,7 +81,7 @@ wrap_pre_uv_fs_post_open(void *wrapctx, void *user_data)
         FUNC_ARGS + "wrap_pre_emit_init");
     op = new AsyncOp(new_fd, event_id);
   } else {
-    new_fd->SetFd(to_string(ret_val));
+    new_fd->SetFd(ret_val);
     op = new SyncOp(new_fd);
   }
   trace_gen->GetCurrentBlock()->AddExpr(op);
@@ -95,7 +95,7 @@ wrap_pre_uv_fs_close(void *wrapctx, OUT void **user_data)
   int fd = (int)(ptr_int_t) drwrap_get_arg(wrapctx, 2);
   void *clb = drwrap_get_arg(wrapctx, 3);
 
-  DelFd *del_fd = new DelFd(to_string(fd));
+  DelFd *del_fd = new DelFd(fd);
   if (clb == NULL) {
     trace_gen->GetCurrentBlock()->AddExpr(new SyncOp(del_fd));
   } else {
