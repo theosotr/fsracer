@@ -1,4 +1,6 @@
 #include <iostream>
+#include <map>
+#include <utility>
 
 #include "dr_api.h"
 #include "drmgr.h"
@@ -48,13 +50,16 @@ get_pc_by_symbol(const module_data_t *mod, const char *symbol)
 }
 
 
-static void
-wrap_func(const module_data_t *mod, const char *func_name,
-          pre_clb_t pre, post_clb_t post)
-{
-  app_pc towrap = get_pc_by_symbol(mod, func_name);
+namespace generator {
+
+
+void Generator::RegisterFunc(const module_data_t *mod, string func_name,
+                             pre_clb_t pre , post_clb_t post) {
+  app_pc towrap = get_pc_by_symbol(mod, func_name.c_str());
+  void *user_data  = this;
   if (towrap != NULL) {
-    bool wrapped = drwrap_wrap(towrap, pre, post);
+    bool wrapped = drwrap_wrap_ex(towrap, pre, post, user_data,
+        DRWRAP_FLAGS_NONE|DRWRAP_CALLCONV_AMD64);
     if (!wrapped) {
       dr_fprintf(STDERR,
           "FSRacer Error: Couldn't wrap the %s function\n", func_name);
@@ -62,12 +67,43 @@ wrap_func(const module_data_t *mod, const char *func_name,
   }
 }
 
-namespace generator {
+
+void Generator::Start(const module_data_t *mod) {
+  for (pair<string, pair<pre_clb_t, post_clb_t>> entry : GetWrappers()) {
+    string func_name = entry.first;
+    pair<pre_clb_t, post_clb_t> func_pair = entry.second;
+    RegisterFunc(mod, func_name, func_pair.first, func_pair.second);
+  }
+}
 
 
-void Generator::RegisterFunc(const module_data_t *mod, string func_name,
-                             pre_clb_t pre , post_clb_t post) {
-  wrap_func(mod, func_name.c_str(), pre, post);
+void Generator::AddToStore(string key, void *value) {
+  store[key] = value;
+}
+
+
+void *Generator::GetStoreValue(string key) {
+    map<string, void*>::iterator it;
+    it = store.find(key);
+    if (it == store.end()) {
+      return nullptr;
+    } else {
+      return it->second;
+    }
+}
+
+}
+
+
+namespace generator_utils {
+
+generator::Generator *GetTraceGenerator(void **data) {
+  if (!data) {
+    return nullptr;
+  }
+
+  generator::Generator *trace_gen = (generator::Generator *) *data;
+  return trace_gen;
 }
 
 
