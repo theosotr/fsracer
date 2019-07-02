@@ -3,6 +3,7 @@
 
 using namespace generator;
 using namespace generator_utils;
+using namespace generator_keys;
 
 
 static void
@@ -15,7 +16,8 @@ wrap_pre_open(void *wrapctx, OUT void **user_data)
   }
 
   char *path = (char *) drwrap_get_arg(wrapctx, 0);
-  trace_gen->AddToStore("open/path", path);
+  string key = FUNC_ARGS + "open";
+  trace_gen->AddToStore(key, path);
 }
 
 
@@ -28,11 +30,11 @@ wrap_post_open(void *wrapctx, void *user_data)
     return;
   }
 
-  string path = (const char *) trace_gen->GetStoreValue("open/path");
-  string key = "newFd " + path;
+  string path = (const char *) trace_gen->PopFromStore(FUNC_ARGS + "open");
+  string key = INCOMPLETE_OPERATIONS + "newFd" + path;
   // We search whether there is an incomplete operation named `newFd`
   // that affects the same path as `open`.
-  Operation *operation = trace_gen->GetIncompleteOp(key);
+  Operation *operation = (Operation *) trace_gen->PopFromStore(key);
   if (!operation) {
     // We did not find any operation; so we return.
     return;
@@ -58,7 +60,7 @@ wrap_pre_uv_fs_open(void *wrapctx, OUT void **user_data)
   void *clb = drwrap_get_arg(wrapctx, 5);
 
   NewFd *new_fd = new NewFd(path, "");
-  trace_gen->AddToStore("uv_fs_open/op", new_fd);
+  trace_gen->AddToStore(FUNC_ARGS + "uv_fs_open", new_fd);
 }
 
 
@@ -67,15 +69,17 @@ wrap_pre_uv_fs_post_open(void *wrapctx, void *user_data)
 {
   Generator *trace_gen = (Generator *) user_data;
   int ret_val = (int)(ptr_int_t) drwrap_get_retval(wrapctx);
-  NewFd *new_fd = (NewFd *) trace_gen->GetStoreValue("uv_fs_open/op");
-   
+  string key = FUNC_ARGS + "uv_fs_open";
+  NewFd *new_fd = (NewFd *) trace_gen->PopFromStore(key);
   SyncOp *op;
   if (ret_val == 0) {
     // If the return value of open is equal to zero,
     // we have an asynchronous open;
-    string key = new_fd->ToString(); 
-    trace_gen->AddIncompleteOp(key, new_fd);
-    op = new AsyncOp(new_fd, trace_gen->GetLastEventId());
+    string key = INCOMPLETE_OPERATIONS + new_fd->ToString(); 
+    trace_gen->AddToStore(key, new_fd);
+    size_t event_id = (size_t)(intptr_t) trace_gen->GetStoreValue(
+        FUNC_ARGS + "wrap_pre_emit_init");
+    op = new AsyncOp(new_fd, event_id);
   } else {
     new_fd->SetFd(to_string(ret_val));
     op = new SyncOp(new_fd);
@@ -95,8 +99,10 @@ wrap_pre_uv_fs_close(void *wrapctx, OUT void **user_data)
   if (clb == NULL) {
     trace_gen->GetCurrentBlock()->AddExpr(new SyncOp(del_fd));
   } else {
+    size_t event_id = (size_t)(intptr_t) trace_gen->GetStoreValue(
+        FUNC_ARGS + "wrap_pre_emit_init");
     trace_gen->GetCurrentBlock()->AddExpr(
-        new AsyncOp(del_fd, trace_gen->GetLastEventId()));
+        new AsyncOp(del_fd, event_id));
   }
 }
 
@@ -163,10 +169,13 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
   int async_id = *(double *) ctx->ymm; // xmm0 register
   int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
   trace_gen->IncrEventCount();
-  if (trace_gen->IsEventPending() && trace_gen->GetCurrentBlock()) {
+  Event *last_event = (Event *) trace_gen->PopFromStore(LAST_CREATED_EVENT);
+  if (last_event && trace_gen->GetCurrentBlock()) {
     trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
-        async_id, trace_gen->GetLastEvent()));
-    trace_gen->SetLastEventId(async_id);
+        async_id, *last_event));
+    trace_gen->AddToStore(FUNC_ARGS + "wrap_pre_emit_init",
+        (void *)(intptr_t) async_id);
+    delete last_event;
   }
 }
 
@@ -189,10 +198,9 @@ wrap_pre_timerwrap(void *wrapctx, OUT void **user_data)
 {
   Generator *trace_gen = GetTraceGenerator(user_data);
   trace_gen->IncrEventCount();
-  trace_gen->NewLastEvent(Event::W, 1);
+  Event event = Event(Event::W, 1);
   trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
-      trace_gen->GetEventCount(),
-      trace_gen->GetLastEvent()));
+      trace_gen->GetEventCount(), event));
 }
 
 
@@ -200,7 +208,8 @@ static void
 wrap_pre_fsreq(void *wrapctx, OUT void **user_data)
 {
   Generator *trace_gen = GetTraceGenerator(user_data);
-  trace_gen->NewLastEvent(Event::W, 2);
+  Event *ev = new Event(Event::W, 2);
+  trace_gen->AddToStore(LAST_CREATED_EVENT, ev);
 }
 
 
@@ -228,10 +237,9 @@ wrap_pre_new_async_id(void *wrapctx, OUT void **user_data)
 {
   Generator *trace_gen = GetTraceGenerator(user_data);
   trace_gen->IncrEventCount();
-  trace_gen->NewLastEvent(Event::W, 3);
+  Event ev = Event(Event::W, 3);
   trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
-      trace_gen->GetEventCount(),
-      trace_gen->GetLastEvent()));
+      trace_gen->GetEventCount(), ev));
 }
 
 

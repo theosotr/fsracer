@@ -1,5 +1,4 @@
 #include <iostream>
-#include <map>
 #include <utility>
 
 #include "dr_api.h"
@@ -83,14 +82,31 @@ void Generator::AddToStore(string key, void *value) {
 
 
 void *Generator::GetStoreValue(string key) {
-    map<string, void*>::iterator it;
-    it = store.find(key);
-    if (it == store.end()) {
-      return nullptr;
-    } else {
-      return it->second;
-    }
+  map<string, void*>::iterator it;
+  it = store.find(key);
+  if (it == store.end()) {
+    return nullptr;
+  } else {
+    return it->second;
+  }
 }
+
+
+void Generator::DeleteFromStore(string key) {
+  PopFromStore(key);
+}
+
+
+void *Generator::PopFromStore(string key) {
+  map<string, void*>::iterator it = store.find(key);
+  void *value = nullptr;
+  if (it != store.end()) {
+    value = it->second;
+    store.erase(it);
+  }
+  return value;
+}
+
 
 }
 

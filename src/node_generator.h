@@ -8,6 +8,12 @@
 
 using namespace trace;
 
+namespace generator_keys {
+  const string FUNC_ARGS = "args/";
+  const string INCOMPLETE_OPERATIONS = "incomplete_ops/";
+  const string LAST_CREATED_EVENT = "last_created_event/";
+}
+
 
 namespace generator {
 

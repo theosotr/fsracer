@@ -32,7 +32,7 @@ event_exit(void)
   drwrap_exit();
   drmgr_exit();
   drsym_exit();
-   DumpInterpreter *dump_interpreter = new DumpInterpreter(
+  DumpInterpreter *dump_interpreter = new DumpInterpreter(
       DumpInterpreter::STDOUT_DUMP);
   dump_interpreter->Interpret(trace_gen->GetTrace());
   delete dump_interpreter;

@@ -40,7 +40,7 @@ class Expr {
 
 
 /** An class that represents an event. */
-class Event : public TraceNode {
+class Event {
   public:
     enum EventType {
       S,
@@ -53,8 +53,6 @@ class Event : public TraceNode {
       event_value(event_value_) {  }
 
     Event() {  }
-
-    ~Event() {  }
 
     void SetEventValue(unsigned int event_value_) {
       event_value = event_value_;
