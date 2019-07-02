@@ -48,13 +48,13 @@ class Event {
       W
     };
 
-    Event(enum EventType event_type_, unsigned int event_value_):
+    Event(enum EventType event_type_, size_t event_value_):
       event_type(event_type_),
       event_value(event_value_) {  }
 
     Event() {  }
 
-    void SetEventValue(unsigned int event_value_) {
+    void SetEventValue(size_t event_value_) {
       event_value = event_value_;
     }
 
@@ -66,7 +66,7 @@ class Event {
       return event_type;
     }
 
-    unsigned int GetEventValue() {
+    size_t GetEventValue() {
       return event_value;
     }
 
@@ -76,7 +76,7 @@ class Event {
 
   private:
     enum EventType event_type;
-    unsigned int event_value;
+    size_t event_value;
 
 };
 
@@ -104,7 +104,7 @@ class SyncOp : public Expr {
 
 class AsyncOp : public SyncOp {
   public:
-    AsyncOp(Operation *operation_, unsigned int event_id_):
+    AsyncOp(Operation *operation_, size_t event_id_):
       SyncOp(operation_),
       event_id(event_id_) {  }
     ~AsyncOp() {  }
@@ -117,20 +117,20 @@ class AsyncOp : public SyncOp {
     string ToString();
 
   private:
-    unsigned int event_id;
+    size_t event_id;
 };
 
 
 /** This class represents the "newEvent" construct. */
 class NewEventExpr : public Expr {
   public:
-    NewEventExpr(unsigned int event_id_, Event event_):
+    NewEventExpr(size_t event_id_, Event event_):
       event_id(event_id_),
       event(event_) {  }
 
     ~NewEventExpr() {  }
 
-    unsigned int GetEventId() {
+    size_t GetEventId() {
       return event_id;
     }
 
@@ -143,7 +143,7 @@ class NewEventExpr : public Expr {
     string ToString();
 
   private:
-    unsigned int event_id;
+    size_t event_id;
     Event event;
 };
 
@@ -151,15 +151,15 @@ class NewEventExpr : public Expr {
 /** This class represents the "link" construct. */
 class LinkExpr : public Expr {
   public:
-    LinkExpr(unsigned int source_ev_, unsigned int target_ev_):
+    LinkExpr(size_t source_ev_, size_t target_ev_):
       source_ev(source_ev_),
       target_ev(target_ev_) {  }
 
-    unsigned int GetSourceEvent() {
+    size_t GetSourceEvent() {
       return source_ev;
     }
 
-    unsigned int GetTargetEvent() {
+    size_t GetTargetEvent() {
       return target_ev;
     }
 
@@ -168,15 +168,15 @@ class LinkExpr : public Expr {
     string ToString();
 
   private:
-    unsigned int source_ev;
-    unsigned int target_ev;
+    size_t source_ev;
+    size_t target_ev;
 };
 
 
 /** This class represents an execution block. */
 class Block : public TraceNode {
   public:
-    Block(unsigned int block_id_):
+    Block(size_t block_id_):
       block_id(block_id_) {  }
 
     ~Block() {
@@ -191,7 +191,7 @@ class Block : public TraceNode {
       exprs.push_back(expr);
     }
 
-    unsigned int GetBlockId() {
+    size_t GetBlockId() {
       return block_id;
     }
 
@@ -201,7 +201,7 @@ class Block : public TraceNode {
 
   private:
     vector<Expr*> exprs;
-    unsigned int block_id;
+    size_t block_id;
 
     void ClearExprs();
 };
