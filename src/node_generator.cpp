@@ -407,6 +407,7 @@ wrapper_t NodeTraceGenerator::GetWrappers() {
   wrappers["uv_fs_rmdir"] = { wrap_pre_uv_fs_rmdir, nullptr };
   wrappers["uv_fs_stat"] = { wrap_pre_uv_fs_stat, nullptr };
   wrappers["uv_fs_symlink"] = { wrap_pre_uv_fs_symlink, nullptr };
+  wrappers["uv_fs_unlink"] = { wrap_pre_uv_fs_unlink, nullptr };
   wrappers["uv_fs_utime"] = { wrap_pre_uv_fs_utime, nullptr };
 
   // Node wrappers
