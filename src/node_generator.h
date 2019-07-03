@@ -15,6 +15,17 @@ namespace generator_keys {
 }
 
 
+namespace node_utils {
+  void AddOperation(generator::Generator *trace_gen, Operation *operation,
+                    bool is_async);
+  void EmitHpath(void *wrapctx, OUT void **user_data, size_t path_pos,
+                 size_t clb_pos, enum Hpath::EffectType effect_type,
+                 bool follow_symlink);
+  void EmitLink(void *wrapctx, OUT void **user_data, size_t old_path_pos,
+                size_t new_path_pos, size_t clb_pos);
+}
+
+
 namespace generator {
 
 

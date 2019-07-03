@@ -6,6 +6,50 @@ using namespace generator_utils;
 using namespace generator_keys;
 
 
+namespace node_utils {
+
+void AddOperation(Generator *trace_gen, Operation *operation, bool is_async) {
+  if (!is_async) {
+    trace_gen->GetCurrentBlock()->AddExpr(new SyncOp(operation));
+  } else {
+    size_t event_id = (size_t)(intptr_t) trace_gen->GetStoreValue(
+        FUNC_ARGS + "wrap_pre_emit_init");
+    trace_gen->GetCurrentBlock()->AddExpr(
+        new AsyncOp(operation, event_id));
+  }
+}
+
+
+void EmitHpath(void *wrapctx, OUT void **user_data, size_t path_pos,
+               size_t clb_pos, enum Hpath::EffectType effect_type,
+               bool follow_symlink) {
+  Generator *trace_gen = GetTraceGenerator(user_data);
+  string path = (const char *) drwrap_get_arg(wrapctx, path_pos);
+  void *clb = drwrap_get_arg(wrapctx, clb_pos);
+  if (follow_symlink) {
+    Hpath *hpath = new Hpath(AT_FDCWD, path, effect_type);
+    AddOperation(trace_gen, hpath, clb != nullptr);
+  } else {
+    HpathSym *hpathsym = new HpathSym(AT_FDCWD, path, effect_type);
+    AddOperation(trace_gen, hpathsym, clb != nullptr);
+  }
+}
+
+
+void EmitLink(void *wrapctx, OUT void **user_data, size_t old_path_pos,
+    size_t new_path_pos, size_t clb_pos) {
+  EmitHpath(wrapctx, user_data, old_path_pos, clb_pos, Hpath::CONSUMED, true);
+  EmitHpath(wrapctx, user_data, new_path_pos, clb_pos, Hpath::PRODUCED, true);
+  Generator *trace_gen = GetTraceGenerator(user_data);
+  string old_path = (const char *) drwrap_get_arg(wrapctx, old_path_pos);
+  string new_path = (const char *) drwrap_get_arg(wrapctx, new_path_pos);
+  Link *link = new Link(AT_FDCWD, old_path, AT_FDCWD, new_path);
+  AddOperation(trace_gen, link, drwrap_get_arg(wrapctx, clb_pos) != nullptr);
+}
+
+}
+
+
 static void
 wrap_pre_open(void *wrapctx, OUT void **user_data)
 {
@@ -14,7 +58,6 @@ wrap_pre_open(void *wrapctx, OUT void **user_data)
   if (dr_get_thread_id(drcontext) == trace_gen->GetTrace()->GetThreadId()) {
     return;
   }
-
   char *path = (char *) drwrap_get_arg(wrapctx, 0);
   string key = FUNC_ARGS + "open";
   trace_gen->AddToStore(key, path);
@@ -48,7 +91,23 @@ wrap_post_open(void *wrapctx, void *user_data)
 
 
 static void
-wrap_pre_uv_fs_access(void *wrapctx, OUT void **user_data) {
+wrap_pre_uv_fs_access(void *wrapctx, OUT void **user_data)
+{
+  node_utils::EmitHpath(wrapctx, user_data, 2, 4, Hpath::CONSUMED, true);
+}
+
+
+static void
+wrap_pre_uv_fs_chmod(void *wrapctx, OUT void **user_data)
+{
+  node_utils::EmitHpath(wrapctx, user_data, 2, 4, Hpath::CONSUMED, true);
+}
+
+
+static void
+wrap_pre_uv_fs_chown(void *wrapctx, OUT void **user_data)
+{
+  node_utils::EmitHpath(wrapctx, user_data, 2, 5, Hpath::CONSUMED, true);
 }
 
 
@@ -94,16 +153,22 @@ wrap_pre_uv_fs_close(void *wrapctx, OUT void **user_data)
   Generator *trace_gen = GetTraceGenerator(user_data);
   int fd = (int)(ptr_int_t) drwrap_get_arg(wrapctx, 2);
   void *clb = drwrap_get_arg(wrapctx, 3);
-
   DelFd *del_fd = new DelFd(fd);
-  if (clb == NULL) {
-    trace_gen->GetCurrentBlock()->AddExpr(new SyncOp(del_fd));
-  } else {
-    size_t event_id = (size_t)(intptr_t) trace_gen->GetStoreValue(
-        FUNC_ARGS + "wrap_pre_emit_init");
-    trace_gen->GetCurrentBlock()->AddExpr(
-        new AsyncOp(del_fd, event_id));
-  }
+  node_utils::AddOperation(trace_gen, del_fd, clb != nullptr);
+}
+
+
+static void
+wrap_pre_uv_fs_lchown(void *wrapctx, OUT void **user_data)
+{
+  node_utils::EmitHpath(wrapctx, user_data, 2, 5, Hpath::CONSUMED, false);
+}
+
+
+static void
+wrap_pre_uv_fs_link(void *wrapctx, OUT void **user_data)
+{
+  node_utils::EmitLink(wrapctx, user_data, 2, 3, 4);
 }
 
 
@@ -133,11 +198,9 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
   dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
   int async_id = *(double *) ctx->ymm; // xmm0 register
   int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
-
   if (async_id == 0 || async_id == 1) {
     return;
   }
-
 
   if (trace_gen->GetCurrentBlock()) {
     // If this values does not point to NULL, we can infer
@@ -252,8 +315,13 @@ wrapper_t NodeTraceGenerator::GetWrappers() {
   wrappers["open"] = { wrap_pre_open, wrap_post_open };
 
   // libuv wrappers
+  wrappers["uv_fs_access"] = { wrap_pre_uv_fs_access, nullptr };
+  wrappers["uv_fs_chmod"] = { wrap_pre_uv_fs_chmod, nullptr };
+  wrappers["uv_fs_chown"] = { wrap_pre_uv_fs_chown, nullptr };
   wrappers["uv_fs_open"] = { wrap_pre_uv_fs_open, wrap_pre_uv_fs_post_open };
   wrappers["uv_fs_close"] = { wrap_pre_uv_fs_close, nullptr };
+  wrappers["uv_fs_lchown"] = { wrap_pre_uv_fs_lchown, nullptr };
+  wrappers["uv_fs_link"] = { wrap_pre_uv_fs_link, nullptr };
 
   // Node wrappers
   wrappers["node::Start"] = { wrap_pre_start, nullptr };

@@ -18,4 +18,25 @@ void DelFd::Accept(interpreter::Interpreter *interpreter) {
 };
 
 
+void Hpath::Accept(interpreter::Interpreter *interpreter) {
+  if (interpreter) {
+    interpreter->InterpretHpath(this);
+  }
+};
+
+
+void HpathSym::Accept(interpreter::Interpreter *interpreter) {
+  if (interpreter) {
+    interpreter->InterpretHpath(this);
+  }
+};
+
+
+void Link::Accept(interpreter::Interpreter *interpreter) {
+  if (interpreter) {
+    interpreter->InterpretLink(this);
+  }
+};
+
+
 }

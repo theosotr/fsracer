@@ -161,7 +161,7 @@ class Link : public Operation {
       old_path(old_path_),
       new_dirfd(new_dirfd_),
       new_path(new_path_) {  }
-    ~Link();
+    ~Link() {  };
 
     size_t GetOldDirfd() {
       return old_dirfd;
@@ -180,8 +180,12 @@ class Link : public Operation {
     }
 
     string ToString() {
-      return GetOpName() + " " + to_string(old_dirfd) + " " +
-        old_path + " " + to_string(new_dirfd) + " " + new_path;
+      string old_dirfd_str = old_dirfd == AT_FDCWD ?
+        "AT_FDCWD" : to_string(old_dirfd);
+      string new_dirfd_str = new_dirfd == AT_FDCWD ?
+        "AT_FDCWD" : to_string(new_dirfd);
+      return GetOpName() + " " + old_dirfd_str + " " +
+        old_path + " " + new_dirfd_str + " " + new_path;
     };
 
     string GetOpName() {
