@@ -25,6 +25,9 @@ class Interpreter {
     //Operations
     virtual void InterpretNewFd(NewFd *new_fd);
     virtual void InterpretDelFd(DelFd *del_fd);
+    virtual void InterpretHpath(Hpath *hpath);
+    virtual void InterpretHpath(HpathSym *hpathsym);
+    virtual void InterpretLink(Link *link);
 };
 
 
@@ -49,8 +52,11 @@ class DumpInterpreter : public Interpreter {
     void InterpretNewEvent(NewEventExpr *new_ev_expr);
     void InterpretLink(LinkExpr *link_expr);
 
-    void InterpretNewFd(NewFd *new_fd);
-    void InterpretDelFd(DelFd *del_fd);
+    void InterpretNewFd(NewFd *new_fd) {  };
+    void InterpretDelFd(DelFd *del_fd) {  };
+    void InterpretHpath(Hpath *hpath) {  };
+    void InterpretHpath(HpathSym *hpathsym) {  };
+    void InterpretLink(Link *link) {  }
 
     enum DumpOption GetDumpOption() {
       return dump_option;

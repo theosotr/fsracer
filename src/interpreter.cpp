@@ -82,21 +82,4 @@ void DumpInterpreter::InterpretLink(LinkExpr *link_expr) {
   cout << str << "\n";
 }
 
-
-// Operations
-
-void DumpInterpreter::InterpretNewFd(NewFd *new_fd) {
-  if (new_fd) {
-    cout << new_fd->NewFd::ToString() << "\n";
-  }
-}
-
-
-void DumpInterpreter::InterpretDelFd(DelFd *del_fd) {
-  if (del_fd) {
-    cout << del_fd->DelFd::ToString() << "\n";
-  }
-}
-
-
 }
