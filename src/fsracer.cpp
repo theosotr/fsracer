@@ -14,7 +14,7 @@ using namespace interpreter;
 // TODO:
 // * Handle nextTick
 //
-Generator *trace_gen;
+static Generator *trace_gen;
 
 
 static void
