@@ -13,6 +13,8 @@ namespace interpreter {
 
 class Interpreter {
   public:
+    virtual string GetName();
+
     virtual void Interpret(TraceNode *trace_node);
     virtual void InterpretTrace(Trace *trace);
     virtual void InterpretBlock(Block *block);
@@ -43,6 +45,10 @@ class DumpInterpreter : public Interpreter {
     DumpInterpreter(DumpOption dump_option_) {
       trace_count = 0;
       dump_option = dump_option_;
+    }
+
+    string GetName() {
+      return "DumpInterpreter";
     }
 
     void Interpret(TraceNode *trace_node);

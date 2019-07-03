@@ -21,7 +21,6 @@ void DumpInterpreter::InterpretTrace(Trace *trace) {
   if (!trace) {
     return;
   }
-  cout << "Start Interpreting Trace...\n";
   vector<Block*> blocks = trace->GetBlocks();
   for (auto const &block : blocks) {
     InterpretBlock(block);

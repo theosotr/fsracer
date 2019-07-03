@@ -28,15 +28,17 @@ module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
 static void
 event_exit(void)
 {
-  dr_printf("Stopping the FSRacer Client...\n");
+  cout << trace_gen->GetName() << ": Trace collected\n";
   drwrap_exit();
   drmgr_exit();
   drsym_exit();
   DumpInterpreter *dump_interpreter = new DumpInterpreter(
       DumpInterpreter::STDOUT_DUMP);
+  cout << dump_interpreter->GetName() << ": Start interpreting traces...\n";
   dump_interpreter->Interpret(trace_gen->GetTrace());
   delete dump_interpreter;
   delete trace_gen;
+  cout << dump_interpreter->GetName() << ": Interpretation is done\n";
 }
 
 
@@ -51,4 +53,5 @@ dr_client_main(client_id_t client_id, int argc, const char *argv[])
   dr_register_exit_event(event_exit);
   drmgr_register_module_load_event(module_load_event);
   trace_gen = new NodeTraceGenerator();
+  cout << trace_gen->GetName() << ": start collecting trace...\n";
 }
