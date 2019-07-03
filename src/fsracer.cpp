@@ -15,13 +15,22 @@ using namespace interpreter;
 // * Handle nextTick
 //
 static Generator *trace_gen;
+bool module_loaded = false;
 
 
 static void
 module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
 {
   trace_gen->Start(mod);
-  trace_gen->GetTrace()->SetThreadId(dr_get_thread_id(drcontext));
+  size_t pid = dr_get_thread_id(drcontext);
+  trace_gen->GetTrace()->SetThreadId(pid);
+
+  if (!module_loaded) {
+    module_loaded = true;
+    cout << trace_gen->GetName() <<
+      ": PID " << to_string(pid) <<
+      ", Start collecting trace...\n";
+  }
 }
 
 
@@ -58,5 +67,4 @@ dr_client_main(client_id_t client_id, int argc, const char *argv[])
   dr_register_exit_event(event_exit);
   drmgr_register_module_load_event(module_load_event);
   trace_gen = new NodeTraceGenerator();
-  cout << trace_gen->GetName() << ": Start collecting trace...\n";
 }
