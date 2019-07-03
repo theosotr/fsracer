@@ -47,6 +47,29 @@ void EmitLink(void *wrapctx, OUT void **user_data, size_t old_path_pos,
   AddOperation(trace_gen, link, drwrap_get_arg(wrapctx, clb_pos) != nullptr);
 }
 
+
+void EmitRename(void *wrapctx, OUT void **user_data, size_t old_path_pos,
+    size_t new_path_pos, size_t clb_pos) {
+  EmitHpath(wrapctx, user_data, old_path_pos, clb_pos, Hpath::EXPUNGED, true);
+  EmitHpath(wrapctx, user_data, new_path_pos, clb_pos, Hpath::PRODUCED, true);
+  Generator *trace_gen = GetTraceGenerator(user_data);
+  string old_path = (const char *) drwrap_get_arg(wrapctx, old_path_pos);
+  string new_path = (const char *) drwrap_get_arg(wrapctx, new_path_pos);
+  Rename *rename = new Rename(AT_FDCWD, old_path, AT_FDCWD, new_path);
+  AddOperation(trace_gen, rename, drwrap_get_arg(wrapctx, clb_pos) != nullptr);
+}
+
+
+void EmitSymlink(void *wrapctx, OUT void **user_data, size_t target_path_pos,
+    size_t new_path_pos, size_t clb_pos) {
+  EmitHpath(wrapctx, user_data, new_path_pos, clb_pos, Hpath::PRODUCED, true);
+  Generator *trace_gen = GetTraceGenerator(user_data);
+  string target_path = (const char *) drwrap_get_arg(wrapctx, target_path_pos);
+  string new_path = (const char *) drwrap_get_arg(wrapctx, new_path_pos);
+  Symlink *symlink = new Symlink(AT_FDCWD, new_path, target_path);
+  AddOperation(trace_gen, symlink, drwrap_get_arg(wrapctx, clb_pos) != nullptr);
+}
+
 }
 
 
@@ -173,16 +196,70 @@ wrap_pre_uv_fs_link(void *wrapctx, OUT void **user_data)
 
 
 static void
+wrap_pre_uv_fs_lstat(void *wrapctx, OUT void **user_data)
+{
+  node_utils::EmitHpath(wrapctx, user_data, 2, 3, Hpath::CONSUMED, false);
+}
+
+
+static void
+wrap_pre_uv_fs_mkdir(void *wrapctx, OUT void **user_data)
+{
+  node_utils::EmitHpath(wrapctx, user_data, 2, 3, Hpath::PRODUCED, false);
+}
+
+
+static void
+wrap_pre_uv_fs_readlink(void *wrapctx, OUT void **user_data)
+{
+  node_utils::EmitHpath(wrapctx, user_data, 2, 3, Hpath::CONSUMED, true);
+}
+
+
+static void
+wrap_pre_uv_fs_realpath(void *wrapctx, OUT void **user_data)
+{
+  node_utils::EmitHpath(wrapctx, user_data, 2, 3, Hpath::CONSUMED, true);
+}
+
+
+static void
+wrap_pre_uv_fs_rename(void *wrapctx, OUT void **user_data)
+{
+  node_utils::EmitLink(wrapctx, user_data, 2, 3, 4);
+}
+
+
+static void
+wrap_pre_uv_fs_rmdir(void *wrapctx, OUT void **user_data)
+{
+  node_utils::EmitHpath(wrapctx, user_data, 2, 3, Hpath::EXPUNGED, false);
+}
+
+
+static void wrap_pre_uv_fs_stat(void *wrapctx, OUT void **user_data)
+{
+  node_utils::EmitHpath(wrapctx, user_data, 2, 3, Hpath::CONSUMED, true);
+}
+
+
+static void wrap_pre_uv_fs_symlink(void *wrapctx, OUT void **user_data)
+{
+  node_utils::EmitSymlink(wrapctx, user_data, 2, 3, 5);
+}
+
+
+static void
 wrap_pre_uv_fs_unlink(void *wrapctx, OUT void **user_data)
 {
-  //const char *path = (char *) drwrap_get_arg(wrapctx, 2);
-  //void *clb = drwrap_get_arg(wrapctx, 3);
+  node_utils::EmitHpath(wrapctx, user_data, 2, 3, Hpath::EXPUNGED, false);
+}
 
-  //if (clb == NULL) {
-  //  trace_gen->EmitTriggerOpSync("hpath expunged", 0);
-  //} else {
-  //  trace_gen->EmitTriggerOpAsync("hpath expunged", 0);
-  //}
+
+static void
+wrap_pre_uv_fs_utime(void *wrapctx, OUT void **user_data)
+{
+  node_utils::EmitHpath(wrapctx, user_data, 2, 5, Hpath::CONSUMED, true);
 }
 
 
@@ -322,6 +399,15 @@ wrapper_t NodeTraceGenerator::GetWrappers() {
   wrappers["uv_fs_close"] = { wrap_pre_uv_fs_close, nullptr };
   wrappers["uv_fs_lchown"] = { wrap_pre_uv_fs_lchown, nullptr };
   wrappers["uv_fs_link"] = { wrap_pre_uv_fs_link, nullptr };
+  wrappers["uv_fs_lstat"] = { wrap_pre_uv_fs_lstat, nullptr };
+  wrappers["uv_fs_mkdir"] = { wrap_pre_uv_fs_mkdir, nullptr };
+  wrappers["uv_fs_readlink"] = { wrap_pre_uv_fs_readlink, nullptr };
+  wrappers["uv_fs_realpath"] = { wrap_pre_uv_fs_realpath, nullptr };
+  wrappers["uv_fs_rename"] = { wrap_pre_uv_fs_rename, nullptr };
+  wrappers["uv_fs_rmdir"] = { wrap_pre_uv_fs_rmdir, nullptr };
+  wrappers["uv_fs_stat"] = { wrap_pre_uv_fs_stat, nullptr };
+  wrappers["uv_fs_symlink"] = { wrap_pre_uv_fs_symlink, nullptr };
+  wrappers["uv_fs_utime"] = { wrap_pre_uv_fs_utime, nullptr };
 
   // Node wrappers
   wrappers["node::Start"] = { wrap_pre_start, nullptr };

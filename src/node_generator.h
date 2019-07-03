@@ -23,6 +23,10 @@ namespace node_utils {
                  bool follow_symlink);
   void EmitLink(void *wrapctx, OUT void **user_data, size_t old_path_pos,
                 size_t new_path_pos, size_t clb_pos);
+  void EmitRename(void *wrapctx, OUT void **user_data, size_t old_path_pos,
+                  size_t new_path_pos, size_t clb_pos);
+  void EmitSymlink(void *wrapctx, OUT void **user_data, size_t target_path_pos,
+                   size_t new_path_pos, size_t clb_pos);
 }
 
 

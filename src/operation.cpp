@@ -39,4 +39,17 @@ void Link::Accept(interpreter::Interpreter *interpreter) {
 };
 
 
+void Rename::Accept(interpreter::Interpreter *interpreter) {
+  if (interpreter) {
+    interpreter->InterpretRename(this);
+  }
+};
+
+
+void Symlink::Accept(interpreter::Interpreter *interpreter) {
+  if (interpreter) {
+    interpreter->InterpretSymlink(this);
+  }
+};
+
 }
