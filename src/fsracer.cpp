@@ -53,5 +53,5 @@ dr_client_main(client_id_t client_id, int argc, const char *argv[])
   dr_register_exit_event(event_exit);
   drmgr_register_module_load_event(module_load_event);
   trace_gen = new NodeTraceGenerator();
-  cout << trace_gen->GetName() << ": start collecting trace...\n";
+  cout << trace_gen->GetName() << ": Start collecting trace...\n";
 }
