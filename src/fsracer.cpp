@@ -33,7 +33,12 @@ event_exit(void)
   drmgr_exit();
   drsym_exit();
   DumpInterpreter *dump_interpreter = new DumpInterpreter(
-      DumpInterpreter::STDOUT_DUMP);
+      DumpInterpreter::STDOUT_DUMP, "");
+
+  // TODO: Currently the analysis of traces is done offline
+  // (after the execution of the program).
+  //
+  // Add support for both offline and online trace analysis.
   cout << dump_interpreter->GetName() << ": Start interpreting traces...\n";
   dump_interpreter->Interpret(trace_gen->GetTrace());
   delete dump_interpreter;

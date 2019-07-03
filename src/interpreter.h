@@ -1,6 +1,8 @@
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
 
+#include <fstream>
+
 #include "operation.h"
 #include "trace.h"
 
@@ -42,9 +44,15 @@ class DumpInterpreter : public Interpreter {
       STDOUT_DUMP
     };
 
-    DumpInterpreter(DumpOption dump_option_) {
-      trace_count = 0;
-      dump_option = dump_option_;
+    DumpInterpreter(enum DumpOption dump_option_, string filename_):
+      trace_count(0),
+      dump_option(dump_option_),
+      filename(filename_) {
+        SetupOutStream();
+      }
+
+    ~DumpInterpreter() {
+      ClearOutStream();
     }
 
     string GetName() {
@@ -79,10 +87,16 @@ class DumpInterpreter : public Interpreter {
   private:
     size_t trace_count;
     enum DumpOption dump_option;
+    ofstream of;
+    string filename;
 
     void IncrTraceCount() {
       trace_count++;
     }
+
+    void SetupOutStream();
+    void ClearOutStream();
+    ostream &OutStream();
 };
 
 

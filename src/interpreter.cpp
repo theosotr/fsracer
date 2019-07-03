@@ -10,6 +10,36 @@ using namespace trace;
 namespace interpreter {
 
 
+void DumpInterpreter::SetupOutStream() {
+  switch (dump_option) {
+    case FILE_DUMP:
+      of.open(filename);
+    default:
+      break;
+  }
+}
+
+
+void DumpInterpreter::ClearOutStream() {
+  switch (dump_option) {
+    case FILE_DUMP:
+      of.close();
+    default:
+      break;
+  }
+}
+
+
+ostream &DumpInterpreter::OutStream() {
+  switch (dump_option) {
+    case FILE_DUMP:
+      return of;
+    default:
+      return cout;
+  }
+}
+
+
 void DumpInterpreter::Interpret(TraceNode *trace_node) {
   if (trace_node) {
     trace_node->Accept(this);
@@ -33,11 +63,11 @@ void DumpInterpreter::InterpretBlock(Block *block) {
     return;
   }
   vector<Expr*> exprs = block->GetExprs();
-  cout << "Begin " << to_string(block->GetBlockId()) << "\n";
+  OutStream() << "Begin " << to_string(block->GetBlockId()) << "\n";
   for (auto const &expr : exprs) {
     InterpretExpr(expr);
   }
-  cout << "End\n";
+  OutStream() << "End\n";
 }
 
 
@@ -52,7 +82,7 @@ void DumpInterpreter::InterpretSyncOp(SyncOp *sync_op) {
   if (!sync_op) {
     return;
   }
-  cout << sync_op->ToString() << "\n";
+  OutStream() << sync_op->ToString() << "\n";
 }
 
 
@@ -60,7 +90,7 @@ void DumpInterpreter::InterpretAsyncOp(AsyncOp *async_op) {
   if (!async_op) {
     return;
   }
-  cout << async_op->ToString() << "\n";
+  OutStream() << async_op->ToString() << "\n";
 }
 
 
@@ -69,7 +99,7 @@ void DumpInterpreter::InterpretNewEvent(NewEventExpr *new_ev_expr) {
     return;
   }
   string str = new_ev_expr->ToString();
-  cout << str << "\n";
+  OutStream() << str << "\n";
 }
 
 
@@ -78,7 +108,7 @@ void DumpInterpreter::InterpretLink(LinkExpr *link_expr) {
     return;
   }
   string str = link_expr->ToString();
-  cout << str << "\n";
+  OutStream() << str << "\n";
 }
 
 }
