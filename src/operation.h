@@ -87,15 +87,14 @@ class DupFd : public Operation {
 };
 
 
-enum EffectType {
-  Produced,
-  Consumed,
-  Expunged
-};
-
-
 class Hpath : public Operation {
   public:
+    enum EffectType {
+      PRODUCED,
+      CONSUMED,
+      EXPUNGED
+    };
+
     Hpath(size_t dir_fd_, string path_, enum EffectType effect_type_):
       dir_fd(dir_fd_),
       path(path_),
@@ -121,9 +120,9 @@ class Hpath : public Operation {
     string ToString() {
       string str = dir_fd == AT_FDCWD ? "AT_FDCWD" : to_string(dir_fd);
       switch (effect_type) {
-        case Produced:
+        case PRODUCED:
           return GetOpName() + " " + str + " " + path + " produced";
-        case Consumed:
+        case CONSUMED:
           return GetOpName() + " " + str + " " + path + " consumed";
         default:
           return GetOpName() + " " + str + " " + path + " expunged";
@@ -237,15 +236,15 @@ class NewFd : public Operation {
 };
 
 
-enum CloneMode {
-  SHARE_FS,
-  SHARE_FD,
-  SHARE_BOTH,
-  SHARE_NONE
-};
-
 class NewProc : public Operation {
   public:
+    enum CloneMode {
+      SHARE_FS,
+      SHARE_FD,
+      SHARE_BOTH,
+      SHARE_NONE
+    };
+
     NewProc(enum CloneMode clone_mode_):
       clone_mode(clone_mode_),
       pid(0) {  }
