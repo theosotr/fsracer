@@ -121,6 +121,55 @@ class AsyncOp : public SyncOp {
 };
 
 
+class SubmitOp : public Expr {
+  public:
+    enum Type {
+      ASYNC,
+      SYNC
+    };
+
+    SubmitOp(size_t id_, string name_, enum Type type_):
+      id(id_),
+      name(name_),
+      type(type_) {  }
+    ~SubmitOp() {  }
+
+    void Accept(interpreter::Interpreter *interpreter);
+    string ToString();
+
+  private:
+    size_t id;
+    string name;
+    enum Type type;
+};
+
+
+class ExecOp : public Expr {
+  public:
+    ExecOp(size_t id_):
+      id(id_) {  }
+    ~ExecOp() {
+      ClearOperations();
+    }
+
+    void AddOperation(Operation *operation) {
+      operations.push_back(operation);
+    }
+
+    vector<Operation *> GetOperations() {
+      return operations;
+    }
+
+    void Accept(interpreter::Interpreter *interpreter);
+    string ToString();
+
+  private:
+    size_t id;
+    vector<Operation *> operations;
+
+    void ClearOperations();
+};
+
 /** This class represents the "newEvent" construct. */
 class NewEventExpr : public Expr {
   public:

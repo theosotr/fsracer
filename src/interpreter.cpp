@@ -94,6 +94,22 @@ void DumpInterpreter::InterpretAsyncOp(AsyncOp *async_op) {
 }
 
 
+void DumpInterpreter::InterpretSubmitOp(SubmitOp *submit_op) {
+  if (!submit_op) {
+    return;
+  }
+  OutStream() << submit_op->ToString() << "\n";
+}
+
+
+void DumpInterpreter::InterpretExecOp(ExecOp *exec_op) {
+  if (!exec_op) {
+    return;
+  }
+  OutStream() << exec_op->ToString() << "\n";
+}
+
+
 void DumpInterpreter::InterpretNewEvent(NewEventExpr *new_ev_expr) {
   if (!new_ev_expr) {
     return;

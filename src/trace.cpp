@@ -49,6 +49,45 @@ void AsyncOp::Accept(interpreter::Interpreter *interpreter) {
 }
 
 
+string SubmitOp::ToString() {
+  switch (type) {
+    case ASYNC:
+      return "SubmitOp "  + to_string(id) + " " + name + " ASYNC";
+    default:
+      return "SubmitOp "  + to_string(id) + " " + name + " SYNC";
+  }
+}
+
+
+void SubmitOp::Accept(interpreter::Interpreter *interpreter) {
+  interpreter->InterpretSubmitOp(this);
+}
+
+
+void ExecOp::ClearOperations() {
+  for (Operation *operation : operations) {
+    delete operation;
+  }
+  operations.clear();
+}
+
+
+string ExecOp::ToString() {
+  string str = "ExecOp " + to_string(id) + "\n";
+  for (Operation *operation : operations) {
+    str += operation->ToString();
+    str += "\n";
+  }
+  str += "done";
+  return str;
+}
+
+
+void ExecOp::Accept(interpreter::Interpreter *interpreter) {
+  interpreter->InterpretExecOp(this);
+}
+
+
 string NewEventExpr::ToString() {
   string str = to_string(event_id);
   return "newEvent " + str + " " + event.ToString();

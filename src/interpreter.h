@@ -23,6 +23,8 @@ class Interpreter {
     virtual void InterpretExpr(Expr *expr);
     virtual void InterpretSyncOp(SyncOp *sync_op);
     virtual void InterpretAsyncOp(AsyncOp *async_op);
+    virtual void InterpretSubmitOp(SubmitOp *submit_op);
+    virtual void InterpretExecOp(ExecOp *exec_op);
     virtual void InterpretNewEvent(NewEventExpr *new_ev_expr);
     virtual void InterpretLink(LinkExpr *link_expr);
 
@@ -65,6 +67,8 @@ class DumpInterpreter : public Interpreter {
     void InterpretExpr(Expr *expr);
     void InterpretSyncOp(SyncOp *sync_op);
     void InterpretAsyncOp(AsyncOp *async_op);
+    void InterpretSubmitOp(SubmitOp *submit_op);
+    void InterpretExecOp(ExecOp *exec_op);
     void InterpretNewEvent(NewEventExpr *new_ev_expr);
     void InterpretLink(LinkExpr *link_expr);
 
