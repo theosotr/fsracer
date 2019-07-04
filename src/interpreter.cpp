@@ -51,6 +51,10 @@ void DumpInterpreter::InterpretTrace(Trace *trace) {
   if (!trace) {
     return;
   }
+  vector<ExecOp*> exec_ops = trace->GetExecOps();
+  for (auto const &exec_op : exec_ops) {
+    InterpretExecOp(exec_op);
+  }
   vector<Block*> blocks = trace->GetBlocks();
   for (auto const &block : blocks) {
     InterpretBlock(block);
@@ -75,22 +79,6 @@ void DumpInterpreter::InterpretExpr(Expr *expr) {
   if (expr) {
     expr->Accept(this);
   }
-}
-
-
-void DumpInterpreter::InterpretSyncOp(SyncOp *sync_op) {
-  if (!sync_op) {
-    return;
-  }
-  OutStream() << sync_op->ToString() << "\n";
-}
-
-
-void DumpInterpreter::InterpretAsyncOp(AsyncOp *async_op) {
-  if (!async_op) {
-    return;
-  }
-  OutStream() << async_op->ToString() << "\n";
 }
 
 

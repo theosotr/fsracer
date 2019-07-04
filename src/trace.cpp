@@ -23,32 +23,6 @@ string Event::ToString() {
 }
 
 
-string SyncOp::ToString() {
-  if (operation) {
-    return "SyncOp " + operation->ToString();
-  }
-  return "";
-}
-
-
-
-void SyncOp::Accept(interpreter::Interpreter *interpreter) {
-  interpreter->InterpretSyncOp(this);
-}
-
-
-string AsyncOp::ToString() {
-  if (operation) {
-    return "AsyncOp " + to_string(event_id) + " "+ operation->ToString();
-  }
-  return "";
-}
-
-void AsyncOp::Accept(interpreter::Interpreter *interpreter) {
-  interpreter->InterpretAsyncOp(this);
-}
-
-
 string SubmitOp::ToString() {
   switch (type) {
     case ASYNC:
@@ -143,8 +117,20 @@ void Trace::ClearBlocks() {
 }
 
 
+void Trace::ClearExecOps() {
+  for (size_t i = 0; i < exec_ops.size(); i++) {
+    delete exec_ops[i];
+  }
+  exec_ops.clear();
+}
+
+
 string Trace::ToString() {
   string str = "";
+  for (auto const &exec_op : exec_ops) {
+    str += exec_op->ExecOp::ToString();
+    str += "\n";
+  }
   for (auto const &block : blocks) {
     str += block->Block::ToString();
     str += "\n";

@@ -5,28 +5,24 @@
 
 #include "generator.h"
 
+#define WORKER_OFFSET 336
+
 
 using namespace trace;
 
 namespace generator_keys {
   const string FUNC_ARGS = "args/";
+  const string THREADS = "threads/";
+  const string OPERATIONS = "operations/";
+  const string THREAD_OPERATIONS = "thread_operations/";
   const string INCOMPLETE_OPERATIONS = "incomplete_ops/";
   const string LAST_CREATED_EVENT = "last_created_event/";
 }
 
 
 namespace node_utils {
-  void AddOperation(generator::Generator *trace_gen, Operation *operation,
-                    bool is_async);
-  void EmitHpath(void *wrapctx, OUT void **user_data, size_t path_pos,
-                 size_t clb_pos, enum Hpath::EffectType effect_type,
-                 bool follow_symlink);
-  void EmitLink(void *wrapctx, OUT void **user_data, size_t old_path_pos,
-                size_t new_path_pos, size_t clb_pos);
-  void EmitRename(void *wrapctx, OUT void **user_data, size_t old_path_pos,
-                  size_t new_path_pos, size_t clb_pos);
-  void EmitSymlink(void *wrapctx, OUT void **user_data, size_t target_path_pos,
-                   size_t new_path_pos, size_t clb_pos);
+  void AddSubmitOp(void *wrapctx, OUT void **user_data, const string name,
+                   size_t async_pos);
 }
 
 

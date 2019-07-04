@@ -1,5 +1,6 @@
 #include "generator.h"
 #include "node_generator.h"
+#include "utils.h"
 
 using namespace generator;
 using namespace generator_utils;
@@ -8,79 +9,131 @@ using namespace generator_keys;
 
 namespace node_utils {
 
-void AddOperation(Generator *trace_gen, Operation *operation, bool is_async) {
-  if (!is_async) {
-    trace_gen->GetCurrentBlock()->AddExpr(new SyncOp(operation));
+
+void
+AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
+            size_t async_pos)
+{
+
+  Generator *trace_gen = GetTraceGenerator(user_data);
+  // First, we get the pointer that refers to the `uv_fs_t` struct
+  // of the libuv library.
+  //
+  // This pointer holds all the necessary information for executing
+  // the (asynchronous) operation.
+  void *ptr = drwrap_get_arg(wrapctx, 1);
+  void *clb = drwrap_get_arg(wrapctx, async_pos);
+
+  size_t id;
+  if (clb == nullptr) {
+    // This operation is synchronous.
+    // TODO: Generate unique ids for synchronous operations.
+    id = 10;
   } else {
-    size_t event_id = (size_t)(intptr_t) trace_gen->GetStoreValue(
+    id = (size_t)(intptr_t) trace_gen->GetStoreValue(
         FUNC_ARGS + "wrap_pre_emit_init");
-    trace_gen->GetCurrentBlock()->AddExpr(
-        new AsyncOp(operation, event_id));
   }
+  // We use the address that this pointer points to as an indicator
+  // of the event associated with this operation.
+  //
+  // In this way, we are able to retrieve the `event_id` related to
+  // the execution of the operation.
+  //
+  // Note that at this point, the operation is not executed by libuv.
+  // Instread, it just submits this operation to the worker pool
+  // and it is going to be executed in the future.
+  string addr = utils::PtrToString(ptr);
+  string key = OPERATIONS + addr;
+  trace_gen->AddToStore(key, (void *)(intptr_t) id);
+
+  // It's time to add the `submitOp` expression to the current block.
+  enum SubmitOp::Type type = clb == nullptr ?
+    SubmitOp::SYNC : SubmitOp::ASYNC;
+  SubmitOp *submit_op = new SubmitOp(id, op_name, type);
+  trace_gen->GetCurrentBlock()->AddExpr(submit_op);
 }
 
 
-void EmitHpath(void *wrapctx, OUT void **user_data, size_t path_pos,
-               size_t clb_pos, enum Hpath::EffectType effect_type,
-               bool follow_symlink) {
+}
+
+
+ExecOp *
+get_exec_op(void *wrapctx, OUT void **user_data)
+{
+
   Generator *trace_gen = GetTraceGenerator(user_data);
-  string path = (const char *) drwrap_get_arg(wrapctx, path_pos);
-  void *clb = drwrap_get_arg(wrapctx, clb_pos);
-  if (follow_symlink) {
-    Hpath *hpath = new Hpath(AT_FDCWD, path, effect_type);
-    AddOperation(trace_gen, hpath, clb != nullptr);
-  } else {
-    HpathSym *hpathsym = new HpathSym(AT_FDCWD, path, effect_type);
-    AddOperation(trace_gen, hpathsym, clb != nullptr);
-  }
+  size_t thread_id = utils::GetCurrentThread(wrapctx);
+  return (ExecOp *) trace_gen->GetStoreValue(
+      THREADS + to_string(thread_id));
 }
 
 
-void EmitLink(void *wrapctx, OUT void **user_data, size_t old_path_pos,
-    size_t new_path_pos, size_t clb_pos) {
-  EmitHpath(wrapctx, user_data, old_path_pos, clb_pos, Hpath::CONSUMED, true);
-  EmitHpath(wrapctx, user_data, new_path_pos, clb_pos, Hpath::PRODUCED, true);
-  Generator *trace_gen = GetTraceGenerator(user_data);
-  string old_path = (const char *) drwrap_get_arg(wrapctx, old_path_pos);
-  string new_path = (const char *) drwrap_get_arg(wrapctx, new_path_pos);
-  Link *link = new Link(AT_FDCWD, old_path, AT_FDCWD, new_path);
-  AddOperation(trace_gen, link, drwrap_get_arg(wrapctx, clb_pos) != nullptr);
+// Wrappers for system calls.
+static void
+wrap_pre_access(void *wrapctx, OUT void **user_data)
+{
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
 }
 
 
-void EmitRename(void *wrapctx, OUT void **user_data, size_t old_path_pos,
-    size_t new_path_pos, size_t clb_pos) {
-  EmitHpath(wrapctx, user_data, old_path_pos, clb_pos, Hpath::EXPUNGED, true);
-  EmitHpath(wrapctx, user_data, new_path_pos, clb_pos, Hpath::PRODUCED, true);
-  Generator *trace_gen = GetTraceGenerator(user_data);
-  string old_path = (const char *) drwrap_get_arg(wrapctx, old_path_pos);
-  string new_path = (const char *) drwrap_get_arg(wrapctx, new_path_pos);
-  Rename *rename = new Rename(AT_FDCWD, old_path, AT_FDCWD, new_path);
-  AddOperation(trace_gen, rename, drwrap_get_arg(wrapctx, clb_pos) != nullptr);
+static void
+wrap_pre_chmod(void *wrapctx, OUT void **user_data)
+{
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
 }
 
 
-void EmitSymlink(void *wrapctx, OUT void **user_data, size_t target_path_pos,
-    size_t new_path_pos, size_t clb_pos) {
-  EmitHpath(wrapctx, user_data, new_path_pos, clb_pos, Hpath::PRODUCED, true);
-  Generator *trace_gen = GetTraceGenerator(user_data);
-  string target_path = (const char *) drwrap_get_arg(wrapctx, target_path_pos);
-  string new_path = (const char *) drwrap_get_arg(wrapctx, new_path_pos);
-  Symlink *symlink = new Symlink(AT_FDCWD, new_path, target_path);
-  AddOperation(trace_gen, symlink, drwrap_get_arg(wrapctx, clb_pos) != nullptr);
+static void
+wrap_pre_chown(void *wrapctx, OUT void **user_data)
+{
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
 }
 
+
+static void
+wrap_pre_close(void *wrapctx, OUT void **user_data)
+{
+  EmitDelFd(wrapctx, user_data, 0, get_exec_op);
+}
+
+
+static void
+wrap_pre_lchown(void *wrapctx, OUT void **user_data)
+{
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, false, get_exec_op);
+}
+
+
+static void
+wrap_pre_lstat(void *wrapctx, OUT void **user_data)
+{
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, false, get_exec_op);
+}
+
+
+static void
+wrap_pre_link(void *wrapctx, OUT void **user_data)
+{
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, false, get_exec_op);
+  EmitHpath(wrapctx, user_data, 1, Hpath::PRODUCED, false, get_exec_op);
+  EmitLink(wrapctx, user_data, 0, 1, get_exec_op);
+}
+
+
+static void
+wrap_pre_mkdir(void *wrapctx, OUT void **user_data)
+{
+  EmitHpath(wrapctx, user_data, 0, Hpath::PRODUCED, false, get_exec_op);
 }
 
 
 static void
 wrap_pre_open(void *wrapctx, OUT void **user_data)
 {
+  // TODO check open flags.
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
   Generator *trace_gen = GetTraceGenerator(user_data);
   void *drcontext = drwrap_get_drcontext(wrapctx);
-  if (dr_get_thread_id(drcontext) == trace_gen->GetTrace()->GetThreadId()) {
-    return;
-  }
   char *path = (char *) drwrap_get_arg(wrapctx, 0);
   string key = FUNC_ARGS + "open";
   trace_gen->AddToStore(key, path);
@@ -91,175 +144,257 @@ static void
 wrap_post_open(void *wrapctx, void *user_data)
 {
   Generator *trace_gen = (Generator *) user_data;
-  void *drcontext = drwrap_get_drcontext(wrapctx);
-  if (dr_get_thread_id(drcontext) == trace_gen->GetTrace()->GetThreadId()) {
-    return;
-  }
-
   string path = (const char *) trace_gen->PopFromStore(FUNC_ARGS + "open");
-  string key = INCOMPLETE_OPERATIONS + NewFd(path).ToString();
-  // We search whether there is an incomplete operation named `newFd`
-  // that affects the same path as `open`.
-  Operation *operation = (Operation *) trace_gen->PopFromStore(key);
-  if (!operation) {
-    // We did not find any operation; so we return.
+  int ret_val = (int)(ptr_int_t) drwrap_get_retval(wrapctx);
+  size_t thread_id = utils::GetCurrentThread(wrapctx);
+  ExecOp *exec_op = (ExecOp *) trace_gen->GetStoreValue(
+      THREADS + to_string(thread_id));
+  if (!exec_op) {
     return;
   }
+  exec_op->AddOperation(new NewFd(path, ret_val));
+}
 
-  // We set the `fd` value of the found `newFd` operation.
-  int ret_val = (int)(ptr_int_t) drwrap_get_retval(wrapctx);
-  NewFd *new_fd = dynamic_cast<NewFd*>(operation);
-  new_fd->SetFd(ret_val);
+
+static void
+wrap_pre_readlink(void *wrapctx, OUT void **user_data)
+{
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
+}
+
+
+static void
+wrap_pre_realpath(void *wrapctx, OUT void **user_data)
+{
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
+}
+
+
+static void
+wrap_pre_rename(void *wrapctx, OUT void **user_data)
+{
+  EmitHpath(wrapctx, user_data, 0, Hpath::EXPUNGED, true, get_exec_op);
+  EmitHpath(wrapctx, user_data, 0, Hpath::PRODUCED, true, get_exec_op);
+  EmitRename(wrapctx, user_data, 0, 1, get_exec_op);
+}
+
+
+static void
+wrap_pre_rmdir(void *wrapctx, OUT void **user_data)
+{
+  EmitHpath(wrapctx, user_data, 0, Hpath::EXPUNGED, true, get_exec_op);
+}
+
+
+static void
+wrap_pre_stat(void *wrapctx, OUT void **user_data)
+{
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
+}
+
+
+static void
+wrap_pre_symlink(void *wrapctx, OUT void **user_data)
+{
+  EmitSymlink(wrapctx, user_data, 0, 1, get_exec_op);
+}
+
+
+static void
+wrap_pre_unlink(void *wrapctx, OUT void **user_data)
+{
+  EmitHpath(wrapctx, user_data, 0, Hpath::EXPUNGED, true, get_exec_op);
+}
+
+
+static void
+wrap_pre_utime(void *wrapctx, OUT void **user_data)
+{
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
+}
+
+
+static void
+wrap_pre_uv_fs_done(void *wrapctx, OUT void **user_data)
+{
+
+  Generator *trace_gen = GetTraceGenerator(user_data);
+  char *ptr = (char *) drwrap_get_arg(wrapctx, 0);
+  // This is implementation specific.
+  //
+  // The argument of the `uv__fs_work` function is a pointer
+  // of a `uv__work` struct.
+  //
+  // This pointer is one of the fields that is included inside
+  // the `uv_fs_t` struct.
+  // The following pointer arithmetic retrieves the pointer
+  // that refers to the beginning of that struct where
+  // the argument of this function is a member.
+  void *uv_fs_t_ptr = ptr - WORKER_OFFSET;
+  string addr = utils::PtrToString(uv_fs_t_ptr);
+  void *value = trace_gen->PopFromStore(
+      THREAD_OPERATIONS + addr);
+  if (!value) {
+    return;
+  }
+  size_t thread_id = (int)(intptr_t) value;
+  trace_gen->DeleteFromStore(THREADS + to_string(thread_id));
+}
+
+
+static void
+wrap_pre_uv_fs_work(void *wrapctx, OUT void **user_data)
+{
+  Generator *trace_gen = GetTraceGenerator(user_data);
+  size_t thread_id = utils::GetCurrentThread(wrapctx);
+  char *ptr = (char *) drwrap_get_arg(wrapctx, 0);
+  // See the comment inside the `wrap_pre_uv_fs_done` function.
+  void *uv_fs_t_ptr = ptr - WORKER_OFFSET;
+  string addr = utils::PtrToString(uv_fs_t_ptr);
+  string key = OPERATIONS + addr;
+  void *value = trace_gen->PopFromStore(key);
+  if (!value) {
+    return;
+  }
+  size_t event_id = (size_t)(intptr_t) value;
+  ExecOp *exec_op = new ExecOp(event_id);
+  trace_gen->AddToStore(THREADS + to_string(thread_id), (void *) exec_op);
+  trace_gen->AddToStore(THREAD_OPERATIONS + addr,
+                        (void *)(intptr_t) thread_id);
+  trace_gen->GetTrace()->AddExecOp(exec_op);
 }
 
 
 static void
 wrap_pre_uv_fs_access(void *wrapctx, OUT void **user_data)
 {
-  node_utils::EmitHpath(wrapctx, user_data, 2, 4, Hpath::CONSUMED, true);
+  node_utils::AddSubmitOp(wrapctx, user_data, "access", 4);
 }
 
 
 static void
 wrap_pre_uv_fs_chmod(void *wrapctx, OUT void **user_data)
 {
-  node_utils::EmitHpath(wrapctx, user_data, 2, 4, Hpath::CONSUMED, true);
+  node_utils::AddSubmitOp(wrapctx, user_data, "chmod", 4);
 }
 
 
 static void
 wrap_pre_uv_fs_chown(void *wrapctx, OUT void **user_data)
 {
-  node_utils::EmitHpath(wrapctx, user_data, 2, 5, Hpath::CONSUMED, true);
+  node_utils::AddSubmitOp(wrapctx, user_data, "chown", 5);
 }
 
 
 static void
-wrap_pre_uv_fs_open(void *wrapctx, OUT void **user_data)
+wrap_pre_uv_fs_copyfile(void *wrapctx, OUT void **user_data)
 {
-  Generator *trace_gen = GetTraceGenerator(user_data);
-  string path = (const char *) drwrap_get_arg(wrapctx, 2);
-  void *clb = drwrap_get_arg(wrapctx, 5);
-
-  NewFd *new_fd = new NewFd(path);
-  trace_gen->AddToStore(FUNC_ARGS + "uv_fs_open", new_fd);
-}
-
-
-static void
-wrap_pre_uv_fs_post_open(void *wrapctx, void *user_data)
-{
-  Generator *trace_gen = (Generator *) user_data;
-  int ret_val = (int)(ptr_int_t) drwrap_get_retval(wrapctx);
-  string key = FUNC_ARGS + "uv_fs_open";
-  NewFd *new_fd = (NewFd *) trace_gen->PopFromStore(key);
-  SyncOp *op;
-  if (ret_val == 0) {
-    // If the return value of open is equal to zero,
-    // we have an asynchronous open;
-    string key = INCOMPLETE_OPERATIONS + new_fd->ToString(); 
-    trace_gen->AddToStore(key, new_fd);
-    size_t event_id = (size_t)(intptr_t) trace_gen->GetStoreValue(
-        FUNC_ARGS + "wrap_pre_emit_init");
-    op = new AsyncOp(new_fd, event_id);
-  } else {
-    new_fd->SetFd(ret_val);
-    op = new SyncOp(new_fd);
-  }
-  trace_gen->GetCurrentBlock()->AddExpr(op);
+  node_utils::AddSubmitOp(wrapctx, user_data, "copyFile", 5);
 }
 
 
 static void
 wrap_pre_uv_fs_close(void *wrapctx, OUT void **user_data)
 {
-  Generator *trace_gen = GetTraceGenerator(user_data);
-  int fd = (int)(ptr_int_t) drwrap_get_arg(wrapctx, 2);
-  void *clb = drwrap_get_arg(wrapctx, 3);
-  DelFd *del_fd = new DelFd(fd);
-  node_utils::AddOperation(trace_gen, del_fd, clb != nullptr);
+  node_utils::AddSubmitOp(wrapctx, user_data, "close", 3);
 }
+
 
 
 static void
 wrap_pre_uv_fs_lchown(void *wrapctx, OUT void **user_data)
 {
-  node_utils::EmitHpath(wrapctx, user_data, 2, 5, Hpath::CONSUMED, false);
-}
 
-
-static void
-wrap_pre_uv_fs_link(void *wrapctx, OUT void **user_data)
-{
-  node_utils::EmitLink(wrapctx, user_data, 2, 3, 4);
+  node_utils::AddSubmitOp(wrapctx, user_data, "lchown", 5);
 }
 
 
 static void
 wrap_pre_uv_fs_lstat(void *wrapctx, OUT void **user_data)
 {
-  node_utils::EmitHpath(wrapctx, user_data, 2, 3, Hpath::CONSUMED, false);
+  node_utils::AddSubmitOp(wrapctx, user_data, "lstat", 3);
+}
+
+
+static void
+wrap_pre_uv_fs_link(void *wrapctx, OUT void **user_data)
+{
+  node_utils::AddSubmitOp(wrapctx, user_data, "link", 4);
 }
 
 
 static void
 wrap_pre_uv_fs_mkdir(void *wrapctx, OUT void **user_data)
 {
-  node_utils::EmitHpath(wrapctx, user_data, 2, 3, Hpath::PRODUCED, false);
+  node_utils::AddSubmitOp(wrapctx, user_data, "mkdir", 4);
+}
+
+
+static void
+wrap_pre_uv_fs_open(void *wrapctx, OUT void **user_data)
+{
+  node_utils::AddSubmitOp(wrapctx, user_data, "open", 5);
+}
+
+
+static void
+wrap_pre_uv_fs_opendir(void *wrapctx, OUT void **user_data)
+{
+  node_utils::AddSubmitOp(wrapctx, user_data, "opendir", 3);
 }
 
 
 static void
 wrap_pre_uv_fs_readlink(void *wrapctx, OUT void **user_data)
 {
-  node_utils::EmitHpath(wrapctx, user_data, 2, 3, Hpath::CONSUMED, true);
+  node_utils::AddSubmitOp(wrapctx, user_data, "readlink", 3);
 }
 
 
 static void
 wrap_pre_uv_fs_realpath(void *wrapctx, OUT void **user_data)
 {
-  node_utils::EmitHpath(wrapctx, user_data, 2, 3, Hpath::CONSUMED, true);
+  node_utils::AddSubmitOp(wrapctx, user_data, "realpath", 3);
 }
 
 
 static void
 wrap_pre_uv_fs_rename(void *wrapctx, OUT void **user_data)
 {
-  node_utils::EmitLink(wrapctx, user_data, 2, 3, 4);
+  node_utils::AddSubmitOp(wrapctx, user_data, "rename", 4);
 }
 
 
 static void
 wrap_pre_uv_fs_rmdir(void *wrapctx, OUT void **user_data)
 {
-  node_utils::EmitHpath(wrapctx, user_data, 2, 3, Hpath::EXPUNGED, false);
+  node_utils::AddSubmitOp(wrapctx, user_data, "rmdir", 3);
 }
 
 
 static void wrap_pre_uv_fs_stat(void *wrapctx, OUT void **user_data)
 {
-  node_utils::EmitHpath(wrapctx, user_data, 2, 3, Hpath::CONSUMED, true);
+  node_utils::AddSubmitOp(wrapctx, user_data, "stat", 3);
 }
 
 
 static void wrap_pre_uv_fs_symlink(void *wrapctx, OUT void **user_data)
 {
-  node_utils::EmitSymlink(wrapctx, user_data, 2, 3, 5);
+  node_utils::AddSubmitOp(wrapctx, user_data, "symlink", 5);
 }
 
 
 static void
 wrap_pre_uv_fs_unlink(void *wrapctx, OUT void **user_data)
 {
-  node_utils::EmitHpath(wrapctx, user_data, 2, 3, Hpath::EXPUNGED, false);
+  node_utils::AddSubmitOp(wrapctx, user_data, "unlink", 3);
 }
 
 
 static void
 wrap_pre_uv_fs_utime(void *wrapctx, OUT void **user_data)
 {
-  node_utils::EmitHpath(wrapctx, user_data, 2, 5, Hpath::CONSUMED, true);
+  node_utils::AddSubmitOp(wrapctx, user_data, "utime", 5);
 }
 
 
@@ -389,26 +524,50 @@ wrapper_t NodeTraceGenerator::GetWrappers() {
   wrapper_t wrappers;
 
   // system calls
-  wrappers["open"] = { wrap_pre_open, wrap_post_open };
+  wrappers["access"]   = { wrap_pre_access, nullptr };
+  wrappers["chmod"]    = { wrap_pre_chmod, nullptr };
+  wrappers["chown"]    = { wrap_pre_chown, nullptr };
+  wrappers["open"]     = { wrap_pre_open, nullptr };
+  wrappers["close"]    = { wrap_pre_close, nullptr };
+  wrappers["lchown"]   = { wrap_pre_lchown, nullptr };
+  wrappers["link"]     = { wrap_pre_link, nullptr };
+  wrappers["lstat"]    = { wrap_pre_lstat, nullptr };
+  wrappers["mkdir"]    = { wrap_pre_mkdir, nullptr };
+  wrappers["readlink"] = { wrap_pre_readlink, nullptr };
+  wrappers["realpath"] = { wrap_pre_realpath, nullptr };
+  wrappers["rename"]   = { wrap_pre_rename, nullptr };
+  wrappers["rmdir"]    = { wrap_pre_rmdir, nullptr };
+  wrappers["stat"]     = { wrap_pre_stat, nullptr };
+  wrappers["symlink"]  = { wrap_pre_symlink, nullptr };
+  wrappers["unlink"]   = { wrap_pre_unlink, nullptr };
+  wrappers["utime"]    = { wrap_pre_utime, nullptr };
+  wrappers["open"]     = { wrap_pre_open, wrap_post_open };
+  wrappers["close"]    = { wrap_pre_close, nullptr };
+
+  // libuv wrappers for libuv functions responsible for executing
+  // FS operations.
+  wrappers["uv__fs_work"] = { wrap_pre_uv_fs_work, nullptr };
+  wrappers["uv__fs_done"] = { wrap_pre_uv_fs_done, nullptr };
 
   // libuv wrappers
-  wrappers["uv_fs_access"] = { wrap_pre_uv_fs_access, nullptr };
-  wrappers["uv_fs_chmod"] = { wrap_pre_uv_fs_chmod, nullptr };
-  wrappers["uv_fs_chown"] = { wrap_pre_uv_fs_chown, nullptr };
-  wrappers["uv_fs_open"] = { wrap_pre_uv_fs_open, wrap_pre_uv_fs_post_open };
-  wrappers["uv_fs_close"] = { wrap_pre_uv_fs_close, nullptr };
-  wrappers["uv_fs_lchown"] = { wrap_pre_uv_fs_lchown, nullptr };
-  wrappers["uv_fs_link"] = { wrap_pre_uv_fs_link, nullptr };
-  wrappers["uv_fs_lstat"] = { wrap_pre_uv_fs_lstat, nullptr };
-  wrappers["uv_fs_mkdir"] = { wrap_pre_uv_fs_mkdir, nullptr };
+  wrappers["uv_fs_copyfile"] = { wrap_pre_uv_fs_copyfile, nullptr };
+  wrappers["uv_fs_access"]   = { wrap_pre_uv_fs_access, nullptr };
+  wrappers["uv_fs_chmod"]    = { wrap_pre_uv_fs_chmod, nullptr };
+  wrappers["uv_fs_chown"]    = { wrap_pre_uv_fs_chown, nullptr };
+  wrappers["uv_fs_open"]     = { wrap_pre_uv_fs_open, nullptr };
+  wrappers["uv_fs_close"]    = { wrap_pre_uv_fs_close, nullptr };
+  wrappers["uv_fs_lchown"]   = { wrap_pre_uv_fs_lchown, nullptr };
+  wrappers["uv_fs_link"]     = { wrap_pre_uv_fs_link, nullptr };
+  wrappers["uv_fs_lstat"]    = { wrap_pre_uv_fs_lstat, nullptr };
+  wrappers["uv_fs_mkdir"]    = { wrap_pre_uv_fs_mkdir, nullptr };
   wrappers["uv_fs_readlink"] = { wrap_pre_uv_fs_readlink, nullptr };
   wrappers["uv_fs_realpath"] = { wrap_pre_uv_fs_realpath, nullptr };
-  wrappers["uv_fs_rename"] = { wrap_pre_uv_fs_rename, nullptr };
-  wrappers["uv_fs_rmdir"] = { wrap_pre_uv_fs_rmdir, nullptr };
-  wrappers["uv_fs_stat"] = { wrap_pre_uv_fs_stat, nullptr };
-  wrappers["uv_fs_symlink"] = { wrap_pre_uv_fs_symlink, nullptr };
-  wrappers["uv_fs_unlink"] = { wrap_pre_uv_fs_unlink, nullptr };
-  wrappers["uv_fs_utime"] = { wrap_pre_uv_fs_utime, nullptr };
+  wrappers["uv_fs_rename"]   = { wrap_pre_uv_fs_rename, nullptr };
+  wrappers["uv_fs_rmdir"]    = { wrap_pre_uv_fs_rmdir, nullptr };
+  wrappers["uv_fs_stat"]     = { wrap_pre_uv_fs_stat, nullptr };
+  wrappers["uv_fs_symlink"]  = { wrap_pre_uv_fs_symlink, nullptr };
+  wrappers["uv_fs_unlink"]   = { wrap_pre_uv_fs_unlink, nullptr };
+  wrappers["uv_fs_utime"]    = { wrap_pre_uv_fs_utime, nullptr };
 
   // Node wrappers
   wrappers["node::Start"] = { wrap_pre_start, nullptr };

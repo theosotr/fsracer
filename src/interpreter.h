@@ -21,8 +21,6 @@ class Interpreter {
     virtual void InterpretTrace(Trace *trace);
     virtual void InterpretBlock(Block *block);
     virtual void InterpretExpr(Expr *expr);
-    virtual void InterpretSyncOp(SyncOp *sync_op);
-    virtual void InterpretAsyncOp(AsyncOp *async_op);
     virtual void InterpretSubmitOp(SubmitOp *submit_op);
     virtual void InterpretExecOp(ExecOp *exec_op);
     virtual void InterpretNewEvent(NewEventExpr *new_ev_expr);
@@ -65,8 +63,6 @@ class DumpInterpreter : public Interpreter {
     void InterpretTrace(Trace *trace);
     void InterpretBlock(Block *block);
     void InterpretExpr(Expr *expr);
-    void InterpretSyncOp(SyncOp *sync_op);
-    void InterpretAsyncOp(AsyncOp *async_op);
     void InterpretSubmitOp(SubmitOp *submit_op);
     void InterpretExecOp(ExecOp *exec_op);
     void InterpretNewEvent(NewEventExpr *new_ev_expr);

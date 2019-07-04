@@ -206,9 +206,9 @@ class Link : public Operation {
 
 class NewFd : public Operation {
   public:
-    NewFd(string path_):
+    NewFd(string path_, int fd_):
       path(path_),
-      fd(0) { }
+      fd(fd_) { }
 
     ~NewFd() {  }
 
@@ -216,12 +216,8 @@ class NewFd : public Operation {
       return path;
     }
 
-    size_t GetFd() {
+    int GetFd() {
       return fd;
-    }
-
-    void SetFd(size_t fd_) {
-      fd = fd_;
     }
 
     string GetOpName() {
@@ -236,7 +232,7 @@ class NewFd : public Operation {
 
   private:
     string path;
-    size_t fd;
+    int fd;
 };
 
 

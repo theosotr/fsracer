@@ -81,46 +81,6 @@ class Event {
 };
 
 
-class SyncOp : public Expr {
-  public:
-    SyncOp(Operation *operation_):
-      operation(operation_) {  }
-    SyncOp() {  }
-    ~SyncOp() {
-      delete operation;
-    }
-
-    Operation *GetOperation() {
-      return operation;
-    }
-
-    void Accept(interpreter::Interpreter *interpreter);
-    virtual string ToString();
-
-  protected:
-    Operation *operation;
-};
-
-
-class AsyncOp : public SyncOp {
-  public:
-    AsyncOp(Operation *operation_, size_t event_id_):
-      SyncOp(operation_),
-      event_id(event_id_) {  }
-    ~AsyncOp() {  }
-
-    Operation *GetOperation() {
-      return operation;
-    }
-
-    void Accept(interpreter::Interpreter *interpreter);
-    string ToString();
-
-  private:
-    size_t event_id;
-};
-
-
 class SubmitOp : public Expr {
   public:
     enum Type {
@@ -144,7 +104,7 @@ class SubmitOp : public Expr {
 };
 
 
-class ExecOp : public Expr {
+class ExecOp : public TraceNode {
   public:
     ExecOp(size_t id_):
       id(id_) {  }
@@ -270,9 +230,17 @@ class Trace : public TraceNode {
       return blocks;
     };
 
+    vector<ExecOp*> GetExecOps() {
+      return exec_ops;
+    }
+
     void AddBlock(Block *block) {
       blocks.push_back(block);
     };
+
+    void AddExecOp(ExecOp *exec_op) {
+      exec_ops.push_back(exec_op);
+    }
 
     size_t GetThreadId() {
       return thread_id;
@@ -288,10 +256,11 @@ class Trace : public TraceNode {
 
   private:
     vector<Block*> blocks;
+    vector<ExecOp*> exec_ops;
+    size_t thread_id;
 
     void ClearBlocks();
-
-    size_t thread_id;
+    void ClearExecOps();
 };
 
 
