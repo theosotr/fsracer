@@ -47,7 +47,7 @@ void ExecOp::ClearOperations() {
 
 
 string ExecOp::ToString() {
-  string str = "ExecOp " + id + "\n";
+  string str = "Operation " + id + " do\n";
   for (Operation *operation : operations) {
     str += operation->ToString();
     str += "\n";
