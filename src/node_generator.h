@@ -15,7 +15,6 @@ namespace generator_keys {
   const string THREADS = "threads/";
   const string OPERATIONS = "operations/";
   const string THREAD_OPERATIONS = "thread_operations/";
-  const string INCOMPLETE_OPERATIONS = "incomplete_ops/";
   const string LAST_CREATED_EVENT = "last_created_event/";
 }
 
