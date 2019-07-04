@@ -570,15 +570,15 @@ wrapper_t NodeTraceGenerator::GetWrappers() {
   wrappers["uv_fs_utime"]    = { wrap_pre_uv_fs_utime, nullptr };
 
   // Node wrappers
-  wrappers["node::Start"] = { wrap_pre_start, nullptr };
+  wrappers["node::Start"]                                   = { wrap_pre_start, nullptr };
   wrappers["node::Environment::AsyncHooks::push_async_ids"] = { wrap_pre_emit_before, nullptr };
-  wrappers["node::AsyncWrap::EmitAfter"] = { wrap_pre_emit_after, nullptr };
-  wrappers["node::AsyncWrap::EmitAsyncInit"] = { wrap_pre_emit_init, nullptr };
-  wrappers["node::(anonymous namespace)::TimerWrap::now"] = { wrap_pre_timerwrap, nullptr };
-  wrappers["node::fs::NewFSReqWrap"] = { wrap_pre_fsreq, nullptr };
-  wrappers["node::AsyncWrap::EmitPromiseResolve"] = { wrap_pre_promise_resolve, nullptr };
-  wrappers["node::PromiseWrap::PromiseWrap"] = { wrap_pre_promise_wrap, nullptr };
-  wrappers["node::AsyncWrap::NewAsyncId"] = { wrap_pre_new_async_id, nullptr };
+  wrappers["node::AsyncWrap::EmitAfter"]                    = { wrap_pre_emit_after, nullptr };
+  wrappers["node::AsyncWrap::EmitAsyncInit"]                = { wrap_pre_emit_init, nullptr };
+  wrappers["node::(anonymous namespace)::TimerWrap::now"]   = { wrap_pre_timerwrap, nullptr };
+  wrappers["node::fs::NewFSReqWrap"]                        = { wrap_pre_fsreq, nullptr };
+  wrappers["node::AsyncWrap::EmitPromiseResolve"]           = { wrap_pre_promise_resolve, nullptr };
+  wrappers["node::PromiseWrap::PromiseWrap"]                = { wrap_pre_promise_wrap, nullptr };
+  wrappers["node::AsyncWrap::NewAsyncId"]                   = { wrap_pre_new_async_id, nullptr };
   return wrappers;
 }
 
