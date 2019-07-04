@@ -88,7 +88,7 @@ class SubmitOp : public Expr {
       SYNC
     };
 
-    SubmitOp(size_t id_, string name_, enum Type type_):
+    SubmitOp(string id_, string name_, enum Type type_):
       id(id_),
       name(name_),
       type(type_) {  }
@@ -98,7 +98,7 @@ class SubmitOp : public Expr {
     string ToString();
 
   private:
-    size_t id;
+    string id;
     string name;
     enum Type type;
 };
@@ -106,7 +106,7 @@ class SubmitOp : public Expr {
 
 class ExecOp : public TraceNode {
   public:
-    ExecOp(size_t id_):
+    ExecOp(string id_):
       id(id_) {  }
     ~ExecOp() {
       ClearOperations();
@@ -124,7 +124,7 @@ class ExecOp : public TraceNode {
     string ToString();
 
   private:
-    size_t id;
+    string id;
     vector<Operation *> operations;
 
     void ClearOperations();
