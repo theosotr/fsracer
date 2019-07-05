@@ -30,10 +30,11 @@ namespace generator {
 
 class Generator {
   public:
-    Generator() {
+    Generator():
+      current_block(nullptr),
+      event_count(0),
+      sync_op_count(0) {
       trace = new Trace();
-      current_block = nullptr;
-      event_count = 0;
     }
 
     ~Generator() {
@@ -54,12 +55,20 @@ class Generator {
       return store;
     }
 
+    size_t GetSyncOpCount() {
+      return sync_op_count;
+    }
+
     size_t GetEventCount() {
       return event_count;
     }
 
     void IncrEventCount() {
       event_count++;
+    }
+
+    void IncrSyncOpCount() {
+      sync_op_count++;
     }
 
     void SetTrace(Trace *trace_) {
@@ -85,6 +94,7 @@ class Generator {
     ExecOp *exec_op;
     size_t event_count;
     map<string, void*> store;
+    size_t sync_op_count;
 
     void RegisterFunc(const module_data_t *mod, string func_name,
                       pre_clb_t pre, post_clb_t post);

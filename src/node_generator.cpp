@@ -14,7 +14,6 @@ void
 AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
             size_t async_pos)
 {
-
   Generator *trace_gen = GetTraceGenerator(user_data);
   // First, we get the pointer that refers to the `uv_fs_t` struct
   // of the libuv library.
@@ -28,10 +27,13 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
   if (clb == nullptr) {
     // This operation is synchronous.
     // TODO: Generate unique ids for synchronous operations.
-    id = 10;
+    trace_gen->IncrSyncOpCount();
+    id = trace_gen->GetSyncOpCount();
   } else {
-    id = (size_t)(intptr_t) trace_gen->GetStoreValue(
+    int *event_ptr = (int *) trace_gen->GetStoreValue(
         FUNC_ARGS + "wrap_pre_emit_init");
+    id = *event_ptr;
+    delete event_ptr;
   }
   // We use the address that this pointer points to as an indicator
   // of the event associated with this operation.
@@ -44,7 +46,8 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
   // and it is going to be executed in the future.
   string addr = utils::PtrToString(ptr);
   string key = OPERATIONS + addr;
-  trace_gen->AddToStore(key, (void *)(intptr_t) id);
+  int *id_ptr = new int(id);
+  trace_gen->AddToStore(key, (void *) id_ptr);
 
   // It's time to add the `submitOp` expression to the current block.
   enum SubmitOp::Type type = clb == nullptr ?
@@ -267,11 +270,14 @@ wrap_pre_uv_fs_work(void *wrapctx, OUT void **user_data)
   if (!value) {
     return;
   }
-  size_t event_id = (size_t)(intptr_t) value;
-  ExecOp *exec_op = new ExecOp(event_id);
+  int *event_ptr = (int *) value;
+  ExecOp *exec_op = new ExecOp(*event_ptr);
+  delete event_ptr;
   trace_gen->AddToStore(THREADS + to_string(thread_id), (void *) exec_op);
+
+  int *thread_ptr = new int (thread_id);
   trace_gen->AddToStore(THREAD_OPERATIONS + addr,
-                        (void *)(intptr_t) thread_id);
+                        (void *) thread_ptr);
   trace_gen->GetTrace()->AddExecOp(exec_op);
 }
 
@@ -459,8 +465,9 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
   if (last_event && trace_gen->GetCurrentBlock()) {
     trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
         async_id, *last_event));
+    int *event_id = new int(async_id);
     trace_gen->AddToStore(FUNC_ARGS + "wrap_pre_emit_init",
-        (void *)(intptr_t) async_id);
+        (void *) event_id);
     delete last_event;
   }
 }

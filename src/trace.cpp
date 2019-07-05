@@ -26,9 +26,9 @@ string Event::ToString() {
 string SubmitOp::ToString() {
   switch (type) {
     case ASYNC:
-      return "SubmitOp "  + id + " " + name + " ASYNC";
+      return "SubmitOp "  + to_string(id) + " " + name + " ASYNC";
     default:
-      return "SubmitOp "  + id + " " + name + " SYNC";
+      return "SubmitOp "  + to_string(id) + " " + name + " SYNC";
   }
 }
 
@@ -47,7 +47,7 @@ void ExecOp::ClearOperations() {
 
 
 string ExecOp::ToString() {
-  string str = "Operation " + id + " do\n";
+  string str = "Operation " + to_string(id) + " do\n";
   for (Operation *operation : operations) {
     str += operation->ToString();
     str += "\n";
