@@ -251,8 +251,9 @@ wrap_pre_uv_fs_done(void *wrapctx, OUT void **user_data)
   if (!value) {
     return;
   }
-  size_t thread_id = (int)(intptr_t) value;
-  trace_gen->DeleteFromStore(THREADS + to_string(thread_id));
+  int *thread_id = (int *) value;
+  trace_gen->DeleteFromStore(THREADS + to_string(*thread_id));
+  delete thread_id;
 }
 
 
@@ -270,9 +271,9 @@ wrap_pre_uv_fs_work(void *wrapctx, OUT void **user_data)
   if (!value) {
     return;
   }
-  string *event_ptr = static_cast<string*>(value);
-  ExecOp *exec_op = new ExecOp(*event_ptr);
-  delete event_ptr;
+  string *op_ptr = static_cast<string*>(value);
+  ExecOp *exec_op = new ExecOp(*op_ptr);
+  delete op_ptr;
   trace_gen->AddToStore(THREADS + to_string(thread_id), (void *) exec_op);
 
   int *thread_ptr = new int (thread_id);
