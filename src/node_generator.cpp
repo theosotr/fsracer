@@ -9,8 +9,6 @@ using namespace generator_keys;
 
 namespace node_utils {
 
-int sync_op_count = 0;
-
 
 void
 AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
@@ -26,14 +24,14 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
   void *ptr = drwrap_get_arg(wrapctx, 1);
   void *clb = drwrap_get_arg(wrapctx, async_pos);
 
-  string id;
+  size_t id;
   if (clb == nullptr) {
     // This operation is synchronous.
-    id = "sync_" + to_string(++sync_op_count);
+    // TODO: Generate unique ids for synchronous operations.
+    id = 10;
   } else {
-    size_t event_id = (size_t)(intptr_t) trace_gen->GetStoreValue(
+    id = (size_t)(intptr_t) trace_gen->GetStoreValue(
         FUNC_ARGS + "wrap_pre_emit_init");
-    id = "async_" + to_string(event_id);
   }
   // We use the address that this pointer points to as an indicator
   // of the event associated with this operation.
@@ -46,11 +44,7 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
   // and it is going to be executed in the future.
   string addr = utils::PtrToString(ptr);
   string key = OPERATIONS + addr;
-
-  // We dynamically allocate a string pointer as we need to pass
-  // the string of operation id to the store.
-  void *id_ptr = static_cast<void*>(new string(id));
-  trace_gen->AddToStore(key, id_ptr);
+  trace_gen->AddToStore(key, (void *)(intptr_t) id);
 
   // It's time to add the `submitOp` expression to the current block.
   enum SubmitOp::Type type = clb == nullptr ?
@@ -269,16 +263,12 @@ wrap_pre_uv_fs_work(void *wrapctx, OUT void **user_data)
   void *uv_fs_t_ptr = ptr - WORKER_OFFSET;
   string addr = utils::PtrToString(uv_fs_t_ptr);
   string key = OPERATIONS + addr;
-  void *value = trace_gen->GetStoreValue(key);
+  void *value = trace_gen->PopFromStore(key);
   if (!value) {
-    // None operation was found in the store, so we return.
     return;
   }
-  string *op_id = static_cast<string*>(value);
-  ExecOp *exec_op = new ExecOp(*op_id);
-  // It's time to delete the string holding the operation id.
-  delete op_id;
-
+  size_t event_id = (size_t)(intptr_t) value;
+  ExecOp *exec_op = new ExecOp(event_id);
   trace_gen->AddToStore(THREADS + to_string(thread_id), (void *) exec_op);
   trace_gen->AddToStore(THREAD_OPERATIONS + addr,
                         (void *)(intptr_t) thread_id);
