@@ -23,16 +23,16 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
   void *ptr = drwrap_get_arg(wrapctx, 1);
   void *clb = drwrap_get_arg(wrapctx, async_pos);
 
-  size_t id;
+  string id;
   if (clb == nullptr) {
     // This operation is synchronous.
     // TODO: Generate unique ids for synchronous operations.
     trace_gen->IncrSyncOpCount();
-    id = trace_gen->GetSyncOpCount();
+    id = "sync_" + to_string(trace_gen->GetSyncOpCount());
   } else {
     int *event_ptr = (int *) trace_gen->GetStoreValue(
         FUNC_ARGS + "wrap_pre_emit_init");
-    id = *event_ptr;
+    id = "async_" + to_string(*event_ptr);
     delete event_ptr;
   }
   // We use the address that this pointer points to as an indicator
@@ -46,7 +46,7 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
   // and it is going to be executed in the future.
   string addr = utils::PtrToString(ptr);
   string key = OPERATIONS + addr;
-  int *id_ptr = new int(id);
+  void *id_ptr = static_cast<void*>(new string(id));
   trace_gen->AddToStore(key, (void *) id_ptr);
 
   // It's time to add the `submitOp` expression to the current block.
@@ -270,7 +270,7 @@ wrap_pre_uv_fs_work(void *wrapctx, OUT void **user_data)
   if (!value) {
     return;
   }
-  int *event_ptr = (int *) value;
+  string *event_ptr = static_cast<string*>(value);
   ExecOp *exec_op = new ExecOp(*event_ptr);
   delete event_ptr;
   trace_gen->AddToStore(THREADS + to_string(thread_id), (void *) exec_op);
