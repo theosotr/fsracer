@@ -136,11 +136,22 @@ wrap_pre_mkdir(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_open(void *wrapctx, OUT void **user_data)
 {
-  // TODO check open flags.
-  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
   Generator *trace_gen = GetTraceGenerator(user_data);
   void *drcontext = drwrap_get_drcontext(wrapctx);
   char *path = (char *) drwrap_get_arg(wrapctx, 0);
+  int flags = (int)(intptr_t) drwrap_get_arg(wrapctx, 1);
+
+  // We get the two least significant bits of the flags value in order
+  // to determine the mode of `open` (i.e., read-only, write-only,
+  // read-write). 
+  int mode = flags & 3;
+  if (mode == 0) {
+    // It's read-only.
+    EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
+  } else {
+    // It's either write-only or read-write.
+    EmitHpath(wrapctx, user_data, 0, Hpath::PRODUCED, true, get_exec_op);
+  }
   string key = FUNC_ARGS + "open";
   trace_gen->AddToStore(key, path);
 }
