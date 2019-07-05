@@ -9,6 +9,21 @@
 
 #include "generator.h"
 
+#define CHECK_EXEC_OP                                \
+  if (!get_exec_op) {                                \
+    return;                                          \
+  }                                                  \
+  ExecOp *exec_op = get_exec_op(wrapctx, user_data); \
+  if (!exec_op) {                                    \
+    return;                                          \
+  }                                                  \
+
+
+#define MULTIPATH                                                         \
+  generator::Generator *trace_gen = GetTraceGenerator(user_data);         \
+  string old_path = (const char *) drwrap_get_arg(wrapctx, old_path_pos); \
+  string new_path = (const char *) drwrap_get_arg(wrapctx, new_path_pos); \
+
 
 /**
  * This function retrieves the entry point a function.
@@ -129,13 +144,7 @@ void
 EmitDelFd(void *wrapctx, OUT void **user_data, size_t fd_pos,
           exec_op_t get_exec_op)
 {
-  if (!get_exec_op) {
-    return;
-  }
-  ExecOp *exec_op = get_exec_op(wrapctx, user_data);
-  if (!exec_op) {
-    return;
-  }
+  CHECK_EXEC_OP;
   int fd = (int)(intptr_t) drwrap_get_arg(wrapctx, fd_pos);
   exec_op->AddOperation(new DelFd(fd));
 }
@@ -146,13 +155,7 @@ EmitHpath(void *wrapctx, OUT void **user_data, size_t path_pos,
           Hpath::EffectType effect_type, bool follow_symlink,
           exec_op_t get_exec_op)
 {
-  if (!get_exec_op) {
-    return;
-  }
-  ExecOp *exec_op = get_exec_op(wrapctx, user_data);
-  if (!exec_op) {
-    return;
-  }
+  CHECK_EXEC_OP;
   generator::Generator *generator = GetTraceGenerator(user_data);
   string path = (const char *) drwrap_get_arg(wrapctx, path_pos);
   if (follow_symlink) {
@@ -167,17 +170,8 @@ void
 EmitLink(void *wrapctx, OUT void **user_data, size_t old_path_pos,
          size_t new_path_pos, exec_op_t get_exec_op)
 {
-  if (!get_exec_op) {
-    return;
-  }
-  ExecOp *exec_op = get_exec_op(wrapctx, user_data);
-  if (!exec_op) {
-    return;
-  }
-
-  generator::Generator *trace_gen = GetTraceGenerator(user_data);
-  string old_path = (const char *) drwrap_get_arg(wrapctx, old_path_pos);
-  string new_path = (const char *) drwrap_get_arg(wrapctx, new_path_pos);
+  CHECK_EXEC_OP;
+  MULTIPATH;
   exec_op->AddOperation(new Link(AT_FDCWD, old_path, AT_FDCWD, new_path));
 }
 
@@ -186,37 +180,19 @@ void
 EmitRename(void *wrapctx, OUT void **user_data, size_t old_path_pos,
            size_t new_path_pos, exec_op_t get_exec_op)
 {
-  if (!get_exec_op) {
-    return;
-  }
-  ExecOp *exec_op = get_exec_op(wrapctx, user_data);
-  if (!exec_op) {
-    return;
-  }
-
-  generator::Generator *trace_gen = GetTraceGenerator(user_data);
-  string old_path = (const char *) drwrap_get_arg(wrapctx, old_path_pos);
-  string new_path = (const char *) drwrap_get_arg(wrapctx, new_path_pos);
+  CHECK_EXEC_OP;
+  MULTIPATH;
   exec_op->AddOperation(new Rename(AT_FDCWD, old_path, AT_FDCWD, new_path));
 }
 
 
 void
-EmitSymlink(void *wrapctx, OUT void **user_data, size_t target_path_pos,
-            size_t new_path_pos, exec_op_t get_exec_op)
+EmitSymlink(void *wrapctx, OUT void **user_data, size_t old_path_pos,
+            size_t new_path_pos, exec_op_t get_exec_op) 
 {
-  if (!get_exec_op) {
-    return;
-  }
-  ExecOp *exec_op = get_exec_op(wrapctx, user_data);
-  if (!exec_op) {
-    return;
-  }
-
-  generator::Generator *trace_gen = GetTraceGenerator(user_data);
-  string target_path = (const char *) drwrap_get_arg(wrapctx, target_path_pos);
-  string new_path = (const char *) drwrap_get_arg(wrapctx, new_path_pos);
-  exec_op->AddOperation(new Symlink(AT_FDCWD, new_path, target_path));
+  CHECK_EXEC_OP;
+  MULTIPATH;
+  exec_op->AddOperation(new Symlink(AT_FDCWD, new_path, old_path));
 }
 
 }
