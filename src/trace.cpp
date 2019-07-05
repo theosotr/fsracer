@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "interpreter.h"
+#include "analyzer.h"
 #include "trace.h"
 
 
@@ -33,8 +33,8 @@ string SubmitOp::ToString() {
 }
 
 
-void SubmitOp::Accept(interpreter::Interpreter *interpreter) {
-  interpreter->InterpretSubmitOp(this);
+void SubmitOp::Accept(analyzer::Analyzer *analyzer) {
+  analyzer->AnalyzeSubmitOp(this);
 }
 
 
@@ -57,8 +57,8 @@ string ExecOp::ToString() {
 }
 
 
-void ExecOp::Accept(interpreter::Interpreter *interpreter) {
-  interpreter->InterpretExecOp(this);
+void ExecOp::Accept(analyzer::Analyzer *analyzer) {
+  analyzer->AnalyzeExecOp(this);
 }
 
 
@@ -68,8 +68,8 @@ string NewEventExpr::ToString() {
 }
 
 
-void NewEventExpr::Accept(interpreter::Interpreter *interpreter) {
-  interpreter->InterpretNewEvent(this);
+void NewEventExpr::Accept(analyzer::Analyzer *analyzer) {
+  analyzer->AnalyzeNewEvent(this);
 }
 
 
@@ -78,8 +78,8 @@ string LinkExpr::ToString() {
 }
 
 
-void LinkExpr::Accept(interpreter::Interpreter *interpreter) {
-  interpreter->InterpretLink(this);
+void LinkExpr::Accept(analyzer::Analyzer *analyzer) {
+  analyzer->AnalyzeLink(this);
 }
 
 
@@ -104,8 +104,8 @@ string Block::ToString() {
 }
 
 
-void Block::Accept(interpreter::Interpreter *interpreter) {
-  interpreter->InterpretBlock(this);
+void Block::Accept(analyzer::Analyzer *analyzer) {
+  analyzer->AnalyzeBlock(this);
 }
 
 
@@ -139,8 +139,8 @@ string Trace::ToString() {
 }
 
 
-void Trace::Accept(interpreter::Interpreter *interpreter) {
-  interpreter->InterpretTrace(this);
+void Trace::Accept(analyzer::Analyzer *analyzer) {
+  analyzer->AnalyzeTrace(this);
 }
 
 

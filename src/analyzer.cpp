@@ -1,16 +1,16 @@
 #include <iostream>
 #include <vector>
 
-#include "interpreter.h"
+#include "analyzer.h"
 
 
 using namespace operation;
 using namespace trace;
 
-namespace interpreter {
+namespace analyzer {
 
 
-void DumpInterpreter::SetupOutStream() {
+void DumpAnalyzer::SetupOutStream() {
   switch (dump_option) {
     case FILE_DUMP:
       of.open(filename);
@@ -20,7 +20,7 @@ void DumpInterpreter::SetupOutStream() {
 }
 
 
-void DumpInterpreter::ClearOutStream() {
+void DumpAnalyzer::ClearOutStream() {
   switch (dump_option) {
     case FILE_DUMP:
       of.close();
@@ -30,7 +30,7 @@ void DumpInterpreter::ClearOutStream() {
 }
 
 
-ostream &DumpInterpreter::OutStream() {
+ostream &DumpAnalyzer::OutStream() {
   switch (dump_option) {
     case FILE_DUMP:
       return of;
@@ -40,49 +40,49 @@ ostream &DumpInterpreter::OutStream() {
 }
 
 
-void DumpInterpreter::Interpret(TraceNode *trace_node) {
+void DumpAnalyzer::Analyze(TraceNode *trace_node) {
   if (trace_node) {
     trace_node->Accept(this);
   }
 }
 
 
-void DumpInterpreter::InterpretTrace(Trace *trace) {
+void DumpAnalyzer::AnalyzeTrace(Trace *trace) {
   if (!trace) {
     return;
   }
   vector<ExecOp*> exec_ops = trace->GetExecOps();
   for (auto const &exec_op : exec_ops) {
-    InterpretExecOp(exec_op);
+    AnalyzeExecOp(exec_op);
   }
   vector<Block*> blocks = trace->GetBlocks();
   for (auto const &block : blocks) {
-    InterpretBlock(block);
+    AnalyzeBlock(block);
   }
 }
 
 
-void DumpInterpreter::InterpretBlock(Block *block) {
+void DumpAnalyzer::AnalyzeBlock(Block *block) {
   if (!block) {
     return;
   }
   vector<Expr*> exprs = block->GetExprs();
   OutStream() << "Begin " << to_string(block->GetBlockId()) << "\n";
   for (auto const &expr : exprs) {
-    InterpretExpr(expr);
+    AnalyzeExpr(expr);
   }
   OutStream() << "End\n";
 }
 
 
-void DumpInterpreter::InterpretExpr(Expr *expr) {
+void DumpAnalyzer::AnalyzeExpr(Expr *expr) {
   if (expr) {
     expr->Accept(this);
   }
 }
 
 
-void DumpInterpreter::InterpretSubmitOp(SubmitOp *submit_op) {
+void DumpAnalyzer::AnalyzeSubmitOp(SubmitOp *submit_op) {
   if (!submit_op) {
     return;
   }
@@ -90,7 +90,7 @@ void DumpInterpreter::InterpretSubmitOp(SubmitOp *submit_op) {
 }
 
 
-void DumpInterpreter::InterpretExecOp(ExecOp *exec_op) {
+void DumpAnalyzer::AnalyzeExecOp(ExecOp *exec_op) {
   if (!exec_op) {
     return;
   }
@@ -98,7 +98,7 @@ void DumpInterpreter::InterpretExecOp(ExecOp *exec_op) {
 }
 
 
-void DumpInterpreter::InterpretNewEvent(NewEventExpr *new_ev_expr) {
+void DumpAnalyzer::AnalyzeNewEvent(NewEventExpr *new_ev_expr) {
   if (!new_ev_expr) {
     return;
   }
@@ -107,7 +107,7 @@ void DumpInterpreter::InterpretNewEvent(NewEventExpr *new_ev_expr) {
 }
 
 
-void DumpInterpreter::InterpretLink(LinkExpr *link_expr) {
+void DumpAnalyzer::AnalyzeLink(LinkExpr *link_expr) {
   if (!link_expr) {
     return;
   }

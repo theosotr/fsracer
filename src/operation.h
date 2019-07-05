@@ -8,8 +8,8 @@
 
 using namespace std;
 
-namespace interpreter {
-  class Interpreter;
+namespace analyzer {
+  class Analyzer;
 }
 
 
@@ -19,7 +19,7 @@ class Operation {
 
   public:
     virtual ~Operation() {  };
-    virtual void Accept(interpreter::Interpreter *interpreter);
+    virtual void Accept(analyzer::Analyzer *analyzer);
     virtual string ToString();
     virtual string GetOpName();
 };
@@ -44,7 +44,7 @@ class DelFd : public Operation {
       return GetOpName() + " " + to_string(fd);
     }
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
 
   private:
     size_t fd;
@@ -78,7 +78,7 @@ class DupFd : public Operation {
       return GetOpName() + " "  + to_string(old_fd) + " " + to_string(new_fd);
     };
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
 
   private:
       size_t old_fd;
@@ -129,7 +129,7 @@ class Hpath : public Operation {
       }
     };
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
 
   protected:
     size_t dir_fd;
@@ -145,7 +145,7 @@ class HpathSym : public Hpath {
       Hpath(dir_fd_, path_, effect_type_) {  }
     ~HpathSym() {  }
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
 
     string GetOpName() {
       return "hpathsym";
@@ -192,7 +192,7 @@ class Link : public Operation {
       return "link";
     }
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
 
   private:
     size_t old_dirfd;
@@ -228,7 +228,7 @@ class NewFd : public Operation {
       return GetOpName() + " " + path + " " + to_string(fd);
     };
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
 
   private:
     string path;
@@ -296,7 +296,7 @@ class Rename : public Link {
       return "rename";
     }
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
 };
 
 
@@ -318,7 +318,7 @@ class SetCwd : public Operation {
       return GetOpName() + " " + cwd;
     }
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
   private:
     string cwd;
 };
@@ -353,7 +353,7 @@ class Symlink : public Operation {
         target;
     }
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
 
   private:
     size_t dir_fd;
@@ -373,7 +373,7 @@ class Nop : public Operation {
       return GetOpName();
     }
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
 
 };
 

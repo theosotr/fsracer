@@ -4,11 +4,11 @@
 #include "drsyms.h"
 
 #include "node_generator.h"
-#include "interpreter.h"
+#include "analyzer.h"
 
 
 using namespace generator;
-using namespace interpreter;
+using namespace analyzer;
 
 
 // TODO:
@@ -41,18 +41,18 @@ event_exit(void)
   drwrap_exit();
   drmgr_exit();
   drsym_exit();
-  DumpInterpreter *dump_interpreter = new DumpInterpreter(
-      DumpInterpreter::STDOUT_DUMP, "");
+  DumpAnalyzer *dump_analyzer = new DumpAnalyzer(
+      DumpAnalyzer::STDOUT_DUMP, "");
 
   // TODO: Currently the analysis of traces is done offline
   // (after the execution of the program).
   //
   // Add support for both offline and online trace analysis.
-  cout << dump_interpreter->GetName() << ": Start interpreting traces...\n";
-  dump_interpreter->Interpret(trace_gen->GetTrace());
-  delete dump_interpreter;
+  cout << dump_analyzer->GetName() << ": Start analyzing traces...\n";
+  dump_analyzer->Analyze(trace_gen->GetTrace());
+  delete dump_analyzer;
   delete trace_gen;
-  cout << dump_interpreter->GetName() << ": Interpretation is done\n";
+  cout << dump_analyzer->GetName() << ": Analysis is done\n";
 }
 
 

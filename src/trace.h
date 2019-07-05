@@ -12,9 +12,9 @@ using namespace std;
 using namespace operation;
 
 
-namespace interpreter {
+namespace analyzer {
 
-class Interpreter;
+class Analyzer;
 
 }
 
@@ -26,7 +26,7 @@ class TraceNode {
   public:
     virtual ~TraceNode() {  };
     virtual string ToString();
-    virtual void Accept(interpreter::Interpreter *interpreter);
+    virtual void Accept(analyzer::Analyzer *analyzer);
 };
 
 
@@ -34,7 +34,7 @@ class TraceNode {
 class Expr {
   public:
     virtual ~Expr() {  };
-    virtual void Accept(interpreter::Interpreter *interpreter);
+    virtual void Accept(analyzer::Analyzer *analyzer);
     virtual string ToString();
 };
 
@@ -70,7 +70,7 @@ class Event {
       return event_value;
     }
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
 
     string ToString();
 
@@ -94,7 +94,7 @@ class SubmitOp : public Expr {
       type(type_) {  }
     ~SubmitOp() {  }
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
     string ToString();
 
   private:
@@ -120,7 +120,7 @@ class ExecOp : public TraceNode {
       return operations;
     }
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
     string ToString();
 
   private:
@@ -147,7 +147,7 @@ class NewEventExpr : public Expr {
       return event;
     }
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
 
     string ToString();
 
@@ -172,7 +172,7 @@ class LinkExpr : public Expr {
       return target_ev;
     }
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
 
     string ToString();
 
@@ -204,7 +204,7 @@ class Block : public TraceNode {
       return block_id;
     }
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
 
     string ToString();
 
@@ -250,7 +250,7 @@ class Trace : public TraceNode {
       thread_id = thread_id_;
     }
 
-    void Accept(interpreter::Interpreter *interpreter);
+    void Accept(analyzer::Analyzer *analyzer);
 
     string ToString();
 
