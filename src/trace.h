@@ -389,6 +389,7 @@ class Trace : public TraceNode {
     /** Destruct the current trace. */
     ~Trace() {
       ClearBlocks();
+      ClearExecOps();
     }
 
     /** Get the list of blocks. */
