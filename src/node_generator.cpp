@@ -557,12 +557,13 @@ wrap_pre_fsreq(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_promise_resolve(void *wrapctx, OUT void **user_data)
 {
-  // dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
-  // int async_id = *(double *) ctx->ymm; // xmm0 register
-
-  // trace_gen->ConstructSEvent();
-  // trace_gen->EmitNewEventTrace(async_id);
-  // trace_gen->IncrEventCount();
+  Generator *trace_gen = GetTraceGenerator(user_data);
+  dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
+  int async_id = *(double *) ctx->ymm; // xmm0 register
+  trace_gen->IncrEventCount();
+  Event event = Event(Event::S, 0);
+  trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
+      async_id, event));
 }
 
 
