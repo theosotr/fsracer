@@ -1,3 +1,5 @@
+#include <stack>
+
 #include "generator.h"
 #include "node_generator.h"
 #include "utils.h"
@@ -58,6 +60,9 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
 
 
 }
+
+
+int sync_op_count = 0;
 
 
 ExecOp *
@@ -229,11 +234,9 @@ wrap_pre_utime(void *wrapctx, OUT void **user_data)
 
 
 static void
-wrap_pre_uv_fs_done(void *wrapctx, OUT void **user_data)
+wrap_pre_uv_fs_work(void *wrapctx, OUT void **user_data)
 {
-
   Generator *trace_gen = GetTraceGenerator(user_data);
-  char *ptr = (char *) drwrap_get_arg(wrapctx, 0);
   // This is implementation specific.
   //
   // The argument of the `uv__fs_work` function is a pointer
@@ -244,42 +247,86 @@ wrap_pre_uv_fs_done(void *wrapctx, OUT void **user_data)
   // The following pointer arithmetic retrieves the pointer
   // that refers to the beginning of that struct where
   // the argument of this function is a member.
+  char *ptr = (char *) drwrap_get_arg(wrapctx, 0);
   void *uv_fs_t_ptr = ptr - WORKER_OFFSET;
+
+  // We convert address to a string and we use it
+  // as key to store value information about the execution of
+  // the current libuv operation.
+  //
+  // Note that the address is unique for every *active* libuv
+  // operation.
   string addr = utils::PtrToString(uv_fs_t_ptr);
-  void *value = trace_gen->PopFromStore(
-      THREAD_OPERATIONS + addr);
+
+  string thread_str = to_string(utils::GetCurrentThread(wrapctx));
+  string key = THREAD_OPERATIONS + thread_str;
+  // We get the number of `uv__fs_work` invocations in the current call
+  // stack.
+  int *work_count = (int *) trace_gen->GetStoreValue(key);
+  if (!work_count) {
+    // It's the first `uv__fs_work` invocation in the current call stack
+    // so we update the store.
+    work_count = new int(1);
+    trace_gen->AddToStore(key, (void *) work_count);
+  } else {
+    // We increment the number of invocations of `uv__fs_work` in the current
+    // call stack.
+    (*work_count)++;
+  }
+
+  // Now it's time to retrieve the pointer to the `ExecOp` objects.
+  // This object holds all the FStrace operations performed by
+  // the current `libuv` operation.
+  //
+  // Note tha we consider only the parent `uv__fs_work` invocation
+  // that is actually called by Node.
+  key = OPERATIONS + addr;
+  void *value = trace_gen->PopFromStore(key);
   if (!value) {
+    // Probably, this invocation is not the parent,
+    // so we return.
     return;
   }
-  int *thread_id = (int *) value;
-  trace_gen->DeleteFromStore(THREADS + to_string(*thread_id));
-  delete thread_id;
+  string *op_ptr = static_cast<string*>(value);
+  // We create a new `ExecOp`, since its the first `uv__fs_work`
+  // invocation in the current call stack.
+  ExecOp *exec_op = new ExecOp(*op_ptr);
+  delete op_ptr;
+  
+  // We associate the current thread with the newly-created
+  // `ExecOp` object.
+  trace_gen->AddToStore(THREADS + thread_str, (void *) exec_op);
+  // We add the `ExecOp` construct to the current trace.
+  trace_gen->GetTrace()->AddExecOp(exec_op);
 }
 
 
 static void
-wrap_pre_uv_fs_work(void *wrapctx, OUT void **user_data)
+wrap_post_uv_fs_work(void *wrapctx, void *user_data)
 {
-  Generator *trace_gen = GetTraceGenerator(user_data);
+
+  Generator *trace_gen = (Generator *) user_data;
   size_t thread_id = utils::GetCurrentThread(wrapctx);
-  char *ptr = (char *) drwrap_get_arg(wrapctx, 0);
-  // See the comment inside the `wrap_pre_uv_fs_done` function.
-  void *uv_fs_t_ptr = ptr - WORKER_OFFSET;
-  string addr = utils::PtrToString(uv_fs_t_ptr);
-  string key = OPERATIONS + addr;
-  void *value = trace_gen->PopFromStore(key);
-  if (!value) {
+  string thread_str = to_string(thread_id);
+
+  // We examine the store to see the number of
+  // 'uv__fs_work' invocations in the current call stack.
+  string key = THREAD_OPERATIONS + thread_str;
+  int *work_count = (int *) trace_gen->GetStoreValue(key);
+  if (!work_count) {
     return;
   }
-  string *op_ptr = static_cast<string*>(value);
-  ExecOp *exec_op = new ExecOp(*op_ptr);
-  delete op_ptr;
-  trace_gen->AddToStore(THREADS + to_string(thread_id), (void *) exec_op);
 
-  int *thread_ptr = new int (thread_id);
-  trace_gen->AddToStore(THREAD_OPERATIONS + addr,
-                        (void *) thread_ptr);
-  trace_gen->GetTrace()->AddExecOp(exec_op);
+  if (*work_count == 0 || *work_count == 1) {
+    // This means that only only one invocation of `uv__fs_work`
+    // appears in the stack. So after the call of this wrapper,
+    // there will be no invocation of `uv__fs_work` in the call stack.
+    //
+    // So, we free memory and delete the corresponding keys from the store.
+    delete work_count;
+    trace_gen->DeleteFromStore(key);
+    trace_gen->DeleteFromStore(THREADS + thread_str);
+  }
 }
 
 
@@ -565,8 +612,7 @@ wrapper_t NodeTraceGenerator::GetWrappers() {
 
   // libuv wrappers for libuv functions responsible for executing
   // FS operations.
-  wrappers["uv__fs_work"] = { wrap_pre_uv_fs_work, nullptr };
-  wrappers["uv__fs_done"] = { wrap_pre_uv_fs_done, nullptr };
+  wrappers["uv__fs_work"] = { wrap_pre_uv_fs_work, wrap_post_uv_fs_work };
 
   // libuv wrappers
   wrappers["uv_fs_copyfile"] = { wrap_pre_uv_fs_copyfile, nullptr };
