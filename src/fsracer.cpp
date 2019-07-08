@@ -38,6 +38,7 @@ static void
 event_exit(void)
 {
   cout << trace_gen->GetName() << ": Trace collected\n";
+  trace_gen->Stop();
   drwrap_exit();
   drmgr_exit();
   drsym_exit();

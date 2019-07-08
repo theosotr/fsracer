@@ -1,3 +1,4 @@
+#include <set>
 #include <stack>
 
 #include "generator.h"
@@ -28,7 +29,6 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
   string id;
   if (clb == nullptr) {
     // This operation is synchronous.
-    // TODO: Generate unique ids for synchronous operations.
     trace_gen->IncrSyncOpCount();
     id = "sync_" + to_string(trace_gen->GetSyncOpCount());
   } else {
@@ -62,7 +62,32 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
 }
 
 
-int sync_op_count = 0;
+static void
+add_promise(Generator *trace_gen, int promise_id)
+{
+  void *value = trace_gen->GetStoreValue(PROMISE_SET);
+  if (!value) {
+    return;
+  }
+
+  set<int> *set_ptr = static_cast<set<int>*>(value);
+  set_ptr->insert(promise_id);
+}
+
+
+static bool
+is_promise(Generator *trace_gen, int promise_id)
+{
+
+  void *value = trace_gen->GetStoreValue(PROMISE_SET);
+  if (!value) {
+    return false;
+  }
+
+  set<int> *set_ptr = static_cast<set<int>*>(value);
+  set<int>::iterator it = set_ptr->find(promise_id);
+  return !(it == set_ptr->end());
+}
 
 
 ExecOp *
@@ -479,6 +504,13 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
     return;
   }
 
+  int id = async_id;
+  if (is_promise(trace_gen, async_id)) {
+    // If `async_id` is a promise, we use that as the id
+    // of the block.
+    id = trigger_async_id;
+  }
+
   if (trace_gen->GetCurrentBlock()) {
     // If this values does not point to NULL, we can infer
     // that we did not close the previous block.
@@ -488,7 +520,7 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
     trace_gen->SetCurrentBlock(NULL);
   }
   // This hook occurs just before the execution of an event-related callback.
-  trace_gen->SetCurrentBlock(new Block(async_id));
+  trace_gen->SetCurrentBlock(new Block(id));
 }
 
 
@@ -515,6 +547,19 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
   trace_gen->GetCurrentBlock()->AddExpr(
       new LinkExpr(trigger_async_id, async_id));
   Event *last_event = (Event *) trace_gen->PopFromStore(LAST_CREATED_EVENT);
+
+  bool *is_promise = (bool *) trace_gen->PopFromStore(PROMISE_EVENT);
+  if (is_promise && *is_promise) {
+    // This event we are going to create is a promise,
+    // so we add the corresponding id to the set of promises.
+    add_promise(trace_gen, async_id);
+  }
+
+  if (is_promise) {
+    // Allocated at `wrap_pre_promise_wrap()`.
+    delete is_promise;
+  }
+
   if (last_event) {
     trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
         async_id, *last_event));
@@ -534,6 +579,9 @@ wrap_pre_start(void *wrapctx, OUT void **user_data)
   // code.
   //
   // We set the ID of this block to 1.
+  set<int> promise_set;
+  set<int> *set_ptr = new set<int>(promise_set);
+  trace_gen->AddToStore(PROMISE_SET, (void *) set_ptr);
   trace_gen->SetCurrentBlock(new Block(1));
   trace_gen->IncrEventCount();
 }
@@ -575,7 +623,9 @@ wrap_pre_promise_resolve(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_promise_wrap(void *wrapctx, OUT void **user_data)
 {
-  // TODO: revisit. This might not be needed.
+  Generator *trace_gen = GetTraceGenerator(user_data);
+  bool *is_promise = new bool(true);
+  trace_gen->AddToStore(PROMISE_EVENT, (void *) is_promise);
 }
 
 
@@ -648,9 +698,23 @@ wrapper_t NodeTraceGenerator::GetWrappers() {
   wrappers["node::(anonymous namespace)::TimerWrap::now"]   = { wrap_pre_timerwrap, nullptr };
   wrappers["node::fs::NewFSReqWrap"]                        = { wrap_pre_fsreq, nullptr };
   wrappers["node::AsyncWrap::EmitPromiseResolve"]           = { wrap_pre_promise_resolve, nullptr };
-  wrappers["node::PromiseWrap::PromiseWrap"]                = { wrap_pre_promise_wrap, nullptr };
+  wrappers["node::PromiseWrap::New"]                = { wrap_pre_promise_wrap, nullptr };
   wrappers["node::AsyncWrap::NewAsyncId"]                   = { wrap_pre_new_async_id, nullptr };
   return wrappers;
 }
+
+
+void NodeTraceGenerator::Stop() {
+  void *value = this->PopFromStore(PROMISE_SET);
+  if (!value) {
+    return;
+  }
+
+  // We deallocate the set pointer that we created in order
+  // to store all the events that are promises.
+  set<int> *set_ptr = static_cast<set<int>*>(value);
+  delete set_ptr;
+}
+
 
 }

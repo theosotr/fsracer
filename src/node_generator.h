@@ -16,6 +16,8 @@ namespace generator_keys {
   const string OPERATIONS = "operations/";
   const string THREAD_OPERATIONS = "thread_operations/";
   const string LAST_CREATED_EVENT = "last_created_event/";
+  const string PROMISE_SET = "promises/set";
+  const string PROMISE_EVENT = "promises/event";
 }
 
 
@@ -35,6 +37,7 @@ class NodeTraceGenerator : public generator::Generator {
     }
 
     wrapper_t GetWrappers();
+    void Stop();
 };
 
 

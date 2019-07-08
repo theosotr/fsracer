@@ -84,6 +84,7 @@ class Generator {
     void DeleteFromStore(string key);
     void *PopFromStore(string key);
     virtual void Start(const module_data_t *mod);
+    virtual void Stop();
     virtual wrapper_t GetWrappers();
     virtual string GetName();
 
