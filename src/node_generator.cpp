@@ -284,7 +284,7 @@ wrap_pre_uv_fs_work(void *wrapctx, OUT void **user_data)
   string addr = utils::PtrToString(uv_fs_t_ptr);
 
   string thread_str = to_string(utils::GetCurrentThread(wrapctx));
-  string key = THREAD_OPERATIONS + thread_str;
+  string key = FUNC_INVOCATIONS + thread_str + "/uv__fs_work";
   // We get the number of `uv__fs_work` invocations in the current call
   // stack.
   int *work_count = (int *) trace_gen->GetStoreValue(key);
@@ -336,7 +336,7 @@ wrap_post_uv_fs_work(void *wrapctx, void *user_data)
 
   // We examine the store to see the number of
   // 'uv__fs_work' invocations in the current call stack.
-  string key = THREAD_OPERATIONS + thread_str;
+  string key = FUNC_INVOCATIONS + thread_str + "/uv__fs_work";
   int *work_count = (int *) trace_gen->GetStoreValue(key);
   if (!work_count) {
     return;

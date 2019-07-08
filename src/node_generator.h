@@ -12,9 +12,9 @@ using namespace trace;
 
 namespace generator_keys {
   const string FUNC_ARGS = "args/";
+  const string FUNC_INVOCATIONS = "func_invocations/";
   const string THREADS = "threads/";
   const string OPERATIONS = "operations/";
-  const string THREAD_OPERATIONS = "thread_operations/";
   const string LAST_CREATED_EVENT = "last_created_event/";
   const string PROMISE_SET = "promises/set";
   const string PROMISE_EVENT = "promises/event";
