@@ -9,30 +9,20 @@ function before(asyncID) {
 }
 function after() {}
 function destroy() {}
-function resolve() {}
+function resolve(asyncId) {
+  fs.writeSync(1, `Resolve ${asyncId}\n`);
+}
 
 const asyncHook = ah.createHook({init, before, after, destroy, resolve});
 asyncHook.enable();
 
 
-fs.writeFileSync("tmp", "data");
-
-
-setImmediate(() => {
-  fs.exists("tmp", (exists) => {
-    if (exists) {
-      fs.readFile("tmp", (err, data) => {
-        if (err) {
-          return;
-        }
-        console.log("Data: " + data);
-      });
-    }
-  })
+Promise.resolve().then(() => {
+  fs.writeFile("foo", "data", () => {});
+}).then(() => {
+  fs.unlink("foo", () => {})
 });
 
-
-setTimeout(() => {
-  fs.unlink("tmp", () => {
-  })
-});
+Promise.reject().catch(() => {
+  fs.access("foo", () => {});
+})
