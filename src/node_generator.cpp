@@ -509,8 +509,13 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
   int async_id = *(double *) ctx->ymm; // xmm0 register
   int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
   trace_gen->IncrEventCount();
+
+  // We link the event with `trigger_async_id` with the event
+  // with id related to `async_id`.
+  trace_gen->GetCurrentBlock()->AddExpr(
+      new LinkExpr(trigger_async_id, async_id));
   Event *last_event = (Event *) trace_gen->PopFromStore(LAST_CREATED_EVENT);
-  if (last_event && trace_gen->GetCurrentBlock()) {
+  if (last_event) {
     trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
         async_id, *last_event));
     int *event_id = new int(async_id);
@@ -528,8 +533,8 @@ wrap_pre_start(void *wrapctx, OUT void **user_data)
   // This is the block corresponding to the execution of the top-level
   // code.
   //
-  // We set the ID of this block to 0.
-  trace_gen->SetCurrentBlock(new Block(0));
+  // We set the ID of this block to 1.
+  trace_gen->SetCurrentBlock(new Block(1));
   trace_gen->IncrEventCount();
 }
 
