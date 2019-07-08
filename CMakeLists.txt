@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
+option(ENABLE_TESTS "Enable tests for the client" ON)
+
 file(GLOB src_files src/*.cpp)
 add_library(fsracer SHARED ${src_files})
 
@@ -10,3 +12,9 @@ use_DynamoRIO_extension(fsracer "drmgr")
 use_DynamoRIO_extension(fsracer "drsyms")
 
 configure_DynamoRIO_client(fsracer)
+
+
+if (ENABLE_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif (ENABLE_TESTS)
