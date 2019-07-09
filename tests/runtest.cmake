@@ -39,43 +39,61 @@ execute_process(
   COMMAND ${cmd}
   OUTPUT_VARIABLE output
 )
+string(REGEX REPLACE "\n" "." output ${output})
 
-# Replace PID with any empty string.
-string(REGEX REPLACE
-  "[a-zA-Z]+: PID [0-9]+, Start collecting trace..."
-  "Start collecting trace..."
-  output_repl
-  ${output}
+# We replace any boiler plate operations performed
+# by Node during the the start of the program.
+# Typically those operations are simple stat and lstat
+# operations that check whether the given program
+# and its parent directories exist.
+string(CONCAT prologue_operation_repl
+  "(Operation sync_[0-9]+ do.done.)+"
+  "Operation sync_[0-9]+ do."
+  "hpath AT_FDCWD /home[^\n]*/${TEST_FILE} consumed." # At this point Node opens the test program.
+  "newFd /home/[^\n]*/${TEST_FILE} [0-9]+."
+  "done."
+  "Operation sync_[0-9]+ do."
+  "delFd [0-9]+."
+  "done"
 )
 
-# Replace any absolute paths produced by the tool.
-string(REGEX REPLACE
-  "/home/[^\n]*/${TEST_FILE}"
-  "${TEST_FILE}"
-  output_repl
-  ${output_repl}
+string(CONCAT prologue_block_repl
+  "Link 1 2."
+  "Link 1 3."
+  "SubmitOp sync_1 stat SYNC."
+  "(SubmitOp sync_[0-9]+ lstat SYNC.)*"
+  "SubmitOp sync_[0-9]+ open SYNC."
+  "SubmitOp sync_[0-9]+ close SYNC"
 )
-file(WRITE output_file ${output_repl})
-
 
 if (EXISTS "${expected_filename}")
-  # The filename exists, so we use the `diff` utility to compare
-  # the expected result with the current one.
-  execute_process(
-    COMMAND diff output_file ${expected_filename}
-    OUTPUT_VARIABLE output
-    RESULT_VARIABLE exit_code
-  )
+  # Opens the pattern file.
+  file(READ ${expected_filename} pattern)
 
-  # The `diff` utility produced a non zero-exit code, so we presume
-  # that the files do not match.
-  if (exit_code)
+  #We replace boilerplate patterns.
+  string(REGEX REPLACE
+    "@PROLOGUE_OPERATIONS@"
+    ${prologue_operation_repl}
+    pattern
+    ${pattern}
+  )
+  string(REGEX REPLACE
+    "@PROLOGUE_BLOCK@"
+    ${prologue_block_repl}
+    pattern
+    ${pattern}
+  )
+  string(REGEX REPLACE "\n" "." pattern ${pattern})
+  string(REGEX MATCH ${pattern} match ${output})
+
+
+  if (NOT match)
     message(SEND_ERROR
-      "Test ${TEST_FILE} does not produce the expected output\n${output}")
-  endif (exit_code) 
+      "Test ${TEST_FILE} does not produce the expected output.")
+  endif (NOT match)
 else ()
   # If the file does not exist, we just create the expected file
   # and pass the current test.
   # Note that this can be used for creating expected files efficiently.
-  file(WRITE "${expected_filename}" ${output_repl})
+  file(WRITE "${expected_filename}" ${output})
 endif ()

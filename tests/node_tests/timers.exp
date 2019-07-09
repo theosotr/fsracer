@@ -9,34 +9,10 @@ Before 7
 Before 4
 Create 8, FSREQWRAP
 Before 8
-Start collecting trace...
+NodeTrace: PID [0-9]+, Start collecting trace...
 NodeTrace: Trace collected
 DumpAnalyzer: Start analyzing traces...
-Operation sync_1 do
-done
-Operation sync_2 do
-done
-Operation sync_3 do
-done
-Operation sync_4 do
-done
-Operation sync_5 do
-done
-Operation sync_6 do
-done
-Operation sync_7 do
-done
-Operation sync_8 do
-done
-Operation sync_9 do
-done
-Operation sync_10 do
-hpath AT_FDCWD timers.js consumed
-newFd timers.js 19
-done
-Operation sync_11 do
-delFd 19
-done
+@PROLOGUE_OPERATIONS@
 Operation sync_12 do
 hpath AT_FDCWD tmp produced
 newFd tmp 19
@@ -51,19 +27,7 @@ Operation async_8 do
 hpath AT_FDCWD tmp consumed
 done
 Begin 1
-Link 1 2
-Link 1 3
-SubmitOp sync_1 stat SYNC
-SubmitOp sync_2 lstat SYNC
-SubmitOp sync_3 lstat SYNC
-SubmitOp sync_4 lstat SYNC
-SubmitOp sync_5 lstat SYNC
-SubmitOp sync_6 lstat SYNC
-SubmitOp sync_7 lstat SYNC
-SubmitOp sync_8 lstat SYNC
-SubmitOp sync_9 lstat SYNC
-SubmitOp sync_10 open SYNC
-SubmitOp sync_11 close SYNC
+@PROLOGUE_BLOCK@
 SubmitOp sync_12 open SYNC
 SubmitOp sync_13 close SYNC
 newEvent 4 W 3
