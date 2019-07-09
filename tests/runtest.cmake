@@ -19,7 +19,7 @@ message("Testing with DynamoRIO file: ${DYNAMO_FILE}")
 message("Test Binary: ${TEST_CMD}")
 
 # Determine the filename tha contains the expected output.
-string(REPLACE ".js" ".expf" filename ${TEST_FILE})
+string(REPLACE ".js" ".exp" filename ${TEST_FILE})
 # Get the absolute path of the file that holds the expected result.
 get_filename_component(expected_filename
   "${CMAKE_SOURCE_DIR}/../../tests/${TEST_SUITE}/${filename}"
