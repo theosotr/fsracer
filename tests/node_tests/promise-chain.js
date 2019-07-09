@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 var t;
 
 function foo(cond) {
@@ -11,19 +13,17 @@ function foo(cond) {
       throw 'baz';
     });
   } else {
-    return Promise.resolve({
-      then: function fun4(res) {
-        t = {bar : 1};
-        res('bar');
-      }
-    });
+    return Promise.resolve('value');
   }
 }
 
 
 var x = Promise.resolve('bar');
 x.then(function fun1(value) {
-  return foo();
-}).then(function fun5(value) {
+  return foo(true);
+}).catch(function fun5(value) {
   t.bar;
-}).catch(function fun7(value) {  });
+  return foo(false)
+}).then(function fun7(value) {
+  fs.access("foo", () => {});
+});
