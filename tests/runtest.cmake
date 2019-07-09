@@ -30,6 +30,27 @@ get_filename_component(test_file
   "${CMAKE_SOURCE_DIR}/../../tests/${TEST_SUITE}/${TEST_FILE}"
   REALPATH)
 
+if (NOT EXISTS ${test_file})
+  message(FATAL_ERROR "The program under test ${test_file} does not exist")
+endif ()
+
+# We read the program under test and we add it some necessary code
+# to enable testing.
+file(READ ${test_file} program)
+string(CONCAT program
+  "const ah = require('async_hooks');\n"
+  "function init() {  }\n"
+  "function before() {  }\n"
+  "function after() {  }\n"
+  "function destroy() {  }\n"
+  "function resolve() {  }\n"
+  "ah.createHook({ init, before, after, destroy, resolve }).enable()\n"
+  ${program}
+)
+# We save the instrumented program to a new temporary file.
+file(WRITE ${TEST_FILE} ${program})
+set(test_file ${TEST_FILE})
+
 # Define the command to run.
 set (cmd ${DYNAMO_FILE} -c ../libfsracer.so -- ${TEST_CMD} ${test_file})
 
@@ -39,7 +60,7 @@ execute_process(
   COMMAND ${cmd}
   OUTPUT_VARIABLE output
 )
-string(REGEX REPLACE "\n" "." output ${output})
+string(REGEX REPLACE "\n" "." output_rep ${output})
 
 # We replace any boiler plate operations performed
 # by Node during the the start of the program.
@@ -84,12 +105,15 @@ if (EXISTS "${expected_filename}")
     ${pattern}
   )
   string(REGEX REPLACE "\n" "." pattern ${pattern})
-  string(REGEX MATCH ${pattern} match ${output})
+  string(REGEX MATCH ${pattern} match ${output_rep})
 
 
   if (NOT match)
+    file(WRITE ${TEST_FILE}.out ${output})
     message(SEND_ERROR
-      "Test ${TEST_FILE} does not produce the expected output.")
+      "Test ${TEST_FILE} does not produce the expected output.\
+      View resulting output at ${TEST_FILE}.out.")
+
   endif (NOT match)
 else ()
   # If the file does not exist, we just create the expected file
@@ -97,3 +121,6 @@ else ()
   # Note that this can be used for creating expected files efficiently.
   file(WRITE "${expected_filename}" ${output})
 endif ()
+
+# We remove the temporary test file.
+file(REMOVE ${test_file})

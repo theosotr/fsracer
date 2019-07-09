@@ -1,14 +1,4 @@
 Starting the FSRacer Client...
-Create 4, Immediate
-Create 5, Timeout
-Create 6, TIMERWRAP
-Before 6
-Before 5
-Create 7, FSREQWRAP
-Before 7
-Before 4
-Create 8, FSREQWRAP
-Before 8
 NodeTrace: PID [0-9]+, Start collecting trace...
 NodeTrace: Trace collected
 DumpAnalyzer: Start analyzing traces...
