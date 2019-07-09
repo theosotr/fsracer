@@ -26,3 +26,5 @@ endfunction (new_test)
 
 
 new_test (node_tests test_timers timers.js)
+new_test (node_tests test_compound compound.js)
+new_test (node_tests test_promises promises.js)
