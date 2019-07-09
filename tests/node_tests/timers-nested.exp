@@ -1,0 +1,33 @@
+Starting the FSRacer Client...
+NodeTrace: PID [0-9]+, Start collecting trace...
+NodeTrace: Trace collected
+DumpAnalyzer: Start analyzing traces...
+@PROLOGUE_OPERATIONS@
+Operation async_8 do
+hpath AT_FDCWD foo consumed
+done
+Begin 1
+@PROLOGUE_BLOCK@
+newEvent 4 W 3
+Link 1 5
+End
+Begin 5
+End
+Begin 4
+newEvent 6 W 3
+End
+Begin 5
+End
+Begin 6
+newEvent 7 W 3
+End
+Begin 5
+End
+Begin 7
+Link 7 8
+newEvent 8 W 2
+SubmitOp async_8 access ASYNC
+End
+Begin 8
+End
+DumpAnalyzer: Analysis is done
