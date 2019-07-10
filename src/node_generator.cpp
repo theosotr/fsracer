@@ -516,11 +516,12 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
     // that we did not close the previous block.
     //
     // So we do it right now.
-    trace_gen->GetTrace()->AddBlock(trace_gen->GetCurrentBlock());
+    //trace_gen->GetTrace()->AddBlock(trace_gen->GetCurrentBlock());
     trace_gen->SetCurrentBlock(NULL);
   }
   // This hook occurs just before the execution of an event-related callback.
   trace_gen->SetCurrentBlock(new Block(id));
+  trace_gen->GetTrace()->AddBlock(trace_gen->GetCurrentBlock());
 }
 
 
@@ -528,7 +529,6 @@ static void
 wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
 {
   Generator *trace_gen = GetTraceGenerator(user_data);
-  trace_gen->GetTrace()->AddBlock(trace_gen->GetCurrentBlock());
   trace_gen->SetCurrentBlock(NULL);
 }
 
@@ -583,6 +583,7 @@ wrap_pre_start(void *wrapctx, OUT void **user_data)
   set<int> *set_ptr = new set<int>(promise_set);
   trace_gen->AddToStore(PROMISE_SET, (void *) set_ptr);
   trace_gen->SetCurrentBlock(new Block(1));
+  trace_gen->GetTrace()->AddBlock(trace_gen->GetCurrentBlock());
   trace_gen->IncrEventCount();
 }
 
