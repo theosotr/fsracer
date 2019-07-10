@@ -3,35 +3,23 @@ NodeTrace: PID [0-9]+, Start collecting trace...
 NodeTrace: Trace collected
 DumpAnalyzer: Start analyzing traces...
 @PROLOGUE_OPERATIONS@
-Operation async_8 do
-hpath AT_FDCWD foo consumed
-done
-Operation async_9 do
-hpath AT_FDCWD bar consumed
-done
 Begin 1
 @PROLOGUE_BLOCK@
 Link 1 4
 Link 4 5
-Link 1 6
-newEvent 6 S 0
-Link 6 7
 newEvent 4 S 0
 End
-Begin 6
-Link 7 8
-newEvent 8 W 2
-SubmitOp async_8 access ASYNC
-newEvent 7 S 0
-End
 Begin 4
-Link 5 9
-newEvent 9 W 2
-SubmitOp async_9 access ASYNC
+Link 5 6
+newEvent 6 S 0
+Link 6 7
+End
+Begin 6
+newEvent 7 S 0
+Link 7 8
+End
+Begin 7
 newEvent 5 S 0
-End
-Begin 8
-End
-Begin 9
+newEvent 8 S 0
 End
 DumpAnalyzer: Analysis is done

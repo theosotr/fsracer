@@ -622,6 +622,38 @@ wrap_pre_promise_resolve(void *wrapctx, OUT void **user_data)
 
 
 static void
+wrap_pre_thenable(void *wrapctx, OUT void **user_data)
+{
+  // The underlying V8 function NewPromiseResolveThenableJobTask()
+  // is called when we asynchronously resolve a promise with a thenable
+  // or another promise object.
+  //
+  // For example, consider the following JavaScript code:
+  //
+  // var t = {
+  //   then: function foo(resolve) => {
+  //       resolve(true);
+  //   }
+  // var p = Promise.resolve(t);
+  //
+  // The promise `p` does not resolve synchronously.
+  // Instead, V8 schedules the execution of function foo()
+  // that eventually resolves the promise `p`.
+  //
+  // Therefore, when we encounter an invocation of the internal
+  // V8 function NewPromiseResolveThenableJobTask(), we remove
+  // the last expression of the current execution block
+  // corresponding to the creation of the promise.
+  //
+  // A similar expression is added *after* the execution of
+  // the function responsible for fulfilling the promise (e.g., foo()).
+  //
+  Generator *trace_gen = GetTraceGenerator(user_data);
+  trace_gen->GetCurrentBlock()->PopExpr();
+}
+
+
+static void
 wrap_pre_promise_wrap(void *wrapctx, OUT void **user_data)
 {
   Generator *trace_gen = GetTraceGenerator(user_data);
@@ -699,8 +731,11 @@ wrapper_t NodeTraceGenerator::GetWrappers() {
   wrappers["node::(anonymous namespace)::TimerWrap::now"]   = { wrap_pre_timerwrap, nullptr };
   wrappers["node::fs::NewFSReqWrap"]                        = { wrap_pre_fsreq, nullptr };
   wrappers["node::AsyncWrap::EmitPromiseResolve"]           = { wrap_pre_promise_resolve, nullptr };
-  wrappers["node::PromiseWrap::New"]                = { wrap_pre_promise_wrap, nullptr };
+  wrappers["node::PromiseWrap::New"]                        = { wrap_pre_promise_wrap, nullptr };
   wrappers["node::AsyncWrap::NewAsyncId"]                   = { wrap_pre_new_async_id, nullptr };
+
+  // V8 wrappers
+  wrappers["v8::internal::Factory::NewPromiseResolveThenableJobTask"] = { wrap_pre_thenable, nullptr };
   return wrappers;
 }
 

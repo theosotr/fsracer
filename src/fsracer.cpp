@@ -13,7 +13,6 @@ using namespace analyzer;
 
 // TODO:
 // * Handle nextTick
-// * Better handle Promise thenables.
 //
 static Generator *trace_gen;
 bool module_loaded = false;

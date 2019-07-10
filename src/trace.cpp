@@ -83,6 +83,16 @@ void LinkExpr::Accept(analyzer::Analyzer *analyzer) {
 }
 
 
+void Block::PopExpr() {
+  if (exprs.empty()) {
+    return;
+  }
+  vector<Expr *>::iterator it = exprs.end() - 1;
+  delete *it;
+  exprs.erase(it);
+}
+
+
 void Block::ClearExprs() {
   for (size_t i = 0; i < exprs.size(); i++) {
     delete exprs[i];

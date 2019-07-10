@@ -19,7 +19,6 @@ Link 5 8
 newEvent 8 S 0
 Link 8 9
 Link 9 10
-newEvent 5 S 0
 End
 Begin 8
 newEvent 9 S 0
@@ -35,7 +34,6 @@ End
 Begin 5
 Link 6 12
 newEvent 12 S 0
-newEvent 6 S 0
 Link 12 13
 End
 Begin 12

@@ -355,6 +355,9 @@ class Block : public TraceNode {
       return block_id;
     }
 
+    /** Gets the last expression of the block and remove it. */
+    void PopExpr();
+
     /**
      * This method accepts an analyzer that is responsible for processing the
      * current execution block.
