@@ -119,18 +119,10 @@ typedef ExecOp *(*exec_op_t)(void *wrapctx, OUT void **user_data);
 generator::Generator *GetTraceGenerator(void **data);
 
 
+
 static void
-default_post(void *wrapctx, void *user_data)
+DefaultPre(void *wrapctx, OUT void **user_data)
 {
-  generator::Generator *trace_gen = (generator::Generator *) user_data;
-  trace_gen->PopStack();
-}
-
-template<typename Fn, Fn fn, typename... Args>
-void pre_wrap(void *wrapctx, OUT void **user_data) {
-  // Call the actual wrapper
-  fn(wrapctx, user_data);
-
   // Push the name of the function we wrap onto the stack.
   void *ptr = drwrap_get_func(wrapctx);
   string addr = utils::PtrToString(ptr);
@@ -141,15 +133,30 @@ void pre_wrap(void *wrapctx, OUT void **user_data) {
   }
 }
 
+
+static void
+DefaultPost(void *wrapctx, void *user_data)
+{
+  generator::Generator *trace_gen = (generator::Generator *) (user_data);
+  trace_gen->PopStack();
+}
+
+
+template<typename Fn, Fn fn, typename... Args>
+void pre_wrap(void *wrapctx, OUT void **user_data) {
+  // Call the actual wrapper
+  fn(wrapctx, user_data);
+  DefaultPre(wrapctx, user_data);
+}
+
+
 template<typename Fn, Fn fn, typename... Args>
 void post_wrap(void *wrapctx, void *user_data) {
   // Call the actual wrapper
   fn(wrapctx, user_data);
-  generator::Generator *trace_gen = GetTraceGenerator(user_data);
-
-  // Pop the top function from the stack.
-  trace_gen->PopStack();
+  DefaultPost(wrapctx, user_data);
 }
+
 
 void EmitDelFd(void *wrapctx, OUT void **user_data, size_t fd_pos,
                 exec_op_t get_exec_op);

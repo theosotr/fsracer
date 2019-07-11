@@ -18,6 +18,7 @@ namespace generator_keys {
   const string LAST_CREATED_EVENT = "last_created_event/";
   const string PROMISE_SET = "promises/set";
   const string PROMISE_EVENT = "promises/event";
+  const string TIMER_SET = "timers/set";
 }
 
 

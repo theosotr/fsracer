@@ -5,6 +5,12 @@
 #include "node_generator.h"
 #include "utils.h"
 
+
+#define NEW_TIMERWRAP "node::(anonymous namespace)::TimerWrap::New"
+#define PRE_WRAP(FUNC) pre_wrap<decltype(&FUNC), &FUNC>
+
+
+
 using namespace generator;
 using namespace generator_utils;
 using namespace generator_keys;
@@ -63,29 +69,29 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
 
 
 static void
-add_promise(Generator *trace_gen, int promise_id)
+add_to_set(Generator *trace_gen, int event_id, string key)
 {
-  void *value = trace_gen->GetStoreValue(PROMISE_SET);
+  void *value = trace_gen->GetStoreValue(key);
   if (!value) {
     return;
   }
 
   set<int> *set_ptr = static_cast<set<int>*>(value);
-  set_ptr->insert(promise_id);
+  set_ptr->insert(event_id);
 }
 
 
 static bool
-is_promise(Generator *trace_gen, int promise_id)
+has_event_id(Generator *trace_gen, int event_id, string key)
 {
 
-  void *value = trace_gen->GetStoreValue(PROMISE_SET);
+  void *value = trace_gen->GetStoreValue(key);
   if (!value) {
     return false;
   }
 
   set<int> *set_ptr = static_cast<set<int>*>(value);
-  set<int>::iterator it = set_ptr->find(promise_id);
+  set<int>::iterator it = set_ptr->find(event_id);
   return !(it == set_ptr->end());
 }
 
@@ -504,12 +510,23 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
     return;
   }
 
+  if (has_event_id(trace_gen, async_id, TIMER_SET)) {
+    // This block is a timer-related block.
+    // However, we don't create a new block as we use
+    // the block allocated for the timer wrapper.
+    size_t block_id = trace_gen->GetCurrentBlock()->GetBlockId();
+    trace_gen->GetCurrentBlock()->AddExpr(
+        new LinkExpr(block_id, async_id));
+    return;
+  }
+
   int id = async_id;
-  if (is_promise(trace_gen, async_id)) {
+  if (has_event_id(trace_gen, async_id, PROMISE_SET)) {
     // If `async_id` is a promise, we use that as the id
     // of the block.
     id = trigger_async_id;
   }
+
 
   if (trace_gen->GetCurrentBlock()) {
     // If this values does not point to NULL, we can infer
@@ -533,6 +550,19 @@ wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
 }
 
 
+inline static void
+add_new_event_expr(Generator *trace_gen, size_t event_id, Event event)
+{
+  if (!trace_gen) {
+    return;
+  }
+  trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(event_id, event));
+  int *event_id_ptr = new int(event_id);
+  trace_gen->AddToStore(FUNC_ARGS + "wrap_pre_emit_init",
+      (void *) event_id_ptr);
+}
+
+
 static void
 wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
 {
@@ -542,6 +572,16 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
   int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
   trace_gen->IncrEventCount();
 
+  string top_func = trace_gen->TopStack();
+  if (top_func == NEW_TIMERWRAP) {
+    // This means that the created event is a timer wrapper.
+    // So we create an event of type W 0.
+    //
+    // The execution order of the related callbacks follows the
+    // order that appear in traces.
+    add_new_event_expr(trace_gen, async_id, Event(Event::W, 0));
+    return;
+  }
   // We link the event with `trigger_async_id` with the event
   // with id related to `async_id`.
   trace_gen->GetCurrentBlock()->AddExpr(
@@ -552,7 +592,7 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
   if (is_promise && *is_promise) {
     // This event we are going to create is a promise,
     // so we add the corresponding id to the set of promises.
-    add_promise(trace_gen, async_id);
+    add_to_set(trace_gen, async_id, PROMISE_SET);
   }
 
   if (is_promise) {
@@ -561,11 +601,7 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
   }
 
   if (last_event) {
-    trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
-        async_id, *last_event));
-    int *event_id = new int(async_id);
-    trace_gen->AddToStore(FUNC_ARGS + "wrap_pre_emit_init",
-        (void *) event_id);
+    add_new_event_expr(trace_gen, async_id, *last_event);
     delete last_event;
   }
 }
@@ -579,9 +615,11 @@ wrap_pre_start(void *wrapctx, OUT void **user_data)
   // code.
   //
   // We set the ID of this block to 1.
-  set<int> promise_set;
-  set<int> *set_ptr = new set<int>(promise_set);
-  trace_gen->AddToStore(PROMISE_SET, (void *) set_ptr);
+  set<int> initial_set;
+  set<int> *promises = new set<int>(initial_set);
+  set<int> *timers = new set<int>(initial_set);
+  trace_gen->AddToStore(PROMISE_SET, (void *) promises);
+  trace_gen->AddToStore(TIMER_SET, (void *) timers);
   trace_gen->SetCurrentBlock(new Block(1));
   trace_gen->GetTrace()->AddBlock(trace_gen->GetCurrentBlock());
   trace_gen->IncrEventCount();
@@ -592,10 +630,11 @@ static void
 wrap_pre_timerwrap(void *wrapctx, OUT void **user_data)
 {
   Generator *trace_gen = GetTraceGenerator(user_data);
-  trace_gen->IncrEventCount();
   Event event = Event(Event::W, 1);
+  trace_gen->GetCurrentBlock()->PopExpr();
   trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
       trace_gen->GetEventCount(), event));
+  add_to_set(trace_gen, trace_gen->GetEventCount(), TIMER_SET);
 }
 
 
@@ -724,15 +763,16 @@ wrapper_t NodeTraceGenerator::GetWrappers() {
   wrappers["uv_fs_utime"]    = { wrap_pre_uv_fs_utime, nullptr };
 
   // Node wrappers
-  wrappers["node::Start"]                                   = { wrap_pre_start, nullptr };
-  wrappers["node::Environment::AsyncHooks::push_async_ids"] = { wrap_pre_emit_before, nullptr };
-  wrappers["node::AsyncWrap::EmitAfter"]                    = { wrap_pre_emit_after, nullptr };
-  wrappers["node::AsyncWrap::EmitAsyncInit"]                = { wrap_pre_emit_init, nullptr };
-  wrappers["node::(anonymous namespace)::TimerWrap::now"]   = { wrap_pre_timerwrap, nullptr };
-  wrappers["node::fs::NewFSReqWrap"]                        = { wrap_pre_fsreq, nullptr };
-  wrappers["node::AsyncWrap::EmitPromiseResolve"]           = { wrap_pre_promise_resolve, nullptr };
-  wrappers["node::PromiseWrap::New"]                        = { wrap_pre_promise_wrap, nullptr };
-  wrappers["node::AsyncWrap::NewAsyncId"]                   = { wrap_pre_new_async_id, nullptr };
+  wrappers["node::Start"]                                   = { PRE_WRAP(wrap_pre_start), DefaultPost };
+  wrappers["node::Environment::AsyncHooks::push_async_ids"] = { PRE_WRAP(wrap_pre_emit_before), DefaultPost };
+  wrappers["node::AsyncWrap::EmitAfter"]                    = { PRE_WRAP(wrap_pre_emit_after), DefaultPost };
+  wrappers["node::AsyncWrap::EmitAsyncInit"]                = { PRE_WRAP(wrap_pre_emit_init), DefaultPost };
+  wrappers["node::(anonymous namespace)::TimerWrap::Now"]   = { PRE_WRAP(wrap_pre_timerwrap), DefaultPost };
+  wrappers["node::(anonymous namespace)::TimerWrap::New"]   = { DefaultPre, DefaultPost };
+  wrappers["node::fs::NewFSReqWrap"]                        = { PRE_WRAP(wrap_pre_fsreq), DefaultPost };
+  wrappers["node::AsyncWrap::EmitPromiseResolve"]           = { PRE_WRAP(wrap_pre_promise_resolve), DefaultPost };
+  wrappers["node::PromiseWrap::New"]                        = { PRE_WRAP(wrap_pre_promise_wrap), DefaultPost };
+  wrappers["node::AsyncWrap::NewAsyncId"]                   = { PRE_WRAP(wrap_pre_new_async_id), DefaultPost };
 
   // V8 wrappers
   wrappers["v8::internal::Factory::NewPromiseResolveThenableJobTask"] = { wrap_pre_thenable, nullptr };
@@ -741,15 +781,20 @@ wrapper_t NodeTraceGenerator::GetWrappers() {
 
 
 void NodeTraceGenerator::Stop() {
+  // We deallocate the set pointers holding all the timer-
+  // and promise-related events.
+  set<int> *set_ptr;
   void *value = this->PopFromStore(PROMISE_SET);
-  if (!value) {
-    return;
+  if (value) {
+    set_ptr = static_cast<set<int>*>(value);
+    delete set_ptr;
   }
 
-  // We deallocate the set pointer that we created in order
-  // to store all the events that are promises.
-  set<int> *set_ptr = static_cast<set<int>*>(value);
-  delete set_ptr;
+  value = this->PopFromStore(TIMER_SET);
+  if (value) {
+    set_ptr = static_cast<set<int>*>(value);
+    delete set_ptr;
+  }
 }
 
 

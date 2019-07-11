@@ -21,12 +21,11 @@ Begin 1
 SubmitOp sync_12 open SYNC
 SubmitOp sync_13 close SYNC
 newEvent 4 W 3
-newEvent 5 W 3
-Link 1 6
+newEvent 5 W 1
+newEvent 6 W 0
 End
 Begin 6
-End
-Begin 5
+Link 6 5
 Link 5 7
 newEvent 7 W 2
 SubmitOp async_7 unlink ASYNC
