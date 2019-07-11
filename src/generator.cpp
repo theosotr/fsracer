@@ -77,6 +77,12 @@ void Generator::RegisterFunc(const module_data_t *mod, string func_name,
     if (!wrapped) {
       dr_fprintf(STDERR,
           "FSRacer Error: Couldn't wrap the %s function\n", func_name);
+    } else {
+      // We now register the address of the function to the function registry.
+      // Each entry maps the address of the function to its name.
+      void *ptr = (void *) towrap;
+      string addr = utils::PtrToString(ptr);
+      this->AddFunc(addr, func_name);
     }
   }
 }
@@ -120,6 +126,38 @@ void *Generator::PopFromStore(string key) {
     store.erase(it);
   }
   return value;
+}
+
+
+void Generator::PushFunction(string func_name) {
+  call_stack.push(func_name);
+}
+
+
+void Generator::PopStack() {
+  if (!call_stack.empty()) {
+    call_stack.pop();
+  }
+}
+
+
+string Generator::TopStack() {
+  return call_stack.top();
+}
+
+
+void Generator::AddFunc(string addr, string func_name) {
+  funcs[addr] = func_name;
+}
+
+
+string Generator::GetFuncName(string addr) {
+  map<string, string>::iterator it = funcs.find(addr);
+
+  if (it != funcs.end()) {
+    return it->second;
+  }
+  return "";
 }
 
 
@@ -194,5 +232,6 @@ EmitSymlink(void *wrapctx, OUT void **user_data, size_t old_path_pos,
   MULTIPATH;
   exec_op->AddOperation(new Symlink(AT_FDCWD, new_path, old_path));
 }
+
 
 }

@@ -4,14 +4,15 @@
 #include <iostream>
 #include <map>
 #include <utility>
+#include <stack>
 
 #include "dr_api.h"
 #include "drmgr.h"
 #include "drwrap.h"
 #include "drsyms.h"
 
+#include "utils.h"
 #include "trace.h"
-
 
 
 using namespace trace;
@@ -83,6 +84,11 @@ class Generator {
     void *GetStoreValue(string key);
     void DeleteFromStore(string key);
     void *PopFromStore(string key);
+    void PushFunction(string func_name);
+    void PopStack();
+    string TopStack();
+    void AddFunc(string addr, string func_name);
+    string GetFuncName(string addr);
     virtual void Start(const module_data_t *mod);
     virtual void Stop();
     virtual wrapper_t GetWrappers();
@@ -96,6 +102,8 @@ class Generator {
     size_t event_count;
     map<string, void*> store;
     size_t sync_op_count;
+    stack<string> call_stack;
+    map<string, string> funcs;
 
     void RegisterFunc(const module_data_t *mod, string func_name,
                       pre_clb_t pre, post_clb_t post);
@@ -109,6 +117,40 @@ namespace generator_utils {
 typedef ExecOp *(*exec_op_t)(void *wrapctx, OUT void **user_data);
 
 generator::Generator *GetTraceGenerator(void **data);
+
+
+static void
+default_post(void *wrapctx, void *user_data)
+{
+  generator::Generator *trace_gen = (generator::Generator *) user_data;
+  trace_gen->PopStack();
+}
+
+template<typename Fn, Fn fn, typename... Args>
+void pre_wrap(void *wrapctx, OUT void **user_data) {
+  // Call the actual wrapper
+  fn(wrapctx, user_data);
+
+  // Push the name of the function we wrap onto the stack.
+  void *ptr = drwrap_get_func(wrapctx);
+  string addr = utils::PtrToString(ptr);
+  generator::Generator *trace_gen = GetTraceGenerator(user_data);
+  string func_name = trace_gen->GetFuncName(addr);
+  if (func_name != "") {
+    trace_gen->PushFunction(func_name);
+  }
+}
+
+template<typename Fn, Fn fn, typename... Args>
+void post_wrap(void *wrapctx, void *user_data) {
+  // Call the actual wrapper
+  fn(wrapctx, user_data);
+  generator::Generator *trace_gen = GetTraceGenerator(user_data);
+
+  // Pop the top function from the stack.
+  trace_gen->PopStack();
+}
+
 void EmitDelFd(void *wrapctx, OUT void **user_data, size_t fd_pos,
                 exec_op_t get_exec_op);
 void EmitHpath(void *wrapctx, OUT void **user_data,
