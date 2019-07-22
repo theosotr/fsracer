@@ -118,28 +118,9 @@ typedef ExecOp *(*exec_op_t)(void *wrapctx, OUT void **user_data);
 
 generator::Generator *GetTraceGenerator(void **data);
 
+void DefaultPre(void *wrapctx, OUT void **user_data);
 
-
-static void
-DefaultPre(void *wrapctx, OUT void **user_data)
-{
-  // Push the name of the function we wrap onto the stack.
-  void *ptr = drwrap_get_func(wrapctx);
-  string addr = utils::PtrToString(ptr);
-  generator::Generator *trace_gen = GetTraceGenerator(user_data);
-  string func_name = trace_gen->GetFuncName(addr);
-  if (func_name != "") {
-    trace_gen->PushFunction(func_name);
-  }
-}
-
-
-static void
-DefaultPost(void *wrapctx, void *user_data)
-{
-  generator::Generator *trace_gen = (generator::Generator *) (user_data);
-  trace_gen->PopStack();
-}
+void DefaultPost(void *wrapctx, void *user_data);
 
 
 template<typename Fn, Fn fn, typename... Args>

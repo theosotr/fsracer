@@ -166,6 +166,7 @@ string Generator::GetFuncName(string addr) {
 
 namespace generator_utils {
 
+
 generator::Generator *
 GetTraceGenerator(void **data)
 {
@@ -175,6 +176,28 @@ GetTraceGenerator(void **data)
 
   generator::Generator *trace_gen = (generator::Generator *) *data;
   return trace_gen;
+}
+
+
+void
+DefaultPre(void *wrapctx, OUT void **user_data)
+{
+  // Push the name of the function we wrap onto the stack.
+  void *ptr = drwrap_get_func(wrapctx);
+  string addr = utils::PtrToString(ptr);
+  generator::Generator *trace_gen = GetTraceGenerator(user_data);
+  string func_name = trace_gen->GetFuncName(addr);
+  if (func_name != "") {
+    trace_gen->PushFunction(func_name);
+  }
+}
+
+
+void
+DefaultPost(void *wrapctx, void *user_data)
+{
+  generator::Generator *trace_gen = (generator::Generator *) (user_data);
+  trace_gen->PopStack();
 }
 
 
