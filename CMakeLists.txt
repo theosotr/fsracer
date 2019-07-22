@@ -7,6 +7,7 @@ endif (NOT DynamoRIO_BUILD_DIR)
 set(DynamoRIO_DIR ${DynamoRIO_BUILD_DIR}/cmake)
 option(ENABLE_TESTS "Enable tests for the client" ON)
 
+set(CMAKE_CXX_FLAGS  "-std=c++11")
 file(GLOB src_files src/*.cpp)
 add_library(fsracer SHARED ${src_files})
 
