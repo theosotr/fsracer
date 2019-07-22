@@ -5,7 +5,6 @@
 
 #include "generator.h"
 
-#define WORKER_OFFSET 336
 #define TOP_LEVEL_BLOCK 1
 
 

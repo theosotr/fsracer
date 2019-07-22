@@ -7,6 +7,7 @@
 
 
 #define NEW_TIMERWRAP "node::(anonymous namespace)::TimerWrap::New"
+#define WORKER_OFFSET 336
 #define PRE_WRAP(FUNC) pre_wrap<decltype(&FUNC), &FUNC>
 
 
