@@ -627,10 +627,23 @@ wrap_pre_start(void *wrapctx, OUT void **user_data)
 
 
 static void
+wrap_pre_new_tick_info(void *wrapctx, OUT void **user_data)
+{
+  Generator *trace_gen = GetTraceGenerator(user_data);
+  Event event = Event(Event::S, 0);
+  // We remove the last expression created by the NewAsyncId function.
+  trace_gen->GetCurrentBlock()->PopExpr();
+  trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
+      trace_gen->GetEventCount(), event));
+}
+
+
+static void
 wrap_pre_timerwrap(void *wrapctx, OUT void **user_data)
 {
   Generator *trace_gen = GetTraceGenerator(user_data);
   Event event = Event(Event::W, 1);
+  // We remove the last expression created by the NewAsyncId function.
   trace_gen->GetCurrentBlock()->PopExpr();
   trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
       trace_gen->GetEventCount(), event));
@@ -773,6 +786,7 @@ wrapper_t NodeTraceGenerator::GetWrappers() {
   wrappers["node::AsyncWrap::EmitPromiseResolve"]           = { PRE_WRAP(wrap_pre_promise_resolve), DefaultPost };
   wrappers["node::PromiseWrap::New"]                        = { PRE_WRAP(wrap_pre_promise_wrap), DefaultPost };
   wrappers["node::AsyncWrap::NewAsyncId"]                   = { PRE_WRAP(wrap_pre_new_async_id), DefaultPost };
+  wrappers["node::AsyncWrap::NewTickInfo"]                  = { PRE_WRAP(wrap_pre_new_tick_info), DefaultPost };
 
   // V8 wrappers
   wrappers["v8::internal::Factory::NewPromiseResolveThenableJobTask"] = { wrap_pre_thenable, nullptr };
