@@ -26,15 +26,15 @@ newEvent 6 W 0
 End
 Begin 6
 Link 6 5
-Link 5 7
 newEvent 7 W 2
+Link 5 7
 SubmitOp async_7 unlink ASYNC
 End
 Begin 7
 End
 Begin 4
-Link 4 8
 newEvent 8 W 2
+Link 4 8
 SubmitOp async_8 access ASYNC
 End
 Begin 8

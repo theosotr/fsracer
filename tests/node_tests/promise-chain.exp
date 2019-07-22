@@ -8,21 +8,13 @@ hpath AT_FDCWD foo consumed
 done
 Begin 1
 @PROLOGUE_BLOCK@
-Link 1 4
 newEvent 4 S 0
-Link 4 5
-Link 5 6
-Link 6 7
 End
 Begin 4
-Link 5 8
 newEvent 8 S 0
-Link 8 9
-Link 9 10
 End
 Begin 8
 newEvent 9 S 0
-Link 10 11
 End
 Begin 9
 newEvent 10 S 0
@@ -32,17 +24,15 @@ newEvent 5 S 0
 newEvent 11 S 0
 End
 Begin 5
-Link 6 12
 newEvent 12 S 0
-Link 12 13
 End
 Begin 12
 newEvent 6 S 0
 newEvent 13 S 0
 End
 Begin 6
-Link 7 14
 newEvent 14 W 2
+Link 7 14
 SubmitOp async_14 access ASYNC
 newEvent 7 S 0
 End

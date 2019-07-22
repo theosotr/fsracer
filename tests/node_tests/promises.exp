@@ -25,59 +25,54 @@ delFd 20
 done
 Begin 1
 @PROLOGUE_BLOCK@
-Link 1 4
 newEvent 4 S 0
-Link 4 5
-Link 5 6
-Link 1 7
 newEvent 7 S 0
-Link 7 8
 End
 Begin 4
-Link 5 9
 newEvent 9 W 2
+Link 5 9
 SubmitOp async_9 open ASYNC
 newEvent 5 S 0
 End
 Begin 7
-Link 8 10
 newEvent 10 W 2
+Link 8 10
 SubmitOp async_10 access ASYNC
 newEvent 8 S 0
 End
 Begin 5
-Link 6 11
 newEvent 11 W 2
+Link 6 11
 SubmitOp async_11 open ASYNC
 newEvent 6 S 0
 End
 Begin 9
-Link 9 12
 newEvent 12 W 2
+Link 9 12
 End
 Begin 10
 End
 Begin 11
-Link 11 13
 newEvent 13 W 2
+Link 11 13
 End
 Begin 12
-Link 12 14
 newEvent 14 W 2
+Link 12 14
 SubmitOp async_14 close ASYNC
 End
 Begin 13
-Link 13 15
 newEvent 15 W 2
+Link 13 15
 End
 Begin 14
-Link 14 16
 newEvent 16 W 2
+Link 14 16
 SubmitOp async_16 unlink ASYNC
 End
 Begin 15
-Link 15 17
 newEvent 17 W 2
+Link 15 17
 SubmitOp async_17 close ASYNC
 End
 Begin 16

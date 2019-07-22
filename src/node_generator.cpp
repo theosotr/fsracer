@@ -497,7 +497,6 @@ wrap_pre_uv_fs_utime(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
 {
-
   Generator *trace_gen = GetTraceGenerator(user_data);
   /* node::Environment::AsyncHooks::push_async_ids(double, double)
    *
@@ -510,14 +509,19 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
     return;
   }
 
-  if (has_event_id(trace_gen, async_id, TIMER_SET)) {
-    // This block is a timer-related block.
-    // However, we don't create a new block as we use
-    // the block allocated for the timer wrapper.
+  if (trace_gen->GetCurrentBlock()) {
+    // The block we are going to create is a nested block.
+    // 
+    // Nested blocks are not allowed to our trace language.
+    //
+    // Therefore, we don't create a new block. Instead, we use
+    // the most-recent allocated block.
     size_t block_id = trace_gen->GetCurrentBlock()->GetBlockId();
-    trace_gen->GetCurrentBlock()->AddExpr(
-        new LinkExpr(block_id, async_id));
-    return;
+    if (block_id != TOP_LEVEL_BLOCK) {
+      trace_gen->GetCurrentBlock()->AddExpr(
+          new LinkExpr(block_id, async_id));
+      return;
+    } 
   }
 
   int id = async_id;
@@ -529,12 +533,12 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
 
 
   if (trace_gen->GetCurrentBlock()) {
-    // If this values does not point to NULL, we can infer
+    // If this values does not point to nullptr, we can infer
     // that we did not close the previous block.
     //
     // So we do it right now.
     //trace_gen->GetTrace()->AddBlock(trace_gen->GetCurrentBlock());
-    trace_gen->SetCurrentBlock(NULL);
+    trace_gen->SetCurrentBlock(nullptr);
   }
   // This hook occurs just before the execution of an event-related callback.
   trace_gen->SetCurrentBlock(new Block(id));
@@ -546,7 +550,28 @@ static void
 wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
 {
   Generator *trace_gen = GetTraceGenerator(user_data);
-  trace_gen->SetCurrentBlock(NULL);
+  dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
+  int async_id = *(double *) ctx->ymm; // xmm0 register
+
+  if (!trace_gen->GetCurrentBlock()) {
+    // The current block is pointing to null; so there's nothing to end.
+    return;
+  }
+
+  size_t block_id = trace_gen->GetCurrentBlock()->GetBlockId();
+  if (block_id == async_id) {
+    // The current block id matches with the id of the block
+    // we are going to close.
+    trace_gen->SetCurrentBlock(nullptr);
+    return;
+  }
+
+  if (has_event_id(trace_gen, async_id, PROMISE_SET)) {
+    // The id of the block we are going to close is promise-related.
+    // We close it because we know that promise-related blocks are not
+    // nested. XXX: revisit.
+    trace_gen->SetCurrentBlock(nullptr);
+  }
 }
 
 
@@ -582,11 +607,6 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
     add_new_event_expr(trace_gen, async_id, Event(Event::W, 0));
     return;
   }
-  // We link the event with `trigger_async_id` with the event
-  // with id related to `async_id`.
-  trace_gen->GetCurrentBlock()->AddExpr(
-      new LinkExpr(trigger_async_id, async_id));
-  Event *last_event = (Event *) trace_gen->PopFromStore(LAST_CREATED_EVENT);
 
   bool *is_promise = (bool *) trace_gen->PopFromStore(PROMISE_EVENT);
   if (is_promise && *is_promise) {
@@ -600,9 +620,15 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
     delete is_promise;
   }
 
+  Event *last_event = (Event *) trace_gen->PopFromStore(LAST_CREATED_EVENT);
   if (last_event) {
     add_new_event_expr(trace_gen, async_id, *last_event);
     delete last_event;
+
+    // We link the event with `trigger_async_id` with the event
+    // with id related to `async_id`.
+    trace_gen->GetCurrentBlock()->AddExpr(
+        new LinkExpr(trigger_async_id, async_id));
   }
 }
 
@@ -620,7 +646,7 @@ wrap_pre_start(void *wrapctx, OUT void **user_data)
   set<int> *timers = new set<int>(initial_set);
   trace_gen->AddToStore(PROMISE_SET, (void *) promises);
   trace_gen->AddToStore(TIMER_SET, (void *) timers);
-  trace_gen->SetCurrentBlock(new Block(1));
+  trace_gen->SetCurrentBlock(new Block(TOP_LEVEL_BLOCK));
   trace_gen->GetTrace()->AddBlock(trace_gen->GetCurrentBlock());
   trace_gen->IncrEventCount();
 }
@@ -778,7 +804,7 @@ wrapper_t NodeTraceGenerator::GetWrappers() {
   // Node wrappers
   wrappers["node::Start"]                                   = { PRE_WRAP(wrap_pre_start), DefaultPost };
   wrappers["node::Environment::AsyncHooks::push_async_ids"] = { PRE_WRAP(wrap_pre_emit_before), DefaultPost };
-  wrappers["node::AsyncWrap::EmitAfter"]                    = { PRE_WRAP(wrap_pre_emit_after), DefaultPost };
+  wrappers["node::Environment::AsyncHooks::pop_async_id"]   = { PRE_WRAP(wrap_pre_emit_after), DefaultPost };
   wrappers["node::AsyncWrap::EmitAsyncInit"]                = { PRE_WRAP(wrap_pre_emit_init), DefaultPost };
   wrappers["node::(anonymous namespace)::TimerWrap::Now"]   = { PRE_WRAP(wrap_pre_timerwrap), DefaultPost };
   wrappers["node::(anonymous namespace)::TimerWrap::New"]   = { DefaultPre, DefaultPost };

@@ -23,40 +23,40 @@ hpath AT_FDCWD foo expunged
 done
 Begin 1
 @PROLOGUE_BLOCK@
-Link 1 4
 newEvent 4 W 2
+Link 1 4
 SubmitOp async_4 open ASYNC
 End
 Begin 4
-Link 4 5
 newEvent 5 W 2
+Link 4 5
 End
 Begin 5
-Link 5 6
 newEvent 6 W 2
+Link 5 6
 SubmitOp async_6 close ASYNC
 End
 Begin 6
-Link 6 7
 newEvent 7 W 2
+Link 6 7
 SubmitOp async_7 open ASYNC
 End
 Begin 7
-Link 7 8
 newEvent 8 W 2
+Link 7 8
 End
 Begin 8
-Link 8 9
 newEvent 9 W 2
+Link 8 9
 End
 Begin 9
-Link 9 10
 newEvent 10 W 2
+Link 9 10
 SubmitOp async_10 close ASYNC
 End
 Begin 10
-Link 10 11
 newEvent 11 W 2
+Link 10 11
 SubmitOp async_11 unlink ASYNC
 End
 Begin 11

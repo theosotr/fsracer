@@ -11,22 +11,18 @@ hpath AT_FDCWD bar consumed
 done
 Begin 1
 @PROLOGUE_BLOCK@
-Link 1 4
-Link 4 5
-Link 1 6
 newEvent 6 S 0
-Link 6 7
 newEvent 4 S 0
 End
 Begin 6
-Link 7 8
 newEvent 8 W 2
+Link 7 8
 SubmitOp async_8 access ASYNC
 newEvent 7 S 0
 End
 Begin 4
-Link 5 9
 newEvent 9 W 2
+Link 5 9
 SubmitOp async_9 access ASYNC
 newEvent 5 S 0
 End
