@@ -5,7 +5,9 @@ A client that detects data races in file system resources
 on top of the [DynamoRIO](https://www.dynamorio.org) framework.
 
 
-## Setup
+# Setup
+
+## Download DynamoRIO
 
 First, download the binary package of the DynamoRIO core:
 
@@ -14,31 +16,39 @@ wget -O dynamo.tar.gz https://github.com/DynamoRIO/dynamorio/releases/download/c
 tar -xvf dynamo.tar.gz
 ```
 
-Set the environment variable `$DynamoRIO_BUILD_DIR`
-that points to the directory of the extracted archive
-(See the previous step).
+## Build the patched Node binary
 
-Then, build the FSracer client by executing the
-following instructions inside the root directory
-of this repository:
+Build the patched `Node` binary from [this](https://github.com/theosotr/node) repo
+by following the official [instructions](https://github.com/theosotr/node/blob/v10.15.3-patch/BUILDING.md#unixmacos).
+
+
+## Build FSRacer 
+
+To build `FSRacer` run the following commands:
 
 ```
 mkdir build
 cd build
-cmake -DDynamoRIO_DIR=${Dynamo_BUILD_DIR}/cmake ..
+cmake -DTEST_BINARY_PATH=<path to the patched node binary> -DDynamoRIO_BUILD_DIR=<path to the build directory of DynamoRIO> ..
 make
 ```
 
-After the build, a file named `libfsracer.so` is created
-inside the `build` directory.
+Note that the option `-DTEST_BINARY_PATH` corresponds to the path
+where the `Node` binary is located as produced by the previous step.
+On the other hand, the `-DDynamoRIO_BUILD_DIR` is the path to the
+directory where the installation of the `DynamoRIO` is placed.
 
 
-## Example
+# Run FSRacer
 
-Run the FSracer client in an example JavaScript program:
+Run the `FSRacer` client as follows:
 
 ```
-${Dynamo_BUILD_DIR}/bin64/drrun -c build/libfsracer.so -- node examples/timers.js
+<dynamorio binary> -c build/libfsracer.so -- <node binary> <node program>
 ```
 
-This will produce a trace file named `fsracer.trace`.
+Run tests through:
+
+```
+make test
+```
