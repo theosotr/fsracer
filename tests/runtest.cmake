@@ -79,6 +79,10 @@ string(CONCAT prologue_operation_repl
 )
 
 string(CONCAT prologue_block_repl
+  "newEvent 2 W 2."
+  "Link 1 2."
+  "newEvent 3 W 2."
+  "Link 1 3."
   "SubmitOp sync_1 stat SYNC."
   "(SubmitOp sync_[0-9]+ lstat SYNC.)*"
   "SubmitOp sync_[0-9]+ open SYNC."

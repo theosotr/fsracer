@@ -7,6 +7,7 @@
 
 
 #define NEW_TIMERWRAP "node::(anonymous namespace)::TimerWrap::New"
+#define WORKER_OFFSET 336
 #define PRE_WRAP(FUNC) pre_wrap<decltype(&FUNC), &FUNC>
 
 
@@ -618,18 +619,22 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
   if (is_promise) {
     // Allocated at `wrap_pre_promise_wrap()`.
     delete is_promise;
+    // Since the current event resource is a promise,
+    // we do not create a newEvent expression at this point.
+    //
+    // For promises, we consider the time when they are fulfilled
+    // or rejected..
+    return;
   }
 
-  Event *last_event = (Event *) trace_gen->PopFromStore(LAST_CREATED_EVENT);
-  if (last_event) {
-    add_new_event_expr(trace_gen, async_id, *last_event);
-    delete last_event;
-
-    // We link the event with `trigger_async_id` with the event
-    // with id related to `async_id`.
-    trace_gen->GetCurrentBlock()->AddExpr(
-        new LinkExpr(trigger_async_id, async_id));
-  }
+  // The default event is of type W 2.
+  Event last_event = Event(Event::W, 2);
+  add_new_event_expr(trace_gen, async_id, last_event);
+  // We link the event with `trigger_async_id` with the event
+  // with id related to `async_id`.
+  Block *current_block = trace_gen->GetCurrentBlock();
+  current_block->AddExpr(
+      new LinkExpr(trigger_async_id, async_id));
 }
 
 
@@ -674,15 +679,6 @@ wrap_pre_timerwrap(void *wrapctx, OUT void **user_data)
   trace_gen->GetCurrentBlock()->AddExpr(new NewEventExpr(
       trace_gen->GetEventCount(), event));
   add_to_set(trace_gen, trace_gen->GetEventCount(), TIMER_SET);
-}
-
-
-static void
-wrap_pre_fsreq(void *wrapctx, OUT void **user_data)
-{
-  Generator *trace_gen = GetTraceGenerator(user_data);
-  Event *ev = new Event(Event::W, 2);
-  trace_gen->AddToStore(LAST_CREATED_EVENT, ev);
 }
 
 
@@ -808,7 +804,7 @@ wrapper_t NodeTraceGenerator::GetWrappers() {
   wrappers["node::AsyncWrap::EmitAsyncInit"]                = { PRE_WRAP(wrap_pre_emit_init), DefaultPost };
   wrappers["node::(anonymous namespace)::TimerWrap::Now"]   = { PRE_WRAP(wrap_pre_timerwrap), DefaultPost };
   wrappers["node::(anonymous namespace)::TimerWrap::New"]   = { DefaultPre, DefaultPost };
-  wrappers["node::fs::NewFSReqWrap"]                        = { PRE_WRAP(wrap_pre_fsreq), DefaultPost };
+  //wrappers["node::fs::NewFSReqWrap"]                        = { PRE_WRAP(wrap_pre_fsreq), DefaultPost };
   wrappers["node::AsyncWrap::EmitPromiseResolve"]           = { PRE_WRAP(wrap_pre_promise_resolve), DefaultPost };
   wrappers["node::PromiseWrap::New"]                        = { PRE_WRAP(wrap_pre_promise_wrap), DefaultPost };
   wrappers["node::AsyncWrap::NewAsyncId"]                   = { PRE_WRAP(wrap_pre_new_async_id), DefaultPost };
