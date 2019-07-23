@@ -4,6 +4,7 @@
 #include "drsyms.h"
 
 #include "Analyzer.h"
+#include "DependencyInferenceAnalyzer.h"
 #include "NodeGenerator.h"
 
 
@@ -51,15 +52,23 @@ event_exit(void)
   // Add support for both offline and online trace analysis.
   cout << dump_analyzer->GetName() << ": Start analyzing traces...\n";
   dump_analyzer->Analyze(trace_gen->GetTrace());
-  delete dump_analyzer;
-  delete trace_gen;
   cout << dump_analyzer->GetName() << ": Analysis is done\n";
+  delete dump_analyzer;
+
+  // TODO Make analyzers configurable.
+  DependencyInferenceAnalyzer *dep_analyzer = new DependencyInferenceAnalyzer();
+  dep_analyzer->Analyze(trace_gen->GetTrace());
+  dep_analyzer->SaveDependencyGraph(DependencyInferenceAnalyzer::DOT, "graph.dot");
+  delete dep_analyzer;
+  delete trace_gen;
+
 }
 
 
 DR_EXPORT void
 dr_client_main(client_id_t client_id, int argc, const char *argv[])
 {
+  // TODO Create a CLI for the client.
   dr_set_client_name("Client for Detecting Data Races in Files", "");
   dr_printf("Starting the FSRacer Client...\n");
   drmgr_init();

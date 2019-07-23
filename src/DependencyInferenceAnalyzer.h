@@ -21,9 +21,14 @@ namespace analyzer {
 class DependencyInferenceAnalyzer : public Analyzer {
 
   public:
+    enum GraphFormat {
+      DOT,
+      CSV
+    };
+
     DependencyInferenceAnalyzer():
       current_block(nullptr) {  }
-    ~DependencyInferenceAnalyzer();
+    ~DependencyInferenceAnalyzer() {  };
 
     string GetName() {
       return "DependencyInferenceAnalyzer";
@@ -45,6 +50,9 @@ class DependencyInferenceAnalyzer : public Analyzer {
     void AnalyzeLink(Link *link) {  }
     void AnalyzeRename(Rename *rename) {  }
     void AnalyzeSymlink(Symlink *symlink) {  }
+
+    void SaveDependencyGraph(enum GraphFormat graph_format,
+                             const string output_file);
 
   private:
 
@@ -69,8 +77,9 @@ class DependencyInferenceAnalyzer : public Analyzer {
     void AddEventInfo(size_t event_id);
     void AddEventInfo(size_t event_id, Event event);
     void AddDependencies(size_t event_id, Event event);
-    void AddDependency(size_t source, size_t target); 
-
+    void AddDependency(size_t source, size_t target);
+    void ToCSV(ostream &stream);
+    void ToDot(ostream &stream);
 };
 
 
