@@ -1,0 +1,33 @@
+Starting the FSRacer Client...
+NodeTrace: PID @NUM@, Start collecting trace...
+NodeTrace: Trace collected
+DumpAnalyzer: Start analyzing traces...
+@PROLOGUE_OPERATIONS@
+Operation sync_12 do
+hpath AT_FDCWD foo produced
+newFd AT_FDCWD foo @NUM@
+done
+Operation sync_13 do
+delFd @NUM@
+done
+Operation sync_14 do
+hpath AT_FDCWD foo expunged
+done
+Begin 1
+@PROLOGUE_BLOCK@
+newEvent 4 W 3
+newEvent 5 S 0
+End
+Begin 5
+SubmitOp sync_12 open SYNC
+SubmitOp sync_13 close SYNC
+End
+Begin 4
+newEvent 6 W 1
+newEvent 7 W 0
+End
+Begin 7
+Link 7 6
+SubmitOp sync_14 unlink SYNC
+End
+DumpAnalyzer: Analysis is done
