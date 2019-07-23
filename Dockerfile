@@ -9,7 +9,11 @@ RUN apt install -yqq $deps
 WORKDIR /root
 
 # Copy fsracer
-COPY ./ fsracer/
+# XXX: Clone the private repo instead of copying files.
+RUN mkdir fsracer
+COPY ./src fsracer/src
+COPY ./tests fsracer/tests
+COPY ./CMakeLists.txt fsracer/CMakeLists.txt
 WORKDIR fsracer
 RUN git clone https://github.com/theosotr/node engines/node
 
