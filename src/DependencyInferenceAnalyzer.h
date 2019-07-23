@@ -60,10 +60,15 @@ class DependencyInferenceAnalyzer : public Analyzer {
 
     /// The dependency graph of events.
     unordered_map<size_t, EventInfo> dep_graph;
+    set<size_t> alive_events;
     Block *current_block;
 
-    void AddEvent(size_t event_id, Event event);
-    Event GetEvent(size_t event_id);
+    Event ConstructDefaultEvent();
+    void AddAliveEvent(size_t event_id);
+    void RemoveAliveEvent(size_t event_id);
+    void AddEventInfo(size_t event_id);
+    void AddEventInfo(size_t event_id, Event event);
+    void AddDependencies(size_t event_id, Event event);
     void AddDependency(size_t source, size_t target); 
 
 };
