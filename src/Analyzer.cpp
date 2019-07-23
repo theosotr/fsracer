@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "analyzer.h"
+#include "Analyzer.h"
 
 
 using namespace operation;

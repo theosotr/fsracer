@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "generator.h"
+#include "Generator.h"
 
 #define TOP_LEVEL_BLOCK 1
 

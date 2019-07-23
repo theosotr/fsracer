@@ -11,8 +11,8 @@
 #include "drwrap.h"
 #include "drsyms.h"
 
-#include "utils.h"
-#include "trace.h"
+#include "Utils.h"
+#include "Trace.h"
 
 
 using namespace trace;

@@ -7,7 +7,7 @@
 #include "drsyms.h"
 
 
-#include "generator.h"
+#include "Generator.h"
 
 #define CHECK_EXEC_OP                                \
   if (!get_exec_op) {                                \

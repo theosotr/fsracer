@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "analyzer.h"
-#include "trace.h"
+#include "Analyzer.h"
+#include "Trace.h"
 
 
 using namespace std;

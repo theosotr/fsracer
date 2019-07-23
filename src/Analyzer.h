@@ -3,8 +3,8 @@
 
 #include <fstream>
 
-#include "operation.h"
-#include "trace.h"
+#include "Operation.h"
+#include "Trace.h"
 
 
 using namespace operation;

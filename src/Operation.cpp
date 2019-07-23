@@ -1,5 +1,5 @@
-#include "analyzer.h"
-#include "operation.h"
+#include "Analyzer.h"
+#include "Operation.h"
 
 namespace operation {
 

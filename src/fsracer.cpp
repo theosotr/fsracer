@@ -3,8 +3,8 @@
 #include "drwrap.h"
 #include "drsyms.h"
 
-#include "node_generator.h"
-#include "analyzer.h"
+#include "Analyzer.h"
+#include "NodeGenerator.h"
 
 
 using namespace generator;

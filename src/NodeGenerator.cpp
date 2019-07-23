@@ -1,9 +1,9 @@
 #include <set>
 #include <stack>
 
-#include "generator.h"
-#include "node_generator.h"
-#include "utils.h"
+#include "Generator.h"
+#include "NodeGenerator.h"
+#include "Utils.h"
 
 
 #define NEW_TIMERWRAP "node::(anonymous namespace)::TimerWrap::New"
