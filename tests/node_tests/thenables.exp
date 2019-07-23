@@ -3,7 +3,7 @@ NodeTrace: PID @NUM@, Start collecting trace...
 NodeTrace: Trace collected
 DumpAnalyzer: Start analyzing traces...
 @PROLOGUE_OPERATIONS@
-Begin 1
+Begin MAIN
 @PROLOGUE_BLOCK@
 newEvent 4 S 0
 End

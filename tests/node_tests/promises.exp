@@ -23,7 +23,7 @@ done
 Operation async_17 do
 delFd @NUM@
 done
-Begin 1
+Begin MAIN
 @PROLOGUE_BLOCK@
 newEvent 4 S 0
 newEvent 7 S 0

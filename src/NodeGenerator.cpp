@@ -518,7 +518,7 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
     // Therefore, we don't create a new block. Instead, we use
     // the most-recent allocated block.
     size_t block_id = trace_gen->GetCurrentBlock()->GetBlockId();
-    if (block_id != TOP_LEVEL_BLOCK) {
+    if (block_id != MAIN_BLOCK) {
       trace_gen->GetCurrentBlock()->AddExpr(
           new LinkExpr(block_id, async_id));
       return;
@@ -651,7 +651,7 @@ wrap_pre_start(void *wrapctx, OUT void **user_data)
   set<int> *timers = new set<int>(initial_set);
   trace_gen->AddToStore(PROMISE_SET, (void *) promises);
   trace_gen->AddToStore(TIMER_SET, (void *) timers);
-  trace_gen->SetCurrentBlock(new Block(TOP_LEVEL_BLOCK));
+  trace_gen->SetCurrentBlock(new Block(MAIN_BLOCK));
   trace_gen->GetTrace()->AddBlock(trace_gen->GetCurrentBlock());
   trace_gen->IncrEventCount();
 }

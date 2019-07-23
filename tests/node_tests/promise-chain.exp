@@ -6,7 +6,7 @@ DumpAnalyzer: Start analyzing traces...
 Operation async_14 do
 hpath AT_FDCWD foo consumed
 done
-Begin 1
+Begin MAIN
 @PROLOGUE_BLOCK@
 newEvent 4 S 0
 End

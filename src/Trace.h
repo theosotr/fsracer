@@ -8,6 +8,9 @@
 #include "Operation.h"
 
 
+#define MAIN_BLOCK 1
+
+
 using namespace std;
 using namespace operation;
 

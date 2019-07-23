@@ -21,7 +21,7 @@ done
 Operation async_11 do
 hpath AT_FDCWD foo expunged
 done
-Begin 1
+Begin MAIN
 @PROLOGUE_BLOCK@
 newEvent 4 W 2
 Link 1 4

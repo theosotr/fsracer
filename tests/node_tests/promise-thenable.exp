@@ -9,7 +9,7 @@ done
 Operation async_9 do
 hpath AT_FDCWD bar consumed
 done
-Begin 1
+Begin MAIN
 @PROLOGUE_BLOCK@
 newEvent 6 S 0
 newEvent 4 S 0

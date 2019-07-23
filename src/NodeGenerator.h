@@ -5,8 +5,6 @@
 
 #include "Generator.h"
 
-#define TOP_LEVEL_BLOCK 1
-
 
 using namespace trace;
 

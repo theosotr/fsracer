@@ -12,7 +12,7 @@ done
 Operation async_13 do
 hpath AT_FDCWD baz consumed
 done
-Begin 1
+Begin MAIN
 @PROLOGUE_BLOCK@
 newEvent 4 W 1
 newEvent 5 W 0

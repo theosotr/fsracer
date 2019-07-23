@@ -20,7 +20,7 @@ done
 Operation async_10 do
 hpath AT_FDCWD foo expunged
 done
-Begin 1
+Begin MAIN
 @PROLOGUE_BLOCK@
 SubmitOp sync_12 open SYNC
 SubmitOp sync_13 close SYNC

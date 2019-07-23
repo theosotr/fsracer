@@ -13,7 +13,7 @@ done
 Operation sync_12 do
 hpath AT_FDCWD foo expunged
 done
-Begin 1
+Begin MAIN
 @PROLOGUE_BLOCK@
 newEvent 4 W 2
 Link 1 4

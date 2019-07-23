@@ -67,7 +67,9 @@ void DumpAnalyzer::AnalyzeBlock(Block *block) {
     return;
   }
   vector<Expr*> exprs = block->GetExprs();
-  OutStream() << "Begin " << to_string(block->GetBlockId()) << "\n";
+  size_t block_id = block->GetBlockId();
+  OutStream() << "Begin " <<
+    (block_id == MAIN_BLOCK ? "MAIN" : to_string(block_id)) << "\n";
   for (auto const &expr : exprs) {
     AnalyzeExpr(expr);
   }

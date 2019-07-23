@@ -30,7 +30,7 @@ newFd AT_FDCWD foo @NUM@
 delFd @NUM@
 delFd @NUM@
 done
-Begin 1
+Begin MAIN
 @PROLOGUE_BLOCK@
 SubmitOp sync_12 open SYNC
 SubmitOp sync_13 close SYNC

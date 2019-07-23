@@ -13,7 +13,7 @@ done
 Operation async_5 do
 hpath AT_FDCWD foo expunged
 done
-Begin 1
+Begin MAIN
 @PROLOGUE_BLOCK@
 newEvent 4 S 0
 SubmitOp sync_12 open SYNC

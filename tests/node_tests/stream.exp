@@ -30,7 +30,7 @@ done
 Operation sync_15 do
 hpath AT_FDCWD bar expunged
 done
-Begin 1
+Begin MAIN
 @PROLOGUE_BLOCK@
 SubmitOp sync_12 open SYNC
 SubmitOp sync_13 close SYNC

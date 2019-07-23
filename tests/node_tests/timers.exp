@@ -16,7 +16,7 @@ done
 Operation async_8 do
 hpath AT_FDCWD tmp consumed
 done
-Begin 1
+Begin MAIN
 @PROLOGUE_BLOCK@
 SubmitOp sync_12 open SYNC
 SubmitOp sync_13 close SYNC

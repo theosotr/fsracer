@@ -103,7 +103,7 @@ void Block::ClearExprs() {
 
 string Block::ToString() {
   string str = "Begin ";
-  str += to_string(block_id);
+  str += block_id == MAIN_BLOCK ? "MAIN" : to_string(block_id);
   str += "\n";
 
   for (auto const &expr : exprs) {
