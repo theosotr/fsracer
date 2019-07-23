@@ -1,0 +1,126 @@
+Starting the FSRacer Client...
+NodeTrace: PID @NUM@, Start collecting trace...
+NodeTrace: Trace collected
+DumpAnalyzer: Start analyzing traces...
+@PROLOGUE_OPERATIONS@
+Operation async_23 do
+hpath AT_FDCWD foo produced
+newFd foo @NUM@
+done
+Operation async_31 do
+delFd @NUM@
+done
+Operation sync_12 do
+hpath AT_FDCWD foo expunged
+done
+Begin 1
+@PROLOGUE_BLOCK@
+newEvent 4 W 2
+Link 1 4
+newEvent 5 W 2
+Link 1 5
+newEvent 6 W 2
+Link 4 6
+newEvent 7 S 0
+End
+Begin 7
+newEvent 8 W 2
+Link 7 8
+newEvent 9 S 0
+End
+Begin 9
+End
+Begin 6
+newEvent 10 W 2
+Link 4 10
+End
+Begin 10
+End
+Begin 4
+Link 4 8
+newEvent 11 W 2
+Link 8 11
+newEvent 12 W 2
+Link 11 12
+newEvent 13 S 0
+Link 4 8
+Link 4 8
+newEvent 14 S 0
+newEvent 15 S 0
+End
+Begin 13
+newEvent 16 W 2
+Link 13 16
+newEvent 17 S 0
+End
+Begin 14
+End
+Begin 15
+End
+Begin 17
+End
+Begin 4
+newEvent 18 S 0
+newEvent 19 S 0
+End
+Begin 18
+newEvent 20 S 0
+newEvent 21 S 0
+End
+Begin 19
+End
+Begin 20
+End
+Begin 21
+End
+Begin 12
+newEvent 22 W 2
+Link 11 22
+End
+Begin 4
+End
+Begin 22
+End
+Begin 11
+Link 11 16
+newEvent 23 W 2
+Link 16 23
+SubmitOp async_23 open ASYNC
+Link 11 16
+Link 11 16
+newEvent 24 S 0
+newEvent 25 S 0
+End
+Begin 24
+End
+Begin 25
+End
+Begin 11
+newEvent 26 S 0
+newEvent 27 S 0
+End
+Begin 26
+newEvent 28 S 0
+newEvent 29 S 0
+End
+Begin 27
+End
+Begin 28
+End
+Begin 29
+End
+Begin 23
+newEvent 30 W 2
+Link 23 30
+End
+Begin 11
+End
+Begin 30
+newEvent 31 W 2
+Link 30 31
+SubmitOp async_31 close ASYNC
+End
+Begin 31
+SubmitOp sync_12 unlink SYNC
+End
+DumpAnalyzer: Analysis is done
