@@ -68,13 +68,13 @@ string(REGEX REPLACE "\n" "." output_rep ${output})
 # operations that check whether the given program
 # and its parent directories exist.
 string(CONCAT prologue_operation_repl
-  "(Operation sync_[0-9]+ do.done.)+"
-  "Operation sync_[0-9]+ do."
+  "(Operation sync_@NUM@ do.done.)+"
+  "Operation sync_@NUM@ do."
   "hpath AT_FDCWD /home[^\n]*/${TEST_FILE} consumed." # At this point Node opens the test program.
-  "newFd /home/[^\n]*/${TEST_FILE} [0-9]+."
+  "newFd /home/[^\n]*/${TEST_FILE} @NUM@."
   "done."
-  "Operation sync_[0-9]+ do."
-  "delFd [0-9]+."
+  "Operation sync_@NUM@ do."
+  "delFd @NUM@."
   "done"
 )
 
@@ -84,9 +84,9 @@ string(CONCAT prologue_block_repl
   "newEvent 3 W 2."
   "Link 1 3."
   "SubmitOp sync_1 stat SYNC."
-  "(SubmitOp sync_[0-9]+ lstat SYNC.)*"
-  "SubmitOp sync_[0-9]+ open SYNC."
-  "SubmitOp sync_[0-9]+ close SYNC"
+  "(SubmitOp sync_@NUM@ lstat SYNC.)*"
+  "SubmitOp sync_@NUM@ open SYNC."
+  "SubmitOp sync_@NUM@ close SYNC"
 )
 
 if (EXISTS "${expected_filename}")
@@ -106,6 +106,7 @@ if (EXISTS "${expected_filename}")
     pattern
     ${pattern}
   )
+  string(REGEX REPLACE "@NUM@" "[0-9]+" pattern ${pattern})
   string(REGEX REPLACE "\n" "." pattern ${pattern})
   string(REGEX MATCH ${pattern} match ${output_rep})
 

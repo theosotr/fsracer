@@ -1,14 +1,14 @@
 Starting the FSRacer Client...
-NodeTrace: PID [0-9]+, Start collecting trace...
+NodeTrace: PID @NUM@, Start collecting trace...
 NodeTrace: Trace collected
 DumpAnalyzer: Start analyzing traces...
 @PROLOGUE_OPERATIONS@
 Operation sync_12 do
 hpath AT_FDCWD tmp produced
-newFd tmp 19
+newFd tmp @NUM@
 done
 Operation sync_13 do
-delFd 19
+delFd @NUM@
 done
 Operation async_7 do
 hpath AT_FDCWD tmp expunged
