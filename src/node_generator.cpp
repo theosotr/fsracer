@@ -203,7 +203,7 @@ wrap_post_open(void *wrapctx, void *user_data)
   if (!exec_op) {
     return;
   }
-  exec_op->AddOperation(new NewFd(path, ret_val));
+  exec_op->AddOperation(new NewFd(AT_FDCWD, path, ret_val));
 }
 
 

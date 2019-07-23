@@ -5,7 +5,7 @@ DumpAnalyzer: Start analyzing traces...
 @PROLOGUE_OPERATIONS@
 Operation sync_12 do
 hpath AT_FDCWD tmp produced
-newFd tmp @NUM@
+newFd AT_FDCWD tmp @NUM@
 done
 Operation sync_13 do
 delFd @NUM@

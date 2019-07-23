@@ -71,7 +71,7 @@ string(CONCAT prologue_operation_repl
   "(Operation sync_@NUM@ do.done.)+"
   "Operation sync_@NUM@ do."
   "hpath AT_FDCWD /home[^\n]*/${TEST_FILE} consumed." # At this point Node opens the test program.
-  "newFd /home/[^\n]*/${TEST_FILE} @NUM@."
+  "newFd AT_FDCWD /home/[^\n]*/${TEST_FILE} @NUM@."
   "done."
   "Operation sync_@NUM@ do."
   "delFd @NUM@."

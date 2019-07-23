@@ -15,6 +15,12 @@ namespace analyzer {
 
 namespace operation {
 
+
+inline string DirfdToString(size_t dirfd) {
+  return dirfd == AT_FDCWD ? "AT_FDCWD" : to_string(dirfd);
+}
+
+
 class Operation {
 
   public:
@@ -95,14 +101,14 @@ class Hpath : public Operation {
       EXPUNGED
     };
 
-    Hpath(size_t dir_fd_, string path_, enum EffectType effect_type_):
-      dir_fd(dir_fd_),
+    Hpath(size_t dirfd_, string path_, enum EffectType effect_type_):
+      dirfd(dirfd_),
       path(path_),
       effect_type(effect_type_) {  }
     ~Hpath() {  }
 
     size_t GetDirFd() {
-      return dir_fd;
+      return dirfd;
     }
 
     string GetPath() {
@@ -118,7 +124,7 @@ class Hpath : public Operation {
     }
 
     string ToString() {
-      string str = dir_fd == AT_FDCWD ? "AT_FDCWD" : to_string(dir_fd);
+      string str = DirfdToString(dirfd);
       switch (effect_type) {
         case PRODUCED:
           return GetOpName() + " " + str + " " + path + " produced";
@@ -132,7 +138,7 @@ class Hpath : public Operation {
     void Accept(analyzer::Analyzer *analyzer);
 
   protected:
-    size_t dir_fd;
+    size_t dirfd;
     string path;
     enum EffectType effect_type;
 
@@ -141,8 +147,8 @@ class Hpath : public Operation {
 
 class HpathSym : public Hpath {
   public:
-    HpathSym(size_t dir_fd_, string path_, enum EffectType effect_type_):
-      Hpath(dir_fd_, path_, effect_type_) {  }
+    HpathSym(size_t dirfd_, string path_, enum EffectType effect_type_):
+      Hpath(dirfd_, path_, effect_type_) {  }
     ~HpathSym() {  }
 
     void Accept(analyzer::Analyzer *analyzer);
@@ -180,10 +186,8 @@ class Link : public Operation {
     }
 
     string ToString() {
-      string old_dirfd_str = old_dirfd == AT_FDCWD ?
-        "AT_FDCWD" : to_string(old_dirfd);
-      string new_dirfd_str = new_dirfd == AT_FDCWD ?
-        "AT_FDCWD" : to_string(new_dirfd);
+      string old_dirfd_str = DirfdToString(old_dirfd);
+      string new_dirfd_str = DirfdToString(new_dirfd);
       return GetOpName() + " " + old_dirfd_str + " " +
         old_path + " " + new_dirfd_str + " " + new_path;
     };
@@ -206,7 +210,8 @@ class Link : public Operation {
 
 class NewFd : public Operation {
   public:
-    NewFd(string path_, int fd_):
+    NewFd(size_t dirfd_, string path_, int fd_):
+      dirfd(dirfd_),
       path(path_),
       fd(fd_) { }
 
@@ -214,6 +219,10 @@ class NewFd : public Operation {
 
     string GetPath() {
       return path;
+    }
+
+    size_t GetDirFd() {
+      return dirfd;
     }
 
     int GetFd() {
@@ -225,12 +234,15 @@ class NewFd : public Operation {
     }
 
     string ToString() {
-      return GetOpName() + " " + path + " " + to_string(fd);
+      string dirfd_str = DirfdToString(dirfd);
+      return GetOpName() + " " + dirfd_str + " " + path +
+        " " + to_string(fd);
     };
 
     void Accept(analyzer::Analyzer *analyzer);
 
   private:
+    size_t dirfd;
     string path;
     int fd;
 };
@@ -326,14 +338,14 @@ class SetCwd : public Operation {
 
 class Symlink : public Operation {
   public:
-    Symlink(size_t dir_fd_, string path_, string target_):
-      dir_fd(dir_fd_),
+    Symlink(size_t dirfd_, string path_, string target_):
+      dirfd(dirfd_),
       path(path_),
       target(target_) {  }
     ~Symlink() {  }
 
     size_t GetDirFd() {
-      return dir_fd;
+      return dirfd;
     }
 
     string GetPath() {
@@ -349,14 +361,14 @@ class Symlink : public Operation {
     }
 
     string ToString() {
-      return GetOpName() + " " + to_string(dir_fd) + " " + path + " " +
+      return GetOpName() + " " + to_string(dirfd) + " " + path + " " +
         target;
     }
 
     void Accept(analyzer::Analyzer *analyzer);
 
   private:
-    size_t dir_fd;
+    size_t dirfd;
     string path;
     string target;
 

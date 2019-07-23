@@ -6,14 +6,14 @@ DumpAnalyzer: Start analyzing traces...
 @PROLOGUE_OPERATIONS@
 Operation async_4 do
 hpath AT_FDCWD foo produced
-newFd foo 19
+newFd AT_FDCWD foo 19
 done
 Operation async_6 do
 delFd 19
 done
 Operation async_7 do
 hpath AT_FDCWD foo consumed
-newFd foo 19
+newFd AT_FDCWD foo 19
 done
 Operation async_10 do
 delFd 19
