@@ -1,0 +1,90 @@
+Starting the FSRacer Client...
+NodeTrace: PID @NUM@, Start collecting trace...
+NodeTrace: Trace collected
+DumpAnalyzer: Start analyzing traces...
+@PROLOGUE_OPERATIONS@
+Operation sync_12 do
+hpath AT_FDCWD foo produced
+newFd foo @NUM@
+done
+Operation sync_13 do
+delFd @NUM@
+done
+Operation async_4 do
+hpath AT_FDCWD foo consumed
+newFd foo @NUM@
+done
+Operation async_5 do
+hpath AT_FDCWD bar produced
+newFd bar @NUM@
+done
+Operation async_12 do
+delFd @NUM@
+done
+Operation async_14 do
+delFd @NUM@
+done
+Operation sync_14 do
+hpath AT_FDCWD foo expunged
+done
+Operation sync_15 do
+hpath AT_FDCWD bar expunged
+done
+Begin 1
+@PROLOGUE_BLOCK@
+SubmitOp sync_12 open SYNC
+SubmitOp sync_13 close SYNC
+newEvent 4 W 2
+Link 1 4
+SubmitOp async_4 open ASYNC
+newEvent 5 W 2
+Link 1 5
+SubmitOp async_5 open ASYNC
+newEvent 6 S 0
+End
+Begin 6
+End
+Begin 4
+newEvent 7 W 2
+Link 4 7
+End
+Begin 5
+End
+Begin 7
+newEvent 8 W 2
+Link 7 8
+newEvent 9 S 0
+End
+Begin 9
+newEvent 10 W 2
+Link 9 10
+End
+Begin 8
+End
+Begin 10
+newEvent 11 S 0
+End
+Begin 11
+newEvent 12 W 2
+Link 11 12
+SubmitOp async_12 close ASYNC
+newEvent 13 S 0
+End
+Begin 13
+newEvent 14 W 2
+Link 13 14
+SubmitOp async_14 close ASYNC
+End
+Begin 12
+newEvent 15 S 0
+End
+Begin 15
+End
+Begin 14
+newEvent 16 S 0
+SubmitOp sync_14 unlink SYNC
+SubmitOp sync_15 unlink SYNC
+End
+Begin 16
+End
+DumpAnalyzer: Analysis is done
