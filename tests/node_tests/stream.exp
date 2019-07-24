@@ -34,10 +34,10 @@ Begin MAIN
 @PROLOGUE_BLOCK@
 SubmitOp sync_12 open SYNC
 SubmitOp sync_13 close SYNC
-newEvent 4 W 2
+newEvent 4 EXTERNAL
 Link 1 4
 SubmitOp async_4 open ASYNC
-newEvent 5 W 2
+newEvent 5 EXTERNAL
 Link 1 5
 SubmitOp async_5 open ASYNC
 newEvent 6 S 0
@@ -45,18 +45,18 @@ End
 Begin 6
 End
 Begin 4
-newEvent 7 W 2
+newEvent 7 EXTERNAL
 Link 4 7
 End
 Begin 5
 End
 Begin 7
-newEvent 8 W 2
+newEvent 8 EXTERNAL
 Link 7 8
 newEvent 9 S 0
 End
 Begin 9
-newEvent 10 W 2
+newEvent 10 EXTERNAL
 Link 9 10
 End
 Begin 8
@@ -65,13 +65,13 @@ Begin 10
 newEvent 11 S 0
 End
 Begin 11
-newEvent 12 W 2
+newEvent 12 EXTERNAL
 Link 11 12
 SubmitOp async_12 close ASYNC
 newEvent 13 S 0
 End
 Begin 13
-newEvent 14 W 2
+newEvent 14 EXTERNAL
 Link 13 14
 SubmitOp async_14 close ASYNC
 End

@@ -29,49 +29,49 @@ newEvent 4 S 0
 newEvent 7 S 0
 End
 Begin 4
-newEvent 9 W 2
+newEvent 9 EXTERNAL
 Link 5 9
 SubmitOp async_9 open ASYNC
 newEvent 5 S 0
 End
 Begin 7
-newEvent 10 W 2
+newEvent 10 EXTERNAL
 Link 8 10
 SubmitOp async_10 access ASYNC
 newEvent 8 S 0
 End
 Begin 5
-newEvent 11 W 2
+newEvent 11 EXTERNAL
 Link 6 11
 SubmitOp async_11 open ASYNC
 newEvent 6 S 0
 End
 Begin 9
-newEvent 12 W 2
+newEvent 12 EXTERNAL
 Link 9 12
 End
 Begin 10
 End
 Begin 11
-newEvent 13 W 2
+newEvent 13 EXTERNAL
 Link 11 13
 End
 Begin 12
-newEvent 14 W 2
+newEvent 14 EXTERNAL
 Link 12 14
 SubmitOp async_14 close ASYNC
 End
 Begin 13
-newEvent 15 W 2
+newEvent 15 EXTERNAL
 Link 13 15
 End
 Begin 14
-newEvent 16 W 2
+newEvent 16 EXTERNAL
 Link 14 16
 SubmitOp async_16 unlink ASYNC
 End
 Begin 15
-newEvent 17 W 2
+newEvent 17 EXTERNAL
 Link 15 17
 SubmitOp async_17 close ASYNC
 End

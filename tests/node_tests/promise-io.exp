@@ -24,20 +24,20 @@ Begin MAIN
 @PROLOGUE_BLOCK@
 SubmitOp sync_12 open SYNC
 SubmitOp sync_13 close SYNC
-newEvent 5 W 2
+newEvent 5 EXTERNAL
 Link 1 5
 SubmitOp async_5 open ASYNC
 End
 Begin 5
-newEvent 7 W 2
+newEvent 7 EXTERNAL
 Link 5 7
 End
 Begin 7
-newEvent 8 W 2
+newEvent 8 EXTERNAL
 Link 7 8
 End
 Begin 8
-newEvent 9 W 2
+newEvent 9 EXTERNAL
 Link 8 9
 SubmitOp async_9 close ASYNC
 End
@@ -45,7 +45,7 @@ Begin 9
 newEvent 4 S 0
 End
 Begin 4
-newEvent 10 W 2
+newEvent 10 EXTERNAL
 Link 6 10
 SubmitOp async_10 unlink ASYNC
 newEvent 6 S 0

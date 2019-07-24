@@ -15,32 +15,32 @@ hpath AT_FDCWD foo expunged
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
-newEvent 4 W 2
+newEvent 4 EXTERNAL
 Link 1 4
-newEvent 5 W 2
+newEvent 5 EXTERNAL
 Link 1 5
-newEvent 6 W 2
+newEvent 6 EXTERNAL
 Link 4 6
 newEvent 7 S 0
 End
 Begin 7
-newEvent 8 W 2
+newEvent 8 EXTERNAL
 Link 7 8
 newEvent 9 S 0
 End
 Begin 9
 End
 Begin 6
-newEvent 10 W 2
+newEvent 10 EXTERNAL
 Link 4 10
 End
 Begin 10
 End
 Begin 4
 Link 4 8
-newEvent 11 W 2
+newEvent 11 EXTERNAL
 Link 8 11
-newEvent 12 W 2
+newEvent 12 EXTERNAL
 Link 11 12
 newEvent 13 S 0
 Link 4 8
@@ -49,7 +49,7 @@ newEvent 14 S 0
 newEvent 15 S 0
 End
 Begin 13
-newEvent 16 W 2
+newEvent 16 EXTERNAL
 Link 13 16
 newEvent 17 S 0
 End
@@ -74,7 +74,7 @@ End
 Begin 21
 End
 Begin 12
-newEvent 22 W 2
+newEvent 22 EXTERNAL
 Link 11 22
 End
 Begin 4
@@ -83,7 +83,7 @@ Begin 22
 End
 Begin 11
 Link 11 16
-newEvent 23 W 2
+newEvent 23 EXTERNAL
 Link 16 23
 SubmitOp async_23 open ASYNC
 Link 11 16
@@ -110,13 +110,13 @@ End
 Begin 29
 End
 Begin 23
-newEvent 30 W 2
+newEvent 30 EXTERNAL
 Link 23 30
 End
 Begin 11
 End
 Begin 30
-newEvent 31 W 2
+newEvent 31 EXTERNAL
 Link 30 31
 SubmitOp async_31 close ASYNC
 End

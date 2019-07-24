@@ -34,17 +34,17 @@ Begin MAIN
 @PROLOGUE_BLOCK@
 SubmitOp sync_12 open SYNC
 SubmitOp sync_13 close SYNC
-newEvent 4 W 2
+newEvent 4 EXTERNAL
 Link 1 4
 SubmitOp async_4 copyFile ASYNC
-newEvent 5 W 2
+newEvent 5 EXTERNAL
 Link 1 5
 SubmitOp async_5 copyFile ASYNC
 End
 Begin 4
 End
 Begin 5
-newEvent 6 W 2
+newEvent 6 EXTERNAL
 Link 5 6
 SubmitOp async_6 copyFile ASYNC
 End

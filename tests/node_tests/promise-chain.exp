@@ -31,7 +31,7 @@ newEvent 6 S 0
 newEvent 13 S 0
 End
 Begin 6
-newEvent 14 W 2
+newEvent 14 EXTERNAL
 Link 7 14
 SubmitOp async_14 access ASYNC
 newEvent 7 S 0

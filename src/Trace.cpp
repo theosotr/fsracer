@@ -17,8 +17,10 @@ string Event::ToString() {
       return "S " + str;
     case M:
       return "M " + str;
-    default:
+    case W:
       return "W " + str;
+    default:
+      return "EXTERNAL";
   }
 }
 

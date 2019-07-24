@@ -628,7 +628,7 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
   }
 
   // The default event is of type W 2.
-  Event last_event = Event(Event::W, 2);
+  Event last_event = Event(Event::EXT, 0);
   add_new_event_expr(trace_gen, async_id, last_event);
   // We link the event with `trigger_async_id` with the event
   // with id related to `async_id`.

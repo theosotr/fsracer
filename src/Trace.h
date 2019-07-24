@@ -68,15 +68,21 @@ class Event {
      * An event of an M (Medium) type has higher priority of
      * events with type W.
      *
-     * Finally an event with type W (Weak) has lower priority
+     * An event with type W (Weak) has lower priority
      * than those events that have type S or W.
-     * Also, the execution of two events of S type is not deterministic,
-     * i.e., we do not follow a FIFO approach.
+     * Also, the execution of two events of S type is not non-deterministic,
+     * unless their values are the same.
+     * If this is the case we follow a FIFO approach.
+     *
+     * Finally, an event with type EXT (external) is associated with
+     * the external environment, so its execution is
+     * completely non-determinitstic.
      */
     enum EventType {
       S,
       M,
-      W
+      W,
+      EXT
     };
 
     /**

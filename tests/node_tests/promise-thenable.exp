@@ -15,13 +15,13 @@ newEvent 6 S 0
 newEvent 4 S 0
 End
 Begin 6
-newEvent 8 W 2
+newEvent 8 EXTERNAL
 Link 7 8
 SubmitOp async_8 access ASYNC
 newEvent 7 S 0
 End
 Begin 4
-newEvent 9 W 2
+newEvent 9 EXTERNAL
 Link 5 9
 SubmitOp async_9 access ASYNC
 newEvent 5 S 0

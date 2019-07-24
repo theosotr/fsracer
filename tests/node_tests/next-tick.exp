@@ -20,7 +20,7 @@ SubmitOp sync_12 open SYNC
 SubmitOp sync_13 close SYNC
 End
 Begin 4
-newEvent 5 W 2
+newEvent 5 EXTERNAL
 Link 4 5
 SubmitOp async_5 unlink ASYNC
 End
