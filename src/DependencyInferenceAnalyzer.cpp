@@ -258,7 +258,7 @@ void DependencyInferenceAnalyzer::AddDependency(size_t source, size_t target) {
   }
   unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(source);
   if (it != dep_graph.end()) {
-    it->second.dependencies.insert(target);
+    it->second.dependents.insert(target);
   }
 }
 
@@ -282,7 +282,7 @@ void DependencyInferenceAnalyzer::SaveDependencyGraph(enum GraphFormat graph_for
 void DependencyInferenceAnalyzer::ToCSV(ostream &out) {
   for (auto const &entry : dep_graph) {
     EventInfo event_info = entry.second;
-    for (auto const &dependency : event_info.dependencies) {
+    for (auto const &dependency : event_info.dependents) {
       out << event_info.event_id << "," << dependency << "\n";
     }
   }
@@ -294,7 +294,7 @@ void DependencyInferenceAnalyzer::ToDot(ostream &out) {
   for (auto const &entry : dep_graph) {
     // TODO Add node labels.
     EventInfo event_info = entry.second;
-    for (auto const &dependency : event_info.dependencies) {
+    for (auto const &dependency : event_info.dependents) {
       out << event_info.event_id << "->" << dependency << ";\n";
     }
   }

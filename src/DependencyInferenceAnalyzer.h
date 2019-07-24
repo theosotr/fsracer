@@ -39,8 +39,8 @@ class DependencyInferenceAnalyzer : public Analyzer {
       size_t event_id;
       // Type information of the event.
       Event event;
-      // Set of its dependencies.
-      set<size_t> dependencies;
+      // Set of the events dependent on the current one.
+      set<size_t> dependents;
 
       EventInfo(size_t event_id_, Event event_):
         event_id(event_id_),
