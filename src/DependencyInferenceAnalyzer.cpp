@@ -296,8 +296,13 @@ void DependencyInferenceAnalyzer::ToDot(ostream &out) {
     if (event_info.event_id == MAIN_BLOCK) {
       out << MAIN_BLOCK << "[label=\"MAIN\"];\n";
     } else {
-      out << event_info.event_id << "[label=\"" << event_info.event_id
-        << "[" << event_info.event.ToString() << "]" << "\"];\n";
+      out
+        << event_info.event_id
+        << "[label=\"" << event_info.event_id
+        << "["
+        << event_info.event.ToString()
+        << "]"
+        << "\"];\n";
     }
     for (auto const &dependency : event_info.dependents) {
       out << event_info.event_id << "->" << dependency << ";\n";
