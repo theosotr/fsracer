@@ -15,6 +15,12 @@ using namespace operation;
 using namespace trace;
 
 
+inline Event
+construct_default_event() {
+  return Event(Event::S, 0);
+}
+
+
 namespace analyzer {
 
 
@@ -71,13 +77,23 @@ class DependencyInferenceAnalyzer : public Analyzer {
     set<size_t> alive_events;
     Block *current_block;
 
-    Event ConstructDefaultEvent();
     void AddAliveEvent(size_t event_id);
     void RemoveAliveEvent(size_t event_id);
     void AddEventInfo(size_t event_id);
     void AddEventInfo(size_t event_id, Event event);
+    EventInfo GetEventInfo(size_t event_id);
+
+    // Methods for constructing the dependency graph based on
+    // the type of events.
+    void ProceedSEvent(EventInfo &new_event, EventInfo &old_event);
+    void ProceedMEvent(EventInfo &new_event, EventInfo &old_event);
+    void ProceedWEvent(EventInfo &new_event, EventInfo &old_event);
+    void ProceedEXTEvent(EventInfo &new_event, EventInfo &old_event);
     void AddDependencies(size_t event_id, Event event);
     void AddDependency(size_t source, size_t target);
+    void ConnectWithWEvents(EventInfo event_info);
+
+    // Methods for storing the dependency graph.
     void ToCSV(ostream &stream);
     void ToDot(ostream &stream);
 };

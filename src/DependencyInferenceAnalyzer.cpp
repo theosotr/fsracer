@@ -8,6 +8,8 @@
 using namespace operation;
 using namespace trace;
 
+
+
 namespace analyzer {
 
 
@@ -36,6 +38,15 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(Block *block) {
   }
 
   current_block = block;
+  size_t block_id = current_block->GetBlockId();
+  if (block_id != MAIN_BLOCK) {
+    EventInfo event_info = GetEventInfo(block_id);
+    // If this block corresponds to a W event,
+    // we try to associate it with other W events,
+    // since now know when it's executed.
+    ConnectWithWEvents(event_info);
+  }
+
   vector<Expr*> exprs = block->GetExprs();
   for (auto const &expr : exprs) {
     AnalyzeExpr(expr);
@@ -98,7 +109,7 @@ void DependencyInferenceAnalyzer::RemoveAliveEvent(size_t event_id) {
 
 
 void DependencyInferenceAnalyzer::AddEventInfo(size_t event_id) {
-  AddEventInfo(event_id, ConstructDefaultEvent());
+  AddEventInfo(event_id, construct_default_event());
 }
 
 
@@ -108,8 +119,72 @@ void DependencyInferenceAnalyzer::AddEventInfo(size_t event_id, Event event) {
 }
 
 
-Event DependencyInferenceAnalyzer::ConstructDefaultEvent() {
-  return Event(Event::S, 0);
+DependencyInferenceAnalyzer::EventInfo
+DependencyInferenceAnalyzer::GetEventInfo(size_t event_id) {
+  unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(event_id);
+  if (it == dep_graph.end()) {
+    EventInfo ev = EventInfo(0, Event(Event::S, 0));
+    return ev;
+  } else {
+    return it->second;
+  }
+} 
+
+
+void DependencyInferenceAnalyzer::ProceedSEvent(EventInfo &new_event,
+                                                EventInfo &old_event) {
+  AddDependency(old_event.event_id, new_event.event_id);
+}
+
+
+void DependencyInferenceAnalyzer::ProceedMEvent(EventInfo &new_event,
+                                                EventInfo &old_event) {
+  switch (new_event.event.GetEventType()) {
+    case Event::S:
+      // The current event has higher priority (S > M).
+      AddDependency(new_event.event_id, old_event.event_id);
+      break;
+    case Event::M:
+      if (new_event.event.GetEventValue() < old_event.event.GetEventValue()) {
+        // The current event has higher priority because its
+        // event value is smaller. (W i > W j if i < j).
+        AddDependency(new_event.event_id, old_event.event_id);
+      } else {
+        AddDependency(old_event.event_id, new_event.event_id);
+      }
+      break;
+    case Event::W:
+    case Event::EXT:
+      // The current event has smaller priority (W < M).
+      AddDependency(old_event.event_id, new_event.event_id);
+  }
+}
+
+
+void DependencyInferenceAnalyzer::ProceedWEvent(EventInfo &new_event,
+                                                EventInfo &old_event) {
+  switch (new_event.event.GetEventType()) {
+    case Event::EXT:
+      // The new event is external.
+      // Therefore, already created W events have higher priority than
+      // the external events.
+      AddDependency(old_event.event_id, new_event.event_id);
+    default:
+      break;
+  }
+}
+
+
+void DependencyInferenceAnalyzer::ProceedEXTEvent(EventInfo &new_event,
+                                                  EventInfo &old_event) {
+  switch (new_event.event.GetEventType()) {
+    case Event::S:
+    case Event::M:
+      // The current event has higher priority (S > W and M > W).
+      AddDependency(new_event.event_id, old_event.event_id);
+    default:
+      break;
+  }
 }
 
 
@@ -120,54 +195,67 @@ void DependencyInferenceAnalyzer::AddDependencies(size_t event_id, Event event) 
       continue;
     }
     EventInfo event_info = it->second;
+    EventInfo new_event_info = EventInfo(event_id, event);
     switch (event_info.event.GetEventType()) {
       case Event::S:
-        // This event has higher priority than the current one.
-        AddDependency(event_info.event_id, event_id);
+        ProceedSEvent(new_event_info, event_info);
         break;
       case Event::M:
-        switch (event.GetEventType()) {
-          case Event::S:
-            // The current event has higher priority (S > M).
-            AddDependency(event_id, event_info.event_id);
-            break;
-          case Event::M:
-            if (event.GetEventValue() < event_info.event.GetEventValue()) {
-              // The current event has higher priority because its
-              // event value is smaller. (W i > W j if i < j).
-              AddDependency(event_id, event_info.event_id);
-            } else {
-              AddDependency(event_info.event_id, event_id);
-            }
-            break;
-          case Event::W:
-            // The current event has smaller priority (W < M).
-            AddDependency(event_info.event_id, event_id);
-            break;
-        }
+        ProceedMEvent(new_event_info, event_info);
         break;
       case Event::W:
-        switch (event.GetEventType()) {
-          case Event::S:
-          case Event::M:
-            // The current event has higher priority (S > W and M > W).
-            AddDependency(event_id, event_info.event_id);
-            break;
-          case Event::W:
-            if (event.GetEventValue() == event_info.event.GetEventValue()) {
-              // We follow a FIFO approach for events of the same type
-              // and same event value.
-              AddDependency(event_id, event_info.event_id);
-            }
-            break;
-        }
+        ProceedWEvent(new_event_info, event_info);
+        break;
+      case Event::EXT:
+        ProceedEXTEvent(new_event_info, event_info);
         break;
     }
   }
 }
 
 
+void DependencyInferenceAnalyzer::ConnectWithWEvents(EventInfo event_info) {
+  switch (event_info.event.GetEventType()) {
+    case Event::S:
+    case Event::M:
+    case Event::EXT:
+      // This event does not have a W type, so we do nothing.
+      break;
+    case Event::W:
+      for (auto alive_ev_id : alive_events) {
+        unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(alive_ev_id);
+        if (it == dep_graph.end()) {
+          continue;
+        }
+        // In this loop, we get the list of all the alive events
+        // whose type is W and their event value is identical with
+        // that of the current event.
+        //
+        // Then, for every event X found in the previous list,
+        // we create the following dependency:
+        //
+        // current_event -> X.
+        EventInfo ei = it->second;
+        switch (ei.event.GetEventType()) {
+          case Event::S:
+          case Event::M:
+          case Event::EXT:
+            break;
+          case Event::W:
+            if (ei.event.GetEventValue() == event_info.event.GetEventValue()) {
+              AddDependency(event_info.event_id, ei.event_id);
+            }
+          break;
+        }
+     }
+  }
+}
+
+
 void DependencyInferenceAnalyzer::AddDependency(size_t source, size_t target) {
+  if (source == target) {
+    return;
+  }
   unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(source);
   if (it != dep_graph.end()) {
     it->second.dependencies.insert(target);
