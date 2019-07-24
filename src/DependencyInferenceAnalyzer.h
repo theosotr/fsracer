@@ -32,6 +32,22 @@ class DependencyInferenceAnalyzer : public Analyzer {
 
   public:
     /**
+     * This struct holds all the information associated with an event.
+     */
+    struct EventInfo {
+      /// The ID of the event.
+      size_t event_id;
+      // Type information of the event.
+      Event event;
+      // Set of its dependencies.
+      set<size_t> dependencies;
+
+      EventInfo(size_t event_id_, Event event_):
+        event_id(event_id_),
+        event(event_) {  }
+    };
+
+    /**
      * Supported formats of the dependency graph.
      *
      * DOT: The dependency graph is represented as a graphviz graph.
@@ -79,22 +95,6 @@ class DependencyInferenceAnalyzer : public Analyzer {
                              const string output_file);
 
   private:
-
-    /**
-     * This struct holds all the information associated with an event.
-     */
-    struct EventInfo {
-      /// The ID of the event.
-      size_t event_id;
-      // Type information of the event.
-      Event event;
-      // Set of its dependencies.
-      set<size_t> dependencies;
-
-      EventInfo(size_t event_id_, Event event_):
-        event_id(event_id_),
-        event(event_) {  }
-    };
 
     /// The dependency graph of events.
     unordered_map<size_t, EventInfo> dep_graph;
