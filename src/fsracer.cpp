@@ -59,8 +59,11 @@ event_exit(void)
   // TODO Make analyzers configurable.
   DependencyInferenceAnalyzer *dep_analyzer = new DependencyInferenceAnalyzer(
       writer::OutWriter::WRITE_STDOUT, "");
+  cout << dep_analyzer->GetName() << ": Start analyzing traces...\n";
   dep_analyzer->Analyze(trace_gen->GetTrace());
-  dep_analyzer->SaveDependencyGraph(DependencyInferenceAnalyzer::CSV, "graph.dot");
+  cout << dep_analyzer->GetName() << ": Analysis is done\n";
+  cout << dep_analyzer->GetName() << ": Dumping dependency graph...\n";
+  dep_analyzer->DumpDependencyGraph(DependencyInferenceAnalyzer::CSV);
   delete dep_analyzer;
   delete trace_gen;
 

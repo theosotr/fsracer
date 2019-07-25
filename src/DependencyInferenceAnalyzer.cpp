@@ -52,8 +52,8 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(Block *block) {
   vector<Expr*> exprs = block->GetExprs();
   for (auto const &expr : exprs) {
     AnalyzeExpr(expr);
-    RemoveAliveEvent(block->GetBlockId());
   }
+  RemoveAliveEvent(block->GetBlockId());
 }
 
 
@@ -166,6 +166,10 @@ void DependencyInferenceAnalyzer::ProceedMEvent(EventInfo &new_event,
 void DependencyInferenceAnalyzer::ProceedWEvent(EventInfo &new_event,
                                                 EventInfo &old_event) {
   switch (new_event.event.GetEventType()) {
+    case Event::S:
+    case Event::M:
+      AddDependency(new_event.event_id, old_event.event_id);
+      break;
     case Event::EXT:
       // The new event is external.
       // Therefore, already created W events have higher priority than
@@ -193,7 +197,7 @@ void DependencyInferenceAnalyzer::ProceedEXTEvent(EventInfo &new_event,
 void DependencyInferenceAnalyzer::AddDependencies(size_t event_id, Event event) {
   for (auto alive_ev_id : alive_events) {
     unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(alive_ev_id);
-    if (it == dep_graph.end()) {
+    if (it == dep_graph.end() || current_block->GetBlockId() == it->second.event_id) {
       continue;
     }
     EventInfo event_info = it->second;
@@ -265,8 +269,10 @@ void DependencyInferenceAnalyzer::AddDependency(size_t source, size_t target) {
 }
 
 
-void DependencyInferenceAnalyzer::SaveDependencyGraph(enum GraphFormat graph_format,
-                                                      const string output_file) {
+void DependencyInferenceAnalyzer::DumpDependencyGraph(enum GraphFormat graph_format) {
+  if (!out) {
+    return;
+  }
   switch (graph_format) {
     case DOT:
       ToDot(GetOutStream());

@@ -91,11 +91,10 @@ class DependencyInferenceAnalyzer : public Analyzer {
     void AnalyzeSymlink(Symlink *symlink) {  }
 
     /**
-     * This method saves the constructed dependency graph to the given
-     * file in the specified format (either DOT or csv).
+     * This method dumps the constructed dependency graph
+     * in the specified format (either DOT or CSV).
      */
-    void SaveDependencyGraph(enum GraphFormat graph_format,
-                             const string output_file);
+    void DumpDependencyGraph(enum GraphFormat graph_format);
 
   private:
 
