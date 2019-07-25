@@ -40,3 +40,17 @@ End
 Begin 8
 End
 DumpAnalyzer: Analysis is done
+DependencyInferenceAnalyzer: Start analyzing traces...
+DependencyInferenceAnalyzer: Analysis is done
+DependencyInferenceAnalyzer: Dumping dependency graph...
+1,2
+1,3
+1,4
+1,5
+1,6
+4,7
+4,8
+5,7
+5,8
+6,5
+6,7
