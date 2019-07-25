@@ -4,6 +4,7 @@
 #include <fstream>
 
 #include "Operation.h"
+#include "OutWriter.h"
 #include "Trace.h"
 
 
@@ -15,6 +16,16 @@ namespace analyzer {
 
 class Analyzer {
   public:
+    Analyzer(enum writer::OutWriter::WriteOption write_option,
+             string filename) {
+      out = new writer::OutWriter(write_option, filename);
+    }
+
+    ~Analyzer() {
+      if (out) {
+        delete out;
+      }
+    }
     virtual string GetName();
 
     virtual void Analyze(TraceNode *trace_node);
@@ -34,26 +45,21 @@ class Analyzer {
     virtual void AnalyzeLink(Link *link);
     virtual void AnalyzeRename(Rename *rename);
     virtual void AnalyzeSymlink(Symlink *symlink);
+
+    ostream &GetOutStream() {
+      return out->OutStream();
+    }
+
+  protected:
+    writer::OutWriter *out;
 };
 
 
 class DumpAnalyzer : public Analyzer {
   public:
-    enum DumpOption {
-      FILE_DUMP,
-      STDOUT_DUMP
-    };
-
-    DumpAnalyzer(enum DumpOption dump_option_, string filename_):
-      trace_count(0),
-      dump_option(dump_option_),
-      filename(filename_) {
-        SetupOutStream();
-      }
-
-    ~DumpAnalyzer() {
-      ClearOutStream();
-    }
+    DumpAnalyzer(writer::OutWriter::WriteOption write_option, string filename):
+      Analyzer(write_option, filename),
+      trace_count(0) {  }
 
     string GetName() {
       return "DumpAnalyzer";
@@ -76,27 +82,16 @@ class DumpAnalyzer : public Analyzer {
     void AnalyzeRename(Rename *rename) {  }
     void AnalyzeSymlink(Symlink *symlink) {  }
 
-    enum DumpOption GetDumpOption() {
-      return dump_option;
-    }
-
     size_t GetTraceCount() {
       return trace_count;
     }
 
   private:
     size_t trace_count;
-    enum DumpOption dump_option;
-    ofstream of;
-    string filename;
-
     void IncrTraceCount() {
       trace_count++;
     }
 
-    void SetupOutStream();
-    void ClearOutStream();
-    ostream &OutStream();
 };
 
 

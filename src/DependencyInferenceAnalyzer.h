@@ -7,6 +7,7 @@
 
 #include "Analyzer.h"
 #include "Operation.h"
+#include "OutWriter.h"
 #include "Trace.h"
 
 
@@ -60,7 +61,9 @@ class DependencyInferenceAnalyzer : public Analyzer {
     };
 
     /** Default Constructor of the analyzer. */
-    DependencyInferenceAnalyzer():
+    DependencyInferenceAnalyzer(writer::OutWriter::WriteOption write_option,
+                                string filename):
+      Analyzer(write_option, filename),
       current_block(nullptr) {  }
     /** Default Destructor. */
     ~DependencyInferenceAnalyzer() {  };

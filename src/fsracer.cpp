@@ -6,6 +6,7 @@
 #include "Analyzer.h"
 #include "DependencyInferenceAnalyzer.h"
 #include "NodeGenerator.h"
+#include "OutWriter.h"
 
 
 using namespace generator;
@@ -44,7 +45,7 @@ event_exit(void)
   drmgr_exit();
   drsym_exit();
   DumpAnalyzer *dump_analyzer = new DumpAnalyzer(
-      DumpAnalyzer::STDOUT_DUMP, "");
+      writer::OutWriter::WRITE_STDOUT, "");
 
   // TODO: Currently the analysis of traces is done offline
   // (after the execution of the program).
@@ -56,9 +57,10 @@ event_exit(void)
   delete dump_analyzer;
 
   // TODO Make analyzers configurable.
-  DependencyInferenceAnalyzer *dep_analyzer = new DependencyInferenceAnalyzer();
+  DependencyInferenceAnalyzer *dep_analyzer = new DependencyInferenceAnalyzer(
+      writer::OutWriter::WRITE_STDOUT, "");
   dep_analyzer->Analyze(trace_gen->GetTrace());
-  dep_analyzer->SaveDependencyGraph(DependencyInferenceAnalyzer::DOT, "graph.dot");
+  dep_analyzer->SaveDependencyGraph(DependencyInferenceAnalyzer::CSV, "graph.dot");
   delete dep_analyzer;
   delete trace_gen;
 

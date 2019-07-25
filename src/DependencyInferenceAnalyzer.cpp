@@ -1,4 +1,6 @@
 #include <fstream>
+#include <utility>
+#include <set>
 
 #include "DependencyInferenceAnalyzer.h"
 #include "Operation.h"
@@ -265,26 +267,32 @@ void DependencyInferenceAnalyzer::AddDependency(size_t source, size_t target) {
 
 void DependencyInferenceAnalyzer::SaveDependencyGraph(enum GraphFormat graph_format,
                                                       const string output_file) {
-  ofstream out_stream;
-  out_stream.open(output_file);
   switch (graph_format) {
     case DOT:
-      ToDot(out_stream);
+      ToDot(GetOutStream());
       break;
     case CSV:
-      ToCSV(out_stream);
+      ToCSV(GetOutStream());
       break;
   }
-  out_stream.close();
 }
 
 
 void DependencyInferenceAnalyzer::ToCSV(ostream &out) {
+  // We store the graph in uniform form,
+  // the edge list is sorted by on the value of
+  // each source and target.
+  //
+  // The order is ascending.
+  set<pair<size_t, size_t>> edges;
   for (auto const &entry : dep_graph) {
     EventInfo event_info = entry.second;
-    for (auto const &dependency : event_info.dependents) {
-      out << event_info.event_id << "," << dependency << "\n";
+    for (auto dependency : event_info.dependents) {
+      edges.insert({ event_info.event_id, dependency });
     }
+  }
+  for (auto const &edge : edges) {
+    out << edge.first << "," << edge.second << "\n";
   }
 }
 
