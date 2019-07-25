@@ -88,4 +88,11 @@ void DumpAnalyzer::AnalyzeLink(LinkExpr *link_expr) {
 }
 
 
+void DumpAnalyzer::AnalyzeContext(Context *context_expr) {
+  if (!context_expr) {
+    return;
+  }
+  GetOutStream() << context_expr->ToString() << "\n";
+}
+
 }

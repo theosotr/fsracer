@@ -64,7 +64,8 @@ class DependencyInferenceAnalyzer : public Analyzer {
     DependencyInferenceAnalyzer(writer::OutWriter::WriteOption write_option,
                                 string filename):
       Analyzer(write_option, filename),
-      current_block(nullptr) {  }
+      current_block(nullptr),
+      current_context(MAIN_BLOCK) {  }
     /** Default Destructor. */
     ~DependencyInferenceAnalyzer() {  };
 
@@ -81,6 +82,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
     void AnalyzeExecOp(ExecOp *exec_op) {  };
     void AnalyzeNewEvent(NewEventExpr *new_ev_expr);
     void AnalyzeLink(LinkExpr *link_expr);
+    void AnalyzeContext(Context *context_expr);
 
     void AnalyzeNewFd(NewFd *new_fd) {  }
     void AnalyzeDelFd(DelFd *del_fd) {  }
@@ -107,6 +109,12 @@ class DependencyInferenceAnalyzer : public Analyzer {
     set<size_t> alive_events;
     // The block that is currently being processed by the analyzer.
     Block *current_block;
+
+    /**
+     * The ID of the event that corresponds to the context where
+     * the current block is executed.
+     */
+    size_t current_context;
 
     // Methods for perfoming operations on the dependency graph and
     // the set of alive events.

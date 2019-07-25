@@ -41,6 +41,7 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(Block *block) {
 
   current_block = block;
   size_t block_id = current_block->GetBlockId();
+  current_context = block_id;
   if (block_id != MAIN_BLOCK) {
     EventInfo event_info = GetEventInfo(block_id);
     // If this block corresponds to a W event,
@@ -81,7 +82,7 @@ void DependencyInferenceAnalyzer::AnalyzeNewEvent(NewEventExpr *new_event) {
   AddEventInfo(event_id, new_event->GetEvent());
   // We add the dependency between the event corresponding to the current block
   // and the newly created event.
-  AddDependency(block_id, event_id);
+  AddDependency(current_context, event_id);
   AddDependencies(event_id, new_event->GetEvent());
   // Add the newly-created event to the list of alive events,
   // i.e., events whose corresponding callbacks are pending.
@@ -94,6 +95,25 @@ void DependencyInferenceAnalyzer::AnalyzeLink(LinkExpr *link_expr) {
     return;
   }
   AddDependency(link_expr->GetSourceEvent(), link_expr->GetTargetEvent());
+}
+
+
+void DependencyInferenceAnalyzer::AnalyzeContext(Context *context_expr) {
+  if (!context_expr) {
+    return;
+  }
+  unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(current_context);
+  if (it == dep_graph.end()) {
+    return;
+  }
+  if (current_context != current_block->GetBlockId()) {
+    for (auto event_id : it->second.dependents) {
+      AddDependency(context_expr->GetEventId(), event_id);
+    }
+    it->second.dependents.clear();
+  }
+  it->second.dependents.insert(context_expr->GetEventId());
+  current_context = context_expr->GetEventId();
 }
 
 
@@ -174,7 +194,9 @@ void DependencyInferenceAnalyzer::ProceedWEvent(EventInfo &new_event,
       // The new event is external.
       // Therefore, already created W events have higher priority than
       // the external events.
-      AddDependency(old_event.event_id, new_event.event_id);
+      if (old_event.event.GetEventValue() != 0) {
+        AddDependency(old_event.event_id, new_event.event_id);
+      }
     default:
       break;
   }

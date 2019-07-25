@@ -330,6 +330,33 @@ class LinkExpr : public Expr {
 
 
 /**
+ * This expression changes the context in which a block
+ * is executed.
+ */
+class Context : public Expr {
+  public:
+    Context(size_t event_id_):
+      event_id(event_id_) {  }
+
+    size_t GetEventId() {
+      return event_id;
+    }
+
+    /**
+     * This method accepts an analyzer that is responsible for analyzing
+     * the current `context` expression. */
+    void Accept(analyzer::Analyzer *analyzer);
+
+    /** String representation of the current expression. */
+    string ToString();
+
+  private:
+    size_t event_id;
+
+};
+
+
+/**
  * This class represents an execution block.
  *
  * An execution block indicates the boundaries of the execution of
