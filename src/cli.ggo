@@ -1,0 +1,6 @@
+package "fsracer"
+version "0.1dev"
+
+
+option  "analyzer"         - "A string option with list of values" 
+        values="dep-infer","dump" required

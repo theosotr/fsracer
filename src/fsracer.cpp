@@ -1,3 +1,5 @@
+#include "cmdline.h"
+
 #include "dr_api.h"
 #include "drmgr.h"
 #include "drwrap.h"
@@ -18,6 +20,7 @@ using namespace analyzer;
 //
 static Generator *trace_gen;
 bool module_loaded = false;
+
 
 
 static void
@@ -70,9 +73,23 @@ event_exit(void)
 }
 
 
+void
+process_args(gengetopt_args_info &args_info)
+{
+  // TODO.
+}
+
+
 DR_EXPORT void
 dr_client_main(client_id_t client_id, int argc, const char *argv[])
 {
+  gengetopt_args_info args_info;
+  if (cmdline_parser(argc, (char **) argv, &args_info) != 0) {
+    cmdline_parser_print_help();
+    exit(1);
+  }
+  process_args(args_info);
+  cmdline_parser_free(&args_info);
   // TODO Create a CLI for the client.
   dr_set_client_name("Client for Detecting Data Races in Files", "");
   dr_printf("Starting the FSRacer Client...\n");
