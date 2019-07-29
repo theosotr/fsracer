@@ -28,9 +28,9 @@ string Event::ToString() {
 string SubmitOp::ToString() {
   switch (type) {
     case ASYNC:
-      return "SubmitOp "  + id + " " + name + " ASYNC";
+      return "submitOp "  + id + " " + name + " ASYNC";
     default:
-      return "SubmitOp "  + id + " " + name + " SYNC";
+      return "submitOp "  + id + " " + name + " SYNC";
   }
 }
 
@@ -76,7 +76,7 @@ void NewEventExpr::Accept(analyzer::Analyzer *analyzer) {
 
 
 string LinkExpr::ToString() {
-  return "Link " + to_string(source_ev) + " " + to_string(target_ev);
+  return "link " + to_string(source_ev) + " " + to_string(target_ev);
 }
 
 
