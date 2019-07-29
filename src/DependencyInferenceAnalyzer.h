@@ -100,7 +100,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
     void AnalyzeExecOp(ExecOp *exec_op) {  };
     void AnalyzeNewEvent(NewEventExpr *new_ev_expr);
     void AnalyzeLink(LinkExpr *link_expr);
-    void AnalyzeContext(Context *context_expr);
+    void AnalyzeTrigger(Trigger *trigger_expr);
 
     void AnalyzeNewFd(NewFd *new_fd) {  }
     void AnalyzeDelFd(DelFd *del_fd) {  }

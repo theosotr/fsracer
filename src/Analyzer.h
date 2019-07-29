@@ -36,7 +36,7 @@ class Analyzer {
     virtual void AnalyzeExecOp(ExecOp *exec_op);
     virtual void AnalyzeNewEvent(NewEventExpr *new_ev_expr);
     virtual void AnalyzeLink(LinkExpr *link_expr);
-    virtual void AnalyzeContext(Context *context_expr);
+    virtual void AnalyzeTrigger(Trigger *trigger_expr);
 
     //Operations
     virtual void AnalyzeNewFd(NewFd *new_fd);
@@ -74,7 +74,7 @@ class DumpAnalyzer : public Analyzer {
     void AnalyzeExecOp(ExecOp *exec_op);
     void AnalyzeNewEvent(NewEventExpr *new_ev_expr);
     void AnalyzeLink(LinkExpr *link_expr);
-    void AnalyzeContext(Context *context_expr);
+    void AnalyzeTrigger(Trigger *nested_ev_expr);
 
     void AnalyzeNewFd(NewFd *new_fd) {  }
     void AnalyzeDelFd(DelFd *del_fd) {  }

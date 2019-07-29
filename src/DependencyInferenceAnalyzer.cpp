@@ -120,18 +120,19 @@ void DependencyInferenceAnalyzer::AnalyzeLink(LinkExpr *link_expr) {
 }
 
 
-void DependencyInferenceAnalyzer::AnalyzeContext(Context *context_expr) {
-  if (!context_expr) {
+void
+DependencyInferenceAnalyzer::AnalyzeTrigger(Trigger *trigger_expr) {
+  if (!trigger_expr) {
     return;
   }
-  size_t event_id = context_expr->GetEventId();
+  size_t event_id = trigger_expr->GetEventId();
   unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(event_id);
   if (it != dep_graph.end()) {
     // We mark this event as inactive because it is executed as part
     // of the parent block.
     it->second.active = false;
   }
-  current_context = context_expr->GetEventId();
+  current_context = trigger_expr->GetEventId();
 }
 
 

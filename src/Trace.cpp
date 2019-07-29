@@ -85,13 +85,13 @@ void LinkExpr::Accept(analyzer::Analyzer *analyzer) {
 }
 
 
-string Context::ToString() {
-  return "Context " + to_string(event_id);
+string Trigger::ToString() {
+  return "trigger " + to_string(event_id);
 }
 
 
-void Context::Accept(analyzer::Analyzer *analyzer) {
-  analyzer->AnalyzeContext(this);
+void Trigger::Accept(analyzer::Analyzer *analyzer) {
+  analyzer->AnalyzeTrigger(this);
 }
 
 

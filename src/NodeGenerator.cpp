@@ -520,7 +520,7 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
     size_t block_id = trace_gen->GetCurrentBlock()->GetBlockId();
     if (block_id != MAIN_BLOCK) {
       trace_gen->GetCurrentBlock()->AddExpr(
-          new Context(async_id));
+          new Trigger(async_id));
       return;
     } 
   }

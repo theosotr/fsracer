@@ -330,12 +330,12 @@ class LinkExpr : public Expr {
 
 
 /**
- * This expression changes the context in which a block
- * is executed.
+ * This expression triggers the execution of an event's callback
+ * as part of the execution of the current block.
  */
-class Context : public Expr {
+class Trigger : public Expr {
   public:
-    Context(size_t event_id_):
+    Trigger(size_t event_id_):
       event_id(event_id_) {  }
 
     size_t GetEventId() {
@@ -344,7 +344,7 @@ class Context : public Expr {
 
     /**
      * This method accepts an analyzer that is responsible for analyzing
-     * the current `context` expression. */
+     * the current `trigger` expression. */
     void Accept(analyzer::Analyzer *analyzer);
 
     /** String representation of the current expression. */
