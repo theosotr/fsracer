@@ -49,8 +49,7 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(Block *block) {
     return;
   }
 
-  current_block = block;
-  size_t block_id = current_block->GetBlockId();
+  size_t block_id = block->GetBlockId();
   current_context = block_id;
   if (block_id != MAIN_BLOCK) {
     EventInfo event_info = GetEventInfo(block_id);
@@ -58,8 +57,23 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(Block *block) {
     // we try to associate it with other W events,
     // since now know when it's executed.
     ConnectWithWEvents(event_info);
+
+    // We also prune any redundant edges.
+    PruneEdges(block_id);
+
+    // If the current event is active, we can infer that
+    // it has been previously executed. Therefore, we have
+    // to associate the previous block with the first event
+    // that is created inside the current one.
+    if (event_info.active) {
+      if (current_block) {
+        pending_ev = current_block->GetBlockId();
+      }
+
+    }
   }
 
+  current_block = block;
   vector<Expr*> exprs = block->GetExprs();
   for (auto const &expr : exprs) {
     AnalyzeExpr(expr);
@@ -91,6 +105,16 @@ void DependencyInferenceAnalyzer::AnalyzeNewEvent(NewEventExpr *new_event) {
 
   size_t event_id = new_event->GetEventId();
   AddEventInfo(event_id, new_event->GetEvent());
+
+  // There is a pending event that we need to connect with the newly-created
+  // event.
+  //
+  // This pending event came from the same block, but it was created
+  // the first time the corresponding block was executed.
+  if (pending_ev) {
+    AddDependency(pending_ev, event_id, HAPPENS_BEFORE);
+    pending_ev = 0;
+  }
   // We add the dependency between the event corresponding to the current block
   // and the newly created event.
   //
@@ -314,6 +338,50 @@ void DependencyInferenceAnalyzer::AddDependency(size_t source, size_t target,
   unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(source);
   if (it != dep_graph.end()) {
     it->second.dependents.insert({ target, label });
+    unordered_map<size_t, EventInfo>::iterator target_it = dep_graph.find(target);
+    if (target_it == dep_graph.end()) {
+      return;
+    }
+    switch (label) {
+      case HAPPENS_BEFORE:
+      case CREATES:
+        it->second.before.insert(target);
+        target_it->second.after.insert(source);
+        break;
+    }
+  }
+}
+
+
+void DependencyInferenceAnalyzer::RemoveDependency(size_t source, size_t target) {
+  unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(source);
+  if (it != dep_graph.end()) {
+    it->second.dependents.erase({ target, HAPPENS_BEFORE });
+  }
+}
+
+
+void DependencyInferenceAnalyzer::PruneEdges(size_t event_id) {
+  unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(event_id);
+  if (it == dep_graph.end()) {
+    return;
+  }
+  // Iterate over the next nodes of the given event.
+  for (auto next : it->second.before) {
+    unordered_map<size_t, EventInfo>::iterator next_it = dep_graph.find(next);
+    if (next_it == dep_graph.end()) {
+      continue;
+    }
+    // Iterate over the previous nodes of the the given event.
+    //
+    // If prev is included in the set of previous nodes of next,
+    // we remove the corresponding edge, because `prev` is connected with
+    // `next` via the given event.
+    for (auto prev : it->second.after) {
+      if (next_it->second.after.find(prev) != next_it->second.after.end()) {
+        RemoveDependency(prev, next);
+      }
+    }
   }
 }
 

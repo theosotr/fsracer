@@ -92,7 +92,6 @@ DependencyInferenceAnalyzer: Dumping dependency graph...
 5,10,before
 5,11,creates
 7,5,before
-7,9,before
 7,10,creates
 9,12,creates
 11,13,creates

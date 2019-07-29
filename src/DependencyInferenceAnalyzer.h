@@ -58,6 +58,10 @@ class DependencyInferenceAnalyzer : public Analyzer {
       set<pair<size_t, enum EdgeLabel>> dependents;
       /// True if the event is active; false otherwise.
       bool active;
+      /// Set of nodes executed before the current one.
+      set<size_t> before;
+      /// Set of nodes executed after the current one.
+      set<size_t> after;
 
       EventInfo(size_t event_id_, Event event_):
         event_id(event_id_),
@@ -83,7 +87,9 @@ class DependencyInferenceAnalyzer : public Analyzer {
                                 string filename):
       Analyzer(write_option, filename),
       current_block(nullptr),
-      current_context(MAIN_BLOCK) {  }
+      pending_ev(0),
+      current_context(MAIN_BLOCK)
+  {  }
     /** Default Destructor. */
     ~DependencyInferenceAnalyzer() {  };
 
@@ -130,7 +136,10 @@ class DependencyInferenceAnalyzer : public Analyzer {
     set<size_t> alive_events;
     // The block that is currently being processed by the analyzer.
     Block *current_block;
-
+    /**
+     * This is the event that we need to connext with the first
+     * created event in the current execution block. */
+    size_t pending_ev;
     /**
      * The ID of the event that corresponds to the context where
      * the current block is executed.
@@ -212,6 +221,15 @@ class DependencyInferenceAnalyzer : public Analyzer {
      * source -> target
      */
     void AddDependency(size_t source, size_t target, enum EdgeLabel label);
+
+    /** This method removes the dependency from source to target. */
+    void RemoveDependency(size_t source, size_t target);
+
+    /**
+     * This method prunes redundant edges between the previous nodes
+     * of the given event and its next nodes.
+     */
+    void PruneEdges(size_t event_id);
 
     /** Make all the event whose type is W dependent on the given event. */
     void ConnectWithWEvents(EventInfo event_info);
