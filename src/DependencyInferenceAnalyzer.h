@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <unordered_map>
+#include <utility>
 #include <set>
 
 #include "Analyzer.h"
@@ -33,6 +34,19 @@ class DependencyInferenceAnalyzer : public Analyzer {
 
   public:
     /**
+     * Enumeration that indicates the type of an edge found
+     * in the dependency graph.
+     */
+    enum EdgeLabel {
+      /// Indicates that the source event creates the target.
+      CREATES,
+      /**
+       * Indicates that the source event happens-before the target;
+       * it does not create it though.
+       */
+      HAPPENS_BEFORE
+    };
+    /**
      * This struct holds all the information associated with an event.
      */
     struct EventInfo {
@@ -41,11 +55,15 @@ class DependencyInferenceAnalyzer : public Analyzer {
       // Type information of the event.
       Event event;
       // Set of the events dependent on the current one.
-      set<size_t> dependents;
+      set<pair<size_t, enum EdgeLabel>> dependents;
+      /// True if the event is active; false otherwise.
+      bool active;
 
       EventInfo(size_t event_id_, Event event_):
         event_id(event_id_),
-        event(event_) {  }
+        event(event_),
+        active(true)
+      {  }
     };
 
     /**
@@ -97,6 +115,9 @@ class DependencyInferenceAnalyzer : public Analyzer {
      * in the specified format (either DOT or CSV).
      */
     void DumpDependencyGraph(enum GraphFormat graph_format);
+
+    /** Converts the edge label to string. */
+    static string LabelToString(enum EdgeLabel);
 
   private:
 
@@ -187,7 +208,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
      *
      * source -> target
      */
-    void AddDependency(size_t source, size_t target);
+    void AddDependency(size_t source, size_t target, enum EdgeLabel label);
 
     /** Make all the event whose type is W dependent on the given event. */
     void ConnectWithWEvents(EventInfo event_info);

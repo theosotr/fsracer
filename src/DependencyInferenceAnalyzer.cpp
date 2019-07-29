@@ -1,6 +1,6 @@
 #include <fstream>
-#include <utility>
 #include <set>
+#include <tuple>
 
 #include "DependencyInferenceAnalyzer.h"
 #include "Operation.h"
@@ -13,6 +13,16 @@ using namespace trace;
 
 
 namespace analyzer {
+
+
+string DependencyInferenceAnalyzer::LabelToString(enum EdgeLabel label) {
+  switch (label) {
+    case CREATES:
+      return "creates";
+    case HAPPENS_BEFORE:
+      return "before";
+  }
+}
 
 
 void DependencyInferenceAnalyzer::Analyze(TraceNode *trace_node) {
@@ -82,7 +92,11 @@ void DependencyInferenceAnalyzer::AnalyzeNewEvent(NewEventExpr *new_event) {
   AddEventInfo(event_id, new_event->GetEvent());
   // We add the dependency between the event corresponding to the current block
   // and the newly created event.
-  AddDependency(current_context, event_id);
+  //
+  // The current block *creates* this event.
+  AddDependency(block_id, event_id, CREATES);
+  // Create *happens-before* realations between the current event
+  // and all the existing ones.
   AddDependencies(event_id, new_event->GetEvent());
   // Add the newly-created event to the list of alive events,
   // i.e., events whose corresponding callbacks are pending.
@@ -94,7 +108,15 @@ void DependencyInferenceAnalyzer::AnalyzeLink(LinkExpr *link_expr) {
   if (!link_expr) {
     return;
   }
-  AddDependency(link_expr->GetSourceEvent(), link_expr->GetTargetEvent());
+  size_t source_ev = link_expr->GetSourceEvent();
+  // If the source event corresponds to the current block
+  // or to the current context, we presume that we have already
+  // created this dependency.
+  if (source_ev == current_block->GetBlockId() ||
+      source_ev == current_context) {
+    return;
+  }
+  AddDependency(source_ev, link_expr->GetTargetEvent(), HAPPENS_BEFORE);
 }
 
 
@@ -102,17 +124,13 @@ void DependencyInferenceAnalyzer::AnalyzeContext(Context *context_expr) {
   if (!context_expr) {
     return;
   }
-  unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(current_context);
-  if (it == dep_graph.end()) {
-    return;
+  size_t event_id = context_expr->GetEventId();
+  unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(event_id);
+  if (it != dep_graph.end()) {
+    // We mark this event as inactive because it is executed as part
+    // of the parent block.
+    it->second.active = false;
   }
-  if (current_context != current_block->GetBlockId()) {
-    for (auto event_id : it->second.dependents) {
-      AddDependency(context_expr->GetEventId(), event_id);
-    }
-    it->second.dependents.clear();
-  }
-  it->second.dependents.insert(context_expr->GetEventId());
   current_context = context_expr->GetEventId();
 }
 
@@ -155,7 +173,7 @@ DependencyInferenceAnalyzer::GetEventInfo(size_t event_id) {
 
 void DependencyInferenceAnalyzer::ProceedSEvent(EventInfo &new_event,
                                                 EventInfo &old_event) {
-  AddDependency(old_event.event_id, new_event.event_id);
+  AddDependency(old_event.event_id, new_event.event_id, HAPPENS_BEFORE);
 }
 
 
@@ -164,21 +182,21 @@ void DependencyInferenceAnalyzer::ProceedMEvent(EventInfo &new_event,
   switch (new_event.event.GetEventType()) {
     case Event::S:
       // The current event has higher priority (S > M).
-      AddDependency(new_event.event_id, old_event.event_id);
+      AddDependency(new_event.event_id, old_event.event_id, HAPPENS_BEFORE);
       break;
     case Event::M:
       if (new_event.event.GetEventValue() < old_event.event.GetEventValue()) {
         // The current event has higher priority because its
         // event value is smaller. (W i > W j if i < j).
-        AddDependency(new_event.event_id, old_event.event_id);
+        AddDependency(new_event.event_id, old_event.event_id, HAPPENS_BEFORE);
       } else {
-        AddDependency(old_event.event_id, new_event.event_id);
+        AddDependency(old_event.event_id, new_event.event_id, HAPPENS_BEFORE);
       }
       break;
     case Event::W:
     case Event::EXT:
       // The current event has smaller priority (W < M).
-      AddDependency(old_event.event_id, new_event.event_id);
+      AddDependency(old_event.event_id, new_event.event_id, HAPPENS_BEFORE);
   }
 }
 
@@ -188,14 +206,14 @@ void DependencyInferenceAnalyzer::ProceedWEvent(EventInfo &new_event,
   switch (new_event.event.GetEventType()) {
     case Event::S:
     case Event::M:
-      AddDependency(new_event.event_id, old_event.event_id);
+      AddDependency(new_event.event_id, old_event.event_id, HAPPENS_BEFORE);
       break;
     case Event::EXT:
       // The new event is external.
       // Therefore, already created W events have higher priority than
       // the external events.
       if (old_event.event.GetEventValue() != 0) {
-        AddDependency(old_event.event_id, new_event.event_id);
+        AddDependency(old_event.event_id, new_event.event_id, HAPPENS_BEFORE);
       }
     default:
       break;
@@ -209,7 +227,7 @@ void DependencyInferenceAnalyzer::ProceedEXTEvent(EventInfo &new_event,
     case Event::S:
     case Event::M:
       // The current event has higher priority (S > W and M > W).
-      AddDependency(new_event.event_id, old_event.event_id);
+      AddDependency(new_event.event_id, old_event.event_id, HAPPENS_BEFORE);
     default:
       break;
   }
@@ -219,7 +237,12 @@ void DependencyInferenceAnalyzer::ProceedEXTEvent(EventInfo &new_event,
 void DependencyInferenceAnalyzer::AddDependencies(size_t event_id, Event event) {
   for (auto alive_ev_id : alive_events) {
     unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(alive_ev_id);
-    if (it == dep_graph.end() || current_block->GetBlockId() == it->second.event_id) {
+    // We ignore events that are not present to the dependency graph.
+    // events identical to the current block,
+    // as well as inactive events.
+    if (it == dep_graph.end() ||
+        current_block->GetBlockId() == it->second.event_id ||
+        !it->second.active) {
       continue;
     }
     EventInfo event_info = it->second;
@@ -271,7 +294,7 @@ void DependencyInferenceAnalyzer::ConnectWithWEvents(EventInfo event_info) {
             break;
           case Event::W:
             if (ei.event.GetEventValue() == event_info.event.GetEventValue()) {
-              AddDependency(event_info.event_id, ei.event_id);
+              AddDependency(event_info.event_id, ei.event_id, HAPPENS_BEFORE);
             }
           break;
         }
@@ -280,13 +303,14 @@ void DependencyInferenceAnalyzer::ConnectWithWEvents(EventInfo event_info) {
 }
 
 
-void DependencyInferenceAnalyzer::AddDependency(size_t source, size_t target) {
+void DependencyInferenceAnalyzer::AddDependency(size_t source, size_t target,
+                                                enum EdgeLabel label) {
   if (source == target) {
     return;
   }
   unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(source);
   if (it != dep_graph.end()) {
-    it->second.dependents.insert(target);
+    it->second.dependents.insert({ target, label });
   }
 }
 
@@ -312,15 +336,23 @@ void DependencyInferenceAnalyzer::ToCSV(ostream &out) {
   // each source and target.
   //
   // The order is ascending.
-  set<pair<size_t, size_t>> edges;
+  set<tuple<size_t, size_t, enum EdgeLabel>> edges;
   for (auto const &entry : dep_graph) {
     EventInfo event_info = entry.second;
-    for (auto dependency : event_info.dependents) {
-      edges.insert({ event_info.event_id, dependency });
+    for (auto const &dependent: event_info.dependents) {
+      if (GetEventInfo(dependent.first).active) {
+        edges.insert(make_tuple(event_info.event_id, dependent.first,
+                                dependent.second));
+      }
     }
   }
   for (auto const &edge : edges) {
-    out << edge.first << "," << edge.second << "\n";
+    out << get<0>(edge)
+      << ","
+      << get<1>(edge)
+      << ","
+      << LabelToString(get<2>(edge))
+      << "\n";
   }
 }
 
@@ -329,6 +361,9 @@ void DependencyInferenceAnalyzer::ToDot(ostream &out) {
   out << "digraph {\n";
   for (auto const &entry : dep_graph) {
     EventInfo event_info = entry.second;
+    if (!event_info.active) {
+      continue;
+    }
     if (event_info.event_id == MAIN_BLOCK) {
       out << MAIN_BLOCK << "[label=\"MAIN\"];\n";
     } else {
@@ -340,8 +375,14 @@ void DependencyInferenceAnalyzer::ToDot(ostream &out) {
         << "]"
         << "\"];\n";
     }
-    for (auto const &dependency : event_info.dependents) {
-      out << event_info.event_id << "->" << dependency << ";\n";
+    for (auto const &dependent : event_info.dependents) {
+      if (GetEventInfo(dependent.first).active) {
+        out << event_info.event_id << "->"
+          << dependent.first
+          << "[label=\""
+          << LabelToString(dependent.second)
+          << "\"];\n";
+      }
     }
   }
   out << "}\n";
