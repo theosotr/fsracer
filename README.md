@@ -7,6 +7,13 @@ on top of the [DynamoRIO](https://www.dynamorio.org) framework.
 
 # Setup
 
+## Install Dependencies
+
+```
+# Install GNU gengetopt to autogenerate command-line interface.
+sudo apt install gengetopt
+```
+
 ## Download DynamoRIO
 
 First, download the binary package of the DynamoRIO core:
