@@ -18,24 +18,24 @@ hpath AT_FDCWD tmp consumed
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
-SubmitOp sync_12 open SYNC
-SubmitOp sync_13 close SYNC
+submitOp sync_12 open SYNC
+submitOp sync_13 close SYNC
 newEvent 4 W 3
 newEvent 5 W 1
 newEvent 6 W 0
 End
 Begin 6
-Link 6 5
+trigger 5
 newEvent 7 EXTERNAL
-Link 5 7
-SubmitOp async_7 unlink ASYNC
+link 5 7
+submitOp async_7 unlink ASYNC
 End
 Begin 7
 End
 Begin 4
 newEvent 8 EXTERNAL
-Link 4 8
-SubmitOp async_8 access ASYNC
+link 4 8
+submitOp async_8 access ASYNC
 End
 Begin 8
 End
@@ -43,14 +43,8 @@ DumpAnalyzer: Analysis is done
 DependencyInferenceAnalyzer: Start analyzing traces...
 DependencyInferenceAnalyzer: Analysis is done
 DependencyInferenceAnalyzer: Dumping dependency graph...
-1,2
-1,3
-1,4
-1,5
-1,6
-4,7
-4,8
-5,7
-5,8
-6,5
-6,7
+1,4,creates
+1,6,creates
+4,7,before
+4,8,creates
+6,7,creates

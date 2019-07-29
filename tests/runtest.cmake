@@ -80,13 +80,13 @@ string(CONCAT prologue_operation_repl
 
 string(CONCAT prologue_block_repl
   "newEvent 2 EXTERNAL."
-  "Link 1 2."
+  "link 1 2."
   "newEvent 3 EXTERNAL."
-  "Link 1 3."
-  "SubmitOp sync_1 stat SYNC."
-  "(SubmitOp sync_@NUM@ lstat SYNC.)*"
-  "SubmitOp sync_@NUM@ open SYNC."
-  "SubmitOp sync_@NUM@ close SYNC"
+  "link 1 3."
+  "submitOp sync_1 stat SYNC."
+  "(submitOp sync_@NUM@ lstat SYNC.)*"
+  "submitOp sync_@NUM@ open SYNC."
+  "submitOp sync_@NUM@ close SYNC"
 )
 
 if (EXISTS "${expected_filename}")

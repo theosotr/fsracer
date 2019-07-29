@@ -62,7 +62,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
       EventInfo(size_t event_id_, Event event_):
         event_id(event_id_),
         event(event_),
-        active(true)
+        active(false)
       {  }
     };
 
@@ -139,6 +139,9 @@ class DependencyInferenceAnalyzer : public Analyzer {
 
     // Methods for perfoming operations on the dependency graph and
     // the set of alive events.
+    
+    /** Marks the given event as active. */
+    void MarkActive(size_t event_id);
     
     /** Adds new event to the set of alive events. */
     void AddAliveEvent(size_t event_id);

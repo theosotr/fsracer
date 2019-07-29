@@ -65,6 +65,7 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(Block *block) {
     AnalyzeExpr(expr);
   }
   RemoveAliveEvent(block->GetBlockId());
+  MarkActive(block->GetBlockId());
 }
 
 
@@ -125,16 +126,16 @@ DependencyInferenceAnalyzer::AnalyzeTrigger(Trigger *trigger_expr) {
   if (!trigger_expr) {
     return;
   }
-  size_t event_id = trigger_expr->GetEventId();
-  unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(event_id);
-  if (it != dep_graph.end()) {
-    // We mark this event as inactive because it is executed as part
-    // of the parent block.
-    it->second.active = false;
-  }
   current_context = trigger_expr->GetEventId();
 }
 
+
+void DependencyInferenceAnalyzer::MarkActive(size_t event_id) {
+  unordered_map<size_t, EventInfo>::iterator it = dep_graph.find(event_id);
+  if (it != dep_graph.end()) {
+    it->second.active = true;
+  }
+}
 
 void DependencyInferenceAnalyzer::AddAliveEvent(size_t event_id) {
   alive_events.insert(event_id);
@@ -213,6 +214,8 @@ void DependencyInferenceAnalyzer::ProceedWEvent(EventInfo &new_event,
       // The new event is external.
       // Therefore, already created W events have higher priority than
       // the external events.
+      //
+      // XXX: Revisit
       if (old_event.event.GetEventValue() != 0) {
         AddDependency(old_event.event_id, new_event.event_id, HAPPENS_BEFORE);
       }
@@ -242,8 +245,7 @@ void DependencyInferenceAnalyzer::AddDependencies(size_t event_id, Event event) 
     // events identical to the current block,
     // as well as inactive events.
     if (it == dep_graph.end() ||
-        current_block->GetBlockId() == it->second.event_id ||
-        !it->second.active) {
+        current_block->GetBlockId() == it->second.event_id) {
       continue;
     }
     EventInfo event_info = it->second;
@@ -340,6 +342,9 @@ void DependencyInferenceAnalyzer::ToCSV(ostream &out) {
   set<tuple<size_t, size_t, enum EdgeLabel>> edges;
   for (auto const &entry : dep_graph) {
     EventInfo event_info = entry.second;
+    if (!event_info.active) {
+      continue;
+    }
     for (auto const &dependent: event_info.dependents) {
       if (GetEventInfo(dependent.first).active) {
         edges.insert(make_tuple(event_info.event_id, dependent.first,
