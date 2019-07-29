@@ -1,9 +1,11 @@
-#include "cmdline.h"
+#include <string.h>
 
 #include "dr_api.h"
 #include "drmgr.h"
 #include "drwrap.h"
 #include "drsyms.h"
+
+#include "cmdline.h"
 
 #include "Analyzer.h"
 #include "DependencyInferenceAnalyzer.h"
@@ -76,20 +78,48 @@ event_exit(void)
 void
 process_args(gengetopt_args_info &args_info)
 {
-  // TODO.
+}
+
+
+static char **
+copy_argv(int argc, const char **argv)
+{
+  char **c_argv = (char **) malloc(argc * sizeof(argv));
+  for (auto i = 0; i < argc; i++) {
+    c_argv[i] = strdup(argv[i]);
+  }
+  return c_argv;
+}
+
+
+void
+free_argv(int argc, char **argv)
+{
+  for (auto i = 0; i < argc; i++) {
+    free(argv[i]);
+    argv[i] = nullptr;
+  }
+  free(argv);
+  argv = nullptr;
 }
 
 
 DR_EXPORT void
-dr_client_main(client_id_t client_id, int argc, const char *argv[])
+dr_client_main(client_id_t client_id, int argc, const char **argv)
 {
   gengetopt_args_info args_info;
-  if (cmdline_parser(argc, (char **) argv, &args_info) != 0) {
+  // Let's copy the given arguments, so that we do not break things,
+  // since we need to pass a const pointer to a function that
+  // expects a raw pointer.
+  char **c_argv = copy_argv(argc, argv);
+  if (cmdline_parser(argc, c_argv, &args_info) != 0) {
     cmdline_parser_print_help();
+    free_argv(argc, c_argv);
     exit(1);
   }
   process_args(args_info);
   cmdline_parser_free(&args_info);
+  free_argv(argc, c_argv);
   // TODO Create a CLI for the client.
   dr_set_client_name("Client for Detecting Data Races in Files", "");
   dr_printf("Starting the FSRacer Client...\n");
