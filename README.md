@@ -9,7 +9,7 @@ on top of the [DynamoRIO](https://www.dynamorio.org) framework.
 
 ## Install Dependencies
 
-```
+```shell
 # Install GNU gengetopt to autogenerate command-line interface.
 sudo apt install gengetopt
 ```
@@ -18,7 +18,7 @@ sudo apt install gengetopt
 
 First, download the binary package of the DynamoRIO core:
 
-```
+```shell
 wget -O dynamo.tar.gz https://github.com/DynamoRIO/dynamorio/releases/download/cronbuild-7.90.17998/DynamoRIO-x86_64-Linux-7.90.17998-0.tar.gz
 tar -xvf dynamo.tar.gz
 ```
@@ -33,7 +33,7 @@ by following the official [instructions](https://github.com/theosotr/node/blob/v
 
 To build `FSRacer` run the following commands:
 
-```
+```shell
 mkdir build
 cd build
 cmake -DTEST_BINARY_PATH=<path to the patched node binary> -DDynamoRIO_BUILD_DIR=<path to the build directory of DynamoRIO> ..
@@ -50,12 +50,12 @@ directory where the installation of the `DynamoRIO` is placed.
 
 Run the `FSRacer` client as follows:
 
-```
+```shell
 <dynamorio binary> -c build/libfsracer.so -- <node binary> <node program>
 ```
 
 Run tests through:
 
-```
+```shell
 make test
 ```
