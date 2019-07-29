@@ -8,10 +8,10 @@ set(DynamoRIO_DIR ${DynamoRIO_BUILD_DIR}/cmake)
 option(ENABLE_TESTS "Enable tests for the client" ON)
 
 
-find_program(gengetopt_found gengetopt)
-if (NOT gengetopt_found)
+find_program(GENGETOPT_BIN gengetopt)
+if (NOT GENGETOPT_BIN)
     message (FATAL_ERROR "The program 'gengetopt' was not found")
-endif (NOT gengetopt_found)
+endif (NOT GENGETOPT_BIN)
 
 # Specify the directory where we generate command-line interface.
 set(CLI_GEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/cli_gen)
@@ -20,7 +20,7 @@ file(MAKE_DIRECTORY ${CLI_GEN_DIR})
 # Generate command-line interface through GNU gengetopt.
 add_custom_command(
     OUTPUT ${CLI_GEN_DIR}/cmdline.h ${CLI_GEN_DIR}/cmdline.c
-    COMMAND ${gengetopt_found} -i ${CMAKE_CURRENT_SOURCE_DIR}/src/cli.ggo
+    COMMAND ${GENGETOPT_BIN} -i ${CMAKE_CURRENT_SOURCE_DIR}/src/cli.ggo
     --output-dir=${CLI_GEN_DIR}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/cli.ggo
 )
