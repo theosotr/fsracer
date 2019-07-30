@@ -41,6 +41,7 @@ void DependencyInferenceAnalyzer::AnalyzeTrace(Trace *trace) {
   for (auto const &block : blocks) {
     AnalyzeBlock(block);
   }
+  DumpDependencyGraph(graph_format);
 }
 
 

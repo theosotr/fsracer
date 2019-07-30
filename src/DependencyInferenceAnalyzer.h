@@ -84,11 +84,13 @@ class DependencyInferenceAnalyzer : public Analyzer {
 
     /** Default Constructor of the analyzer. */
     DependencyInferenceAnalyzer(writer::OutWriter::WriteOption write_option,
-                                string filename):
+                                string filename,
+                                enum GraphFormat graph_format_):
       Analyzer(write_option, filename),
       current_block(nullptr),
       pending_ev(0),
-      current_context(MAIN_BLOCK)
+      current_context(MAIN_BLOCK),
+      graph_format(graph_format_)
   {  }
     /** Default Destructor. */
     ~DependencyInferenceAnalyzer() {  };
@@ -145,6 +147,9 @@ class DependencyInferenceAnalyzer : public Analyzer {
      * the current block is executed.
      */
     size_t current_context;
+
+    /// Specifies the format of the generated dependency graph.
+    enum GraphFormat graph_format;
 
     // Methods for perfoming operations on the dependency graph and
     // the set of alive events.
