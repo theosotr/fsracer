@@ -38,12 +38,13 @@ void DumpAnalyzer::AnalyzeBlock(Block *block) {
   }
   vector<Expr*> exprs = block->GetExprs();
   size_t block_id = block->GetBlockId();
-  GetOutStream() << "Begin " <<
-    (block_id == MAIN_BLOCK ? "MAIN" : to_string(block_id)) << "\n";
+  trace_buf += "Begin ";
+  trace_buf += (block_id == MAIN_BLOCK ? "MAIN" : to_string(block_id));
+  trace_buf += "\n";
   for (auto const &expr : exprs) {
     AnalyzeExpr(expr);
   }
-  GetOutStream() << "End\n";
+  trace_buf += "End\n";
 }
 
 
@@ -58,7 +59,8 @@ void DumpAnalyzer::AnalyzeSubmitOp(SubmitOp *submit_op) {
   if (!submit_op) {
     return;
   }
-  GetOutStream() << submit_op->ToString() << "\n";
+  trace_buf += submit_op->ToString();
+  trace_buf += "\n";
 }
 
 
@@ -66,7 +68,8 @@ void DumpAnalyzer::AnalyzeExecOp(ExecOp *exec_op) {
   if (!exec_op) {
     return;
   }
-  GetOutStream() << exec_op->ToString() << "\n";
+  trace_buf += exec_op->ToString();
+  trace_buf += "\n";
 }
 
 
@@ -75,7 +78,8 @@ void DumpAnalyzer::AnalyzeNewEvent(NewEventExpr *new_ev_expr) {
     return;
   }
   string str = new_ev_expr->ToString();
-  GetOutStream() << str << "\n";
+  trace_buf += str;
+  trace_buf += "\n";
 }
 
 
@@ -84,7 +88,8 @@ void DumpAnalyzer::AnalyzeLink(LinkExpr *link_expr) {
     return;
   }
   string str = link_expr->ToString();
-  GetOutStream() << str << "\n";
+  trace_buf += str;
+  trace_buf += "\n";
 }
 
 
@@ -92,7 +97,20 @@ void DumpAnalyzer::AnalyzeTrigger(Trigger *trigger_expr) {
   if (!trigger_expr) {
     return;
   }
-  GetOutStream() << trigger_expr->ToString() << "\n";
+  trace_buf += trigger_expr->ToString();
+  trace_buf += "\n";
 }
+
+
+void DumpAnalyzer::DumpOutput(writer::OutWriter *out) {
+  if (out) {
+    out->OutStream() << trace_buf;
+
+    // The same object cannot be used again.
+    delete out;
+    out = nullptr;
+  }
+}
+
 
 }

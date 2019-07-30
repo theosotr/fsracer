@@ -41,7 +41,6 @@ void DependencyInferenceAnalyzer::AnalyzeTrace(Trace *trace) {
   for (auto const &block : blocks) {
     AnalyzeBlock(block);
   }
-  DumpDependencyGraph(graph_format);
 }
 
 
@@ -387,18 +386,22 @@ void DependencyInferenceAnalyzer::PruneEdges(size_t event_id) {
 }
 
 
-void DependencyInferenceAnalyzer::DumpDependencyGraph(enum GraphFormat graph_format) {
+void DependencyInferenceAnalyzer::DumpOutput(writer::OutWriter *out) {
   if (!out) {
     return;
   }
   switch (graph_format) {
     case DOT:
-      ToDot(GetOutStream());
+      ToDot(out->OutStream());
       break;
     case CSV:
-      ToCSV(GetOutStream());
+      ToCSV(out->OutStream());
       break;
   }
+
+  // Clear out object. Cannot be reused.
+  delete out;
+  out = nullptr;
 }
 
 

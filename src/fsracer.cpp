@@ -1,4 +1,5 @@
 #include <string.h>
+#include <utility>
 
 #include "dr_api.h"
 #include "drmgr.h"
@@ -21,9 +22,10 @@ struct FSracerSetup {
   /// Generator used for creating traces.
   Generator *trace_gen;
   /// A list of analyzers that operate on traces.
-  vector<Analyzer*> analyzers;
+  vector<pair<Analyzer*, writer::OutWriter*>> analyzers;
 
-  FSracerSetup(Generator *trace_gen_, vector<Analyzer*> analyzers_):
+  FSracerSetup(Generator *trace_gen_,
+               vector<pair<Analyzer*, writer::OutWriter*>> analyzers_):
     trace_gen(trace_gen_),
     analyzers(analyzers_) { }
 };
@@ -68,7 +70,9 @@ analyze_traces(FSracerSetup *setup)
   if (!setup || !setup->trace_gen) {
     return;
   }
-  for (auto const &analyzer : setup->analyzers) {
+  for (auto const &pair_analyzer : setup->analyzers) {
+    Analyzer *analyzer = pair_analyzer.first;
+    writer::OutWriter *out = pair_analyzer.second;
     // TODO: Currently the analysis of traces is done offline
     // (after the execution of the program).
     //
@@ -76,6 +80,11 @@ analyze_traces(FSracerSetup *setup)
     cout << analyzer->GetName() << ": Start analyzing traces...\n";
     analyzer->Analyze(setup->trace_gen->GetTrace());
     cout << analyzer->GetName() << ": Analysis is done\n";
+    if (out) {
+      cout << analyzer->GetName() << ": Dumping analysis output to "
+        << out->ToString() << "\n";
+      analyzer->DumpOutput(out);
+    }
   }
 }
 
@@ -89,9 +98,10 @@ clear_fsracer_setup(FSracerSetup *setup)
   if (setup->trace_gen) {
     delete setup->trace_gen;
   }
-  for (auto i = 0; i < setup->analyzers.size(); i++) {
-    if (setup->analyzers[i]) {
-      delete setup->analyzers[i];
+  for (auto &entry : setup->analyzers) {
+    Analyzer *analyzer = entry.first;
+    if (analyzer) {
+      delete analyzer;
     }
   }
   setup->analyzers.clear();
@@ -127,41 +137,42 @@ static void
 process_args(gengetopt_args_info &args_info)
 {
   if (args_info.dump_trace_given && args_info.output_trace_given) {
-    // TODO add an erroneous message to the user.
     cerr << CMDLINE_PARSER_PACKAGE << ": "
       << "options '-dump-trace' and '-output-trace' are mutually exclusive\n";
     exit(-1);
   }
 
   if (args_info.dump_dep_graph_given && args_info.output_dep_graph_given) {
-    // TODO add an erroneous message to the user.
     cerr << CMDLINE_PARSER_PACKAGE << ": "
       << "options '-dump-dep-graph' and '-output-dep-graph' are mutually exclusive\n";
     exit(-1);
   }
 
-  vector<Analyzer*> analyzers;
+  vector<pair<Analyzer*, writer::OutWriter*>> analyzers;
   if (args_info.dump_trace_given) {
-    analyzers.push_back(new DumpAnalyzer(writer::OutWriter::WRITE_STDOUT, ""));
+    analyzers.push_back({ new DumpAnalyzer(),
+        new writer::OutWriter(writer::OutWriter::WRITE_STDOUT, "") });
   }
 
   if (args_info.output_trace_given) {
-    analyzers.push_back(new DumpAnalyzer(
-        writer::OutWriter::WRITE_FILE, args_info.output_trace_orig));
+    analyzers.push_back({ new DumpAnalyzer(),
+        new writer::OutWriter(writer::OutWriter::WRITE_FILE,
+                              args_info.output_trace_arg) });
   }
   if (args_info.analyzer_given) {
     string analyzer = args_info.analyzer_orig;
     if (analyzer == "dep-infer") {
       if (args_info.dump_dep_graph_given) {
-        analyzers.push_back(new DependencyInferenceAnalyzer(
-            writer::OutWriter::WRITE_STDOUT, "",
-            get_graph_format(args_info)));
+        analyzers.push_back({
+            new DependencyInferenceAnalyzer(get_graph_format(args_info)),
+            new writer::OutWriter(writer::OutWriter::WRITE_STDOUT, "") });
       }
 
       if (args_info.output_dep_graph_given) {
-        analyzers.push_back(new DependencyInferenceAnalyzer(
-            writer::OutWriter::WRITE_FILE, args_info.output_dep_graph_orig,
-            get_graph_format(args_info)));
+        analyzers.push_back({
+            new DependencyInferenceAnalyzer(get_graph_format(args_info)),
+            new writer::OutWriter(writer::OutWriter::WRITE_FILE,
+                                  args_info.output_dep_graph_arg) });
       }
     }
   }

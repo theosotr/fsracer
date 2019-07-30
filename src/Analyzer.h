@@ -20,11 +20,9 @@ class Analyzer {
              string filename) {
       out = new writer::OutWriter(write_option, filename);
     }
+    Analyzer() {  }
 
     ~Analyzer() {
-      if (out) {
-        delete out;
-      }
     }
     virtual string GetName();
 
@@ -51,6 +49,8 @@ class Analyzer {
       return out->OutStream();
     }
 
+    virtual void DumpOutput(writer::OutWriter *out);
+
   protected:
     writer::OutWriter *out;
 };
@@ -58,8 +58,7 @@ class Analyzer {
 
 class DumpAnalyzer : public Analyzer {
   public:
-    DumpAnalyzer(writer::OutWriter::WriteOption write_option, string filename):
-      Analyzer(write_option, filename),
+    DumpAnalyzer():
       trace_count(0) {  }
 
     string GetName() {
@@ -88,7 +87,15 @@ class DumpAnalyzer : public Analyzer {
       return trace_count;
     }
 
+    /**
+     * This method dumps the analysis output using the given
+     * object responsible for writing the output either to
+     * standard output or to a dedicated file.
+     */
+    void DumpOutput(writer::OutWriter *out);
+
   private:
+    string trace_buf;
     size_t trace_count;
     void IncrTraceCount() {
       trace_count++;

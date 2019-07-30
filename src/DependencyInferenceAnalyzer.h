@@ -83,10 +83,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
     };
 
     /** Default Constructor of the analyzer. */
-    DependencyInferenceAnalyzer(writer::OutWriter::WriteOption write_option,
-                                string filename,
-                                enum GraphFormat graph_format_):
-      Analyzer(write_option, filename),
+    DependencyInferenceAnalyzer(enum GraphFormat graph_format_):
       current_block(nullptr),
       pending_ev(0),
       current_context(MAIN_BLOCK),
@@ -118,14 +115,13 @@ class DependencyInferenceAnalyzer : public Analyzer {
     void AnalyzeRename(Rename *rename) {  }
     void AnalyzeSymlink(Symlink *symlink) {  }
 
+    void DumpOutput(writer::OutWriter *out);
+
     /**
      * This method dumps the constructed dependency graph
      * in the specified format (either DOT or CSV).
      */
     void DumpDependencyGraph(enum GraphFormat graph_format);
-
-    /** Converts the edge label to string. */
-    static string LabelToString(enum EdgeLabel);
 
   private:
 
@@ -246,6 +242,10 @@ class DependencyInferenceAnalyzer : public Analyzer {
 
     /** Converts the dependency graph to a DOT format. */
     void ToDot(ostream &stream);
+
+    /** Converts the edge label to string. */
+    static string LabelToString(enum EdgeLabel);
+
 };
 
 

@@ -34,4 +34,14 @@ ostream &OutWriter::OutStream() {
 }
 
 
+string OutWriter::ToString() {
+  switch (write_option) {
+    case WRITE_STDOUT:
+      return "STDOUT";
+    case WRITE_FILE:
+      return "FILE '" + filename + "'";
+  }
+}
+
+
 }

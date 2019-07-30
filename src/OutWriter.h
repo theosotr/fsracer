@@ -39,6 +39,9 @@ class OutWriter {
     /** Gets the output stream used internally. */
     ostream &OutStream();
 
+    /** String representation of the object. */
+    string ToString();
+
   private:
     /// Writing option. */
     enum WriteOption write_option;
