@@ -83,7 +83,10 @@ class Analyzer {
 class DumpAnalyzer : public Analyzer {
   public:
     DumpAnalyzer():
-      trace_count(0) {  }
+      trace_count(0),
+      operation_count(0),
+      block_count(0)
+  {  }
 
     string GetName() {
       return "DumpAnalyzer";
@@ -99,13 +102,13 @@ class DumpAnalyzer : public Analyzer {
     void AnalyzeLink(LinkExpr *link_expr);
     void AnalyzeTrigger(Trigger *nested_ev_expr);
 
-    void AnalyzeNewFd(NewFd *new_fd) {  }
-    void AnalyzeDelFd(DelFd *del_fd) {  }
-    void AnalyzeHpath(Hpath *hpath) {  }
-    void AnalyzeHpath(HpathSym *hpathsym) {  }
-    void AnalyzeLink(Link *link) {  }
-    void AnalyzeRename(Rename *rename) {  }
-    void AnalyzeSymlink(Symlink *symlink) {  }
+    void AnalyzeNewFd(NewFd *new_fd) { trace_count++; }
+    void AnalyzeDelFd(DelFd *del_fd) { trace_count++; }
+    void AnalyzeHpath(Hpath *hpath) { trace_count++; }
+    void AnalyzeHpathSym(HpathSym *hpathsym) { trace_count++; }
+    void AnalyzeLink(Link *link) { trace_count++; }
+    void AnalyzeRename(Rename *rename) { trace_count++; }
+    void AnalyzeSymlink(Symlink *symlink) { trace_count++; }
 
     /** Gets the number of trace entries. */
     size_t GetTraceCount() {
@@ -119,12 +122,10 @@ class DumpAnalyzer : public Analyzer {
     string trace_buf;
     /// This is a counter of trace entries.
     size_t trace_count;
-
-    /** Increment the counter of trace entries. */
-    void IncrTraceCount() {
-      trace_count++;
-    }
-
+    /// This is a counter of FS operations.
+    size_t operation_count;
+    /// This is a counter of execution blocks.
+    size_t block_count;
 };
 
 

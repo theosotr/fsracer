@@ -79,6 +79,9 @@ string(CONCAT preamble
   "DumpAnalyzer: Start analyzing traces...."
   "DumpAnalyzer: Analysis is done."
   "DumpAnalyzer: Dumping analysis output to STDOUT."
+  "!Blocks: @NUM@."
+  "!Operations: @NUM@."
+  "!Trace entries: @NUM@."
   "!PID: @NUM@"
 )
 
