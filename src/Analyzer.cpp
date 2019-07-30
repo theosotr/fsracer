@@ -21,6 +21,9 @@ void DumpAnalyzer::AnalyzeTrace(Trace *trace) {
   if (!trace) {
     return;
   }
+  trace_buf += "!PID: ";
+  trace_buf += to_string(trace->GetThreadId());
+  trace_buf += "\n";
   vector<ExecOp*> exec_ops = trace->GetExecOps();
   for (auto const &exec_op : exec_ops) {
     AnalyzeExecOp(exec_op);
