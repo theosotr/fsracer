@@ -14,6 +14,9 @@ if (NOT TEST_SUITE)
   message (FATAL_ERROR "Variable `TEST_SUITE` must be defined")
 endif (NOT TEST_SUITE)
 
+if (NOT FSRACER_ARGS)
+  message (FATAL_ERROR "Variable `FSRACER_ARGS` must be defined")
+endif (NOT FSRACER_ARGS)
 
 message("Testing with DynamoRIO file: ${DYNAMO_FILE}")
 message("Test Binary: ${TEST_CMD}")
@@ -52,7 +55,8 @@ file(WRITE ${TEST_FILE} ${program})
 set(test_file ${TEST_FILE})
 
 # Define the command to run.
-set (cmd ${DYNAMO_FILE} -c ../libfsracer.so -- ${TEST_CMD} ${test_file})
+separate_arguments(args UNIX_COMMAND ${FSRACER_ARGS})
+set (cmd ${DYNAMO_FILE} -c ../libfsracer.so ${args} -- ${TEST_CMD} ${test_file})
 
 # Running Test Application using DynamoRIO and capturing its standard output
 # to a file.
@@ -67,6 +71,17 @@ string(REGEX REPLACE "\n" "." output_rep ${output})
 # Typically those operations are simple stat and lstat
 # operations that check whether the given program
 # and its parent directories exist.
+string(CONCAT preamble
+  "Starting the FSRacer Client...."
+  "@PROGRAM_OUTPUT@." # This is a place holder for program output.
+  "NodeTrace: PID @NUM@, Start collecting trace...."
+  "NodeTrace: Trace collected."
+  "DumpAnalyzer: Start analyzing traces...."
+  "DumpAnalyzer: Analysis is done."
+  "DumpAnalyzer: Dumping analysis output to STDOUT."
+  "!PID: @NUM@"
+)
+
 string(CONCAT prologue_operation_repl
   "(Operation sync_@NUM@ do.done.)+"
   "Operation sync_@NUM@ do."
@@ -94,6 +109,12 @@ if (EXISTS "${expected_filename}")
   file(READ ${expected_filename} pattern)
 
   #We replace boilerplate patterns.
+  string (REGEX REPLACE
+    "@PREAMBLE@"
+    ${preamble}
+    pattern
+    ${pattern}
+  )
   string(REGEX REPLACE
     "@PROLOGUE_OPERATIONS@"
     ${prologue_operation_repl}
@@ -106,10 +127,23 @@ if (EXISTS "${expected_filename}")
     pattern
     ${pattern}
   )
+
+  # First check if the pattern explicitly contains the output of the
+  # analyzed program.
+  # If this is the case, the extract the program output and put
+  # it inside the preable.
+  string(REGEX REPLACE "@PROGRAM_OUTPUT:(.*)@@\n" "" pattern ${pattern})
+  if (NOT CMAKE_MATCH_1)
+    # The pattern does not specify the pattern about the program output.
+    # We then assume that it does not produce any output, and
+    # therefore, we remove the placeholder.
+    string(REGEX REPLACE "@PROGRAM_OUTPUT@." "" pattern ${pattern})
+  else ()
+    string(REGEX REPLACE "@PROGRAM_OUTPUT@" ${CMAKE_MATCH_1} pattern ${pattern})
+  endif (NOT CMAKE_MATCH_1)
   string(REGEX REPLACE "@NUM@" "[0-9]+" pattern ${pattern})
   string(REGEX REPLACE "\n" "." pattern ${pattern})
   string(REGEX MATCH ${pattern} match ${output_rep})
-
 
   if (NOT match)
     file(WRITE ${TEST_FILE}.out ${output})

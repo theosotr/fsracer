@@ -11,6 +11,7 @@ add_test(build_fsracer
 
 message("${DynamoRIO_BUILD_DIR}")
 
+set(DEFAULT_FSRACER_ARGS "--analyzer=dep-infer --dep-graph-format=csv --dump-dep-graph --dump-trace")
 function (new_test test_suite test_name test_file)
   # Actual tests
   add_test(${test_name}
@@ -19,6 +20,7 @@ function (new_test test_suite test_name test_file)
       -D TEST_FILE=${test_file}
       -D TEST_SUITE=${test_suite}
       -D DYNAMO_FILE=${DynamoRIO_BUILD_DIR}/bin64/drrun
+      -D FSRACER_ARGS=${DEFAULT_FSRACER_ARGS}
       -P "${CMAKE_SOURCE_DIR}/tests/runtest.cmake"
   )
   set_tests_properties(${test_name} PROPERTIES DEPENDS build_fsracer)
