@@ -1,7 +1,4 @@
-Starting the FSRacer Client...
-NodeTrace: PID @NUM@, Start collecting trace...
-NodeTrace: Trace collected
-DumpAnalyzer: Start analyzing traces...
+@PREAMBLE@
 @PROLOGUE_OPERATIONS@
 Operation sync_12 do
 hpath AT_FDCWD tmp produced
@@ -39,10 +36,9 @@ submitOp async_8 access ASYNC
 End
 Begin 8
 End
-DumpAnalyzer: Analysis is done
 DependencyInferenceAnalyzer: Start analyzing traces...
 DependencyInferenceAnalyzer: Analysis is done
-DependencyInferenceAnalyzer: Dumping dependency graph...
+DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
 1,4,creates
 1,6,creates
 4,7,before

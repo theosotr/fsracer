@@ -1,7 +1,4 @@
-Starting the FSRacer Client...
-NodeTrace: PID @NUM@, Start collecting trace...
-NodeTrace: Trace collected
-DumpAnalyzer: Start analyzing traces...
+@PREAMBLE@
 @PROLOGUE_OPERATIONS@
 Begin MAIN
 @PROLOGUE_BLOCK@
@@ -17,10 +14,9 @@ Begin 7
 newEvent 5 S 0
 newEvent 8 S 0
 End
-DumpAnalyzer: Analysis is done
 DependencyInferenceAnalyzer: Start analyzing traces...
 DependencyInferenceAnalyzer: Analysis is done
-DependencyInferenceAnalyzer: Dumping dependency graph...
+DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
 1,4,creates
 4,6,creates
 6,7,creates
