@@ -17,17 +17,26 @@ using namespace generator;
 using namespace analyzer;
 
 
-// TODO:
-// * Handle nextTick
-//
-static Generator *trace_gen;
-bool module_loaded = false;
+struct FSracerSetup {
+  /// Generator used for creating traces.
+  Generator *trace_gen;
+  /// A list of analyzers that operate on traces.
+  vector<Analyzer*> analyzers;
 
+  FSracerSetup(Generator *trace_gen_, vector<Analyzer*> analyzers_):
+    trace_gen(trace_gen_),
+    analyzers(analyzers_) { }
+};
+
+
+static FSracerSetup *setup;
+bool module_loaded = false;
 
 
 static void
 module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
 {
+  Generator *trace_gen = setup->trace_gen;
   trace_gen->Start(mod);
   size_t pid = dr_get_thread_id(drcontext);
   trace_gen->GetTrace()->SetThreadId(pid);
@@ -42,42 +51,121 @@ module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
 
 
 static void
-event_exit(void)
+stop_trace_gen(FSracerSetup *setup)
 {
-  cout << trace_gen->GetName() << ": Trace collected\n";
-  trace_gen->Stop();
-  drwrap_exit();
-  drmgr_exit();
-  drsym_exit();
-  DumpAnalyzer *dump_analyzer = new DumpAnalyzer(
-      writer::OutWriter::WRITE_STDOUT, "");
 
-  // TODO: Currently the analysis of traces is done offline
-  // (after the execution of the program).
-  //
-  // Add support for both offline and online trace analysis.
-  cout << dump_analyzer->GetName() << ": Start analyzing traces...\n";
-  dump_analyzer->Analyze(trace_gen->GetTrace());
-  cout << dump_analyzer->GetName() << ": Analysis is done\n";
-  delete dump_analyzer;
-
-  // TODO Make analyzers configurable.
-  DependencyInferenceAnalyzer *dep_analyzer = new DependencyInferenceAnalyzer(
-      writer::OutWriter::WRITE_STDOUT, "");
-  cout << dep_analyzer->GetName() << ": Start analyzing traces...\n";
-  dep_analyzer->Analyze(trace_gen->GetTrace());
-  cout << dep_analyzer->GetName() << ": Analysis is done\n";
-  cout << dep_analyzer->GetName() << ": Dumping dependency graph...\n";
-  dep_analyzer->DumpDependencyGraph(DependencyInferenceAnalyzer::CSV);
-  delete dep_analyzer;
-  delete trace_gen;
-
+  if (!setup || !setup->trace_gen) {
+    return;
+  }
+  cout << setup->trace_gen->GetName() << ": Trace collected\n";
+  setup->trace_gen->Stop();
 }
 
 
-void
+static void
+analyze_traces(FSracerSetup *setup)
+{
+  if (!setup || !setup->trace_gen) {
+    return;
+  }
+  for (auto const &analyzer : setup->analyzers) {
+    // TODO: Currently the analysis of traces is done offline
+    // (after the execution of the program).
+    //
+    // Add support for both offline and online trace analysis.
+    cout << analyzer->GetName() << ": Start analyzing traces...\n";
+    analyzer->Analyze(setup->trace_gen->GetTrace());
+    cout << analyzer->GetName() << ": Analysis is done\n";
+  }
+}
+
+
+static void
+clear_fsracer_setup(FSracerSetup *setup)
+{
+  if (!setup) {
+    return;
+  }
+  if (setup->trace_gen) {
+    delete setup->trace_gen;
+  }
+  for (auto i = 0; i < setup->analyzers.size(); i++) {
+    if (setup->analyzers[i]) {
+      delete setup->analyzers[i];
+    }
+  }
+  setup->analyzers.clear();
+  delete setup;
+}
+
+
+static void
+event_exit(void)
+{
+  drwrap_exit();
+  drmgr_exit();
+  drsym_exit();
+
+  stop_trace_gen(setup);
+  analyze_traces(setup);
+  clear_fsracer_setup(setup);
+
+}
+
+static DependencyInferenceAnalyzer::GraphFormat
+get_graph_format(gengetopt_args_info &args_info)
+{
+  string graph_format = args_info.dep_graph_format_arg;
+  if (graph_format == "dot") {
+    return DependencyInferenceAnalyzer::DOT;
+  }
+  return DependencyInferenceAnalyzer::CSV;
+}
+
+
+static void
 process_args(gengetopt_args_info &args_info)
 {
+  if (args_info.dump_trace_given && args_info.output_trace_given) {
+    // TODO add an erroneous message to the user.
+    cerr << CMDLINE_PARSER_PACKAGE << ": "
+      << "options '-dump-trace' and '-output-trace' are mutually exclusive\n";
+    exit(-1);
+  }
+
+  if (args_info.dump_dep_graph_given && args_info.output_dep_graph_given) {
+    // TODO add an erroneous message to the user.
+    cerr << CMDLINE_PARSER_PACKAGE << ": "
+      << "options '-dump-dep-graph' and '-output-dep-graph' are mutually exclusive\n";
+    exit(-1);
+  }
+
+  vector<Analyzer*> analyzers;
+  if (args_info.dump_trace_given) {
+    analyzers.push_back(new DumpAnalyzer(writer::OutWriter::WRITE_STDOUT, ""));
+  }
+
+  if (args_info.output_trace_given) {
+    analyzers.push_back(new DumpAnalyzer(
+        writer::OutWriter::WRITE_FILE, args_info.output_trace_orig));
+  }
+  if (args_info.analyzer_given) {
+    string analyzer = args_info.analyzer_orig;
+    if (analyzer == "dep-infer") {
+      if (args_info.dump_dep_graph_given) {
+        analyzers.push_back(new DependencyInferenceAnalyzer(
+            writer::OutWriter::WRITE_STDOUT, "",
+            get_graph_format(args_info)));
+      }
+
+      if (args_info.output_dep_graph_given) {
+        analyzers.push_back(new DependencyInferenceAnalyzer(
+            writer::OutWriter::WRITE_FILE, args_info.output_dep_graph_orig,
+            get_graph_format(args_info)));
+      }
+    }
+  }
+  setup = new FSracerSetup(new NodeTraceGenerator(), analyzers);
 }
 
 
@@ -128,5 +216,4 @@ dr_client_main(client_id_t client_id, int argc, const char **argv)
   drsym_init(0);
   dr_register_exit_event(event_exit);
   drmgr_register_module_load_event(module_load_event);
-  trace_gen = new NodeTraceGenerator();
 }
