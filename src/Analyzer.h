@@ -14,48 +14,72 @@ using namespace trace;
 namespace analyzer {
 
 
+/**
+ * This is the main interface for analyzers.
+ *
+ * Each analyzer must implement every method responsible for
+ * analyzing every node specified in the AST of traces.
+ *
+ * This is achieved through the visitor design pattern.
+ */
 class Analyzer {
   public:
-    Analyzer(enum writer::OutWriter::WriteOption write_option,
-             string filename) {
-      out = new writer::OutWriter(write_option, filename);
-    }
-    Analyzer() {  }
-
-    ~Analyzer() {
-    }
+    /** Name of analyzer. */
     virtual string GetName();
 
+    /** Analyze a node in the AST of traces. */
     virtual void Analyze(TraceNode *trace_node);
+    /** Analyze the whole trace. */
     virtual void AnalyzeTrace(Trace *trace);
+    /** Analyze a single block */
     virtual void AnalyzeBlock(Block *block);
+    /** Analyze a trace expression. */
     virtual void AnalyzeExpr(Expr *expr);
+    /** Analyze the 'submitOp' construct. */
     virtual void AnalyzeSubmitOp(SubmitOp *submit_op);
+    /** Analyze the 'execOp' construct. */
     virtual void AnalyzeExecOp(ExecOp *exec_op);
+    /** Analyze the 'newEvent' construct. */
     virtual void AnalyzeNewEvent(NewEventExpr *new_ev_expr);
+    /** Analyze the 'link' construct. */
     virtual void AnalyzeLink(LinkExpr *link_expr);
+    /** Analyze the 'trigger' construct. */
     virtual void AnalyzeTrigger(Trigger *trigger_expr);
 
-    //Operations
+    // ----- Methods for analyzing FS-related operations -----
+    
+    /** Analzyze the 'newFd' construct. */
     virtual void AnalyzeNewFd(NewFd *new_fd);
+    /** Analyze the 'delFd' construct. */
     virtual void AnalyzeDelFd(DelFd *del_fd);
+    /** Analyze the 'hpath' construct. */
     virtual void AnalyzeHpath(Hpath *hpath);
+    /** Analyze the 'hpathsym' construct. */
     virtual void AnalyzeHpath(HpathSym *hpathsym);
+    /** Analyze the 'link' construct. */
     virtual void AnalyzeLink(Link *link);
+    /** Analyze the 'rename' construct. */
     virtual void AnalyzeRename(Rename *rename);
+    /** Analyze the 'symlink' construct. */
     virtual void AnalyzeSymlink(Symlink *symlink);
 
-    ostream &GetOutStream() {
-      return out->OutStream();
-    }
-
+    /**
+     * This method dumps the analysis output using the given
+     * object responsible for writing the output either to
+     * standard output or to a dedicated file.
+     */
     virtual void DumpOutput(writer::OutWriter *out);
 
-  protected:
-    writer::OutWriter *out;
 };
 
 
+/**
+ * This is the DumpAnalyzer.
+ *
+ * This is a simple analyzer whose job is very simple.
+ * It iterates over the generated traces and dumps them
+ * either to standard output or to a dedicated file.
+ */
 class DumpAnalyzer : public Analyzer {
   public:
     DumpAnalyzer():
@@ -83,20 +107,20 @@ class DumpAnalyzer : public Analyzer {
     void AnalyzeRename(Rename *rename) {  }
     void AnalyzeSymlink(Symlink *symlink) {  }
 
+    /** Gets the number of trace entries. */
     size_t GetTraceCount() {
       return trace_count;
     }
 
-    /**
-     * This method dumps the analysis output using the given
-     * object responsible for writing the output either to
-     * standard output or to a dedicated file.
-     */
     void DumpOutput(writer::OutWriter *out);
 
   private:
+    /// This is the string for holding the generated traces.
     string trace_buf;
+    /// This is a counter of trace entries.
     size_t trace_count;
+
+    /** Increment the counter of trace entries. */
     void IncrTraceCount() {
       trace_count++;
     }
