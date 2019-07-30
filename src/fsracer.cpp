@@ -17,7 +17,13 @@
 using namespace generator;
 using namespace analyzer;
 
-
+/**
+ * This struct contains all the information about the current instance
+ * of FSracer.
+ *
+ * Specifically, it contains the generator responsible for creating
+ * traces, and a vector of analyzers working on the generated traces.
+ */
 struct FSracerSetup {
   /// Generator used for creating traces.
   Generator *trace_gen;
@@ -81,7 +87,8 @@ analyze_traces(FSracerSetup *setup)
     analyzer->Analyze(setup->trace_gen->GetTrace());
     cout << analyzer->GetName() << ": Analysis is done\n";
     if (out) {
-      cout << analyzer->GetName() << ": Dumping analysis output to "
+      cout << analyzer->GetName()
+        << ": Dumping analysis output to "
         << out->ToString() << "\n";
       analyzer->DumpOutput(out);
     }
@@ -116,8 +123,11 @@ event_exit(void)
   drmgr_exit();
   drsym_exit();
 
+  // Traces collected. Stop trace generator.
   stop_trace_gen(setup);
+  // Analyze generated traces.
   analyze_traces(setup);
+  // Deallocate memory and clear things.
   clear_fsracer_setup(setup);
 
 }
@@ -139,13 +149,13 @@ process_args(gengetopt_args_info &args_info)
   if (args_info.dump_trace_given && args_info.output_trace_given) {
     cerr << CMDLINE_PARSER_PACKAGE << ": "
       << "options '-dump-trace' and '-output-trace' are mutually exclusive\n";
-    exit(-1);
+    dr_exit_process(1);
   }
 
   if (args_info.dump_dep_graph_given && args_info.output_dep_graph_given) {
     cerr << CMDLINE_PARSER_PACKAGE << ": "
       << "options '-dump-dep-graph' and '-output-dep-graph' are mutually exclusive\n";
-    exit(-1);
+    dr_exit_process(1);
   }
 
   vector<pair<Analyzer*, writer::OutWriter*>> analyzers;
@@ -214,12 +224,11 @@ dr_client_main(client_id_t client_id, int argc, const char **argv)
   if (cmdline_parser(argc, c_argv, &args_info) != 0) {
     cmdline_parser_print_help();
     free_argv(argc, c_argv);
-    exit(1);
+    dr_exit_process(1);
   }
   process_args(args_info);
   cmdline_parser_free(&args_info);
   free_argv(argc, c_argv);
-  // TODO Create a CLI for the client.
   dr_set_client_name("Client for Detecting Data Races in Files", "");
   dr_printf("Starting the FSRacer Client...\n");
   drmgr_init();
