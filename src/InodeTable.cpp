@@ -1,7 +1,7 @@
 #include "InodeTable.h"
 
 
-namespace {
+namespace table {
 
 void InodeTable::AddEntry(inode_t inode_p, string basename,
                           inode_t inode) {
@@ -15,21 +15,8 @@ void InodeTable::AddEntry(inode_t inode_p, string basename,
 }
 
 
-void InodeTable::RemoveEntry(inode_t inode_p, string basename) {
-  inode_table_t::iterator it = table.find({ inode_p, basename });
-  if (it != table.end()) {
-    table.erase(it);
-  }
-}
-
-
 optional<inode_t> InodeTable::GetInode(inode_t inode_p, string basename) {
-  optional<inode_t> inode;
-  inode_table_t::iterator it = table.find({ inode_p, basename });
-  if (it != table.end()) {
-    inode = it->second;
-  }
-  return inode;
+  return GetValue({ inode_p, basename });
 }
 
 

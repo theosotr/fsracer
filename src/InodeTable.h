@@ -7,19 +7,22 @@
 #include <utility>
 #include <set>
 
+#include "Table.h"
+
+
 #define ROOT_INODE 0
 
 
 using namespace std;
 
 
-namespace {
+namespace table {
 
 typedef size_t inode_t;
 typedef map<pair<inode_t, string>, inode_t> inode_table_t;
 
 
-class InodeTable {
+class InodeTable : public Table<pair<inode_t, string>, inode_t> {
   public:
     InodeTable():
       next_inode(0) {
@@ -28,13 +31,11 @@ class InodeTable {
 
     void AddEntry(inode_t inode_p, string basename,
                   inode_t inode = ROOT_INODE);
-    void RemoveEntry(inode_t inode_p, string basename);
     optional<inode_t> GetInode(inode_t inode_p, string basename);
     inode_t ToInode(string filename);
     optional<string> ToPath(inode_t inode);
 
   private:
-    inode_table_t table;
     map<inode_t, set<string>> rev_table;
 
     size_t next_inode;
