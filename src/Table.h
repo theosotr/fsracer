@@ -22,11 +22,17 @@ class Table {
       table[key] = value;
     }
 
-    void RemoveEntry(T1 key) {
+    T2 PopEntry(T1 key) {
       typename table_t::iterator it = table.find(key);
       if (it != table.end()) {
+        T2 val = it->second;
         table.erase(it);
+        return val;
       }
+    }
+
+    void RemoveEntry(T1 key) {
+      PopEntry(key);
     }
 
     optional<T2> GetValue(T1 key) {
