@@ -211,6 +211,11 @@ class ExecOp : public TraceNode {
       return operations;
     }
 
+    /** Getter for the `id` field. */
+    string GetId() {
+      return id;
+    }
+
     /**
      * This method accepts an analyzer that is responsible for processing
      * the current 'execOp' primtive.
