@@ -24,6 +24,10 @@ void DumpAnalyzer::AnalyzeTrace(Trace *trace) {
   trace_buf += "!PID: ";
   trace_buf += to_string(trace->GetThreadId());
   trace_buf += "\n";
+
+  trace_buf += "!Working Directory: ";
+  trace_buf += trace->GetCwd();
+  trace_buf += "\n";
   vector<ExecOp*> exec_ops = trace->GetExecOps();
   operation_count = exec_ops.size();
   for (auto const &exec_op : exec_ops) {

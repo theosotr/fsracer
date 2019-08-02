@@ -459,9 +459,22 @@ class Trace : public TraceNode {
       return thread_id;
     }
 
-    /** Setter for the `thread_id` field */
+    /** Setter for the `thread_id` field. */
     void SetThreadId(size_t thread_id_) {
       thread_id = thread_id_;
+    }
+
+    /**
+     * Get the initial working directory of the program associated
+     * with the current trace.
+     */
+    string GetCwd() {
+      return cwd;
+    }
+
+    /** Setter for the `cwd` field. */
+    void SetCwd(const string cwd_) {
+      cwd = cwd_;
     }
 
     /**
@@ -482,6 +495,16 @@ class Trace : public TraceNode {
 
     /// Id of the main thread of the program. */
     size_t thread_id;
+
+    /**
+     * The working directory of the program when the execution
+     * starts.
+     *
+     * Note that it is possible to change the initial
+     * working directory of the program.
+     * However, this field indicates its initial value.
+     */
+    string cwd;
 
     /** Clear the vector of execution blocks. */
     void ClearBlocks();

@@ -82,7 +82,8 @@ string(CONCAT preamble
   "!Blocks: @NUM@."
   "!Operations: @NUM@."
   "!Trace entries: @NUM@."
-  "!PID: @NUM@"
+  "!PID: @NUM@."
+  "!Working Directory: ${CMAKE_CURRENT_BINARY_DIR}"
 )
 
 string(CONCAT prologue_operation_repl

@@ -47,7 +47,19 @@ module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
   Generator *trace_gen = setup->trace_gen;
   trace_gen->Start(mod);
   size_t pid = dr_get_thread_id(drcontext);
+
+  size_t buf_size = 100;
+  char *cwd_buf = (char *) dr_global_alloc(buf_size * sizeof(char));
+  // TODO: Maybe, we should call this function
+  // everytime we generate a trace that depends on
+  // the current working directory of the process.
+  dr_get_current_directory(cwd_buf, buf_size);
+  string cwd = cwd_buf; // copy it to a C++ string.
+  // Since we have copied the contents of the buffer,
+  // let's free memory.
+  dr_global_free(cwd_buf, buf_size);
   trace_gen->GetTrace()->SetThreadId(pid);
+  trace_gen->GetTrace()->SetCwd(cwd);
 
   if (!module_loaded) {
     module_loaded = true;
