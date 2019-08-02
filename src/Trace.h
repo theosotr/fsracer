@@ -172,6 +172,21 @@ class SubmitOp : public Expr {
     /** String representation of the current object. */
     string ToString();
 
+    /** Getter of the `id` field. */
+    string GetId() {
+      return id;
+    }
+
+    /** Getter of the `type` field. */
+    enum Type GetType() {
+      return type;
+    }
+
+    /** Getter of the `name` field. */
+    string GetName() {
+      return name;
+    }
+
   private:
     /// Id of the current operation.
     string id;
