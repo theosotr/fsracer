@@ -1,6 +1,7 @@
 #ifndef FS_ANALYZER_H
 #define FS_ANALYZER_H
 
+#include <experimental/filesystem>
 #include <iostream>
 #include <unordered_map>
 #include <utility>
@@ -16,6 +17,8 @@ using namespace analyzer;
 using namespace table;
 using namespace trace;
 
+namespace fs = experimental::filesystem;
+
 
 namespace analyzer {
 
@@ -25,9 +28,9 @@ class FSAnalyzer : public Analyzer {
   typedef size_t fd_t;
 
   private:
-    Table<addr_t, string> cwd_table;
+    Table<addr_t, fs::path> cwd_table;
     Table<pair<addr_t, fd_t>, inode_t> fd_table;
-    Table<inode_t, string> symlink_table;
+    Table<inode_t, fs::path> symlink_table;
     Table<proc_t, pair<addr_t, addr_t>> proc_table;
     InodeTable inode_table;
 

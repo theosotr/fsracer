@@ -31,7 +31,7 @@ add_library(fsracer SHARED ${src_files}
     ${CLI_GEN_DIR}/cmdline.c)
 target_include_directories(fsracer PRIVATE ${CLI_GEN_DIR})
 
-set(CMAKE_CXX_FLAGS  "-std=c++11")
+set(CMAKE_CXX_FLAGS  "-std=c++17 -lstdc++fs")
 
 find_package(DynamoRIO REQUIRED)
 

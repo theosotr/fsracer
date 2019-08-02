@@ -1,6 +1,7 @@
 #ifndef INODE_TABLE_H
 #define INODE_TABLE_H
 
+#include <experimental/filesystem>
 #include <iostream>
 #include <map>
 #include <optional>
@@ -14,6 +15,7 @@
 
 
 using namespace std;
+namespace fs = experimental::filesystem;
 
 
 namespace table {
@@ -32,11 +34,11 @@ class InodeTable : public Table<pair<inode_t, string>, inode_t> {
     void AddEntry(inode_t inode_p, string basename,
                   inode_t inode = ROOT_INODE);
     optional<inode_t> GetInode(inode_t inode_p, string basename);
-    inode_t ToInode(string filename);
-    optional<string> ToPath(inode_t inode);
+    inode_t ToInode(fs::path filename);
+    optional<fs::path> ToPath(inode_t inode);
 
   private:
-    map<inode_t, set<string>> rev_table;
+    map<inode_t, set<fs::path>> rev_table;
 
     size_t next_inode;
 };

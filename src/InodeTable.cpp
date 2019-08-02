@@ -20,15 +20,15 @@ optional<inode_t> InodeTable::GetInode(inode_t inode_p, string basename) {
 }
 
 
-inode_t InodeTable::ToInode(string filename) {
+inode_t InodeTable::ToInode(fs::path filename) {
   // TODO
   return 0;
 }
 
 
-optional<string> InodeTable::ToPath(inode_t inode) {
+optional<fs::path> InodeTable::ToPath(inode_t inode) {
   // TODO;
-  optional<string> filename;
+  optional<fs::path> filename;
   return filename;
 }
 
