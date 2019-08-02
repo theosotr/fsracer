@@ -113,6 +113,13 @@ void DumpAnalyzer::AnalyzeTrigger(Trigger *trigger_expr) {
 }
 
 
+void DumpAnalyzer::AnalyzeOperation(Operation *operation) {
+  if (operation) {
+    operation->Accept(this);
+  }
+}
+
+
 void DumpAnalyzer::DumpOutput(writer::OutWriter *out) {
   if (out) {
     string preamble = "";

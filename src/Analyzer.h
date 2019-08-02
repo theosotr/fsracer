@@ -47,7 +47,9 @@ class Analyzer {
     virtual void AnalyzeTrigger(Trigger *trigger_expr);
 
     // ----- Methods for analyzing FS-related operations -----
-    
+  
+    /** Analyze an FS operation. */
+    virtual void AnalyzeOperation(Operation *operation);
     /** Analzyze the 'newFd' construct. */
     virtual void AnalyzeNewFd(NewFd *new_fd);
     /** Analyze the 'delFd' construct. */
@@ -102,6 +104,7 @@ class DumpAnalyzer : public Analyzer {
     void AnalyzeLink(LinkExpr *link_expr);
     void AnalyzeTrigger(Trigger *nested_ev_expr);
 
+    void AnalyzeOperation(Operation *operation);
     void AnalyzeNewFd(NewFd *new_fd) { trace_count++; }
     void AnalyzeDelFd(DelFd *del_fd) { trace_count++; }
     void AnalyzeHpath(Hpath *hpath) { trace_count++; }

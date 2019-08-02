@@ -107,6 +107,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
     void AnalyzeLink(LinkExpr *link_expr);
     void AnalyzeTrigger(Trigger *trigger_expr);
 
+    void AnalyzeOperation(Operation *operation) {  }
     void AnalyzeNewFd(NewFd *new_fd) {  }
     void AnalyzeDelFd(DelFd *del_fd) {  }
     void AnalyzeHpath(Hpath *hpath) {  }
