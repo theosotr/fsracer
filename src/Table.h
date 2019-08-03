@@ -45,6 +45,10 @@ class Table {
       return val;
     }
 
+    table_t GetTable() {
+      return table;
+    }
+
   protected:
     map<T1, T2> table;
 };

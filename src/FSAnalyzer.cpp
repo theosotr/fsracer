@@ -1,4 +1,5 @@
 #include <optional>
+#include <ostream>
 #include <string>
 
 #include "FSAnalyzer.h"
@@ -26,6 +27,8 @@ void FSAnalyzer::AnalyzeTrace(Trace *trace) {
 
   main_process = trace->GetThreadId();
   cwd = trace->GetCwd();
+
+  cwd_table.AddEntry(main_process, inode_table.ToInode(cwd));
 
   vector<ExecOp*> exec_ops = trace->GetExecOps();
   for (auto const &exec_op : exec_ops) {
@@ -181,7 +184,8 @@ void FSAnalyzer::AnalyzeLink(Link *link) {
   inode_t inode_p = inode_table.ToInode(
       new_path.value().parent_path());
   string basename = new_path.value().filename().native();
-  inode_table.AddEntry(inode_p, basename, inode);
+  inode_table.AddEntry(inode_p, basename, new_path.value().native(),
+                       inode);
 }
 
 
@@ -205,8 +209,8 @@ void FSAnalyzer::AnalyzeRename(Rename *rename) {
   if (inode_new.has_value() && inode_new.value() == inode) {
     return;
   }
-  inode_table.AddEntry(inode_p, basename, inode);
-
+  inode_table.AddEntry(inode_p, basename, new_path.value().native(),
+                       inode);
   inode_p = inode_table.ToInode(old_path.value().parent_path());
   basename = old_path.value().filename().native();
   inode_table.RemoveEntry(inode_p, basename);
@@ -271,16 +275,46 @@ optional<fs::path> FSAnalyzer::GetParentDir(size_t dirfd) {
   if (!p.has_value()) {
     return cwd;
   }
+  cout << p.value() << endl;
   return p;
 }
 
 
 optional<fs::path> FSAnalyzer::GetAbsolutePath(size_t dirfd, fs::path p) {
+  if (p.is_absolute()) {
+    return p;
+  }
   optional<fs::path> parent_p = GetParentDir(dirfd);
   if (!parent_p.has_value()) {
     return parent_p;
   }
-  return fs::canonical(parent_p.value() / p);
+  // TODO better normalise path.
+  return parent_p.value() / p;
+}
+
+
+void FSAnalyzer::DumpOutput(writer::OutWriter *out) {
+  if (!out) {
+    return;
+  }
+
+  ostream &os = out->OutStream();
+  os << "{" << endl;
+  for (auto const &entry : effect_table.GetTable()) {
+    os << "\"" << entry.first.native() << "\": [" << endl;
+    for (auto const &pair_element : entry.second) {
+      os << "{" << endl;
+      os << "\"block\": " << "\"" << pair_element.first << "\"," << endl;
+      os << "\"effect\": " << "\"" << Hpath::EffToString(pair_element.second)
+        << "\"" << endl;
+      os << "}" << endl;
+    }
+    os << "]" << endl;
+  }
+  os << "}" << endl;
+
+  delete out;
+  out = nullptr;
 }
 
 
