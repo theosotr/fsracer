@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "Analyzer.h"
+#include "EffectTable.h"
 #include "InodeTable.h"
 #include "Operation.h"
 #include "Table.h"
@@ -19,6 +20,7 @@ using namespace table;
 using namespace trace;
 
 namespace fs = experimental::filesystem;
+
 
 
 namespace analyzer {
@@ -61,10 +63,11 @@ class FSAnalyzer : public Analyzer {
     void DumpOutput(writer::OutWriter *out);
 
   private:
-    Table<addr_t, fs::path> cwd_table;
-    Table<pair<addr_t, fd_t>, inode_t> fd_table;
+    Table<proc_t, inode_t> cwd_table;
+    Table<pair<proc_t, fd_t>, inode_t> fd_table;
     Table<inode_t, fs::path> symlink_table;
     Table<proc_t, pair<addr_t, addr_t>> proc_table;
+    EffectTable effect_table;
     InodeTable inode_table;
 
     Table<string, ExecOp*> op_table;
@@ -72,6 +75,11 @@ class FSAnalyzer : public Analyzer {
     Block *current_block;
     size_t main_process;
     fs::path cwd;
+    size_t block_id;
+
+    void ProcessPathEffect(fs::path p, enum Hpath::EffectType effect);
+    optional<fs::path> GetParentDir(size_t dirfd);
+    optional<fs::path> GetAbsolutePath(size_t dirfd, fs::path p);
 
 };
 
