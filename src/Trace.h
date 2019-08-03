@@ -226,6 +226,9 @@ class ExecOp : public TraceNode {
       return operations;
     }
 
+    /** Gets the last inserted operation. */
+    Operation *GetLastOperation();
+
     /** Getter for the `id` field. */
     string GetId() {
       return id;

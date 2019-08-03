@@ -108,6 +108,16 @@ get_exec_op(void *wrapctx, OUT void **user_data)
 }
 
 
+ExecOp *
+get_exec_op_post(void *wrapctx, void *user_data) {
+  
+  Generator *trace_gen = (Generator *) user_data;
+  size_t thread_id = utils::GetCurrentThread(wrapctx);
+  return (ExecOp *) trace_gen->GetStoreValue(
+      THREADS + to_string(thread_id));
+}
+
+
 // Wrappers for system calls.
 static void
 wrap_pre_access(void *wrapctx, OUT void **user_data)
@@ -134,6 +144,13 @@ static void
 wrap_pre_close(void *wrapctx, OUT void **user_data)
 {
   EmitDelFd(wrapctx, user_data, 0, get_exec_op);
+}
+
+
+static void
+wrap_post_status(void *wrapctx, void *user_data)
+{
+  MarkOperationStatus(wrapctx, user_data, get_exec_op_post);
 }
 
 
@@ -203,7 +220,11 @@ wrap_post_open(void *wrapctx, void *user_data)
   if (!exec_op) {
     return;
   }
-  exec_op->AddOperation(new NewFd(AT_FDCWD, path, ret_val));
+  NewFd *new_fd = new NewFd(AT_FDCWD, path, ret_val);
+  if (ret_val < 0) {
+    new_fd->MarkFailed();
+  }
+  exec_op->AddOperation(new_fd);
 }
 
 
@@ -756,22 +777,20 @@ wrapper_t NodeTraceGenerator::GetWrappers() {
   wrappers["access"]   = { wrap_pre_access, nullptr };
   wrappers["chmod"]    = { wrap_pre_chmod, nullptr };
   wrappers["chown"]    = { wrap_pre_chown, nullptr };
-  wrappers["open"]     = { wrap_pre_open, nullptr };
-  wrappers["close"]    = { wrap_pre_close, nullptr };
+  wrappers["open"]     = { wrap_pre_open, wrap_post_open };
+  wrappers["close"]    = { wrap_pre_close, wrap_post_status };
   wrappers["lchown"]   = { wrap_pre_lchown, nullptr };
-  wrappers["link"]     = { wrap_pre_link, nullptr };
+  wrappers["link"]     = { wrap_pre_link, wrap_post_status };
   wrappers["lstat"]    = { wrap_pre_lstat, nullptr };
-  wrappers["mkdir"]    = { wrap_pre_mkdir, nullptr };
+  wrappers["mkdir"]    = { wrap_pre_mkdir, wrap_post_status };
   wrappers["readlink"] = { wrap_pre_readlink, nullptr };
   wrappers["realpath"] = { wrap_pre_realpath, nullptr };
-  wrappers["rename"]   = { wrap_pre_rename, nullptr };
-  wrappers["rmdir"]    = { wrap_pre_rmdir, nullptr };
+  wrappers["rename"]   = { wrap_pre_rename, wrap_post_status };
+  wrappers["rmdir"]    = { wrap_pre_rmdir, wrap_post_status };
   wrappers["stat"]     = { wrap_pre_stat, nullptr };
-  wrappers["symlink"]  = { wrap_pre_symlink, nullptr };
-  wrappers["unlink"]   = { wrap_pre_unlink, nullptr };
+  wrappers["symlink"]  = { wrap_pre_symlink, wrap_post_status };
+  wrappers["unlink"]   = { wrap_pre_unlink, wrap_post_status };
   wrappers["utime"]    = { wrap_pre_utime, nullptr };
-  wrappers["open"]     = { wrap_pre_open, wrap_post_open };
-  wrappers["close"]    = { wrap_pre_close, nullptr };
 
   // libuv wrappers for libuv functions responsible for executing
   // FS operations.

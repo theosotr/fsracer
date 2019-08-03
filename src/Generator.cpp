@@ -257,4 +257,18 @@ EmitSymlink(void *wrapctx, OUT void **user_data, size_t old_path_pos,
 }
 
 
+void MarkOperationStatus(void *wrapctx, void *user_data,
+                         exec_op_post_t get_exec_op)
+{
+  CHECK_EXEC_OP;
+  int ret_val = (int)(ptr_int_t) drwrap_get_retval(wrapctx);
+  if (ret_val < 0) {
+    Operation *op = exec_op->GetLastOperation();
+    if (op) {
+      op->MarkFailed();
+    }
+  }
+}
+
+
 }

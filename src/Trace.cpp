@@ -40,6 +40,15 @@ void SubmitOp::Accept(analyzer::Analyzer *analyzer) {
 }
 
 
+Operation *ExecOp::GetLastOperation() {
+  if (operations.empty()) {
+    return nullptr;
+  }
+
+  return *(operations.end() - 1);
+}
+
+
 void ExecOp::ClearOperations() {
   for (Operation *operation : operations) {
     delete operation;

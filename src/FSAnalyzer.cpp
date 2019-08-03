@@ -9,7 +9,6 @@
 // TODO:
 // * Properly unlink resources.
 // * Generate erroneous messages when something goes wrong.
-// * Keep track when the corresponding system call failed.
 
 namespace analyzer {
 
