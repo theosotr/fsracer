@@ -1,25 +1,27 @@
+#include<set>
+
 #include "InodeTable.h"
 
 
 namespace table {
 
+
+void InodeTable::AddEntry(inode_t inode_p, string basename, string p) {
+  AddEntry(inode_p, basename, p, next_inode);
+  next_inode++;
+}
+
+
 void InodeTable::AddEntry(inode_t inode_p, string basename,
-                          inode_t inode) {
+                          string p, inode_t inode) {
   // Add the given entry to the underlying inode table
   // and the reversed inode table.
   set<fs::path> path_set;
   pair<inode_t, string> entry = { inode_p, basename };
-  if (inode == ROOT_INODE) {
-    table[entry] = next_inode;
-    path_set.insert(basename);
-    rev_table[inode] = path_set;
-    next_inode++;
-  } else {
-    path_set = ToPaths(inode);
-    path_set.insert(basename);
-    rev_table[inode] = path_set;
-    table[entry] = inode;
-  }
+  path_set = ToPaths(inode);
+  path_set.insert(p);
+  rev_table[inode] = path_set;
+  table[entry] = inode;
 }
 
 
@@ -63,6 +65,7 @@ inode_t InodeTable::ToInode(fs::path path_val) {
 
   fs::path dirname = path_val.parent_path();
   fs::path basename = path_val.filename();
+  cout << "Dirname " << dirname << "\n";
   inode_t inode_p = ToInode(dirname);
   optional<inode_t> i = GetInode(inode_p, basename.native());
   if (i.has_value()) {
@@ -72,8 +75,8 @@ inode_t InodeTable::ToInode(fs::path path_val) {
   } else {
     // Add a new entry to the inode table,
     // and return the generated inode as value.
-    AddEntry(inode_p, basename.native());
-    return next_inode;
+    AddEntry(inode_p, basename.native(), path_val.native());
+    return next_inode - 1;
   }
 }
 

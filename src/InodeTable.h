@@ -27,12 +27,12 @@ typedef map<pair<inode_t, string>, inode_t> inode_table_t;
 class InodeTable : public Table<pair<inode_t, string>, inode_t> {
   public:
     InodeTable():
-      next_inode(0) {
-        AddEntry(ROOT_INODE, "/");
-      };
+      next_inode(1) {
+        InodeTable::AddEntry(ROOT_INODE, "/", "/");
+    };
 
-    void AddEntry(inode_t inode_p, string basename,
-                  inode_t inode = ROOT_INODE);
+    void AddEntry(inode_t inode_p, string basename, string p);
+    void AddEntry(inode_t inode_p, string basename, string p, inode_t inode);
     void RemoveEntry(inode_t inode, string basename);
     optional<inode_t> GetInode(inode_t inode_p, string basename);
     inode_t ToInode(fs::path path_val);
