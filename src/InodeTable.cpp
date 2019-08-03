@@ -65,7 +65,6 @@ inode_t InodeTable::ToInode(fs::path path_val) {
 
   fs::path dirname = path_val.parent_path();
   fs::path basename = path_val.filename();
-  cout << "Dirname " << dirname << "\n";
   inode_t inode_p = ToInode(dirname);
   optional<inode_t> i = GetInode(inode_p, basename.native());
   if (i.has_value()) {
