@@ -26,7 +26,7 @@ namespace utils {
     if (pos == std::string::npos) {
       return str;
     }
-    return str.substr(pos, std::string::npos);
+    return str.substr(pos + 1, std::string::npos);
   }
 
 }
