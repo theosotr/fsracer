@@ -17,7 +17,7 @@ delFd @NUM@
 done
 Operation async_5 do
 hpath AT_FDCWD baz consumed
-newFd AT_FDCWD baz -1
+newFd AT_FDCWD baz -1 !failed
 done
 Operation async_6 do
 hpath AT_FDCWD bar consumed
