@@ -140,7 +140,7 @@ class Hpath : public Operation {
 
     string ToString() {
       string str = DirfdToString(dirfd);
-      return GetOpName() + " " + str + " " + path +
+      return GetOpName() + " " + str + " " + path + " " +
         Hpath::EffToString(effect_type) + FAILED;
     };
 
