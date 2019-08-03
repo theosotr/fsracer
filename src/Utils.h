@@ -5,4 +5,6 @@ namespace utils {
   std::string PtrToString(void *ptr);
 
   size_t GetCurrentThread(void *wrapctx);
+
+  std::string GetRightSubstr(std::string &str, std::string delm);
 }
