@@ -301,15 +301,22 @@ void FSAnalyzer::DumpOutput(writer::OutWriter *out) {
   ostream &os = out->OutStream();
   os << "{" << endl;
   for (auto const &entry : effect_table.GetTable()) {
-    os << "\"" << entry.first.native() << "\": [" << endl;
-    for (auto const &pair_element : entry.second) {
-      os << "{" << endl;
-      os << "\"block\": " << "\"" << pair_element.first << "\"," << endl;
-      os << "\"effect\": " << "\"" << Hpath::EffToString(pair_element.second)
-        << "\"" << endl;
-      os << "}" << endl;
+    os << "  \"" << entry.first.native() << "\": [" << endl;
+    size_t size = entry.second.size();
+    for (auto it = entry.second.begin(); it != entry.second.end(); it++) {
+      os << "    {" << endl;
+      os << "      \"block\": " << "\"" << (*it).first
+        << "\"," << endl;
+      os << "      \"effect\": " << "\""
+        << Hpath::EffToString((*it).second) << "\"" << endl;
+      os << "    }";
+      if (it != entry.second.end() - 1) {
+        os << "," << endl;
+      } else {
+        os << endl;
+      }
     }
-    os << "]" << endl;
+    os << "  ]" << endl;
   }
   os << "}" << endl;
 
