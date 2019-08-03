@@ -275,7 +275,6 @@ optional<fs::path> FSAnalyzer::GetParentDir(size_t dirfd) {
   if (!p.has_value()) {
     return cwd;
   }
-  cout << p.value() << endl;
   return p;
 }
 
