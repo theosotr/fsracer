@@ -3,9 +3,18 @@ version "0.1dev"
 
 option "output-trace" - "File to store generated traces" string optional
 option "dump-trace" - "Dump generated traces to standard output" flag off
+
 option "analyzer" - "The analyzer used to operate on traces"
-  values="dep-infer" optional
-option "dump-dep-graph" - "Dump dependency graph to standard output" flag off dependon="analyzer"
-option "output-dep-graph" - "File to store generated dependency graph" string optional dependon="analyzer"
-option "dep-graph-format" - "Format of generated dependency graph" optional dependon="analyzer"
+  values="dep-infer","fs" optional
+
+option "dump-dep-graph" - "Dump dependency graph to standard output"
+  flag off dependon="analyzer"
+option "output-dep-graph" - "File to store generated dependency graph"
+  string optional dependon="analyzer"
+option "dep-graph-format" - "Format of generated dependency graph"
   values="csv","dot" default="dot" optional dependon="analyzer"
+
+option "dump-fs-accesses" - "Dump all file accesses perfomed in every block"
+  flag off dependon="analyzer"
+option "output-fs-accesses" - "File to store file accesses performed in every block"
+  string optional dependon="analyzer"

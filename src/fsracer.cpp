@@ -10,6 +10,7 @@
 
 #include "Analyzer.h"
 #include "DependencyInferenceAnalyzer.h"
+#include "FSAnalyzer.h"
 #include "NodeGenerator.h"
 #include "OutWriter.h"
 
@@ -46,22 +47,22 @@ module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
 {
   Generator *trace_gen = setup->trace_gen;
   trace_gen->Start(mod);
-  size_t pid = dr_get_thread_id(drcontext);
-
-  size_t buf_size = 100;
-  char *cwd_buf = (char *) dr_global_alloc(buf_size * sizeof(char));
-  // TODO: Maybe, we should call this function
-  // everytime we generate a trace that depends on
-  // the current working directory of the process.
-  dr_get_current_directory(cwd_buf, buf_size);
-  string cwd = cwd_buf; // copy it to a C++ string.
-  // Since we have copied the contents of the buffer,
-  // let's free memory.
-  dr_global_free(cwd_buf, buf_size);
-  trace_gen->GetTrace()->SetThreadId(pid);
-  trace_gen->GetTrace()->SetCwd(cwd);
-
   if (!module_loaded) {
+    size_t pid = dr_get_thread_id(drcontext);
+
+    size_t buf_size = 100;
+    char *cwd_buf = (char *) dr_global_alloc(buf_size * sizeof(char));
+    // TODO: Maybe, we should call this function
+    // everytime we generate a trace that depends on
+    // the current working directory of the process.
+    dr_get_current_directory(cwd_buf, buf_size);
+    string cwd = cwd_buf; // copy it to a C++ string.
+    // Since we have copied the contents of the buffer,
+    // let's free memory.
+    dr_global_free(cwd_buf, buf_size);
+    trace_gen->GetTrace()->SetThreadId(pid);
+    trace_gen->GetTrace()->SetCwd(cwd);
+
     module_loaded = true;
     cout << trace_gen->GetName() <<
       ": PID " << to_string(pid) <<
@@ -160,14 +161,19 @@ process_args(gengetopt_args_info &args_info)
 {
   if (args_info.dump_trace_given && args_info.output_trace_given) {
     cerr << CMDLINE_PARSER_PACKAGE << ": "
-      << "options '-dump-trace' and '-output-trace' are mutually exclusive\n";
+      << "options '--dump-trace' and '--output-trace' are mutually exclusive\n";
     dr_exit_process(1);
   }
 
   if (args_info.dump_dep_graph_given && args_info.output_dep_graph_given) {
     cerr << CMDLINE_PARSER_PACKAGE << ": "
-      << "options '-dump-dep-graph' and '-output-dep-graph' are mutually exclusive\n";
+      << "options '--dump-dep-graph' and '--output-dep-graph' are mutually exclusive\n";
     dr_exit_process(1);
+  }
+
+  if (args_info.dump_fs_accesses_given && args_info.output_fs_accesses_given) {
+    cerr << CMDLINE_PARSER_PACKAGE << ": "
+      << "options '--dump-fs-accesses' and '--output-fs-accesses' are mutually exclusive\n";
   }
 
   vector<pair<Analyzer*, writer::OutWriter*>> analyzers;
@@ -195,6 +201,20 @@ process_args(gengetopt_args_info &args_info)
             new DependencyInferenceAnalyzer(get_graph_format(args_info)),
             new writer::OutWriter(writer::OutWriter::WRITE_FILE,
                                   args_info.output_dep_graph_arg) });
+      }
+    }
+    if (analyzer == "fs") {
+      if (args_info.dump_fs_accesses_given) {
+        analyzers.push_back({
+            new FSAnalyzer(),
+            new writer::OutWriter(writer::OutWriter::WRITE_STDOUT, "")});
+      }
+
+      if (args_info.output_fs_accesses_given) {
+        analyzers.push_back({
+            new FSAnalyzer(),
+            new writer::OutWriter(writer::OutWriter::WRITE_FILE,
+                                  args_info.output_fs_accesses_arg)});
       }
     }
   }
