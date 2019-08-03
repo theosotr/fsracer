@@ -15,9 +15,10 @@ namespace table {
 
 template<class T1, class T2>
 class Table {
-  typedef map<T1, T2> table_t;
 
   public:
+    typedef map<T1, T2> table_t;
+
     void AddEntry(T1 key, T2 value) {
       table[key] = value;
     }
