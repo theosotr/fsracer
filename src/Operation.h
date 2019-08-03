@@ -140,17 +140,13 @@ class Hpath : public Operation {
 
     string ToString() {
       string str = DirfdToString(dirfd);
-      switch (effect_type) {
-        case PRODUCED:
-          return GetOpName() + " " + str + " " + path + " produced" + FAILED;
-        case CONSUMED:
-          return GetOpName() + " " + str + " " + path + " consumed" + FAILED;
-        default:
-          return GetOpName() + " " + str + " " + path + " expunged" + FAILED;
-      }
+      return GetOpName() + " " + str + " " + path +
+        Hpath::EffToString(effect_type) + FAILED;
     };
 
     void Accept(analyzer::Analyzer *analyzer);
+
+    static string EffToString(enum EffectType effect);
 
   protected:
     size_t dirfd;

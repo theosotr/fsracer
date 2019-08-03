@@ -25,6 +25,18 @@ void Hpath::Accept(analyzer::Analyzer *analyzer) {
 };
 
 
+string Hpath::EffToString(enum EffectType effect) {
+  switch (effect) {
+    case CONSUMED:
+      return "consumed";
+    case PRODUCED:
+      return "produced";
+    case EXPUNGED:
+      return "expunged";
+  }
+}
+
+
 void HpathSym::Accept(analyzer::Analyzer *analyzer) {
   if (analyzer) {
     analyzer->AnalyzeHpath(this);
