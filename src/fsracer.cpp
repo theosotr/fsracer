@@ -15,6 +15,19 @@
 #include "OutWriter.h"
 
 
+#define INIT_OUT(arg_prefix)                                               \
+  do {                                                                     \
+    if (args_info.dump_##arg_prefix##_given) {                             \
+      out = new writer::OutWriter(writer::OutWriter::WRITE_STDOUT, "");    \
+    }                                                                      \
+    if (args_info.output_##arg_prefix##_given) {                           \
+      out = new writer::OutWriter(writer::OutWriter::WRITE_FILE,           \
+                                  args_info.output_##arg_prefix##_arg);    \
+    }                                                                      \
+  }                                                                        \
+  while (false)                                                            \
+
+
 using namespace generator;
 using namespace analyzer;
 
@@ -157,6 +170,28 @@ get_graph_format(gengetopt_args_info &args_info)
 
 
 static void
+init_analyzers(gengetopt_args_info &args_info,
+               vector<pair<Analyzer*, writer::OutWriter*>> &analyzers)
+{
+  Analyzer *analyzer_ptr = nullptr;
+  writer::OutWriter *out = nullptr;
+  for (int i = 0; i < args_info.analyzer_given; i++) {
+    string analyzer = args_info.analyzer_arg[i];
+    if (analyzer == "dep-infer") {
+      analyzer_ptr = new DependencyInferenceAnalyzer(
+          get_graph_format(args_info));
+      INIT_OUT(dep_graph);
+    }
+    if (analyzer == "fs") {
+      analyzer_ptr = new FSAnalyzer();
+      INIT_OUT(fs_accesses);
+    }
+    analyzers.push_back({ analyzer_ptr, out });
+  }
+}
+
+
+static void
 process_args(gengetopt_args_info &args_info)
 {
   if (args_info.dump_trace_given && args_info.output_trace_given) {
@@ -187,37 +222,7 @@ process_args(gengetopt_args_info &args_info)
         new writer::OutWriter(writer::OutWriter::WRITE_FILE,
                               args_info.output_trace_arg) });
   }
-  if (args_info.analyzer_given) {
-    string analyzer = args_info.analyzer_orig;
-    if (analyzer == "dep-infer") {
-      if (args_info.dump_dep_graph_given) {
-        analyzers.push_back({
-            new DependencyInferenceAnalyzer(get_graph_format(args_info)),
-            new writer::OutWriter(writer::OutWriter::WRITE_STDOUT, "") });
-      }
-
-      if (args_info.output_dep_graph_given) {
-        analyzers.push_back({
-            new DependencyInferenceAnalyzer(get_graph_format(args_info)),
-            new writer::OutWriter(writer::OutWriter::WRITE_FILE,
-                                  args_info.output_dep_graph_arg) });
-      }
-    }
-    if (analyzer == "fs") {
-      if (args_info.dump_fs_accesses_given) {
-        analyzers.push_back({
-            new FSAnalyzer(),
-            new writer::OutWriter(writer::OutWriter::WRITE_STDOUT, "")});
-      }
-
-      if (args_info.output_fs_accesses_given) {
-        analyzers.push_back({
-            new FSAnalyzer(),
-            new writer::OutWriter(writer::OutWriter::WRITE_FILE,
-                                  args_info.output_fs_accesses_arg)});
-      }
-    }
-  }
+  init_analyzers(args_info, analyzers);
   setup = new FSracerSetup(new NodeTraceGenerator(), analyzers);
 }
 

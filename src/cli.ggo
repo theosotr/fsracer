@@ -5,7 +5,7 @@ option "output-trace" - "File to store generated traces" string optional
 option "dump-trace" - "Dump generated traces to standard output" flag off
 
 option "analyzer" - "The analyzer used to operate on traces"
-  values="dep-infer","fs" optional
+  values="dep-infer","fs" optional multiple
 
 option "dump-dep-graph" - "Dump dependency graph to standard output"
   flag off dependon="analyzer"
