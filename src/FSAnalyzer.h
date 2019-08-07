@@ -64,7 +64,7 @@ class FSAnalyzer : public Analyzer {
 
   private:
     Table<proc_t, inode_t> cwd_table;
-    Table<pair<proc_t, fd_t>, inode_t> fd_table;
+    Table<pair<proc_t, fd_t>, inode_key_t> fd_table;
     Table<inode_t, fs::path> symlink_table;
     Table<proc_t, pair<addr_t, addr_t>> proc_table;
     EffectTable effect_table;
@@ -80,6 +80,7 @@ class FSAnalyzer : public Analyzer {
     void ProcessPathEffect(fs::path p, enum Hpath::EffectType effect);
     optional<fs::path> GetParentDir(size_t dirfd);
     optional<fs::path> GetAbsolutePath(size_t dirfd, fs::path p);
+    void UnlinkResource(inode_t inode_p, string basename);
 
 };
 

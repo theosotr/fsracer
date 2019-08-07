@@ -8,7 +8,6 @@
 #include "Utils.h"
 
 // TODO:
-// * Properly unlink resources.
 // * Generate erroneous messages when something goes wrong.
 
 namespace analyzer {
@@ -119,9 +118,16 @@ void FSAnalyzer::AnalyzeNewFd(NewFd *new_fd) {
     return;
   }
   // We create a new inode that corresponds to
-  // the absolute path.
-  inode_t inode = inode_table.ToInode(abs_path.value());
-  fd_table.AddEntry({ main_process, new_fd->GetFd() }, inode);
+  // the absolute path. To do so, we first get the inode of the parent path
+  // and the basename of the initial path.
+  //
+  // The we add the entry to the inode table.
+  inode_t inode_p = inode_table.ToInode(abs_path.value().parent_path());
+  string basename = abs_path.value().filename().native();
+  inode_table.AddEntry(inode_p, basename, abs_path.value());
+  // Mark the inode as open.
+  inode_table.OpenInode(inode_p, basename);
+  fd_table.AddEntry({ main_process, new_fd->GetFd() }, { inode_p, basename });
 }
 
 
@@ -129,7 +135,12 @@ void FSAnalyzer::AnalyzeDelFd(DelFd *del_fd) {
   if (!del_fd) {
     return;
   }
-  fd_table.RemoveEntry({ main_process, del_fd->GetFd() });
+  optional<inode_key_t> key = fd_table.PopEntry(
+      { main_process, del_fd->GetFd() });
+  if (key.has_value()) {
+    // It's time to close the inode.
+    inode_table.CloseInode(key.value().first, key.value().second);
+  }
 }
 
 
@@ -213,7 +224,7 @@ void FSAnalyzer::AnalyzeRename(Rename *rename) {
                        inode);
   inode_p = inode_table.ToInode(old_path.value().parent_path());
   basename = old_path.value().filename().native();
-  inode_table.RemoveEntry(inode_p, basename);
+  UnlinkResource(inode_p, basename);
 }
 
 
@@ -241,8 +252,8 @@ void FSAnalyzer::ProcessPathEffect(fs::path p,
     case Hpath::EXPUNGED:
       inode_t inode_p = inode_table.ToInode(p.parent_path());
       string basename = p.filename().native();
-      inode_table.RemoveEntry(inode_p, basename);
       effect_table.AddPathEffect(p, block_id, Hpath::EXPUNGED);
+      UnlinkResource(inode_p, basename);
   }
 }
 
@@ -260,7 +271,11 @@ optional<fs::path> FSAnalyzer::GetParentDir(size_t dirfd) {
     default:
       // Otherwise, we inspect the file descriptor table to
       // get the inode corresponding to the given file descriptor.
-      inode = fd_table.GetValue({ main_process, dirfd });
+      optional<inode_key_t> key = fd_table.GetValue({ main_process, dirfd });
+      if (key.has_value()) {
+        inode = inode_table.GetInode(key.value().first,
+                                     key.value().second);
+      }
 
   }
   if (!inode.has_value()) {
@@ -289,6 +304,11 @@ optional<fs::path> FSAnalyzer::GetAbsolutePath(size_t dirfd, fs::path p) {
   }
   // TODO better normalise path.
   return parent_p.value() / p;
+}
+
+
+void FSAnalyzer::UnlinkResource(inode_t inode_p, string basename) {
+  inode_table.RemoveEntry(inode_p, basename);
 }
 
 
