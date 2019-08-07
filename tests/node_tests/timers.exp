@@ -44,3 +44,10 @@ DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
 4,7,before
 4,8,creates
 6,7,creates
+FSAnalyzer: Start analyzing traces...
+FSAnalyzer: Analysis is done
+FSAnalyzer: Dumping analysis output to STDOUT
+@CURRENT_DIR@/timers.js,1,consumed
+@CURRENT_DIR@/tmp,1,produced
+@CURRENT_DIR@/tmp,7,expunged
+@CURRENT_DIR@/tmp,8,consumed

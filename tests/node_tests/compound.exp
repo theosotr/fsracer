@@ -53,3 +53,13 @@ DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
 1,4,creates
 1,5,creates
 5,6,creates
+FSAnalyzer: Start analyzing traces...
+FSAnalyzer: Analysis is done
+FSAnalyzer: Dumping analysis output to STDOUT
+@CURRENT_DIR@/bar,1,produced
+@CURRENT_DIR@/bar,4,consumed
+@CURRENT_DIR@/bar,6,consumed
+@CURRENT_DIR@/baz,5,consumed
+@CURRENT_DIR@/compound.js,1,consumed
+@CURRENT_DIR@/foo,4,produced
+@CURRENT_DIR@/foo,6,produced

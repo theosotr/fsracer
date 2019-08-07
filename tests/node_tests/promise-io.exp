@@ -58,3 +58,10 @@ DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
 7,8,creates
 8,9,creates
 9,4,creates
+FSAnalyzer: Start analyzing traces...
+FSAnalyzer: Analysis is done
+FSAnalyzer: Dumping analysis output to STDOUT
+@CURRENT_DIR@/foo,1,produced
+@CURRENT_DIR@/foo,5,consumed
+@CURRENT_DIR@/foo,10,expunged
+@CURRENT_DIR@/promise-io.js,1,consumed

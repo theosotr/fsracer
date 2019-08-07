@@ -28,3 +28,9 @@ DependencyInferenceAnalyzer: Analysis is done
 DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
 1,4,creates
 4,5,creates
+FSAnalyzer: Start analyzing traces...
+FSAnalyzer: Analysis is done
+FSAnalyzer: Dumping analysis output to STDOUT
+@CURRENT_DIR@/foo,1,produced
+@CURRENT_DIR@/foo,5,expunged
+@CURRENT_DIR@/next-tick.js,1,consumed

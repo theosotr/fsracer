@@ -105,3 +105,12 @@ DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
 13,14,creates
 14,16,creates
 15,14,before
+FSAnalyzer: Start analyzing traces...
+FSAnalyzer: Analysis is done
+FSAnalyzer: Dumping analysis output to STDOUT
+@CURRENT_DIR@/bar,5,produced
+@CURRENT_DIR@/bar,14,expunged
+@CURRENT_DIR@/foo,1,produced
+@CURRENT_DIR@/foo,4,consumed
+@CURRENT_DIR@/foo,14,expunged
+@CURRENT_DIR@/stream.js,1,consumed

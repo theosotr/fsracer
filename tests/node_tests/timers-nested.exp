@@ -29,3 +29,9 @@ DependencyInferenceAnalyzer: Analysis is done
 DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
 1,5,creates
 5,8,creates
+5,8,before
+FSAnalyzer: Start analyzing traces...
+FSAnalyzer: Analysis is done
+FSAnalyzer: Dumping analysis output to STDOUT
+@CURRENT_DIR@/foo,8,consumed
+@CURRENT_DIR@/timers-nested.js,1,consumed

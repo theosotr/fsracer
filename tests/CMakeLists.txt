@@ -11,7 +11,16 @@ add_test(build_fsracer
 
 message("${DynamoRIO_BUILD_DIR}")
 
-set(DEFAULT_FSRACER_ARGS "--analyzer=dep-infer --dep-graph-format=csv --dump-dep-graph --dump-trace")
+string(CONCAT cmd_options
+  "--analyzer=dep-infer "
+  "--dep-graph-format=csv "
+  "--dump-dep-graph "
+  "--analyzer=fs "
+  "--fs-accesses-format=csv "
+  "--dump-fs-accesses "
+  "--dump-trace"
+)
+set(DEFAULT_FSRACER_ARGS ${cmd_options})
 function (new_test test_suite test_name test_file)
   # Actual tests
   add_test(${test_name}

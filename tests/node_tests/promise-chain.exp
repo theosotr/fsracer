@@ -46,3 +46,8 @@ DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
 9,10,creates
 10,5,creates
 12,6,creates
+FSAnalyzer: Start analyzing traces...
+FSAnalyzer: Analysis is done
+FSAnalyzer: Dumping analysis output to STDOUT
+@CURRENT_DIR@/foo,14,consumed
+@CURRENT_DIR@/promise-chain.js,1,consumed

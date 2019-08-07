@@ -20,3 +20,7 @@ DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
 1,4,creates
 4,6,creates
 6,7,creates
+FSAnalyzer: Start analyzing traces...
+FSAnalyzer: Analysis is done
+FSAnalyzer: Dumping analysis output to STDOUT
+@CURRENT_DIR@/thenables.js,1,consumed
