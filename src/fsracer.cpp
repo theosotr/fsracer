@@ -169,6 +169,17 @@ get_graph_format(gengetopt_args_info &args_info)
 }
 
 
+static FSAnalyzer::OutFormat
+get_fs_out_format(gengetopt_args_info &args_info)
+{
+  string out_format = args_info.fs_accesses_format_arg;
+  if (out_format == "json") {
+    return FSAnalyzer::JSON;
+  }
+  return FSAnalyzer::CSV;
+}
+
+
 static void
 init_analyzers(gengetopt_args_info &args_info,
                vector<pair<Analyzer*, writer::OutWriter*>> &analyzers)
@@ -183,7 +194,7 @@ init_analyzers(gengetopt_args_info &args_info,
       INIT_OUT(dep_graph);
     }
     if (analyzer == "fs") {
-      analyzer_ptr = new FSAnalyzer();
+      analyzer_ptr = new FSAnalyzer(get_fs_out_format(args_info));
       INIT_OUT(fs_accesses);
     }
     analyzers.push_back({ analyzer_ptr, out });

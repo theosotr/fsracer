@@ -32,9 +32,15 @@ class FSAnalyzer : public Analyzer {
   typedef size_t fd_t;
 
   public:
-    FSAnalyzer():
+    enum OutFormat {
+      JSON,
+      CSV
+    };
+
+    FSAnalyzer(enum OutFormat out_format_):
       current_block(nullptr),
-      main_process(0)
+      main_process(0),
+      out_format(out_format_)
   {  }
 
     string GetName() {
@@ -77,10 +83,15 @@ class FSAnalyzer : public Analyzer {
     fs::path cwd;
     size_t block_id;
 
+    enum OutFormat out_format;
+
     void ProcessPathEffect(fs::path p, enum Hpath::EffectType effect);
     optional<fs::path> GetParentDir(size_t dirfd);
     optional<fs::path> GetAbsolutePath(size_t dirfd, fs::path p);
     void UnlinkResource(inode_t inode_p, string basename);
+
+    void DumpJSON(ostream &os);
+    void DumpCSV(ostream &os);
 
 };
 

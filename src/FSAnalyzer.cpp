@@ -316,8 +316,19 @@ void FSAnalyzer::DumpOutput(writer::OutWriter *out) {
   if (!out) {
     return;
   }
+  switch (out_format) {
+    case JSON:
+      DumpJSON(out->OutStream());
+      break;
+    case CSV:
+      DumpCSV(out->OutStream());
+      break;
+  }
+  delete out;
+}
 
-  ostream &os = out->OutStream();
+
+void FSAnalyzer::DumpJSON(ostream &os) {
   os << "{" << endl;
   auto table = effect_table.GetTable();
   for (auto map_it = table.begin(); map_it != table.end(); map_it++) {
@@ -342,8 +353,18 @@ void FSAnalyzer::DumpOutput(writer::OutWriter *out) {
     }
   }
   os << "}" << endl;
-  delete out;
-  out = nullptr;
+}
+
+
+void FSAnalyzer::DumpCSV(ostream &os) {
+  auto table = effect_table.GetTable();
+  for (auto const &entry : table) {
+    for (auto const &pair_element : entry.second) {
+      os << entry.first.native() << ","
+        << pair_element.first << ","
+        << Hpath::EffToString(pair_element.second) << "\n";
+    }
+  }
 }
 
 
