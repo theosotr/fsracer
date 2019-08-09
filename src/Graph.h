@@ -17,8 +17,8 @@ namespace graph {
  * A template class that represents a node in
  * the graph.
  *
- * Each node is presented by an ID (a positive inter) and
- * and object associateted with the given template parameter.
+ * Each node is presented by an ID (a positive inter),
+ * and an object associated with the given template parameter.
  */
 template<typename T, typename L>
 struct Node {
