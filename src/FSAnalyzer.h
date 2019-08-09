@@ -27,9 +27,9 @@ namespace analyzer {
 
 
 class FSAnalyzer : public Analyzer {
-  typedef size_t proc_t;
-  typedef size_t addr_t;
-  typedef size_t fd_t;
+  using proc_t = size_t;
+  using addr_t = size_t;
+  using fd_t = size_t;
 
   public:
     enum OutFormat {

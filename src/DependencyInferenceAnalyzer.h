@@ -170,13 +170,13 @@ class DependencyInferenceAnalyzer : public Analyzer {
      * Also, every edge in this graph has a label defined in
      * the `EdgeLabel` enumeration.
      */
-    typedef graph::Graph<Event, enum graph::EdgeLabel> dep_graph_t;
+    using dep_graph_t = graph::Graph<Event, enum graph::EdgeLabel>;
     /**
      * The type of EventInfo.
      *
      * Each node represents information about an event.
      */
-    typedef graph::Graph<Event, graph::EdgeLabel>::NodeInfo EventInfo;
+    using EventInfo = graph::Graph<Event, graph::EdgeLabel>::NodeInfo;
 
     /// The dependency graph of events.
     dep_graph_t dep_graph;

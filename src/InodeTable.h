@@ -20,9 +20,9 @@ namespace fs = experimental::filesystem;
 
 namespace table {
 
-typedef size_t inode_t;
-typedef pair<inode_t, string> inode_key_t;
-typedef map<pair<inode_t, string>, inode_t> inode_table_t;
+using inode_t = size_t;
+using inode_key_t = pair<inode_t, string>;
+using inode_table_t = map<pair<inode_t, string>, inode_t>;
 
 
 class InodeTable : public Table<inode_key_t, inode_t> {

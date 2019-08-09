@@ -146,7 +146,7 @@ class Graph {
      */
     using NodeInfo = Node<T, L>;
     /// Representation of the underlying graph.
-    typedef unordered_map<size_t, NodeInfo> graph_t;
+    using graph_t = unordered_map<size_t, NodeInfo>;
 
     /** Adds a new node to the graph. */
     void AddNode(size_t node_id, T node_obj) {

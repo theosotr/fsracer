@@ -17,7 +17,7 @@ template<class T1, class T2>
 class Table {
 
   public:
-    typedef map<T1, T2> table_t;
+    using table_t = map<T1, T2>;
 
     void AddEntry(T1 key, T2 value) {
       table[key] = value;

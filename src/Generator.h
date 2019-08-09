@@ -20,9 +20,9 @@ using namespace std;
 using namespace operation;
 
 
-typedef void (*pre_clb_t)(void *wrapctx, OUT void **user_data);
-typedef void (*post_clb_t)(void *wrapctx, void *user_data);
-typedef map<string, pair<pre_clb_t, post_clb_t>> wrapper_t;
+using pre_clb_t = void (*)(void *wrapctx, OUT void **user_data);
+using post_clb_t = void (*)(void *wrapctx, void *user_data);
+using wrapper_t = map<string, pair<pre_clb_t, post_clb_t>>;
 
 
 
@@ -114,8 +114,8 @@ class Generator {
 
 namespace generator_utils {
 
-typedef ExecOp *(*exec_op_t)(void *wrapctx, OUT void **user_data);
-typedef ExecOp *(*exec_op_post_t)(void *wrapctx, void *user_data);
+using exec_op_t = ExecOp *(*)(void *wrapctx, OUT void **user_data);
+using exec_op_post_t = ExecOp *(*)(void *wrapctx, void *user_data);
 
 generator::Generator *GetTraceGenerator(void **data);
 
