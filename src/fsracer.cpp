@@ -199,6 +199,7 @@ init_analyzers(gengetopt_args_info &args_info,
       INIT_OUT(fs_accesses);
     }
     analyzers.push_back({ analyzer_ptr, out });
+    out = nullptr;
   }
 }
 
