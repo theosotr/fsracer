@@ -12,6 +12,8 @@
 #include "OutWriter.h"
 #include "Trace.h"
 
+#define EXECUTED_ATTR "EXECUTED"
+
 
 using namespace std;
 using namespace operation;
@@ -42,11 +44,11 @@ enum EdgeLabel {
 
 
 template<>
-struct GraphPrinter<Event, enum EdgeLabel> {
+struct GraphPrinter<Event, enum EdgeLabel> : public GraphPrinterDefault {
   public:
     using NodeInfo = Node<Event, enum EdgeLabel>;
-    static string PrintNodeDot(size_t node_id, NodeInfo &node_info) {
-      if (!node_info.active) {
+    static string PrintNodeDot(size_t node_id, const NodeInfo &node_info) {
+      if (!node_info.HasAttribute(EXECUTED_ATTR)) {
         return "";
       }
       if (node_id == MAIN_BLOCK) {
@@ -58,6 +60,13 @@ struct GraphPrinter<Event, enum EdgeLabel> {
       }
     }
 
+    static string PrintNodeCSV(size_t node_id, const NodeInfo &node_info) {
+      if (!node_info.HasAttribute(EXECUTED_ATTR)) {
+        return "";
+      }
+      return to_string(node_info.node_id);
+    }
+
     static string PrintEdgeLabel(enum EdgeLabel label) {
       switch (label) {
         case CREATES:
@@ -65,6 +74,26 @@ struct GraphPrinter<Event, enum EdgeLabel> {
         case HAPPENS_BEFORE:
           return "before";
       }
+    }
+
+    static string PrintEdgeDot(const NodeInfo &source, const NodeInfo &target) {
+      if (IgnoreEdge(source, target)) {
+        return "";
+      }
+      return GraphPrinterDefault::PrintEdgeDot(source, target);
+    }
+
+    static string PrintEdgeCSV(const NodeInfo &source, const NodeInfo &target) {
+      if (IgnoreEdge(source, target)) {
+        return "";
+      }
+      return GraphPrinterDefault::PrintEdgeCSV(source, target);
+    }
+
+  private:
+    static bool IgnoreEdge(const NodeInfo &source, const NodeInfo &target) {
+      return !source.HasAttribute(EXECUTED_ATTR) ||
+        !target.HasAttribute(EXECUTED_ATTR);
     }
 };
 

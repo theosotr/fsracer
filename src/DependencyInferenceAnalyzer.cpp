@@ -58,7 +58,7 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(Block *block) {
     // it has been previously executed. Therefore, we have
     // to associate the previous block with the first event
     // that is created inside the current one.
-    if (event_info.value().active) {
+    if (event_info.value().HasAttribute(EXECUTED_ATTR)) {
       if (current_block) {
         pending_ev = current_block->GetBlockId();
       }
@@ -72,7 +72,7 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(Block *block) {
     AnalyzeExpr(expr);
   }
   RemoveAliveEvent(block->GetBlockId());
-  dep_graph.MarkActive(block->GetBlockId());
+  dep_graph.AddNodeAttr(block->GetBlockId(), EXECUTED_ATTR);
 }
 
 

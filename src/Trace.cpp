@@ -10,7 +10,7 @@ using namespace std;
 namespace trace {
 
 
-string Event::ToString() {
+string Event::ToString() const {
   string str = to_string(event_value);
   switch (event_type) {
     case S:

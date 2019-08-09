@@ -119,7 +119,7 @@ class Event {
     void Accept(analyzer::Analyzer *analyzer);
 
     /** String representation of the current event object. */
-    string ToString();
+    string ToString() const;
 
   private:
     /// Type of the event.

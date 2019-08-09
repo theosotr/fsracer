@@ -25,13 +25,29 @@ struct Node {
   set<size_t> before;
   /// Set of nodes executed after the current one.
   set<size_t> after;
-  bool active;
+  /// Set of node attributes.
+  set<string> attributes;
 
   Node(size_t node_id_, T node_obj_):
     node_id(node_id_),
-    node_obj(node_obj_),
-    active(false)
+    node_obj(node_obj_)
   {  }
+
+  bool HasAttribute(string attr) const {
+    return attributes.find(attr) != attributes.end();
+  }
+
+  void AddAttribute(string attr) {
+    attributes.insert(attr);
+  }
+
+  void RemoveAttribute(string attr) {
+    attributes.erase(attr);
+  }
+
+  friend bool operator<(const Node &lhs, const Node &rhs) {
+    return lhs.node_id < rhs.node_id;
+  }
 
 };
 
@@ -39,18 +55,28 @@ struct Node {
 struct GraphPrinterDefault {
   public:
     template<typename T>
-    static string PrintNodeDot(size_t node_id, T node_obj) {
+    static string PrintNodeDot(size_t node_id, const T &node_obj) {
       return to_string(node_id);
     }
 
     template<typename T>
-    static string PrintNodeCSV(size_t node_id, T node_obj) {
+    static string PrintNodeCSV(size_t node_id, const T &node_obj) {
       return to_string(node_id);
     }
 
     template<typename L>
     static string PrintEdgeLabel(L label) {
       return "";
+    }
+
+    template<typename T>
+    static string PrintEdgeCSV(const T &source, const T &target) {
+      return to_string(source.node_id) + "," + to_string(target.node_id);
+    }
+
+    template<typename T>
+    static string PrintEdgeDot(const T &source, const T &target) {
+      return to_string(source.node_id) + "->" + to_string(target.node_id);
     }
 };
 
@@ -79,17 +105,32 @@ class Graph {
     using NodeInfo = Node<T, L>;
     typedef unordered_map<size_t, NodeInfo> graph_t;
 
-    void MarkActive(size_t node_id) {
-      typename graph_t::iterator it = graph.find(node_id);
-      if (it != graph.end()) {
-        it->second.active = true;
-      }
-    }
-
     void AddNode(size_t node_id, T node_obj) {
       NodeInfo node_info = NodeInfo(node_id, node_obj);
       graph.emplace(node_id, node_info);
 
+    }
+
+    void AddNodeAttr(size_t node_id, string attr) {
+      typename graph_t::iterator it = graph.find(node_id);
+      if (it != graph.end()) {
+        it->second.AddAttribute(attr);
+      }
+    }
+
+    bool HasNodeAttr(size_t node_id, string attr) {
+      typename graph_t::iterator it = graph.find(node_id);
+      if (it != graph.end()) {
+        return it->second.HasAttribute(attr);
+      }
+      return false;
+    }
+
+    void RemoveNodeAttr(size_t node_id, string attr) {
+      typename graph_t::iterator it = graph.find(node_id);
+      if (it != graph.end()) {
+        it->second.RemoveAttribute(attr);
+      }
     }
 
     optional<NodeInfo> GetNodeInfo(size_t node_id) {
@@ -149,18 +190,20 @@ class Graph {
           os << node_str << ";" << endl;
         }
         for (auto const &dependent : node_info.dependents) {
-          optional<NodeInfo> target_info = GetNodeInfo(dependent.first);
-          if (!target_info.has_value()) {
+          optional<NodeInfo> target_info_opt = GetNodeInfo(dependent.first);
+          if (!target_info_opt.has_value()) {
             continue;
           }
-          if (target_info.value().active) {
-            os << node_info.node_id << "->"
-              << dependent.first
-              << "[label=\""
-              << printer.PrintEdgeLabel(dependent.second)
-              << "\"];"
-              << endl;
+          NodeInfo target_info = target_info_opt.value();
+          string edge_str = printer.PrintEdgeDot(node_info, target_info);
+          if (edge_str == "") {
+            continue;
           }
+
+          os << edge_str << "[label=\""
+            << printer.PrintEdgeLabel(dependent.second)
+            << "\"];"
+            << endl;
         }
       }
       os << "}" << endl;
@@ -172,30 +215,25 @@ class Graph {
       // each source and target.
       //
       // The order is ascending.
-      set<tuple<size_t, size_t, L>> edges;
+      set<tuple<NodeInfo, NodeInfo, L>> edges;
       for (auto const &entry : graph) {
         NodeInfo node_info = entry.second;
-        if (!node_info.active) {
-          continue;
-        }
         for (auto const &dependent: node_info.dependents) {
-          optional<NodeInfo> target_info = GetNodeInfo(dependent.first);
-          if (!target_info.has_value()) {
+          optional<NodeInfo> target_info_opt = GetNodeInfo(dependent.first);
+          if (!target_info_opt.has_value()) {
             continue;
           }
-          if (target_info.value().active) {
-            edges.insert(make_tuple(node_info.node_id, dependent.first,
-                                    dependent.second));
-          }
+          NodeInfo target_info = target_info_opt.value();
+          edges.insert(make_tuple(node_info, target_info,
+                                  dependent.second));
         }
       }
       for (auto const &edge : edges) {
-        os << get<0>(edge)
-           << ","
-           << get<1>(edge)
-           << ","
-           << printer.PrintEdgeLabel(get<2>(edge))
-           << "\n";
+        string edge_str = printer.PrintEdgeCSV(get<0>(edge), get<1>(edge));
+        if (edge_str != "") {
+          os << edge_str << "," << printer.PrintEdgeLabel(get<2>(edge))
+            << endl;
+        }
       }
     }
 };
