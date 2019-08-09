@@ -43,15 +43,23 @@ enum EdgeLabel {
 };
 
 
+/**
+ * This is a template specilization for printing nodes and edges
+ * of a dependency graph of events.
+ */
 template<>
 struct GraphPrinter<Event, enum EdgeLabel> : public GraphPrinterDefault {
   public:
     using NodeInfo = Node<Event, enum EdgeLabel>;
     static string PrintNodeDot(size_t node_id, const NodeInfo &node_info) {
+      // If the given node (i.e., event) has not been executed,
+      // then omit printing it.
       if (!node_info.HasAttribute(EXECUTED_ATTR)) {
         return "";
       }
       if (node_id == MAIN_BLOCK) {
+        // Special treatment on the node corresponding to the main
+        // event.
         return MAIN_BLOCK + "[label=\"MAIN\"]";
       } else {
         string node_str = to_string(node_id);
@@ -61,6 +69,8 @@ struct GraphPrinter<Event, enum EdgeLabel> : public GraphPrinterDefault {
     }
 
     static string PrintNodeCSV(size_t node_id, const NodeInfo &node_info) {
+      // If the given node (i.e., event) has not been executed,
+      // then omit printing it.
       if (!node_info.HasAttribute(EXECUTED_ATTR)) {
         return "";
       }
@@ -68,6 +78,7 @@ struct GraphPrinter<Event, enum EdgeLabel> : public GraphPrinterDefault {
     }
 
     static string PrintEdgeLabel(enum EdgeLabel label) {
+      // Convert edge labels of the dependency graph into a string.
       switch (label) {
         case CREATES:
           return "creates";
@@ -78,19 +89,23 @@ struct GraphPrinter<Event, enum EdgeLabel> : public GraphPrinterDefault {
 
     static string PrintEdgeDot(const NodeInfo &source, const NodeInfo &target) {
       if (IgnoreEdge(source, target)) {
-        return "";
+        return ""; // The edge is not printed.
       }
       return GraphPrinterDefault::PrintEdgeDot(source, target);
     }
 
     static string PrintEdgeCSV(const NodeInfo &source, const NodeInfo &target) {
       if (IgnoreEdge(source, target)) {
-        return "";
+        return ""; // The edge is not printed.
       }
       return GraphPrinterDefault::PrintEdgeCSV(source, target);
     }
 
   private:
+    /**
+     * If any of the given nodes (either the source or the target node)
+     * has not been executed, then this edge should be ignored.
+     */
     static bool IgnoreEdge(const NodeInfo &source, const NodeInfo &target) {
       return !source.HasAttribute(EXECUTED_ATTR) ||
         !target.HasAttribute(EXECUTED_ATTR);
@@ -148,7 +163,13 @@ class DependencyInferenceAnalyzer : public Analyzer {
     void DumpOutput(writer::OutWriter *out);
 
   private:
-    /// The type of the dependency graph.
+    /**
+     * The type of the dependency graph.
+     *
+     * Each node in the dependency graph represents an event.
+     * Also, every edge in this graph has a label defined in
+     * the `EdgeLabel` enumeration.
+     */
     typedef graph::Graph<Event, enum graph::EdgeLabel> dep_graph_t;
     /**
      * The type of EventInfo.
