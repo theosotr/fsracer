@@ -60,7 +60,7 @@ struct GraphPrinter<Event, enum EdgeLabel> : public GraphPrinterDefault {
       if (node_id == MAIN_BLOCK) {
         // Special treatment on the node corresponding to the main
         // event.
-        return MAIN_BLOCK + "[label=\"MAIN\"]";
+        return to_string(MAIN_BLOCK) + "[label=\"MAIN\"]";
       } else {
         string node_str = to_string(node_id);
         return node_str + "[label=\"" + node_str + "["
