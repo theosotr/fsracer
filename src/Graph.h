@@ -133,10 +133,6 @@ class Graph {
       }
     }
 
-    graph_t &GetGraph() {
-      return graph;
-    }
-
   private:
     using GPrinter = GraphPrinter<T, L>;
     graph_t graph;

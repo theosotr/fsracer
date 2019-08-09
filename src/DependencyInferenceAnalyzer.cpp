@@ -303,24 +303,25 @@ void DependencyInferenceAnalyzer::ConnectWithWEvents(EventInfo event_info) {
 
 
 void DependencyInferenceAnalyzer::PruneEdges(size_t event_id) {
-  unordered_map<size_t, EventInfo> graph = dep_graph.GetGraph();
-  unordered_map<size_t, EventInfo>::iterator it = graph.find(event_id);
-  if (it == graph.end()) {
+  optional<EventInfo> event_info_opt = dep_graph.GetNodeInfo(event_id);
+  if (!event_info_opt.has_value()) {
     return;
   }
-  // Iterate over the next nodes of the given event.
-  for (auto next : it->second.before) {
-    unordered_map<size_t, EventInfo>::iterator next_it = graph.find(next);
-    if (next_it == graph.end()) {
+  EventInfo event_info = event_info_opt.value();
+  for (auto next : event_info.before) {
+    optional<EventInfo> nextev_info_opt = dep_graph.GetNodeInfo(next);
+    if (!nextev_info_opt.has_value()) {
       continue;
     }
+
+    EventInfo nextev_info = nextev_info_opt.value();
     // Iterate over the previous nodes of the the given event.
     //
     // If prev is included in the set of previous nodes of next,
     // we remove the corresponding edge, because `prev` is connected with
     // `next` via the given event.
-    for (auto prev : it->second.after) {
-      if (next_it->second.after.find(prev) != next_it->second.after.end()) {
+    for (auto prev : event_info.after) {
+      if (nextev_info.after.find(prev) != nextev_info.after.end()) {
         dep_graph.RemoveEdge(prev, next, graph::HAPPENS_BEFORE);
       }
     }
