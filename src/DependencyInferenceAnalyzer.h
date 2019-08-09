@@ -7,6 +7,7 @@
 #include <set>
 
 #include "Analyzer.h"
+#include "Graph.h"
 #include "Operation.h"
 #include "OutWriter.h"
 #include "Trace.h"
@@ -23,6 +24,51 @@ construct_default_event() {
 }
 
 
+namespace graph {
+
+/**
+ * Enumeration that indicates the type of an edge found
+ * in the dependency graph.
+ */
+enum EdgeLabel {
+  /// Indicates that the source event creates the target.
+  CREATES,
+  /**
+   * Indicates that the source event happens-before the target;
+   * it does not create it though.
+   */
+  HAPPENS_BEFORE
+};
+
+
+template<>
+struct GraphPrinter<Event, enum EdgeLabel> : public GraphPrinterDefault {
+  public:
+    static string PrintNodeDot(size_t node_id, Event event) {
+      if (node_id == MAIN_BLOCK) {
+        return MAIN_BLOCK + "[label=\"MAIN\"]";
+      } else {
+        string node_str = to_string(node_id);
+        return node_str + "[label=\"" + node_str + "[" + event.ToString()
+          + "]\"]";
+      }
+    }
+
+    static string PrintEdgeLabel(enum EdgeLabel label) {
+      switch (label) {
+        case CREATES:
+          return "creates";
+        case HAPPENS_BEFORE:
+          return "before";
+      }
+    }
+};
+
+typedef graph::Graph<Event, enum graph::EdgeLabel> dep_graph_t;
+
+}
+
+
 namespace analyzer {
 
 
@@ -33,57 +79,8 @@ namespace analyzer {
 class DependencyInferenceAnalyzer : public Analyzer {
 
   public:
-    /**
-     * Enumeration that indicates the type of an edge found
-     * in the dependency graph.
-     */
-    enum EdgeLabel {
-      /// Indicates that the source event creates the target.
-      CREATES,
-      /**
-       * Indicates that the source event happens-before the target;
-       * it does not create it though.
-       */
-      HAPPENS_BEFORE
-    };
-    /**
-     * This struct holds all the information associated with an event.
-     */
-    struct EventInfo {
-      /// The ID of the event.
-      size_t event_id;
-      // Type information of the event.
-      Event event;
-      // Set of the events dependent on the current one.
-      set<pair<size_t, enum EdgeLabel>> dependents;
-      /// True if the event is active; false otherwise.
-      bool active;
-      /// Set of nodes executed before the current one.
-      set<size_t> before;
-      /// Set of nodes executed after the current one.
-      set<size_t> after;
-
-      EventInfo(size_t event_id_, Event event_):
-        event_id(event_id_),
-        event(event_),
-        active(false)
-      {  }
-    };
-
-    /**
-     * Supported formats of the dependency graph.
-     *
-     * DOT: The dependency graph is represented as a graphviz graph.
-     * CSV: The dependency graph is represented as csv file that contains
-     *      its edge list.
-     */
-    enum GraphFormat {
-      DOT,
-      CSV
-    };
-
     /** Default Constructor of the analyzer. */
-    DependencyInferenceAnalyzer(enum GraphFormat graph_format_):
+    DependencyInferenceAnalyzer(enum graph::GraphFormat graph_format_):
       current_block(nullptr),
       pending_ev(0),
       current_context(MAIN_BLOCK),
@@ -118,16 +115,16 @@ class DependencyInferenceAnalyzer : public Analyzer {
 
     void DumpOutput(writer::OutWriter *out);
 
-    /**
-     * This method dumps the constructed dependency graph
-     * in the specified format (either DOT or CSV).
-     */
-    void DumpDependencyGraph(enum GraphFormat graph_format);
-
   private:
+    /**
+     * The type of EventInfo.
+     *
+     * Each node represents information about an event.
+     */
+    typedef graph::Graph<Event, graph::EdgeLabel>::NodeInfo EventInfo;
 
     /// The dependency graph of events.
-    unordered_map<size_t, EventInfo> dep_graph;
+    graph::dep_graph_t dep_graph;
     /**
      * The set of alive events (i.e., events whose corresponding callbacks)
      * have not been executed yet.
@@ -146,33 +143,16 @@ class DependencyInferenceAnalyzer : public Analyzer {
     size_t current_context;
 
     /// Specifies the format of the generated dependency graph.
-    enum GraphFormat graph_format;
+    enum graph::GraphFormat graph_format;
 
     // Methods for perfoming operations on the dependency graph and
     // the set of alive events.
-    
-    /** Marks the given event as active. */
-    void MarkActive(size_t event_id);
     
     /** Adds new event to the set of alive events. */
     void AddAliveEvent(size_t event_id);
 
     /** Removes the given event from the set of alive events. */
     void RemoveAliveEvent(size_t event_id);
-
-    /**
-     * Adds the given event to the dependency graph.
-     *
-     * Since the type of the event is not given,
-     * the type information related to this event are the default ones.
-     */
-    void AddEventInfo(size_t event_id);
-
-    /** Ads the given event to the dependency graph. */
-    void AddEventInfo(size_t event_id, Event event);
-
-    /** Retrieves the information about the given event. */
-    EventInfo GetEventInfo(size_t event_id);
 
     // Methods for constructing the dependency graph based on
     // the type of events.
@@ -218,16 +198,6 @@ class DependencyInferenceAnalyzer : public Analyzer {
     void AddDependencies(size_t event_id, Event event);
 
     /**
-     * Makes the target event dependent on the source.
-     *
-     * source -> target
-     */
-    void AddDependency(size_t source, size_t target, enum EdgeLabel label);
-
-    /** This method removes the dependency from source to target. */
-    void RemoveDependency(size_t source, size_t target);
-
-    /**
      * This method prunes redundant edges between the previous nodes
      * of the given event and its next nodes.
      */
@@ -235,18 +205,6 @@ class DependencyInferenceAnalyzer : public Analyzer {
 
     /** Make all the event whose type is W dependent on the given event. */
     void ConnectWithWEvents(EventInfo event_info);
-
-    // Methods for storing the dependency graph.
-    
-    /** Converts the dependency graph to a CSV edge list format. */
-    void ToCSV(ostream &stream);
-
-    /** Converts the dependency graph to a DOT format. */
-    void ToDot(ostream &stream);
-
-    /** Converts the edge label to string. */
-    static string LabelToString(enum EdgeLabel);
-
 };
 
 

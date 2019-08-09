@@ -10,6 +10,7 @@
 
 #include "Analyzer.h"
 #include "DependencyInferenceAnalyzer.h"
+#include "Graph.h"
 #include "FSAnalyzer.h"
 #include "NodeGenerator.h"
 #include "OutWriter.h"
@@ -158,14 +159,14 @@ event_exit(void)
 
 }
 
-static DependencyInferenceAnalyzer::GraphFormat
+static graph::GraphFormat
 get_graph_format(gengetopt_args_info &args_info)
 {
   string graph_format = args_info.dep_graph_format_arg;
   if (graph_format == "dot") {
-    return DependencyInferenceAnalyzer::DOT;
+    return graph::DOT;
   }
-  return DependencyInferenceAnalyzer::CSV;
+  return graph::CSV;
 }
 
 
