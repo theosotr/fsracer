@@ -13,6 +13,28 @@ using namespace std;
 
 namespace graph {
 
+template<typename T, typename L>
+struct Node {
+  /// The ID of the current node.
+  size_t node_id;
+  /// Type information of the node.
+  T node_obj;
+  /// The set of nodes that are dependent on the current one.
+  set<pair<size_t, L>> dependents;
+  /// Set of nodes executed before the current one.
+  set<size_t> before;
+  /// Set of nodes executed after the current one.
+  set<size_t> after;
+  bool active;
+
+  Node(size_t node_id_, T node_obj_):
+    node_id(node_id_),
+    node_obj(node_obj_),
+    active(false)
+  {  }
+
+};
+
 
 struct GraphPrinterDefault {
   public:
@@ -34,7 +56,8 @@ struct GraphPrinterDefault {
 
 
 template<typename T, typename L>
-struct GraphPrinter : public GraphPrinterDefault {  };
+struct GraphPrinter : public GraphPrinterDefault {
+};
 
 
 /**
@@ -53,29 +76,8 @@ enum GraphFormat {
 template<typename T, typename L>
 class Graph {
   public:
-    struct NodeInfo {
-      /// The ID of the current node.
-      size_t node_id;
-      /// Type information of the node.
-      T node_obj;
-      /// The set of nodes that are dependent on the current one.
-      set<pair<size_t, L>> dependents;
-      /// Set of nodes executed before the current one.
-      set<size_t> before;
-      /// Set of nodes executed after the current one.
-      set<size_t> after;
-      bool active;
-
-      NodeInfo(size_t node_id_, T node_obj_):
-        node_id(node_id_),
-        node_obj(node_obj_),
-        active(false)
-      {  }
-
-    };
-
+    using NodeInfo = Node<T, L>;
     typedef unordered_map<size_t, NodeInfo> graph_t;
-
 
     void MarkActive(size_t node_id) {
       typename graph_t::iterator it = graph.find(node_id);
@@ -142,12 +144,10 @@ class Graph {
       os << "digraph {\n";
       for (auto const &entry : graph) {
         NodeInfo node_info = entry.second;
-        if (!node_info.active) {
-          // TODO
-          continue;
+        string node_str = printer.PrintNodeDot(node_info.node_id, node_info);
+        if (node_str != "") {
+          os << node_str << ";" << endl;
         }
-        os << printer.PrintNodeDot(node_info.node_id, node_info.node_obj) << ";"
-          << endl;
         for (auto const &dependent : node_info.dependents) {
           optional<NodeInfo> target_info = GetNodeInfo(dependent.first);
           if (!target_info.has_value()) {

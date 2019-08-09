@@ -42,15 +42,19 @@ enum EdgeLabel {
 
 
 template<>
-struct GraphPrinter<Event, enum EdgeLabel> : public GraphPrinterDefault {
+struct GraphPrinter<Event, enum EdgeLabel> {
   public:
-    static string PrintNodeDot(size_t node_id, Event event) {
+    using NodeInfo = Node<Event, enum EdgeLabel>;
+    static string PrintNodeDot(size_t node_id, NodeInfo &node_info) {
+      if (!node_info.active) {
+        return "";
+      }
       if (node_id == MAIN_BLOCK) {
         return MAIN_BLOCK + "[label=\"MAIN\"]";
       } else {
         string node_str = to_string(node_id);
-        return node_str + "[label=\"" + node_str + "[" + event.ToString()
-          + "]\"]";
+        return node_str + "[label=\"" + node_str + "["
+          + node_info.node_obj.ToString() + "]\"]";
       }
     }
 
@@ -64,7 +68,6 @@ struct GraphPrinter<Event, enum EdgeLabel> : public GraphPrinterDefault {
     }
 };
 
-typedef graph::Graph<Event, enum graph::EdgeLabel> dep_graph_t;
 
 }
 
@@ -116,6 +119,8 @@ class DependencyInferenceAnalyzer : public Analyzer {
     void DumpOutput(writer::OutWriter *out);
 
   private:
+    /// The type of the dependency graph.
+    typedef graph::Graph<Event, enum graph::EdgeLabel> dep_graph_t;
     /**
      * The type of EventInfo.
      *
@@ -124,7 +129,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
     typedef graph::Graph<Event, graph::EdgeLabel>::NodeInfo EventInfo;
 
     /// The dependency graph of events.
-    graph::dep_graph_t dep_graph;
+    dep_graph_t dep_graph;
     /**
      * The set of alive events (i.e., events whose corresponding callbacks)
      * have not been executed yet.
