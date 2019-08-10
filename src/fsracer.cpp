@@ -9,6 +9,7 @@
 #include "cmdline.h"
 
 #include "Analyzer.h"
+#include "Debug.h"
 #include "DependencyInferenceAnalyzer.h"
 #include "Graph.h"
 #include "FSAnalyzer.h"
@@ -76,11 +77,9 @@ module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
     dr_global_free(cwd_buf, buf_size);
     trace_gen->GetTrace()->SetThreadId(pid);
     trace_gen->GetTrace()->SetCwd(cwd);
-
     module_loaded = true;
-    cout << trace_gen->GetName() <<
-      ": PID " << to_string(pid) <<
-      ", Start collecting trace...\n";
+    debug::info(trace_gen->GetName())
+      << "PID " << pid << ", Start collecting trace...";
   }
 }
 
@@ -92,7 +91,7 @@ stop_trace_gen(FSracerSetup *setup)
   if (!setup || !setup->trace_gen) {
     return;
   }
-  cout << setup->trace_gen->GetName() << ": Trace collected\n";
+  debug::info(setup->trace_gen->GetName()) << "Trace collected";
   setup->trace_gen->Stop();
 }
 
@@ -110,13 +109,13 @@ analyze_traces(FSracerSetup *setup)
     // (after the execution of the program).
     //
     // Add support for both offline and online trace analysis.
-    cout << analyzer->GetName() << ": Start analyzing traces...\n";
+    debug::info(analyzer->GetName()) << "Start analyzing traces...";
     analyzer->Analyze(setup->trace_gen->GetTrace());
-    cout << analyzer->GetName() << ": Analysis is done\n";
+    debug::info(analyzer->GetName()) << "Analysis is done";
     if (out) {
-      cout << analyzer->GetName()
-        << ": Dumping analysis output to "
-        << out->ToString() << "\n";
+      debug::info(analyzer->GetName())
+        << "Dumping analysis output to "
+        << out->ToString();
       analyzer->DumpOutput(out);
     }
   }
@@ -208,20 +207,20 @@ static void
 process_args(gengetopt_args_info &args_info)
 {
   if (args_info.dump_trace_given && args_info.output_trace_given) {
-    cerr << CMDLINE_PARSER_PACKAGE << ": "
-      << "options '--dump-trace' and '--output-trace' are mutually exclusive\n";
+    debug::err(CMDLINE_PARSER_PACKAGE)
+      << "options '--dump-trace' and '--output-trace' are mutually exclusive";
     dr_exit_process(1);
   }
 
   if (args_info.dump_dep_graph_given && args_info.output_dep_graph_given) {
-    cerr << CMDLINE_PARSER_PACKAGE << ": "
-      << "options '--dump-dep-graph' and '--output-dep-graph' are mutually exclusive\n";
+    debug::err(CMDLINE_PARSER_PACKAGE)
+      << "options '--dump-dep-graph' and '--output-dep-graph' are mutually exclusive";
     dr_exit_process(1);
   }
 
   if (args_info.dump_fs_accesses_given && args_info.output_fs_accesses_given) {
-    cerr << CMDLINE_PARSER_PACKAGE << ": "
-      << "options '--dump-fs-accesses' and '--output-fs-accesses' are mutually exclusive\n";
+    debug::err(CMDLINE_PARSER_PACKAGE)
+      << "options '--dump-fs-accesses' and '--output-fs-accesses' are mutually exclusive";
   }
 
   vector<pair<Analyzer*, writer::OutWriter*>> analyzers;
