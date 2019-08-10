@@ -84,9 +84,7 @@ submitOp sync_15 unlink SYNC
 End
 Begin 16
 End
-DependencyInferenceAnalyzer: Start analyzing traces...
-DependencyInferenceAnalyzer: Analysis is done
-DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 1,4,creates
 1,5,creates
 1,6,creates
@@ -105,9 +103,7 @@ DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
 13,14,creates
 14,16,creates
 15,14,before
-FSAnalyzer: Start analyzing traces...
-FSAnalyzer: Analysis is done
-FSAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 @CURRENT_DIR@/bar,5,produced
 @CURRENT_DIR@/bar,14,expunged
 @CURRENT_DIR@/foo,1,produced

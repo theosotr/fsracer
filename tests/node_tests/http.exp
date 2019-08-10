@@ -120,9 +120,7 @@ End
 Begin 31
 submitOp sync_12 unlink SYNC
 End
-DependencyInferenceAnalyzer: Start analyzing traces...
-DependencyInferenceAnalyzer: Analysis is done
-DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 1,4,creates
 1,6,creates
 1,7,creates
@@ -169,9 +167,7 @@ DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
 28,29,before
 29,23,before
 30,31,creates
-FSAnalyzer: Start analyzing traces...
-FSAnalyzer: Analysis is done
-FSAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 @CURRENT_DIR@/foo,23,produced
 @CURRENT_DIR@/foo,31,expunged
 @CURRENT_DIR@/http.js,1,consumed

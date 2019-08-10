@@ -40,15 +40,11 @@ submitOp async_10 access ASYNC
 End
 Begin 10
 End
-DependencyInferenceAnalyzer: Start analyzing traces...
-DependencyInferenceAnalyzer: Analysis is done
-DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 1,5,creates
 5,7,creates
 7,9,creates
 9,10,creates
-FSAnalyzer: Start analyzing traces...
-FSAnalyzer: Analysis is done
-FSAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 @CURRENT_DIR@/foo,10,consumed
 @CURRENT_DIR@/timers-nested2.js,1,consumed

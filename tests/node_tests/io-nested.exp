@@ -58,9 +58,7 @@ submitOp async_11 unlink ASYNC
 End
 Begin 11
 End
-DependencyInferenceAnalyzer: Start analyzing traces...
-DependencyInferenceAnalyzer: Analysis is done
-DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 1,4,creates
 4,5,creates
 5,6,creates
@@ -69,9 +67,7 @@ DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
 8,9,creates
 9,10,creates
 10,11,creates
-FSAnalyzer: Start analyzing traces...
-FSAnalyzer: Analysis is done
-FSAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 @CURRENT_DIR@/foo,4,produced
 @CURRENT_DIR@/foo,7,consumed
 @CURRENT_DIR@/foo,11,expunged

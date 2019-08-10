@@ -73,12 +73,10 @@ string(REGEX REPLACE "\n" "." output_rep ${output})
 # and its parent directories exist.
 string(CONCAT preamble
   "Starting the FSRacer Client...."
+  ".*Start collecting trace....*"
   "@PROGRAM_OUTPUT@." # This is a place holder for program output.
-  "NodeTrace: PID @NUM@, Start collecting trace...."
-  "NodeTrace: Trace collected."
-  "DumpAnalyzer: Start analyzing traces...."
-  "DumpAnalyzer: Analysis is done."
-  "DumpAnalyzer: Dumping analysis output to STDOUT."
+  ".*Trace collected.*"
+  "@IGNORE@."
   "!Blocks: @NUM@."
   "!Operations: @NUM@."
   "!Trace entries: @NUM@."
@@ -107,6 +105,7 @@ string(CONCAT prologue_block_repl
   "submitOp sync_@NUM@ open SYNC."
   "submitOp sync_@NUM@ close SYNC"
 )
+
 
 if (EXISTS "${expected_filename}")
   # Opens the pattern file.
@@ -147,12 +146,14 @@ if (EXISTS "${expected_filename}")
   endif (NOT CMAKE_MATCH_1)
   string(REGEX REPLACE "@NUM@" "[0-9]+" pattern ${pattern})
   string(REGEX REPLACE "@CURRENT_DIR@" ${CMAKE_CURRENT_BINARY_DIR} pattern ${pattern})
+  string (REGEX REPLACE "@IGNORE@" ".*" pattern ${pattern})
   string(REGEX REPLACE "\n" "." pattern ${pattern})
   string(CONCAT pattern ${pattern} "$")
   string(REGEX MATCH ${pattern} match ${output_rep})
 
   if (NOT match)
     file(WRITE ${TEST_FILE}.out ${output})
+    file(WRITE ${TEST_FILE}.pattern ${pattern})
     message(SEND_ERROR
       "Test ${TEST_FILE} does not produce the expected output.\
       View resulting output at ${TEST_FILE}.out.")

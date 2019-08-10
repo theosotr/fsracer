@@ -47,15 +47,11 @@ submitOp async_6 copyFile ASYNC
 End
 Begin 6
 End
-DependencyInferenceAnalyzer: Start analyzing traces...
-DependencyInferenceAnalyzer: Analysis is done
-DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 1,4,creates
 1,5,creates
 5,6,creates
-FSAnalyzer: Start analyzing traces...
-FSAnalyzer: Analysis is done
-FSAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 @CURRENT_DIR@/bar,1,produced
 @CURRENT_DIR@/bar,4,consumed
 @CURRENT_DIR@/bar,6,consumed

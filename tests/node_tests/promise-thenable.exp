@@ -27,18 +27,14 @@ Begin 8
 End
 Begin 9
 End
-DependencyInferenceAnalyzer: Start analyzing traces...
-DependencyInferenceAnalyzer: Analysis is done
-DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 1,4,creates
 1,6,creates
 4,8,before
 4,9,creates
 6,4,before
 6,8,creates
-FSAnalyzer: Start analyzing traces...
-FSAnalyzer: Analysis is done
-FSAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 @CURRENT_DIR@/bar,9,consumed
 @CURRENT_DIR@/foo,8,consumed
 @CURRENT_DIR@/promise-thenable.js,1,consumed

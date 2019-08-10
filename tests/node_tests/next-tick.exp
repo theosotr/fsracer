@@ -23,14 +23,10 @@ submitOp async_5 unlink ASYNC
 End
 Begin 5
 End
-DependencyInferenceAnalyzer: Start analyzing traces...
-DependencyInferenceAnalyzer: Analysis is done
-DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 1,4,creates
 4,5,creates
-FSAnalyzer: Start analyzing traces...
-FSAnalyzer: Analysis is done
-FSAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 @CURRENT_DIR@/foo,1,produced
 @CURRENT_DIR@/foo,5,expunged
 @CURRENT_DIR@/next-tick.js,1,consumed

@@ -44,9 +44,7 @@ Begin 12
 End
 Begin 13
 End
-DependencyInferenceAnalyzer: Start analyzing traces...
-DependencyInferenceAnalyzer: Analysis is done
-DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 1,5,creates
 1,7,creates
 5,7,before
@@ -55,9 +53,7 @@ DependencyInferenceAnalyzer: Dumping analysis output to STDOUT
 5,12,creates
 7,11,before
 7,13,creates
-FSAnalyzer: Start analyzing traces...
-FSAnalyzer: Analysis is done
-FSAnalyzer: Dumping analysis output to STDOUT
+@IGNORE@
 @CURRENT_DIR@/bar,9,consumed
 @CURRENT_DIR@/baz,13,consumed
 @CURRENT_DIR@/foo,12,consumed
