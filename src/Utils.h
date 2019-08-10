@@ -2,7 +2,7 @@
 
 
 namespace utils {
-  std::string PtrToString(void *ptr);
+  std::string PtrToString(const void *ptr);
 
   size_t GetCurrentThread(void *wrapctx);
 

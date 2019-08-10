@@ -8,7 +8,7 @@
 
 namespace utils {
 
-  std::string PtrToString(void *ptr) {
+  std::string PtrToString(const void *ptr) {
     std::stringstream ss;
     ss << ptr;
     return ss.str();
