@@ -176,7 +176,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
      *
      * Each node represents information about an event.
      */
-    using EventInfo = graph::Graph<Event, graph::EdgeLabel>::NodeInfo;
+    using EventInfo = dep_graph_t::NodeInfo;
 
     /// The dependency graph of events.
     dep_graph_t dep_graph;
