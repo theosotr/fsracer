@@ -89,10 +89,16 @@ class Generator {
     string TopStack();
     void AddFunc(string addr, string func_name);
     string GetFuncName(string addr);
-    virtual void Start(const module_data_t *mod);
+    void Setup(const module_data_t *mod);
+
+    virtual void Start();
     virtual void Stop();
     virtual wrapper_t GetWrappers();
     virtual string GetName();
+
+    double GetTraceGenerationTime() {
+      return gen_time.GetTimeSeconds();
+    };
 
 
   private:
@@ -107,6 +113,9 @@ class Generator {
 
     void RegisterFunc(const module_data_t *mod, string func_name,
                       pre_clb_t pre, post_clb_t post);
+
+  protected:
+    utils::timer gen_time;
 };
 
 }

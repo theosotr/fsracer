@@ -88,7 +88,7 @@ void Generator::RegisterFunc(const module_data_t *mod, string func_name,
 }
 
 
-void Generator::Start(const module_data_t *mod) {
+void Generator::Setup(const module_data_t *mod) {
   for (pair<string, pair<pre_clb_t, post_clb_t>> entry : GetWrappers()) {
     string func_name = entry.first;
     pair<pre_clb_t, post_clb_t> func_pair = entry.second;

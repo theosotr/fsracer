@@ -835,7 +835,13 @@ wrapper_t NodeTraceGenerator::GetWrappers() {
 }
 
 
+void NodeTraceGenerator::Start() {
+  gen_time.Start();
+}
+
+
 void NodeTraceGenerator::Stop() {
+  gen_time.Stop();
   // We deallocate the set pointers holding all the timer-
   // and promise-related events.
   set<int> *set_ptr;

@@ -67,7 +67,7 @@ static void
 module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
 {
   Generator *trace_gen = setup->trace_gen;
-  trace_gen->Start(mod);
+  trace_gen->Setup(mod);
   if (!module_loaded) {
     size_t pid = dr_get_thread_id(drcontext);
 
@@ -84,6 +84,7 @@ module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
     trace_gen->GetTrace()->SetThreadId(pid);
     trace_gen->GetTrace()->SetCwd(cwd);
     module_loaded = true;
+    trace_gen->Start();
     debug::info(trace_gen->GetName())
       << "PID " << pid << ", Start collecting trace...";
   }
@@ -97,8 +98,9 @@ stop_trace_gen(FSracerSetup *setup)
   if (!setup || !setup->trace_gen) {
     return;
   }
-  debug::info(setup->trace_gen->GetName()) << "Trace collected";
   setup->trace_gen->Stop();
+  debug::info(setup->trace_gen->GetName()) << "Trace collected in "
+    << setup->trace_gen->GetTraceGenerationTime() << " seconds";
 }
 
 
@@ -117,7 +119,8 @@ analyze_traces(FSracerSetup *setup)
     // Add support for both offline and online trace analysis.
     debug::info(analyzer->GetName()) << "Start analyzing traces...";
     analyzer->Analyze(setup->trace_gen->GetTrace());
-    debug::info(analyzer->GetName()) << "Analysis is done";
+    debug::info(analyzer->GetName()) << "Analysis is done in "
+      << analyzer->GetAnalysisTime() << "ms";
     if (out) {
       debug::info(analyzer->GetName())
         << "Dumping analysis output to "

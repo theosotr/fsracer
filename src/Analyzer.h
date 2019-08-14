@@ -73,15 +73,14 @@ class Analyzer {
      */
     virtual void DumpOutput(writer::OutWriter *out);
 
+    /** Get the analysis time in milli seconds. */
     double GetAnalysisTime() {
       return analysis_time.GetTimeMillis();
     }
 
   protected:
+    /// Track analysis time.
     utils::timer analysis_time;
-
-  private:
-    std::chrono::high_resolution_clock::time_point start_time;
 
 };
 

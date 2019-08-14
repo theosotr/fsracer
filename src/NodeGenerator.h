@@ -36,6 +36,7 @@ class NodeTraceGenerator : public generator::Generator {
     }
 
     wrapper_t GetWrappers();
+    void Start();
     void Stop();
 };
 
