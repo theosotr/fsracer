@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 #include <ostream>
 
@@ -109,7 +110,8 @@ outs &outs::operator<<(short N) {
 }
 
 outs &outs::operator<<(double D) {
-  os << D;
+  // Dump double up to 3 decimals.
+  os << std::fixed << std::setprecision(3) << D;
   return *this;
 }
 
