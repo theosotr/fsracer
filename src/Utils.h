@@ -19,7 +19,7 @@ namespace utils {
   template<template<typename> class C, typename T>
   std::vector<std::pair<T, T>> Get2Combinations(const C<T> &a) {
     std::vector<std::pair<T, T>> combs;
-    for (auto it = a.begin(); it != a.end(); it++) {
+    for (typename C<T>::const_iterator it = a.begin(); it != a.end(); it++) {
       for (auto it_c = it; it_c != a.end(); it_c++) {
         combs.push_back({ *it, *it_c });
       }
