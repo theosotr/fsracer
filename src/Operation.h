@@ -148,6 +148,8 @@ class Hpath : public Operation {
 
     static string EffToString(enum EffectType effect);
 
+    static bool Consumes(enum EffectType effect);
+
   protected:
     size_t dirfd;
     string path;

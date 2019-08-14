@@ -37,6 +37,16 @@ string Hpath::EffToString(enum EffectType effect) {
 }
 
 
+bool Hpath::Consumes(enum EffectType effect) {
+  switch (effect) {
+    case CONSUMED:
+      return true;
+    default:
+      return false;
+  }
+}
+
+
 void HpathSym::Accept(analyzer::Analyzer *analyzer) {
   if (analyzer) {
     analyzer->AnalyzeHpath(this);
