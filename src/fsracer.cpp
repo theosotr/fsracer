@@ -349,7 +349,7 @@ dr_client_main(client_id_t client_id, int argc, const char **argv)
   cmdline_parser_free(&args_info);
   free_argv(argc, c_argv);
   dr_set_client_name("Client for Detecting Data Races in Files", "");
-  debug::outs() << "Starting the FSRacer Client...";
+  debug::msg() << "Starting the FSRacer Client...";
   drmgr_init();
   drwrap_init();
   drsym_init(0);

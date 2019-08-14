@@ -92,13 +92,13 @@ void RaceDetector::DumpFaults(const faults_t &faults) const {
   if (faults.empty()) {
     return;
   }
-  debug::outs() << "Number of faults: " << faults.size();
+  debug::msg() << "Number of faults: " << faults.size();
   for (auto const &fault_entry : faults) {
     auto block_pair = fault_entry.first;
-    debug::outs() << "* Race between blocks '" << block_pair.first
+    debug::msg() << "* Race between blocks '" << block_pair.first
       << "' and '" << block_pair.second << "':";
     for (auto const &fault_desc : fault_entry.second) {
-      debug::outs() << "  - " << fault_desc.ToString();
+      debug::msg() << "  - " << fault_desc.ToString();
     }
   }
 }
