@@ -330,8 +330,7 @@ void FSAnalyzer::DumpOutput(writer::OutWriter *out) {
 
 void FSAnalyzer::DumpJSON(ostream &os) {
   os << "{" << endl;
-  auto table = effect_table.GetTable();
-  for (auto map_it = table.begin(); map_it != table.end(); map_it++) {
+  for (auto map_it = effect_table.begin(); map_it != effect_table.end(); map_it++) {
     auto entry = *map_it;
     os << "  \"" << entry.first.native() << "\": [" << endl;
     for (auto it = entry.second.begin(); it != entry.second.end(); it++) {
@@ -346,7 +345,7 @@ void FSAnalyzer::DumpJSON(ostream &os) {
         os << "    }" << endl;
       }
     }
-    if (map_it != --table.end()) {
+    if (map_it != --effect_table.end()) {
       os << "  ]," << endl;
     } else {
       os << "  ]" << endl;
@@ -357,8 +356,7 @@ void FSAnalyzer::DumpJSON(ostream &os) {
 
 
 void FSAnalyzer::DumpCSV(ostream &os) {
-  auto table = effect_table.GetTable();
-  for (auto const &entry : table) {
+  for (auto const &entry : effect_table) {
     for (auto const &pair_element : entry.second) {
       os << entry.first.native() << ","
         << pair_element.first << ","

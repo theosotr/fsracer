@@ -49,6 +49,15 @@ class Table {
       return table;
     }
 
+    typename table_t::iterator begin() {
+      // TODO use a custom iterator.
+      return table.begin();
+    }
+
+    typename table_t::iterator end() {
+      return table.end();
+    }
+
   protected:
     map<T1, T2> table;
 };
