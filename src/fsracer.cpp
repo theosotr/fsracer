@@ -12,9 +12,11 @@
 #include "Debug.h"
 #include "DependencyInferenceAnalyzer.h"
 #include "Graph.h"
+#include "FaultDetector.h"
 #include "FSAnalyzer.h"
 #include "NodeGenerator.h"
 #include "OutWriter.h"
+#include "RaceDetector.h"
 
 
 #define INIT_OUT(arg_prefix)                                               \
@@ -45,11 +47,15 @@ struct FSracerSetup {
   Generator *trace_gen;
   /// A list of analyzers that operate on traces.
   vector<pair<Analyzer*, writer::OutWriter*>> analyzers;
+  /// Component used to detect faults.
+  detector::FaultDetector *fault_detector;
 
   FSracerSetup(Generator *trace_gen_,
-               vector<pair<Analyzer*, writer::OutWriter*>> analyzers_):
+               vector<pair<Analyzer*, writer::OutWriter*>> analyzers_,
+               detector::FaultDetector *fault_detector_):
     trace_gen(trace_gen_),
-    analyzers(analyzers_) { }
+    analyzers(analyzers_),
+    fault_detector(fault_detector_) { }
 };
 
 
@@ -123,6 +129,18 @@ analyze_traces(FSracerSetup *setup)
 
 
 static void
+detect_faults(FSracerSetup *setup) {
+  if (!setup || !setup->fault_detector) {
+    return;
+  }
+  detector::FaultDetector *fault_detector = setup->fault_detector;
+  debug::info(fault_detector->GetName())
+    << "Detecting faults...";
+  fault_detector->Detect();
+}
+
+
+static void
 clear_fsracer_setup(FSracerSetup *setup)
 {
   if (!setup) {
@@ -138,6 +156,10 @@ clear_fsracer_setup(FSracerSetup *setup)
     }
   }
   setup->analyzers.clear();
+
+  if (setup->fault_detector) {
+    delete setup->fault_detector;
+  }
   delete setup;
 }
 
@@ -153,6 +175,8 @@ event_exit(void)
   stop_trace_gen(setup);
   // Analyze generated traces.
   analyze_traces(setup);
+  // Detect faults using the analysis output.
+  detect_faults(setup);
   // Deallocate memory and clear things.
   clear_fsracer_setup(setup);
 
@@ -186,8 +210,24 @@ init_analyzers(gengetopt_args_info &args_info,
 {
   Analyzer *analyzer_ptr = nullptr;
   writer::OutWriter *out = nullptr;
-  for (int i = 0; i < args_info.analyzer_given; i++) {
-    string analyzer = args_info.analyzer_arg[i];
+  vector<string> enabled_analyzers;
+  if (args_info.analyzer_given) {
+    for (int i = 0; i < args_info.analyzer_given; i++) {
+      enabled_analyzers.push_back(args_info.analyzer_arg[i]);
+    }
+  }
+
+  if (args_info.fault_detector_given) {
+    string fault_detector = args_info.fault_detector_arg;
+    if (fault_detector == "race") {
+      // The race detector uses two analyzers:
+      // (1) the dependency inference analyzer.
+      // (2) the analyzer responsible for computing the file accesses
+      //     per execution block.
+      enabled_analyzers = { "dep-infer", "fs" }; 
+    }
+  }
+  for (auto const &analyzer : enabled_analyzers) {
     if (analyzer == "dep-infer") {
       analyzer_ptr = new DependencyInferenceAnalyzer(
           get_graph_format(args_info));
@@ -203,6 +243,28 @@ init_analyzers(gengetopt_args_info &args_info,
 }
 
 
+detector::FaultDetector *
+init_fault_detector(gengetopt_args_info &args_info,
+                    vector<pair<Analyzer*, writer::OutWriter*>> &analyzers)
+{
+  detector::FaultDetector *fault_detector = nullptr;
+  if (args_info.fault_detector_given) {
+    string fault_detector_str = args_info.fault_detector_arg;
+    if (fault_detector_str == "race") {
+      // We know the first analyzer corresponds to the `dep-infer` analyzer,
+      // while the second one is the `fs` analyzer.
+      DependencyInferenceAnalyzer *dep_analyzer =
+        static_cast<DependencyInferenceAnalyzer*>(analyzers[0].first);
+      FSAnalyzer *fs_analyzer = static_cast<FSAnalyzer*>(analyzers[1].first);
+      fault_detector = new detector::RaceDetector(
+          fs_analyzer->GetFSAccesses(),
+          dep_analyzer->GetDependencyGraph());
+    }
+  }
+  return fault_detector;
+}
+
+
 static void
 process_args(gengetopt_args_info &args_info)
 {
@@ -214,13 +276,15 @@ process_args(gengetopt_args_info &args_info)
 
   if (args_info.dump_dep_graph_given && args_info.output_dep_graph_given) {
     debug::err(CMDLINE_PARSER_PACKAGE)
-      << "options '--dump-dep-graph' and '--output-dep-graph' are mutually exclusive";
+      << "options '--dump-dep-graph' and '--output-dep-graph' are mutually"
+      << "exclusive";
     dr_exit_process(1);
   }
 
   if (args_info.dump_fs_accesses_given && args_info.output_fs_accesses_given) {
     debug::err(CMDLINE_PARSER_PACKAGE)
-      << "options '--dump-fs-accesses' and '--output-fs-accesses' are mutually exclusive";
+      << "options '--dump-fs-accesses' and '--output-fs-accesses'"
+      << "are mutually exclusive";
   }
 
   vector<pair<Analyzer*, writer::OutWriter*>> analyzers;
@@ -235,7 +299,10 @@ process_args(gengetopt_args_info &args_info)
                               args_info.output_trace_arg) });
   }
   init_analyzers(args_info, analyzers);
-  setup = new FSracerSetup(new NodeTraceGenerator(), analyzers);
+  detector::FaultDetector *fault_detector = init_fault_detector(
+      args_info, analyzers);
+  setup = new FSracerSetup(new NodeTraceGenerator(), analyzers,
+                           fault_detector);
 }
 
 
