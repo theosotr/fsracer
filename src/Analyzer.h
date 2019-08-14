@@ -6,6 +6,7 @@
 #include "Operation.h"
 #include "OutWriter.h"
 #include "Trace.h"
+#include "Utils.h"
 
 
 using namespace operation;
@@ -71,6 +72,16 @@ class Analyzer {
      * standard output or to a dedicated file.
      */
     virtual void DumpOutput(writer::OutWriter *out);
+
+    double GetAnalysisTime() {
+      return analysis_time.GetTimeMillis();
+    }
+
+  protected:
+    utils::timer analysis_time;
+
+  private:
+    std::chrono::high_resolution_clock::time_point start_time;
 
 };
 

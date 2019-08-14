@@ -14,7 +14,9 @@ namespace analyzer {
 
 void FSAnalyzer::Analyze(TraceNode *trace_node) {
   if (trace_node) {
+    analysis_time.Start();
     trace_node->Accept(this);
+    analysis_time.Stop();
   }
 }
 
