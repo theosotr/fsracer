@@ -1,7 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-
+#include <chrono>
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -27,7 +27,32 @@ namespace utils {
     return combs;
   }
 
+  /** Class that tracks the time interval between two timer periods. */
+  class timer {
+  public:
+    /** Start tracking time. */
+    void Start();
+
+    /** Stop tracking time. */
+    void Stop();
+
+    /** Get time interval in milli seconds. */
+    double GetTimeMillis() const;
+
+    /** Get time interval in seconds. */
+    double GetTimeSeconds() const;
+
+    /** Get time interval in micro seconds. */
+    double GetTimeMicros() const;
+
+  private:
+    /// Starting time point.
+    std::chrono::high_resolution_clock::time_point start_time;
+    /// Time interval in micro seconds.
+    long time;
+  };
 
 } //namespace utils
+
 
 #endif

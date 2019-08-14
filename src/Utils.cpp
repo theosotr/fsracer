@@ -1,9 +1,12 @@
+#include <chrono>
 #include <iostream>
 #include <sstream>
 #include <string>
 
 #include "dr_api.h"
 #include "drwrap.h"
+
+#include "Utils.h"
 
 
 namespace utils {
@@ -29,4 +32,32 @@ namespace utils {
     return str.substr(pos + 1, std::string::npos);
   }
 
-}
+
+  void timer::Start() {
+    start_time = std::chrono::high_resolution_clock::now();
+  }
+
+
+  void timer::Stop() {
+    auto elapsed = std::chrono::high_resolution_clock::now() - start_time;
+    time = std::chrono::duration_cast<std::chrono::microseconds>(
+        elapsed).count();
+  }
+
+
+  double timer::GetTimeMillis() const {
+    return (double) time / 1000;
+  }
+
+
+  double timer::GetTimeSeconds() const {
+    return (double) time / 1000000;
+  }
+
+
+  double timer::GetTimeMicros() const {
+    return time;
+  }
+
+
+} // namespace utils
