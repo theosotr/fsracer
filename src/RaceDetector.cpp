@@ -15,14 +15,14 @@ namespace op = operation;
 namespace detector {
 
 
-void RaceDetector::Detect() const {
+void RaceDetector::Detect() {
   // First, get the detected faults.
   auto faults = GetFaults();
   // Second, report the detected faults to the standard output.
   DumpFaults(faults);
 }
 
-void RaceDetector::Detect(std::map<std::string, void*> gen_store) const {
+void RaceDetector::Detect(std::map<std::string, void*> gen_store) {
   // Online analysis is not supported at the moment.
 };
 

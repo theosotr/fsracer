@@ -70,19 +70,19 @@ public:
     dep_graph(dep_graph_) {  }
 
   /** Gets the pretty name of this fault detector. */
-  std::string GetName() {
+  std::string GetName() const {
     return "RaceDetector";
   }
 
   /** Checks whether this fault detector supports online analysis. */
-  bool SupportOnlineAnalysis() {
+  bool SupportOnlineAnalysis() const {
     return false;
   }
 
   /** Detecting data races. */
-  void Detect(void) const;
+  void Detect(void);
   /** Detecting data races as the application runs. */
-  void Detect(std::map<std::string, void*> gen_store) const;
+  void Detect(std::map<std::string, void*> gen_store);
 
 private:
   /// File accesses per block.

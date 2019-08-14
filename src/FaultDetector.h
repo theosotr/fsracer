@@ -15,20 +15,20 @@ class FaultDetector {
 
 public:
   /** Gets the name of the fault detector. */
-  virtual std::string GetName() = 0;
+  virtual std::string GetName() const = 0;
 
   /**
    * Whether the fault detector supports online fault detection,
    * i.e., whether the fault detector is able to locate faults while
    * the application is running.
    */
-  virtual bool SupportOnlineAnalysis() = 0;
+  virtual bool SupportOnlineAnalysis() const = 0;
 
   /** Detecting faults offline, i.e., after the execution of application. */
-  virtual void Detect() const = 0;
+  virtual void Detect() = 0;
   
   /** Detecting faults online, i.e., while the application is running. */
-  virtual void Detect(std::map<std::string, void*> gen_store) const = 0;
+  virtual void Detect(std::map<std::string, void*> gen_store) = 0;
 };
 
 
