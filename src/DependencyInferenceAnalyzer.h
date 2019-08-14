@@ -126,6 +126,21 @@ namespace analyzer {
 class DependencyInferenceAnalyzer : public Analyzer {
 
   public:
+    /**
+     * The type of the dependency graph.
+     *
+     * Each node in the dependency graph represents an event.
+     * Also, every edge in this graph has a label defined in
+     * the `EdgeLabel` enumeration.
+     */
+    using dep_graph_t = graph::Graph<Event, enum graph::EdgeLabel>;
+    /**
+     * The type of EventInfo.
+     *
+     * Each node represents information about an event.
+     */
+    using EventInfo = dep_graph_t::NodeInfo;
+
     /** Default Constructor of the analyzer. */
     DependencyInferenceAnalyzer(enum graph::GraphFormat graph_format_):
       current_block(nullptr),
@@ -163,21 +178,6 @@ class DependencyInferenceAnalyzer : public Analyzer {
     void DumpOutput(writer::OutWriter *out);
 
   private:
-    /**
-     * The type of the dependency graph.
-     *
-     * Each node in the dependency graph represents an event.
-     * Also, every edge in this graph has a label defined in
-     * the `EdgeLabel` enumeration.
-     */
-    using dep_graph_t = graph::Graph<Event, enum graph::EdgeLabel>;
-    /**
-     * The type of EventInfo.
-     *
-     * Each node represents information about an event.
-     */
-    using EventInfo = dep_graph_t::NodeInfo;
-
     /// The dependency graph of events.
     dep_graph_t dep_graph;
     /**
