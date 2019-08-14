@@ -1,9 +1,11 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
+#include "assert.h"
 #include <optional>
 #include <ostream>
 #include <set>
+#include <stack>
 #include <unordered_map>
 #include <utility>
 
@@ -181,9 +183,9 @@ class Graph {
     }
 
     /** Gets the information associated with the given node. */
-    optional<NodeInfo> GetNodeInfo(size_t node_id) {
+    optional<NodeInfo> GetNodeInfo(size_t node_id) const {
       optional<NodeInfo> node_info;
-      typename graph_t::iterator it = graph.find(node_id);
+      typename graph_t::const_iterator it = graph.find(node_id);
       if (it != graph.end()) {
         return it->second;
       }
@@ -232,6 +234,15 @@ class Graph {
         case CSV:
           PrintCSV(os);
       }
+    }
+
+    /**
+     * Checks whether there is at least one path from source node to
+     * target.
+     */
+    bool HasPath(size_t source, size_t target) const {
+      set<size_t> visited = DFS(source);
+      return visited.find(target) != visited.end();
     }
 
   private:
@@ -301,6 +312,36 @@ class Graph {
             << endl;
         }
       }
+    }
+
+    /**
+     * Gets the set of nodes that are reachable from the given node.
+     */
+    set<size_t> DFS(size_t source) const {
+      set<size_t> visited;
+      stack<size_t> pool;
+      pool.push(source);
+      while (!pool.empty()) {
+        size_t node = pool.top();
+        pool.pop();
+        if (visited.find(node) != visited.end()) {
+          // We have already visited this node.
+          continue;
+        }
+
+        visited.insert(node);
+        optional<NodeInfo> node_info = GetNodeInfo(node);
+        assert(node_info.has_value());
+        for (auto &n : node_info.value().dependents) {
+          if (visited.find(n.first) == visited.end()) {
+            // We have not visited this node, so we add it
+            // to the pool.
+            pool.push(n.first);
+          }
+        }
+      }
+
+      return visited;
     }
 };
 
