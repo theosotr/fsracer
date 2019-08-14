@@ -68,6 +68,10 @@ class FSAnalyzer : public Analyzer {
 
     void DumpOutput(writer::OutWriter *out);
 
+    const EffectTable &GetFSAccesses() {
+      return effect_table;
+    }
+
   private:
     Table<proc_t, inode_t> cwd_table;
     Table<pair<proc_t, fd_t>, inode_key_t> fd_table;

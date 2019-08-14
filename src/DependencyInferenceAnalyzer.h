@@ -177,6 +177,10 @@ class DependencyInferenceAnalyzer : public Analyzer {
 
     void DumpOutput(writer::OutWriter *out);
 
+    const dep_graph_t &GetDependencyGraph() {
+      return dep_graph;
+    }
+
   private:
     /// The dependency graph of events.
     dep_graph_t dep_graph;
