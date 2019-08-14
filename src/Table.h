@@ -45,7 +45,7 @@ class Table {
       return val;
     }
 
-    table_t GetTable() {
+    table_t GetTable() const {
       return table;
     }
 
