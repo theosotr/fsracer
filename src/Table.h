@@ -36,9 +36,9 @@ class Table {
       PopEntry(key);
     }
 
-    optional<T2> GetValue(T1 key) {
+    optional<T2> GetValue(T1 key) const {
       optional<T2> val;
-      typename table_t::iterator it = table.find(key);
+      typename table_t::const_iterator it = table.find(key);
       if (it != table.end()) {
         val = it->second;
       }

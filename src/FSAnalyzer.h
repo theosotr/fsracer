@@ -53,7 +53,7 @@ class FSAnalyzer : public Analyzer {
     void AnalyzeExpr(Expr *expr);
     void AnalyzeSubmitOp(SubmitOp *submit_op);
     void AnalyzeExecOp(ExecOp *exec_op);
-    void AnalyzeNewEvent(NewEventExpr *new_ev_expr) {  };
+    void AnalyzeNewEvent(NewEventExpr *new_ev_expr);
     void AnalyzeLink(LinkExpr *link_expr) {  };
     void AnalyzeTrigger(Trigger *nested_ev_expr) {  };
 
@@ -81,6 +81,7 @@ class FSAnalyzer : public Analyzer {
     InodeTable inode_table;
 
     Table<string, ExecOp*> op_table;
+    Table<size_t, NewEventExpr*> event_info;
 
     Block *current_block;
     size_t main_process;

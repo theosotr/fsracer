@@ -21,6 +21,10 @@ namespace detector {
  */
 class RaceDetector : public FaultDetector {
 public:
+  // Some type aliases.
+  using dep_graph_t = analyzer::DependencyInferenceAnalyzer::dep_graph_t;
+  using fs_access_t = table::FSAccess;
+
   /**
    * This struct describes a fault associated with two
    * conflicting blocks.
@@ -29,16 +33,16 @@ public:
     /// The file path that the two blocks are conflicting.
     std::string p;
     /// The effect that the first block has on the path.
-    enum op::Hpath::EffectType block1_eff;
+    fs_access_t fs_access1;
     /// The effect that the second block has on the path.
-    enum op::Hpath::EffectType block2_eff;
+    fs_access_t fs_access2;
 
     /** Constructor. */
-    FaultDesc(std::string p_, enum op::Hpath::EffectType block1_eff_,
-              enum op::Hpath::EffectType block2_eff_):
+    FaultDesc(std::string p_, fs_access_t fs_access1_,
+              fs_access_t fs_access2_):
       p(p_),
-      block1_eff(block1_eff_),
-      block2_eff(block2_eff_) {  }
+      fs_access1(fs_access1_),
+      fs_access2(fs_access2_) {  }
 
     /**
      * Overriding the operator '<' so that we can insert instances of
@@ -52,9 +56,6 @@ public:
     std::string ToString() const;
   };
 
-  // Some type aliases.
-  using dep_graph_t = analyzer::DependencyInferenceAnalyzer::dep_graph_t;
-  using fs_access_t = std::pair<size_t, enum op::Hpath::EffectType>;
   // FIXME: Use hash map.
   using faults_t = std::map<std::pair<size_t, size_t>, std::set<FaultDesc>>;
 
@@ -89,6 +90,10 @@ private:
   const table::EffectTable &fs_accesses;
   /// The dependency graph of events.
   const dep_graph_t &dep_graph;
+
+  /// Table that tracks debug information of each event.
+  /// Useful for fault reporting.
+  mutable table::Table<size_t, trace::DebugInfo> event_info;
 
   /**
    * Gets the list of faults by exploiting the dependency graph

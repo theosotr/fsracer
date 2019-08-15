@@ -71,6 +71,14 @@ void FSAnalyzer::AnalyzeExpr(Expr *expr) {
 }
 
 
+void FSAnalyzer::AnalyzeNewEvent(NewEventExpr *new_ev_expr) {
+  if (!new_ev_expr) {
+    return;
+  }
+  event_info.AddEntry(new_ev_expr->GetEventId(), new_ev_expr);
+}
+
+
 void FSAnalyzer::AnalyzeSubmitOp(SubmitOp *submit_op) {
   if (!submit_op) {
     return;
@@ -246,15 +254,23 @@ void FSAnalyzer::AnalyzeSymlink(Symlink *symlink) {
 
 void FSAnalyzer::ProcessPathEffect(fs::path p,
     enum Hpath::EffectType effect) {
+  DebugInfo debug_info;
+  if (block_id == MAIN_BLOCK) {
+    debug_info.AddDebugInfo("main");
+  } else {
+    auto expr = event_info.GetValue(block_id);
+    debug_info = expr.value()->GetDebugInfo();
+  }
   switch (effect) {
     case Hpath::CONSUMED:
     case Hpath::PRODUCED:
-      effect_table.AddPathEffect(p, block_id, effect);
+      effect_table.AddPathEffect(p, FSAccess(block_id, effect, debug_info));
       break;
     case Hpath::EXPUNGED:
       inode_t inode_p = inode_table.ToInode(p.parent_path());
       string basename = p.filename().native();
-      effect_table.AddPathEffect(p, block_id, Hpath::EXPUNGED);
+      effect_table.AddPathEffect(
+          p, FSAccess(block_id, Hpath::EXPUNGED, debug_info));
       UnlinkResource(inode_p, basename);
   }
 }
@@ -337,10 +353,10 @@ void FSAnalyzer::DumpJSON(ostream &os) {
     os << "  \"" << entry.first.native() << "\": [" << endl;
     for (auto it = entry.second.begin(); it != entry.second.end(); it++) {
       os << "    {" << endl;
-      os << "      \"block\": " << "\"" << (*it).first
+      os << "      \"block\": " << "\"" << (*it).event_id
         << "\"," << endl;
       os << "      \"effect\": " << "\""
-        << Hpath::EffToString((*it).second) << "\"" << endl;
+        << Hpath::EffToString((*it).effect_type) << "\"" << endl;
       if (it != entry.second.end() - 1) {
         os << "    }," << endl;
       } else {
@@ -359,10 +375,10 @@ void FSAnalyzer::DumpJSON(ostream &os) {
 
 void FSAnalyzer::DumpCSV(ostream &os) {
   for (auto const &entry : effect_table) {
-    for (auto const &pair_element : entry.second) {
+    for (auto const &fs_access : entry.second) {
       os << entry.first.native() << ","
-        << pair_element.first << ","
-        << Hpath::EffToString(pair_element.second) << "\n";
+        << fs_access.event_id << ","
+        << Hpath::EffToString(fs_access.effect_type) << "\n";
     }
   }
 }
