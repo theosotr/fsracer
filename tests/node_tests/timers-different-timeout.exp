@@ -11,29 +11,29 @@ hpath AT_FDCWD baz consumed
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
-newEvent 4 W 1
-newEvent 5 W 0
-newEvent 6 W 1
-newEvent 7 W 0
-newEvent 8 W 1
+newEvent 4 W 1 !setTimeout
+newEvent 5 W 0 !timerWrap
+newEvent 6 W 1 !setTimeout
+newEvent 7 W 0 !timerWrap
+newEvent 8 W 1 !setTimeout
 End
 Begin 5
 trigger 4
-newEvent 9 EXTERNAL
+newEvent 9 EXTERNAL !fs !access
 link 4 9
-submitOp async_9 access ASYNC
-newEvent 10 W 1
-newEvent 11 W 0
+submitOp async_9 9 ASYNC !access
+newEvent 10 W 1 !setTimeout
+newEvent 11 W 0 !timerWrap
 trigger 8
-newEvent 12 EXTERNAL
+newEvent 12 EXTERNAL !fs !access
 link 8 12
-submitOp async_12 access ASYNC
+submitOp async_12 12 ASYNC !access
 End
 Begin 7
 trigger 6
-newEvent 13 EXTERNAL
+newEvent 13 EXTERNAL !fs !access
 link 6 13
-submitOp async_13 access ASYNC
+submitOp async_13 13 ASYNC !access
 End
 Begin 11
 trigger 10

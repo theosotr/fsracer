@@ -100,10 +100,10 @@ string(CONCAT prologue_block_repl
   "link 1 2."
   "newEvent 3 EXTERNAL."
   "link 1 3."
-  "submitOp sync_1 stat SYNC."
-  "(submitOp sync_@NUM@ lstat SYNC.)*"
-  "submitOp sync_@NUM@ open SYNC."
-  "submitOp sync_@NUM@ close SYNC"
+  "submitOp sync_1 SYNC !stat."
+  "(submitOp sync_@NUM@ SYNC !lstat.)*"
+  "submitOp sync_@NUM@ SYNC !open."
+  "submitOp sync_@NUM@ SYNC !close"
 )
 
 

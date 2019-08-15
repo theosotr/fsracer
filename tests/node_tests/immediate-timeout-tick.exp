@@ -12,20 +12,20 @@ hpath AT_FDCWD foo expunged
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
-newEvent 4 W 3
-newEvent 5 S 0
+newEvent 4 W 3 !setImmediate
+newEvent 5 S 0 !nextTick
 End
 Begin 5
-submitOp sync_12 open SYNC
-submitOp sync_13 close SYNC
+submitOp sync_12 SYNC !open
+submitOp sync_13 SYNC !close
 End
 Begin 4
-newEvent 6 W 1
-newEvent 7 W 0
+newEvent 6 W 1 !setTimeout
+newEvent 7 W 0 !timerWrap
 End
 Begin 7
 trigger 6
-submitOp sync_14 unlink SYNC
+submitOp sync_14 SYNC !unlink
 End
 @IGNORE@
 1,4,creates

@@ -8,20 +8,20 @@ hpath AT_FDCWD bar consumed
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
-newEvent 6 S 0
-newEvent 4 S 0
+newEvent 6 S 0 !promise
+newEvent 4 S 0 !promise
 End
 Begin 6
-newEvent 8 EXTERNAL
+newEvent 8 EXTERNAL !fs !access
 link 7 8
-submitOp async_8 access ASYNC
-newEvent 7 S 0
+submitOp async_8 8 ASYNC !access
+newEvent 7 S 0 !promise
 End
 Begin 4
-newEvent 9 EXTERNAL
+newEvent 9 EXTERNAL !fs !access
 link 5 9
-submitOp async_9 access ASYNC
-newEvent 5 S 0
+submitOp async_9 9 ASYNC !access
+newEvent 5 S 0 !promise
 End
 Begin 8
 End

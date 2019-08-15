@@ -5,33 +5,33 @@ hpath AT_FDCWD foo consumed
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
-newEvent 4 S 0
+newEvent 4 S 0 !promise
 End
 Begin 4
-newEvent 8 S 0
+newEvent 8 S 0 !promise
 End
 Begin 8
-newEvent 9 S 0
+newEvent 9 S 0 !promise
 End
 Begin 9
-newEvent 10 S 0
+newEvent 10 S 0 !promise
 End
 Begin 10
-newEvent 5 S 0
-newEvent 11 S 0
+newEvent 5 S 0 !promise
+newEvent 11 S 0 !promise
 End
 Begin 5
-newEvent 12 S 0
+newEvent 12 S 0 !promise
 End
 Begin 12
-newEvent 6 S 0
-newEvent 13 S 0
+newEvent 6 S 0 !promise
+newEvent 13 S 0 !promise
 End
 Begin 6
-newEvent 14 EXTERNAL
+newEvent 14 EXTERNAL !fs !access
 link 7 14
-submitOp async_14 access ASYNC
-newEvent 7 S 0
+submitOp async_14 14 ASYNC !access
+newEvent 7 S 0 !promise
 End
 Begin 14
 End

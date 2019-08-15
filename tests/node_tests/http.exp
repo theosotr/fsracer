@@ -18,12 +18,12 @@ newEvent 5 EXTERNAL
 link 1 5
 newEvent 6 EXTERNAL
 link 4 6
-newEvent 7 S 0
+newEvent 7 S 0 !nextTick
 End
 Begin 7
 newEvent 8 EXTERNAL
 link 7 8
-newEvent 9 S 0
+newEvent 9 S 0 !nextTick
 End
 Begin 9
 End
@@ -39,16 +39,16 @@ newEvent 11 EXTERNAL
 link 8 11
 newEvent 12 EXTERNAL
 link 11 12
-newEvent 13 S 0
+newEvent 13 S 0 !nextTick
 trigger 8
 trigger 8
-newEvent 14 S 0
-newEvent 15 S 0
+newEvent 14 S 0 !nextTick
+newEvent 15 S 0 !nextTick
 End
 Begin 13
 newEvent 16 EXTERNAL
 link 13 16
-newEvent 17 S 0
+newEvent 17 S 0 !nextTick
 End
 Begin 14
 End
@@ -57,12 +57,12 @@ End
 Begin 17
 End
 Begin 4
-newEvent 18 S 0
-newEvent 19 S 0
+newEvent 18 S 0 !nextTick
+newEvent 19 S 0 !nextTick
 End
 Begin 18
-newEvent 20 S 0
-newEvent 21 S 0
+newEvent 20 S 0 !nextTick
+newEvent 21 S 0 !nextTick
 End
 Begin 19
 End
@@ -80,25 +80,25 @@ Begin 22
 End
 Begin 11
 trigger 16
-newEvent 23 EXTERNAL
+newEvent 23 EXTERNAL !fs !open
 link 16 23
-submitOp async_23 open ASYNC
+submitOp async_23 23 ASYNC !open
 trigger 16
 trigger 16
-newEvent 24 S 0
-newEvent 25 S 0
+newEvent 24 S 0 !nextTick
+newEvent 25 S 0 !nextTick
 End
 Begin 24
 End
 Begin 25
 End
 Begin 11
-newEvent 26 S 0
-newEvent 27 S 0
+newEvent 26 S 0 !nextTick
+newEvent 27 S 0 !nextTick
 End
 Begin 26
-newEvent 28 S 0
-newEvent 29 S 0
+newEvent 28 S 0 !nextTick
+newEvent 29 S 0 !nextTick
 End
 Begin 27
 End
@@ -113,12 +113,12 @@ End
 Begin 11
 End
 Begin 30
-newEvent 31 EXTERNAL
+newEvent 31 EXTERNAL !fs !close
 link 30 31
-submitOp async_31 close ASYNC
+submitOp async_31 31 ASYNC !close
 End
 Begin 31
-submitOp sync_12 unlink SYNC
+submitOp sync_12 SYNC !unlink
 End
 @IGNORE@
 1,4,creates

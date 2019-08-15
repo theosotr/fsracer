@@ -29,21 +29,21 @@ delFd @NUM@
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
-submitOp sync_12 open SYNC
-submitOp sync_13 close SYNC
-newEvent 4 EXTERNAL
+submitOp sync_12 SYNC !open
+submitOp sync_13 SYNC !close
+newEvent 4 EXTERNAL !fs !copyFile
 link 1 4
-submitOp async_4 copyFile ASYNC
-newEvent 5 EXTERNAL
+submitOp async_4 4 ASYNC !copyFile
+newEvent 5 EXTERNAL !fs !copyFile
 link 1 5
-submitOp async_5 copyFile ASYNC
+submitOp async_5 5 ASYNC !copyFile
 End
 Begin 4
 End
 Begin 5
-newEvent 6 EXTERNAL
+newEvent 6 EXTERNAL !fs !copyFile
 link 5 6
-submitOp async_6 copyFile ASYNC
+submitOp async_6 6 ASYNC !copyFile
 End
 Begin 6
 End

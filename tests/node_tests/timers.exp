@@ -14,25 +14,25 @@ Operation async_8 do
 hpath AT_FDCWD tmp consumed
 done
 Begin MAIN
-@IGNORE@
-submitOp sync_12 open SYNC
-submitOp sync_13 close SYNC
-newEvent 4 W 3
-newEvent 5 W 1
-newEvent 6 W 0
+@PROLOGUE_BLOCK@
+submitOp sync_12 SYNC !open
+submitOp sync_13 SYNC !close
+newEvent 4 W 3 !setImmediate
+newEvent 5 W 1 !setTimeout
+newEvent 6 W 0 !timerWrap
 End
 Begin 6
 trigger 5
-newEvent 7 EXTERNAL
+newEvent 7 EXTERNAL !fs !unlink
 link 5 7
-submitOp async_7 unlink ASYNC
+submitOp async_7 7 ASYNC !unlink
 End
 Begin 7
 End
 Begin 4
-newEvent 8 EXTERNAL
+newEvent 8 EXTERNAL !fs !access
 link 4 8
-submitOp async_8 access ASYNC
+submitOp async_8 8 ASYNC !access
 End
 Begin 8
 End

@@ -29,15 +29,15 @@ hpath AT_FDCWD bar expunged
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
-submitOp sync_12 open SYNC
-submitOp sync_13 close SYNC
-newEvent 4 EXTERNAL
+submitOp sync_12 SYNC !open
+submitOp sync_13 SYNC !close
+newEvent 4 EXTERNAL !fs !open
 link 1 4
-submitOp async_4 open ASYNC
-newEvent 5 EXTERNAL
+submitOp async_4 4 ASYNC !open
+newEvent 5 EXTERNAL !fs !open
 link 1 5
-submitOp async_5 open ASYNC
-newEvent 6 S 0
+submitOp async_5 5 ASYNC !open
+newEvent 6 S 0 !nextTick
 End
 Begin 6
 End
@@ -50,7 +50,7 @@ End
 Begin 7
 newEvent 8 EXTERNAL
 link 7 8
-newEvent 9 S 0
+newEvent 9 S 0 !nextTick
 End
 Begin 9
 newEvent 10 EXTERNAL
@@ -59,28 +59,28 @@ End
 Begin 8
 End
 Begin 10
-newEvent 11 S 0
+newEvent 11 S 0 !nextTick
 End
 Begin 11
-newEvent 12 EXTERNAL
+newEvent 12 EXTERNAL !fs !close
 link 11 12
-submitOp async_12 close ASYNC
-newEvent 13 S 0
+submitOp async_12 12 ASYNC !close
+newEvent 13 S 0 !nextTick
 End
 Begin 13
-newEvent 14 EXTERNAL
+newEvent 14 EXTERNAL !fs !close
 link 13 14
-submitOp async_14 close ASYNC
+submitOp async_14 14 ASYNC !close
 End
 Begin 12
-newEvent 15 S 0
+newEvent 15 S 0 !nextTick
 End
 Begin 15
 End
 Begin 14
-newEvent 16 S 0
-submitOp sync_14 unlink SYNC
-submitOp sync_15 unlink SYNC
+newEvent 16 S 0 !nextTick
+submitOp sync_14 SYNC !unlink
+submitOp sync_15 SYNC !unlink
 End
 Begin 16
 End

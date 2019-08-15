@@ -20,23 +20,23 @@ hpath AT_FDCWD foo expunged
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
-newEvent 4 EXTERNAL
+newEvent 4 EXTERNAL !fs !open
 link 1 4
-submitOp async_4 open ASYNC
+submitOp async_4 4 ASYNC !open
 End
 Begin 4
 newEvent 5 EXTERNAL
 link 4 5
 End
 Begin 5
-newEvent 6 EXTERNAL
+newEvent 6 EXTERNAL !fs !close
 link 5 6
-submitOp async_6 close ASYNC
+submitOp async_6 6 ASYNC !close
 End
 Begin 6
-newEvent 7 EXTERNAL
+newEvent 7 EXTERNAL !fs !open
 link 6 7
-submitOp async_7 open ASYNC
+submitOp async_7 7 ASYNC !open
 End
 Begin 7
 newEvent 8 EXTERNAL
@@ -47,14 +47,14 @@ newEvent 9 EXTERNAL
 link 8 9
 End
 Begin 9
-newEvent 10 EXTERNAL
+newEvent 10 EXTERNAL !fs !close
 link 9 10
-submitOp async_10 close ASYNC
+submitOp async_10 10 ASYNC !close
 End
 Begin 10
-newEvent 11 EXTERNAL
+newEvent 11 EXTERNAL !fs !unlink
 link 10 11
-submitOp async_11 unlink ASYNC
+submitOp async_11 11 ASYNC !unlink
 End
 Begin 11
 End

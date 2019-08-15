@@ -22,26 +22,26 @@ delFd @NUM@
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
-newEvent 4 S 0
-newEvent 7 S 0
+newEvent 4 S 0 !promise
+newEvent 7 S 0 !promise
 End
 Begin 4
-newEvent 9 EXTERNAL
+newEvent 9 EXTERNAL !fs !open
 link 5 9
-submitOp async_9 open ASYNC
-newEvent 5 S 0
+submitOp async_9 9 ASYNC !open
+newEvent 5 S 0 !promise
 End
 Begin 7
-newEvent 10 EXTERNAL
+newEvent 10 EXTERNAL !fs !access
 link 8 10
-submitOp async_10 access ASYNC
-newEvent 8 S 0
+submitOp async_10 10 ASYNC !access
+newEvent 8 S 0 !promise
 End
 Begin 5
-newEvent 11 EXTERNAL
+newEvent 11 EXTERNAL !fs !open
 link 6 11
-submitOp async_11 open ASYNC
-newEvent 6 S 0
+submitOp async_11 11 ASYNC !open
+newEvent 6 S 0 !promise
 End
 Begin 9
 newEvent 12 EXTERNAL
@@ -54,23 +54,23 @@ newEvent 13 EXTERNAL
 link 11 13
 End
 Begin 12
-newEvent 14 EXTERNAL
+newEvent 14 EXTERNAL !fs !close
 link 12 14
-submitOp async_14 close ASYNC
+submitOp async_14 14 ASYNC !close
 End
 Begin 13
 newEvent 15 EXTERNAL
 link 13 15
 End
 Begin 14
-newEvent 16 EXTERNAL
+newEvent 16 EXTERNAL !fs !unlink
 link 14 16
-submitOp async_16 unlink ASYNC
+submitOp async_16 16 ASYNC !unlink
 End
 Begin 15
-newEvent 17 EXTERNAL
+newEvent 17 EXTERNAL !fs !close
 link 15 17
-submitOp async_17 close ASYNC
+submitOp async_17 17 ASYNC !close
 End
 Begin 16
 End

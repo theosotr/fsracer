@@ -2,17 +2,17 @@
 @PROLOGUE_OPERATIONS@
 Begin MAIN
 @PROLOGUE_BLOCK@
-newEvent 4 S 0
+newEvent 4 S 0 !promise
 End
 Begin 4
-newEvent 6 S 0
+newEvent 6 S 0 !promise
 End
 Begin 6
-newEvent 7 S 0
+newEvent 7 S 0 !promise
 End
 Begin 7
-newEvent 5 S 0
-newEvent 8 S 0
+newEvent 5 S 0 !promise
+newEvent 8 S 0 !promise
 End
 @IGNORE@
 1,4,creates

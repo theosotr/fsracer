@@ -12,14 +12,14 @@ hpath AT_FDCWD foo expunged
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
-newEvent 4 S 0
-submitOp sync_12 open SYNC
-submitOp sync_13 close SYNC
+newEvent 4 S 0 !nextTick
+submitOp sync_12 SYNC !open
+submitOp sync_13 SYNC !close
 End
 Begin 4
-newEvent 5 EXTERNAL
+newEvent 5 EXTERNAL !fs !unlink
 link 4 5
-submitOp async_5 unlink ASYNC
+submitOp async_5 5 ASYNC !unlink
 End
 Begin 5
 End
