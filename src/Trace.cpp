@@ -40,7 +40,7 @@ string SubmitOp::ToString() {
     return "submitOp "  + op_id + " " + to_string(event_id.value())
       + " " + type_str + debug_info.ToString();
   }
-  return "SubmitOp " + op_id + " " + type_str + debug_info.ToString();
+  return "submitOp " + op_id + " " + type_str + debug_info.ToString();
 }
 
 
