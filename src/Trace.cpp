@@ -1,3 +1,4 @@
+#include "assert.h"
 #include <iostream>
 
 #include "Analyzer.h"
@@ -75,7 +76,10 @@ void ExecOp::Accept(analyzer::Analyzer *analyzer) {
 
 string NewEventExpr::ToString() {
   string str = to_string(event_id);
-  return "newEvent " + str + " " + event.ToString();
+  string debug_info = GetDebugInfo();
+  debug_info = !debug_info.size() ?
+    "" : " !" + debug_info;
+  return "newEvent " + str + " " + event.ToString() + debug_info;
 }
 
 
@@ -119,6 +123,19 @@ void Block::ClearExprs() {
     delete exprs[i];
   }
   exprs.clear();
+}
+
+
+size_t Block::Size() {
+  return exprs.size();
+}
+
+
+void Block::SetExprDebugInfo(size_t index, string debug_info) {
+  assert(index < exprs.size());
+  if (exprs[index]) {
+    exprs[index]->SetDebugInfo(debug_info);
+  }
 }
 
 

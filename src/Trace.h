@@ -19,7 +19,8 @@ namespace analyzer {
 
 class Analyzer;
 
-}
+} // namespace analyzer
+
 
 namespace trace {
 
@@ -51,6 +52,20 @@ class Expr {
      * analyzing the current expression.
      */
     virtual void Accept(analyzer::Analyzer *analyzer);
+
+    /** Get the debug information corresponding to this expression. */
+    string GetDebugInfo() {
+      return debug_info;
+    }
+
+    /** Set the debug information for this expression. */
+    void SetDebugInfo(string debug_info_) {
+      debug_info = debug_info_;
+    }
+
+  private:
+    /// String corresponding to debug information about this expression.
+    string debug_info;
 };
 
 
@@ -361,6 +376,7 @@ class Trigger : public Expr {
     Trigger(size_t event_id_):
       event_id(event_id_) {  }
 
+    /** Getter of the `event_id` field. */
     size_t GetEventId() {
       return event_id;
     }
@@ -374,6 +390,8 @@ class Trigger : public Expr {
     string ToString();
 
   private:
+    /// The ID of the event whose callback is executed as part of the current
+    /// block.
     size_t event_id;
 
 };
@@ -425,6 +443,17 @@ class Block : public TraceNode {
 
     /** String representation of the current execution block. */
     string ToString();
+
+    /**
+     * Get the size of the current block in terms of the number of
+     * expressions.
+     */
+    size_t Size();
+
+    /**
+     * Set the debug information of the expression located at the given index.
+     */
+    void SetExprDebugInfo(size_t index, string debug_info);
 
   private:
     /// The vector of expressions included in the current execution block. */
@@ -537,6 +566,6 @@ class Trace : public TraceNode {
 };
 
 
-}
+} // namespace trace
 
 #endif
