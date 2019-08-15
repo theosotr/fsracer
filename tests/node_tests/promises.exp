@@ -1,24 +1,24 @@
 @PREAMBLE@
 @PROLOGUE_OPERATIONS@
 Operation async_9 do
-hpath AT_FDCWD foo produced
-newFd AT_FDCWD foo @NUM@
+hpath AT_FDCWD foo produced !open
+newFd AT_FDCWD foo @NUM@ !open
 done
 Operation async_10 do
-hpath AT_FDCWD foo consumed
+hpath AT_FDCWD foo consumed !access
 done
 Operation async_11 do
-hpath AT_FDCWD foo consumed
-newFd AT_FDCWD foo @NUM@
+hpath AT_FDCWD foo consumed !open
+newFd AT_FDCWD foo @NUM@ !open
 done
 Operation async_14 do
-delFd @NUM@
+delFd @NUM@ !close
 done
 Operation async_16 do
-hpath AT_FDCWD foo expunged
+hpath AT_FDCWD foo expunged !unlink
 done
 Operation async_17 do
-delFd @NUM@
+delFd @NUM@ !close
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
@@ -26,21 +26,21 @@ newEvent 4 S 0 !promise
 newEvent 7 S 0 !promise
 End
 Begin 4
-newEvent 9 EXTERNAL !fs !open
+newEvent 9 EXTERNAL !fs !node_open
 link 5 9
-submitOp async_9 9 ASYNC !open
+submitOp async_9 9 ASYNC !node_open
 newEvent 5 S 0 !promise
 End
 Begin 7
-newEvent 10 EXTERNAL !fs !access
+newEvent 10 EXTERNAL !fs !node_access
 link 8 10
-submitOp async_10 10 ASYNC !access
+submitOp async_10 10 ASYNC !node_access
 newEvent 8 S 0 !promise
 End
 Begin 5
-newEvent 11 EXTERNAL !fs !open
+newEvent 11 EXTERNAL !fs !node_open
 link 6 11
-submitOp async_11 11 ASYNC !open
+submitOp async_11 11 ASYNC !node_open
 newEvent 6 S 0 !promise
 End
 Begin 9
@@ -54,23 +54,23 @@ newEvent 13 EXTERNAL
 link 11 13
 End
 Begin 12
-newEvent 14 EXTERNAL !fs !close
+newEvent 14 EXTERNAL !fs !node_close
 link 12 14
-submitOp async_14 14 ASYNC !close
+submitOp async_14 14 ASYNC !node_close
 End
 Begin 13
 newEvent 15 EXTERNAL
 link 13 15
 End
 Begin 14
-newEvent 16 EXTERNAL !fs !unlink
+newEvent 16 EXTERNAL !fs !node_unlink
 link 14 16
-submitOp async_16 16 ASYNC !unlink
+submitOp async_16 16 ASYNC !node_unlink
 End
 Begin 15
-newEvent 17 EXTERNAL !fs !close
+newEvent 17 EXTERNAL !fs !node_close
 link 15 17
-submitOp async_17 17 ASYNC !close
+submitOp async_17 17 ASYNC !node_close
 End
 Begin 16
 End

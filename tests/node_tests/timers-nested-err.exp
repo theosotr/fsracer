@@ -1,7 +1,7 @@
 @PREAMBLE@
 @PROLOGUE_OPERATIONS@
 Operation async_8 do
-hpath AT_FDCWD foo consumed
+hpath AT_FDCWD foo consumed !access
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
@@ -18,9 +18,9 @@ newEvent 7 W 1 !setTimeout
 End
 Begin 5
 trigger 7
-newEvent 8 EXTERNAL !fs !access
+newEvent 8 EXTERNAL !fs !node_access
 link 7 8
-submitOp async_8 8 ASYNC !access
+submitOp async_8 8 ASYNC !node_access
 End
 @IGNORE@
 1,5,creates

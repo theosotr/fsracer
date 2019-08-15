@@ -4,7 +4,8 @@
 #include <iostream>
 
 #define AT_FDCWD 0
-#define FAILED (isFailed() ? " !failed" : "")
+#define FAILED (failed ? " !failed" : "")
+#define ACTUAL_NAME (actual_op_name != "" ? " !" + actual_op_name : "")
 
 
 using namespace std;
@@ -48,7 +49,7 @@ class Operation {
       return actual_op_name;
     }
 
-  private:
+  protected:
     bool failed;
     string actual_op_name;
 };
@@ -70,7 +71,7 @@ class DelFd : public Operation {
     }
 
     string ToString() {
-      return GetOpName() + " " + to_string(fd) + FAILED;
+      return GetOpName() + " " + to_string(fd) + ACTUAL_NAME + FAILED;
     }
 
     void Accept(analyzer::Analyzer *analyzer);
@@ -105,7 +106,7 @@ class DupFd : public Operation {
 
     string ToString() {
       return GetOpName() + " "  + to_string(old_fd) + " " +
-        to_string(new_fd) + FAILED;
+        to_string(new_fd) + ACTUAL_NAME + FAILED;
     };
 
     void Accept(analyzer::Analyzer *analyzer);
@@ -150,7 +151,7 @@ class Hpath : public Operation {
     string ToString() {
       string str = DirfdToString(dirfd);
       return GetOpName() + " " + str + " " + path + " " +
-        Hpath::EffToString(effect_type) + FAILED;
+        Hpath::EffToString(effect_type) + ACTUAL_NAME + FAILED;
     };
 
     void Accept(analyzer::Analyzer *analyzer);
@@ -211,7 +212,7 @@ class Link : public Operation {
       string old_dirfd_str = DirfdToString(old_dirfd);
       string new_dirfd_str = DirfdToString(new_dirfd);
       return GetOpName() + " " + old_dirfd_str + " " +
-        old_path + " " + new_dirfd_str + " " + new_path + FAILED;
+        old_path + " " + new_dirfd_str + " " + new_path + ACTUAL_NAME + FAILED;
     };
 
     string GetOpName() {
@@ -258,7 +259,7 @@ class NewFd : public Operation {
     string ToString() {
       string dirfd_str = DirfdToString(dirfd);
       return GetOpName() + " " + dirfd_str + " " + path +
-        " " + to_string(fd) + FAILED;
+        " " + to_string(fd) + ACTUAL_NAME + FAILED;
     };
 
     void Accept(analyzer::Analyzer *analyzer);
@@ -303,13 +304,13 @@ class NewProc : public Operation {
     string ToString() {
       switch (clone_mode) {
         case SHARE_FD:
-          return GetOpName() + " FD " + to_string(pid) + FAILED;
+          return GetOpName() + " FD " + to_string(pid) + ACTUAL_NAME + FAILED;
         case SHARE_FS:
-          return GetOpName() + " FS " + to_string(pid) + FAILED;
+          return GetOpName() + " FS " + to_string(pid) + ACTUAL_NAME + FAILED;
         case SHARE_BOTH:
-          return GetOpName() + " FS|FD " + to_string(pid) + FAILED;
+          return GetOpName() + " FS|FD " + to_string(pid) + ACTUAL_NAME + FAILED;
         default:
-          return GetOpName() + " " + to_string(pid) + FAILED;
+          return GetOpName() + " " + to_string(pid) + ACTUAL_NAME + FAILED;
       }
     }
 
@@ -349,7 +350,7 @@ class SetCwd : public Operation {
     }
 
     string ToString() {
-      return GetOpName() + " " + cwd + FAILED;
+      return GetOpName() + " " + cwd + ACTUAL_NAME + FAILED;
     }
 
     void Accept(analyzer::Analyzer *analyzer);
@@ -384,7 +385,7 @@ class Symlink : public Operation {
 
     string ToString() {
       return GetOpName() + " " + to_string(dirfd) + " " + path + " " +
-        target + FAILED;
+        target + ACTUAL_NAME + FAILED;
     }
 
     void Accept(analyzer::Analyzer *analyzer);

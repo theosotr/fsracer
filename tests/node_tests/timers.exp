@@ -1,38 +1,38 @@
 @PREAMBLE@
 @PROLOGUE_OPERATIONS@
 Operation sync_12 do
-hpath AT_FDCWD tmp produced
-newFd AT_FDCWD tmp @NUM@
+hpath AT_FDCWD tmp produced !open
+newFd AT_FDCWD tmp @NUM@ !open
 done
 Operation sync_13 do
-delFd @NUM@
+delFd @NUM@ !close
 done
 Operation async_7 do
-hpath AT_FDCWD tmp expunged
+hpath AT_FDCWD tmp expunged !unlink
 done
 Operation async_8 do
-hpath AT_FDCWD tmp consumed
+hpath AT_FDCWD tmp consumed !access
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
-submitOp sync_12 SYNC !open
-submitOp sync_13 SYNC !close
+submitOp sync_12 SYNC !node_open
+submitOp sync_13 SYNC !node_close
 newEvent 4 W 3 !setImmediate
 newEvent 5 W 1 !setTimeout
 newEvent 6 W 0 !timerWrap
 End
 Begin 6
 trigger 5
-newEvent 7 EXTERNAL !fs !unlink
+newEvent 7 EXTERNAL !fs !node_unlink
 link 5 7
-submitOp async_7 7 ASYNC !unlink
+submitOp async_7 7 ASYNC !node_unlink
 End
 Begin 7
 End
 Begin 4
-newEvent 8 EXTERNAL !fs !access
+newEvent 8 EXTERNAL !fs !node_access
 link 4 8
-submitOp async_8 8 ASYNC !access
+submitOp async_8 8 ASYNC !node_access
 End
 Begin 8
 End

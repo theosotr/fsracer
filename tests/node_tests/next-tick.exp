@@ -1,25 +1,25 @@
 @PREAMBLE@
 @PROLOGUE_OPERATIONS@
 Operation sync_12 do
-hpath AT_FDCWD foo produced
-newFd AT_FDCWD foo @NUM@
+hpath AT_FDCWD foo produced !open
+newFd AT_FDCWD foo @NUM@ !open
 done
 Operation sync_13 do
-delFd @NUM@
+delFd @NUM@ !close
 done
 Operation async_5 do
-hpath AT_FDCWD foo expunged
+hpath AT_FDCWD foo expunged !unlink
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
 newEvent 4 S 0 !nextTick
-submitOp sync_12 SYNC !open
-submitOp sync_13 SYNC !close
+submitOp sync_12 SYNC !node_open
+submitOp sync_13 SYNC !node_close
 End
 Begin 4
-newEvent 5 EXTERNAL !fs !unlink
+newEvent 5 EXTERNAL !fs !node_unlink
 link 4 5
-submitOp async_5 5 ASYNC !unlink
+submitOp async_5 5 ASYNC !node_unlink
 End
 Begin 5
 End

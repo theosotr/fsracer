@@ -1,13 +1,13 @@
 @PREAMBLE@
 @PROLOGUE_OPERATIONS@
 Operation async_9 do
-hpath AT_FDCWD bar consumed
+hpath AT_FDCWD bar consumed !access
 done
 Operation async_12 do
-hpath AT_FDCWD foo consumed
+hpath AT_FDCWD foo consumed !access
 done
 Operation async_13 do
-hpath AT_FDCWD baz consumed
+hpath AT_FDCWD baz consumed !access
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
@@ -19,21 +19,21 @@ newEvent 8 W 1 !setTimeout
 End
 Begin 5
 trigger 4
-newEvent 9 EXTERNAL !fs !access
+newEvent 9 EXTERNAL !fs !node_access
 link 4 9
-submitOp async_9 9 ASYNC !access
+submitOp async_9 9 ASYNC !node_access
 newEvent 10 W 1 !setTimeout
 newEvent 11 W 0 !timerWrap
 trigger 8
-newEvent 12 EXTERNAL !fs !access
+newEvent 12 EXTERNAL !fs !node_access
 link 8 12
-submitOp async_12 12 ASYNC !access
+submitOp async_12 12 ASYNC !node_access
 End
 Begin 7
 trigger 6
-newEvent 13 EXTERNAL !fs !access
+newEvent 13 EXTERNAL !fs !node_access
 link 6 13
-submitOp async_13 13 ASYNC !access
+submitOp async_13 13 ASYNC !node_access
 End
 Begin 11
 trigger 10

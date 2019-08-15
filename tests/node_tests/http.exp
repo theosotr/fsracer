@@ -1,14 +1,14 @@
 @PREAMBLE@
 @PROLOGUE_OPERATIONS@
 Operation async_23 do
-hpath AT_FDCWD foo produced
-newFd AT_FDCWD foo @NUM@
+hpath AT_FDCWD foo produced !open
+newFd AT_FDCWD foo @NUM@ !open
 done
 Operation async_31 do
-delFd @NUM@
+delFd @NUM@ !close
 done
 Operation sync_12 do
-hpath AT_FDCWD foo expunged
+hpath AT_FDCWD foo expunged !unlink
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
@@ -80,9 +80,9 @@ Begin 22
 End
 Begin 11
 trigger 16
-newEvent 23 EXTERNAL !fs !open
+newEvent 23 EXTERNAL !fs !node_open
 link 16 23
-submitOp async_23 23 ASYNC !open
+submitOp async_23 23 ASYNC !node_open
 trigger 16
 trigger 16
 newEvent 24 S 0 !nextTick
@@ -113,12 +113,12 @@ End
 Begin 11
 End
 Begin 30
-newEvent 31 EXTERNAL !fs !close
+newEvent 31 EXTERNAL !fs !node_close
 link 30 31
-submitOp async_31 31 ASYNC !close
+submitOp async_31 31 ASYNC !node_close
 End
 Begin 31
-submitOp sync_12 SYNC !unlink
+submitOp sync_12 SYNC !node_unlink
 End
 @IGNORE@
 1,4,creates

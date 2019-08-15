@@ -422,35 +422,35 @@ wrap_post_uv_fs_work(void *wrapctx, void *user_data)
 static void
 wrap_pre_uv_fs_access(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "access", 4);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_access", 4);
 }
 
 
 static void
 wrap_pre_uv_fs_chmod(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "chmod", 4);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_chmod", 4);
 }
 
 
 static void
 wrap_pre_uv_fs_chown(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "chown", 5);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_chown", 5);
 }
 
 
 static void
 wrap_pre_uv_fs_copyfile(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "copyFile", 5);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_copyFile", 5);
 }
 
 
 static void
 wrap_pre_uv_fs_close(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "close", 3);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_close", 3);
 }
 
 
@@ -459,96 +459,96 @@ static void
 wrap_pre_uv_fs_lchown(void *wrapctx, OUT void **user_data)
 {
 
-  node_utils::AddSubmitOp(wrapctx, user_data, "lchown", 5);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_lchown", 5);
 }
 
 
 static void
 wrap_pre_uv_fs_lstat(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "lstat", 3);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_lstat", 3);
 }
 
 
 static void
 wrap_pre_uv_fs_link(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "link", 4);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_link", 4);
 }
 
 
 static void
 wrap_pre_uv_fs_mkdir(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "mkdir", 4);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_mkdir", 4);
 }
 
 
 static void
 wrap_pre_uv_fs_open(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "open", 5);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_open", 5);
 }
 
 
 static void
 wrap_pre_uv_fs_opendir(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "opendir", 3);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_opendir", 3);
 }
 
 
 static void
 wrap_pre_uv_fs_readlink(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "readlink", 3);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_readlink", 3);
 }
 
 
 static void
 wrap_pre_uv_fs_realpath(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "realpath", 3);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_realpath", 3);
 }
 
 
 static void
 wrap_pre_uv_fs_rename(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "rename", 4);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_rename", 4);
 }
 
 
 static void
 wrap_pre_uv_fs_rmdir(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "rmdir", 3);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_rmdir", 3);
 }
 
 
 static void wrap_pre_uv_fs_stat(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "stat", 3);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_stat", 3);
 }
 
 
 static void wrap_pre_uv_fs_symlink(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "symlink", 5);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_symlink", 5);
 }
 
 
 static void
 wrap_pre_uv_fs_unlink(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "unlink", 3);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_unlink", 3);
 }
 
 
 static void
 wrap_pre_uv_fs_utime(void *wrapctx, OUT void **user_data)
 {
-  node_utils::AddSubmitOp(wrapctx, user_data, "utime", 5);
+  node_utils::AddSubmitOp(wrapctx, user_data, "node_utime", 5);
 }
 
 

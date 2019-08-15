@@ -87,11 +87,11 @@ string(CONCAT preamble
 string(CONCAT prologue_operation_repl
   "(Operation sync_@NUM@ do.done.)+"
   "Operation sync_@NUM@ do."
-  "hpath AT_FDCWD /home[^\n]*/${TEST_FILE} consumed." # At this point Node opens the test program.
-  "newFd AT_FDCWD /home/[^\n]*/${TEST_FILE} @NUM@."
+  "hpath AT_FDCWD /home[^\n]*/${TEST_FILE} consumed !open." # At this point Node opens the test program.
+  "newFd AT_FDCWD /home/[^\n]*/${TEST_FILE} @NUM@ !open."
   "done."
   "Operation sync_@NUM@ do."
-  "delFd @NUM@."
+  "delFd @NUM@ !close."
   "done"
 )
 
@@ -100,10 +100,10 @@ string(CONCAT prologue_block_repl
   "link 1 2."
   "newEvent 3 EXTERNAL."
   "link 1 3."
-  "submitOp sync_1 SYNC !stat."
-  "(submitOp sync_@NUM@ SYNC !lstat.)*"
-  "submitOp sync_@NUM@ SYNC !open."
-  "submitOp sync_@NUM@ SYNC !close"
+  "submitOp sync_1 SYNC !node_stat."
+  "(submitOp sync_@NUM@ SYNC !node_lstat.)*"
+  "submitOp sync_@NUM@ SYNC !node_open."
+  "submitOp sync_@NUM@ SYNC !node_close"
 )
 
 

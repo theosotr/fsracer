@@ -1,14 +1,14 @@
 @PREAMBLE@
 @PROLOGUE_OPERATIONS@
 Operation sync_12 do
-hpath AT_FDCWD foo produced
-newFd AT_FDCWD foo @NUM@
+hpath AT_FDCWD foo produced !open
+newFd AT_FDCWD foo @NUM@ !open
 done
 Operation sync_13 do
-delFd @NUM@
+delFd @NUM@ !close
 done
 Operation sync_14 do
-hpath AT_FDCWD foo expunged
+hpath AT_FDCWD foo expunged !unlink
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
@@ -16,8 +16,8 @@ newEvent 4 W 3 !setImmediate
 newEvent 5 S 0 !nextTick
 End
 Begin 5
-submitOp sync_12 SYNC !open
-submitOp sync_13 SYNC !close
+submitOp sync_12 SYNC !node_open
+submitOp sync_13 SYNC !node_close
 End
 Begin 4
 newEvent 6 W 1 !setTimeout
@@ -25,7 +25,7 @@ newEvent 7 W 0 !timerWrap
 End
 Begin 7
 trigger 6
-submitOp sync_14 SYNC !unlink
+submitOp sync_14 SYNC !node_unlink
 End
 @IGNORE@
 1,4,creates

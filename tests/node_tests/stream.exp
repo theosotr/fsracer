@@ -1,42 +1,42 @@
 @PREAMBLE@
 @PROLOGUE_OPERATIONS@
 Operation sync_12 do
-hpath AT_FDCWD foo produced
-newFd AT_FDCWD foo @NUM@
+hpath AT_FDCWD foo produced !open
+newFd AT_FDCWD foo @NUM@ !open
 done
 Operation sync_13 do
-delFd @NUM@
+delFd @NUM@ !close
 done
 Operation async_4 do
-hpath AT_FDCWD foo consumed
-newFd AT_FDCWD foo @NUM@
+hpath AT_FDCWD foo consumed !open
+newFd AT_FDCWD foo @NUM@ !open
 done
 Operation async_5 do
-hpath AT_FDCWD bar produced
-newFd AT_FDCWD bar @NUM@
+hpath AT_FDCWD bar produced !open
+newFd AT_FDCWD bar @NUM@ !open
 done
 Operation async_12 do
-delFd @NUM@
+delFd @NUM@ !close
 done
 Operation async_14 do
-delFd @NUM@
+delFd @NUM@ !close
 done
 Operation sync_14 do
-hpath AT_FDCWD foo expunged
+hpath AT_FDCWD foo expunged !unlink
 done
 Operation sync_15 do
-hpath AT_FDCWD bar expunged
+hpath AT_FDCWD bar expunged !unlink
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
-submitOp sync_12 SYNC !open
-submitOp sync_13 SYNC !close
-newEvent 4 EXTERNAL !fs !open
+submitOp sync_12 SYNC !node_open
+submitOp sync_13 SYNC !node_close
+newEvent 4 EXTERNAL !fs !node_open
 link 1 4
-submitOp async_4 4 ASYNC !open
-newEvent 5 EXTERNAL !fs !open
+submitOp async_4 4 ASYNC !node_open
+newEvent 5 EXTERNAL !fs !node_open
 link 1 5
-submitOp async_5 5 ASYNC !open
+submitOp async_5 5 ASYNC !node_open
 newEvent 6 S 0 !nextTick
 End
 Begin 6
@@ -62,15 +62,15 @@ Begin 10
 newEvent 11 S 0 !nextTick
 End
 Begin 11
-newEvent 12 EXTERNAL !fs !close
+newEvent 12 EXTERNAL !fs !node_close
 link 11 12
-submitOp async_12 12 ASYNC !close
+submitOp async_12 12 ASYNC !node_close
 newEvent 13 S 0 !nextTick
 End
 Begin 13
-newEvent 14 EXTERNAL !fs !close
+newEvent 14 EXTERNAL !fs !node_close
 link 13 14
-submitOp async_14 14 ASYNC !close
+submitOp async_14 14 ASYNC !node_close
 End
 Begin 12
 newEvent 15 S 0 !nextTick
@@ -79,8 +79,8 @@ Begin 15
 End
 Begin 14
 newEvent 16 S 0 !nextTick
-submitOp sync_14 SYNC !unlink
-submitOp sync_15 SYNC !unlink
+submitOp sync_14 SYNC !node_unlink
+submitOp sync_15 SYNC !node_unlink
 End
 Begin 16
 End

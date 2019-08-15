@@ -1,49 +1,49 @@
 @PREAMBLE@
 @PROLOGUE_OPERATIONS@
 Operation sync_12 do
-hpath AT_FDCWD bar produced
-newFd AT_FDCWD bar @NUM@
+hpath AT_FDCWD bar produced !open
+newFd AT_FDCWD bar @NUM@ !open
 done
 Operation sync_13 do
-delFd @NUM@
+delFd @NUM@ !close
 done
 Operation async_4 do
-hpath AT_FDCWD bar consumed
-newFd AT_FDCWD bar @NUM@
-hpath AT_FDCWD foo produced
-newFd AT_FDCWD foo @NUM@
-delFd @NUM@
-delFd @NUM@
+hpath AT_FDCWD bar consumed !open
+newFd AT_FDCWD bar @NUM@ !open
+hpath AT_FDCWD foo produced !open
+newFd AT_FDCWD foo @NUM@ !open
+delFd @NUM@ !close
+delFd @NUM@ !close
 done
 Operation async_5 do
-hpath AT_FDCWD baz consumed
-newFd AT_FDCWD baz -1 !failed
+hpath AT_FDCWD baz consumed !open
+newFd AT_FDCWD baz -1 !open !failed
 done
 Operation async_6 do
-hpath AT_FDCWD bar consumed
-newFd AT_FDCWD bar @NUM@
-hpath AT_FDCWD foo produced
-newFd AT_FDCWD foo @NUM@
-delFd @NUM@
-delFd @NUM@
+hpath AT_FDCWD bar consumed !open
+newFd AT_FDCWD bar @NUM@ !open
+hpath AT_FDCWD foo produced !open
+newFd AT_FDCWD foo @NUM@ !open
+delFd @NUM@ !close
+delFd @NUM@ !close
 done
 Begin MAIN
 @PROLOGUE_BLOCK@
-submitOp sync_12 SYNC !open
-submitOp sync_13 SYNC !close
-newEvent 4 EXTERNAL !fs !copyFile
+submitOp sync_12 SYNC !node_open
+submitOp sync_13 SYNC !node_close
+newEvent 4 EXTERNAL !fs !node_copyFile
 link 1 4
-submitOp async_4 4 ASYNC !copyFile
-newEvent 5 EXTERNAL !fs !copyFile
+submitOp async_4 4 ASYNC !node_copyFile
+newEvent 5 EXTERNAL !fs !node_copyFile
 link 1 5
-submitOp async_5 5 ASYNC !copyFile
+submitOp async_5 5 ASYNC !node_copyFile
 End
 Begin 4
 End
 Begin 5
-newEvent 6 EXTERNAL !fs !copyFile
+newEvent 6 EXTERNAL !fs !node_copyFile
 link 5 6
-submitOp async_6 6 ASYNC !copyFile
+submitOp async_6 6 ASYNC !node_copyFile
 End
 Begin 6
 End
