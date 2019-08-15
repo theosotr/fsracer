@@ -94,6 +94,9 @@ void RaceDetector::DumpFaults(const faults_t &faults) const {
   if (faults.empty()) {
     return;
   }
+  debug::msg() << "Detected Data Races";
+  debug::msg() << "-------------------";
+  debug::msg() << "Number of data races: " << faults.size();
   for (auto const &fault_entry : faults) {
     auto block_pair = fault_entry.first;
     optional<DebugInfo> debug_info1 = event_info.GetValue(block_pair.first);
@@ -112,9 +115,6 @@ void RaceDetector::DumpFaults(const faults_t &faults) const {
     } else {
       debug2 = " !main";
     }
-    debug::msg() << "Detected Data Races";
-    debug::msg() << "-------------------";
-    debug::msg() << "Number of data races: " << faults.size();
     debug::msg() << "* Event: "
       << block_pair.first << " (tags:" << debug1 << ") and Event: "
       << block_pair.second << " (tags:" << debug2 << "):";
