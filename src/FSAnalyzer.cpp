@@ -76,7 +76,7 @@ void FSAnalyzer::AnalyzeSubmitOp(SubmitOp *submit_op) {
     return;
   }
 
-  string op_id = submit_op->GetId();
+  string op_id = submit_op->GetOpId();
   optional<ExecOp*> exec_op = op_table.GetValue(op_id);
   if (!exec_op.has_value()) {
     return;

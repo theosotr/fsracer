@@ -35,6 +35,7 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
   void *clb = drwrap_get_arg(wrapctx, async_pos);
 
   string id;
+  size_t event_id = 0;
   if (clb == nullptr) {
     // This operation is synchronous.
     trace_gen->IncrSyncOpCount();
@@ -42,6 +43,7 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
   } else {
     int *event_ptr = (int *) trace_gen->GetStoreValue(
         FUNC_ARGS + "wrap_pre_emit_init");
+    event_id = *event_ptr;
     id = "async_" + to_string(*event_ptr);
     delete event_ptr;
   }
@@ -60,17 +62,23 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
   trace_gen->AddToStore(key, (void *) id_ptr);
 
   // It's time to add the `submitOp` expression to the current block.
-  enum SubmitOp::Type type = clb == nullptr ?
-    SubmitOp::SYNC : SubmitOp::ASYNC;
-  SubmitOp *submit_op = new SubmitOp(id, op_name, type);
+  SubmitOp *submit_op = nullptr;
+  if (clb == nullptr) {
+    // Since function pointer is null, we presume that this operation
+    // is synchronous.
+    submit_op = new SubmitOp(id);
+  } else {
+    submit_op = new SubmitOp(id, event_id);
+  }
   size_t size = trace_gen->GetCurrentBlock()->Size();
   // We set the debug information of the `newEvent` expression,
   // since we now know that this expression corresponds to an
   // fs operation.
-  if (size >= 2 && type == SubmitOp::ASYNC) {
+  if (size >= 2 && clb != nullptr) {
     trace_gen->GetCurrentBlock()->SetExprDebugInfo(size - 2, "fs");
     trace_gen->GetCurrentBlock()->SetExprDebugInfo(size - 2, op_name);
   }
+  submit_op->AddDebugInfo(op_name);
   trace_gen->GetCurrentBlock()->AddExpr(submit_op);
 }
 

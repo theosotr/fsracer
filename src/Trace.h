@@ -3,6 +3,7 @@
 
 
 #include <iostream>
+#include <optional>
 #include <vector>
 
 #include "Operation.h"
@@ -185,13 +186,16 @@ class SubmitOp : public Expr {
       SYNC
     };
 
-    /**
-     * Constructs a new 'submitOp' primitive.
-     */
-    SubmitOp(string id_, string name_, enum Type type_):
-      id(id_),
-      name(name_),
-      type(type_) {  }
+    /** Constructor for creating a new asynchronous operation. */
+    SubmitOp(string op_id_, size_t event_id_):
+      op_id(op_id_),
+      event_id(event_id_),
+      type(ASYNC) {  }
+
+    /** Constructor for creating a new synchronous operation. */
+    SubmitOp(string op_id_):
+      op_id(op_id_),
+      type(SYNC) {  }
     
     /** Destructs the current 'submitOp' construct. */
     ~SubmitOp() {  }
@@ -203,8 +207,12 @@ class SubmitOp : public Expr {
     string ToString();
 
     /** Getter of the `id` field. */
-    string GetId() {
-      return id;
+    string GetOpId() {
+      return op_id;
+    }
+
+    optional<size_t> GetEventId() {
+      return event_id;
     }
 
     /** Getter of the `type` field. */
@@ -212,17 +220,15 @@ class SubmitOp : public Expr {
       return type;
     }
 
-    /** Getter of the `name` field. */
-    string GetName() {
-      return name;
-    }
-
   private:
     /// Id of the current operation.
-    string id;
+    string op_id;
 
-    /// Pretty name of the current operation.
-    string name;
+    /**
+     * Id of the event corresponding to this operation.
+     * If `event_id` is absent, then the operation is synchronous.
+     */
+    optional<size_t> event_id;
 
     // Type of the current operation.
     enum Type type;

@@ -27,12 +27,20 @@ string Event::ToString() const {
 
 
 string SubmitOp::ToString() {
+  string type_str = "";
   switch (type) {
     case ASYNC:
-      return "submitOp "  + id + " " + name + " ASYNC";
-    default:
-      return "submitOp "  + id + " " + name + " SYNC";
+      type_str = "ASYNC";
+      break;
+    case SYNC:
+      type_str = "SYNC";
   }
+  DebugInfo debug_info = GetDebugInfo();
+  if (event_id.has_value()) {
+    return "submitOp "  + op_id + " " + to_string(event_id.value())
+      + " " + type_str + debug_info.ToString();
+  }
+  return "SubmitOp " + op_id + " " + type_str + debug_info.ToString();
 }
 
 
