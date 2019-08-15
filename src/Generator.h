@@ -150,16 +150,21 @@ void post_wrap(void *wrapctx, void *user_data) {
 
 
 void EmitDelFd(void *wrapctx, OUT void **user_data, size_t fd_pos,
-                exec_op_t get_exec_op);
+                exec_op_t get_exec_op,
+                string op_name);
 void EmitHpath(void *wrapctx, OUT void **user_data,
                size_t path_pos, Hpath::EffectType effect_type,
-               bool follow_symlink, exec_op_t get_exec_op);
+               bool follow_symlink, exec_op_t get_exec_op,
+               string op_name);
 void EmitLink(void *wrapctx, OUT void **user_data, size_t old_path_pos,
-              size_t new_path_pos, exec_op_t get_exec_op);
+              size_t new_path_pos, exec_op_t get_exec_op,
+              string op_name);
 void EmitRename(void *wrapctx, OUT void **user_data, size_t old_path_pos,
-                size_t new_path_pos, exec_op_t get_exec_op);
+                size_t new_path_pos, exec_op_t get_exec_op,
+                string op_name);
 void EmitSymlink(void *wrapctx, OUT void **user_data, size_t target_path_pos,
-                 size_t new_path_pos, exec_op_t get_exec_op); 
+                 size_t new_path_pos, exec_op_t get_exec_op,
+                 string op_name);
 void MarkOperationStatus(void *wrapctx, void *user_data,
                          exec_op_post_t get_exec_op);
 

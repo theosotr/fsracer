@@ -139,28 +139,31 @@ get_exec_op_post(void *wrapctx, void *user_data) {
 static void
 wrap_pre_access(void *wrapctx, OUT void **user_data)
 {
-  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op,
+            "access");
 }
 
 
 static void
 wrap_pre_chmod(void *wrapctx, OUT void **user_data)
 {
-  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op,
+            "chmod");
 }
 
 
 static void
 wrap_pre_chown(void *wrapctx, OUT void **user_data)
 {
-  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op,
+            "chown");
 }
 
 
 static void
 wrap_pre_close(void *wrapctx, OUT void **user_data)
 {
-  EmitDelFd(wrapctx, user_data, 0, get_exec_op);
+  EmitDelFd(wrapctx, user_data, 0, get_exec_op, "close");
 }
 
 
@@ -174,30 +177,35 @@ wrap_post_status(void *wrapctx, void *user_data)
 static void
 wrap_pre_lchown(void *wrapctx, OUT void **user_data)
 {
-  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, false, get_exec_op);
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, false, get_exec_op,
+            "lchown");
 }
 
 
 static void
 wrap_pre_lstat(void *wrapctx, OUT void **user_data)
 {
-  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, false, get_exec_op);
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, false, get_exec_op,
+            "lstat");
 }
 
 
 static void
 wrap_pre_link(void *wrapctx, OUT void **user_data)
 {
-  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, false, get_exec_op);
-  EmitHpath(wrapctx, user_data, 1, Hpath::PRODUCED, false, get_exec_op);
-  EmitLink(wrapctx, user_data, 0, 1, get_exec_op);
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, false, get_exec_op,
+            "link");
+  EmitHpath(wrapctx, user_data, 1, Hpath::PRODUCED, false, get_exec_op,
+            "link");
+  EmitLink(wrapctx, user_data, 0, 1, get_exec_op, "link");
 }
 
 
 static void
 wrap_pre_mkdir(void *wrapctx, OUT void **user_data)
 {
-  EmitHpath(wrapctx, user_data, 0, Hpath::PRODUCED, false, get_exec_op);
+  EmitHpath(wrapctx, user_data, 0, Hpath::PRODUCED, false, get_exec_op,
+            "mkdir");
 }
 
 
@@ -215,10 +223,12 @@ wrap_pre_open(void *wrapctx, OUT void **user_data)
   int mode = flags & 3;
   if (mode == 0) {
     // It's read-only.
-    EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
+    EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op,
+              "open");
   } else {
     // It's either write-only or read-write.
-    EmitHpath(wrapctx, user_data, 0, Hpath::PRODUCED, true, get_exec_op);
+    EmitHpath(wrapctx, user_data, 0, Hpath::PRODUCED, true, get_exec_op,
+              "open");
   }
   string key = FUNC_ARGS + "open";
   trace_gen->AddToStore(key, path);
@@ -238,6 +248,7 @@ wrap_post_open(void *wrapctx, void *user_data)
     return;
   }
   NewFd *new_fd = new NewFd(AT_FDCWD, path, ret_val);
+  new_fd->SetActualOpName("open");
   if (ret_val < 0) {
     new_fd->MarkFailed();
   }
@@ -248,58 +259,66 @@ wrap_post_open(void *wrapctx, void *user_data)
 static void
 wrap_pre_readlink(void *wrapctx, OUT void **user_data)
 {
-  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op,
+            "readlink");
 }
 
 
 static void
 wrap_pre_realpath(void *wrapctx, OUT void **user_data)
 {
-  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op,
+            "realpath");
 }
 
 
 static void
 wrap_pre_rename(void *wrapctx, OUT void **user_data)
 {
-  EmitHpath(wrapctx, user_data, 0, Hpath::EXPUNGED, true, get_exec_op);
-  EmitHpath(wrapctx, user_data, 0, Hpath::PRODUCED, true, get_exec_op);
-  EmitRename(wrapctx, user_data, 0, 1, get_exec_op);
+  EmitHpath(wrapctx, user_data, 0, Hpath::EXPUNGED, true, get_exec_op,
+            "rename");
+  EmitHpath(wrapctx, user_data, 0, Hpath::PRODUCED, true, get_exec_op,
+            "rename");
+  EmitRename(wrapctx, user_data, 0, 1, get_exec_op, "rename");
 }
 
 
 static void
 wrap_pre_rmdir(void *wrapctx, OUT void **user_data)
 {
-  EmitHpath(wrapctx, user_data, 0, Hpath::EXPUNGED, true, get_exec_op);
+  EmitHpath(wrapctx, user_data, 0, Hpath::EXPUNGED, true, get_exec_op,
+            "rmdir");
 }
 
 
 static void
 wrap_pre_stat(void *wrapctx, OUT void **user_data)
 {
-  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op,
+            "stat");
 }
 
 
 static void
 wrap_pre_symlink(void *wrapctx, OUT void **user_data)
 {
-  EmitSymlink(wrapctx, user_data, 0, 1, get_exec_op);
+  EmitSymlink(wrapctx, user_data, 0, 1, get_exec_op, "symlink");
 }
 
 
 static void
 wrap_pre_unlink(void *wrapctx, OUT void **user_data)
 {
-  EmitHpath(wrapctx, user_data, 0, Hpath::EXPUNGED, true, get_exec_op);
+  EmitHpath(wrapctx, user_data, 0, Hpath::EXPUNGED, true, get_exec_op,
+            "unlink");
 }
 
 
 static void
 wrap_pre_utime(void *wrapctx, OUT void **user_data)
 {
-  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op);
+  EmitHpath(wrapctx, user_data, 0, Hpath::CONSUMED, true, get_exec_op,
+            "utime");
 }
 
 

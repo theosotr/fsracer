@@ -90,7 +90,8 @@ class FSAnalyzer : public Analyzer {
 
     enum OutFormat out_format;
 
-    void ProcessPathEffect(fs::path p, enum Hpath::EffectType effect);
+    void ProcessPathEffect(fs::path p, enum Hpath::EffectType effect,
+                           string operation_name);
     optional<fs::path> GetParentDir(size_t dirfd);
     optional<fs::path> GetAbsolutePath(size_t dirfd, fs::path p);
     void UnlinkResource(inode_t inode_p, string basename);

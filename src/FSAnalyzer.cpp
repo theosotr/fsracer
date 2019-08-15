@@ -172,7 +172,8 @@ void FSAnalyzer::AnalyzeHpath(Hpath *hpath) {
   if (der_path.has_value()) {
     p = der_path.value();
   }
-  ProcessPathEffect(p, hpath->GetEffectType());
+  ProcessPathEffect(p, hpath->GetEffectType(),
+                    hpath->GetActualOpName());
 }
 
 
@@ -186,7 +187,9 @@ void FSAnalyzer::AnalyzeHpathSym(HpathSym *hpathsym) {
     return;
   }
   // In the `hpathsym` construct, we do not dereference the link.
-  ProcessPathEffect(abs_path.value(), hpathsym->GetEffectType());
+  ProcessPathEffect(abs_path.value(),
+                    hpathsym->GetEffectType(),
+                    hpathsym->GetActualOpName());
 }
 
 
@@ -253,7 +256,8 @@ void FSAnalyzer::AnalyzeSymlink(Symlink *symlink) {
 
 
 void FSAnalyzer::ProcessPathEffect(fs::path p,
-    enum Hpath::EffectType effect) {
+    enum Hpath::EffectType effect,
+    string operation_name) {
   DebugInfo debug_info;
   if (block_id == MAIN_BLOCK) {
     debug_info.AddDebugInfo("main");
@@ -264,13 +268,14 @@ void FSAnalyzer::ProcessPathEffect(fs::path p,
   switch (effect) {
     case Hpath::CONSUMED:
     case Hpath::PRODUCED:
-      effect_table.AddPathEffect(p, FSAccess(block_id, effect, debug_info));
+      effect_table.AddPathEffect(
+          p, FSAccess(block_id, effect, debug_info, operation_name));
       break;
     case Hpath::EXPUNGED:
       inode_t inode_p = inode_table.ToInode(p.parent_path());
       string basename = p.filename().native();
       effect_table.AddPathEffect(
-          p, FSAccess(block_id, Hpath::EXPUNGED, debug_info));
+          p, FSAccess(block_id, Hpath::EXPUNGED, debug_info, operation_name));
       UnlinkResource(inode_p, basename);
   }
 }

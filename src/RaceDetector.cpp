@@ -126,11 +126,12 @@ void RaceDetector::DumpFaults(const faults_t &faults) const {
 
 
 std::string RaceDetector::FaultDesc::ToString() const {
-  return  "Path " + p + ": "
-    + op::Hpath::EffToString(fs_access1.effect_type)
-    + " by the first block and "
-    + op::Hpath::EffToString(fs_access2.effect_type)
-    + " by the second one.";
+  return  "Path " + p + ":\n"
+    + "    " + op::Hpath::EffToString(fs_access1.effect_type)
+    + " by the first event "
+    + "(operation: " + fs_access1.operation_name + ")\n"
+    + "    "+ op::Hpath::EffToString(fs_access2.effect_type)
+    + " by the second event (operation: " + fs_access2.operation_name + ")";
 }
 
 

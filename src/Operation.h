@@ -40,8 +40,17 @@ class Operation {
       return failed;
     }
 
+    void SetActualOpName(string actual_op_name_) {
+      actual_op_name = actual_op_name_;
+    }
+
+    string GetActualOpName() {
+      return actual_op_name;
+    }
+
   private:
     bool failed;
+    string actual_op_name;
 };
 
 

@@ -22,12 +22,14 @@ struct FSAccess {
   size_t event_id;
   enum Hpath::EffectType effect_type;
   DebugInfo debug_info;
+  string operation_name;
 
   FSAccess(size_t event_id_, enum Hpath::EffectType effect_type_,
-           DebugInfo debug_info_):
+           DebugInfo debug_info_, string operation_name_):
     event_id(event_id_),
     effect_type(effect_type_),
-    debug_info(debug_info_) {  }
+    debug_info(debug_info_),
+    operation_name(operation_name_) {  }
 };
 
 

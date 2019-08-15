@@ -203,57 +203,69 @@ DefaultPost(void *wrapctx, void *user_data)
 
 void
 EmitDelFd(void *wrapctx, OUT void **user_data, size_t fd_pos,
-          exec_op_t get_exec_op)
+          exec_op_t get_exec_op, string op_name)
 {
   CHECK_EXEC_OP;
   int fd = (int)(intptr_t) drwrap_get_arg(wrapctx, fd_pos);
-  exec_op->AddOperation(new DelFd(fd));
+  DelFd *delfd = new DelFd(fd);
+  delfd->SetActualOpName(op_name);
+  exec_op->AddOperation(delfd);
 }
 
 
 void
 EmitHpath(void *wrapctx, OUT void **user_data, size_t path_pos,
           Hpath::EffectType effect_type, bool follow_symlink,
-          exec_op_t get_exec_op)
+          exec_op_t get_exec_op, string op_name)
 {
   CHECK_EXEC_OP;
   generator::Generator *generator = GetTraceGenerator(user_data);
   string path = (const char *) drwrap_get_arg(wrapctx, path_pos);
   if (follow_symlink) {
-    exec_op->AddOperation(new Hpath(AT_FDCWD, path, effect_type));
+    Hpath *hpath = new Hpath(AT_FDCWD, path, effect_type);
+    hpath->SetActualOpName(op_name);
+    exec_op->AddOperation(hpath);
   } else {
-    exec_op->AddOperation(new HpathSym(AT_FDCWD, path, effect_type));
+    HpathSym *hpathsym = new HpathSym(AT_FDCWD, path, effect_type);
+    hpathsym->SetActualOpName(op_name);
+    exec_op->AddOperation(hpathsym);
   }
 }
 
 
 void
 EmitLink(void *wrapctx, OUT void **user_data, size_t old_path_pos,
-         size_t new_path_pos, exec_op_t get_exec_op)
+         size_t new_path_pos, exec_op_t get_exec_op, string op_name)
 {
   CHECK_EXEC_OP;
   MULTIPATH;
-  exec_op->AddOperation(new Link(AT_FDCWD, old_path, AT_FDCWD, new_path));
+  Link *link = new Link(AT_FDCWD, old_path, AT_FDCWD, new_path);
+  link->SetActualOpName(op_name);
+  exec_op->AddOperation(link);
 }
 
 
 void
 EmitRename(void *wrapctx, OUT void **user_data, size_t old_path_pos,
-           size_t new_path_pos, exec_op_t get_exec_op)
+           size_t new_path_pos, exec_op_t get_exec_op, string op_name)
 {
   CHECK_EXEC_OP;
   MULTIPATH;
-  exec_op->AddOperation(new Rename(AT_FDCWD, old_path, AT_FDCWD, new_path));
+  Rename *rename = new Rename(AT_FDCWD, old_path, AT_FDCWD, new_path);
+  rename->SetActualOpName(op_name);
+  exec_op->AddOperation(rename);
 }
 
 
 void
 EmitSymlink(void *wrapctx, OUT void **user_data, size_t old_path_pos,
-            size_t new_path_pos, exec_op_t get_exec_op) 
+            size_t new_path_pos, exec_op_t get_exec_op, string op_name)
 {
   CHECK_EXEC_OP;
   MULTIPATH;
-  exec_op->AddOperation(new Symlink(AT_FDCWD, new_path, old_path));
+  Symlink *symlink = new Symlink(AT_FDCWD, new_path, old_path);
+  symlink->SetActualOpName(op_name);
+  exec_op->AddOperation(symlink);
 }
 
 
