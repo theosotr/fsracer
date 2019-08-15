@@ -67,7 +67,8 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
   // We set the debug information of the `newEvent` expression,
   // since we now know that this expression corresponds to an
   // fs operation.
-  if (size >= 2) {
+  if (size >= 2 && type == SubmitOp::ASYNC) {
+    trace_gen->GetCurrentBlock()->SetExprDebugInfo(size - 2, "fs");
     trace_gen->GetCurrentBlock()->SetExprDebugInfo(size - 2, op_name);
   }
   trace_gen->GetCurrentBlock()->AddExpr(submit_op);
@@ -613,7 +614,9 @@ add_new_event_expr(Generator *trace_gen, size_t event_id, Event event,
     return;
   }
   NewEventExpr *new_event = new NewEventExpr(event_id, event);
-  new_event->SetDebugInfo(debug_info);
+  if (debug_info != "") {
+    new_event->AddDebugInfo(debug_info);
+  }
   trace_gen->GetCurrentBlock()->AddExpr(new_event);
   int *event_id_ptr = new int(event_id);
   trace_gen->AddToStore(FUNC_ARGS + "wrap_pre_emit_init",
@@ -698,7 +701,7 @@ wrap_pre_new_tick_info(void *wrapctx, OUT void **user_data)
   trace_gen->GetCurrentBlock()->PopExpr();
   NewEventExpr *new_event = new NewEventExpr(trace_gen->GetEventCount(),
                                              event);
-  new_event->SetDebugInfo("nextTick");
+  new_event->AddDebugInfo("nextTick");
   trace_gen->GetCurrentBlock()->AddExpr(new_event);
 }
 
@@ -712,7 +715,7 @@ wrap_pre_timerwrap(void *wrapctx, OUT void **user_data)
   trace_gen->GetCurrentBlock()->PopExpr();
   NewEventExpr *new_event = new NewEventExpr(trace_gen->GetEventCount(),
                                              event);
-  new_event->SetDebugInfo("setTimeout");
+  new_event->AddDebugInfo("setTimeout");
   trace_gen->GetCurrentBlock()->AddExpr(new_event);
   add_to_set(trace_gen, trace_gen->GetEventCount(), TIMER_SET);
 }
@@ -727,7 +730,7 @@ wrap_pre_promise_resolve(void *wrapctx, OUT void **user_data)
   trace_gen->IncrEventCount();
   Event event = Event(Event::S, 0);
   NewEventExpr *new_event = new NewEventExpr(async_id, event);
-  new_event->SetDebugInfo("promise");
+  new_event->AddDebugInfo("promise");
   trace_gen->GetCurrentBlock()->AddExpr(new_event);
 }
 
@@ -781,7 +784,7 @@ wrap_pre_new_async_id(void *wrapctx, OUT void **user_data)
   Event event = Event(Event::W, 3);
   NewEventExpr *new_event = new NewEventExpr(
       trace_gen->GetEventCount(), event);
-  new_event->SetDebugInfo("setImmediate");
+  new_event->AddDebugInfo("setImmediate");
   trace_gen->GetCurrentBlock()->AddExpr(new_event);
 }
 

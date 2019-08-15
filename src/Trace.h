@@ -40,6 +40,21 @@ class TraceNode {
 };
 
 
+/** Class that holds debug information. */
+class DebugInfo {
+public:
+  /** Add a debug information. */
+  void AddDebugInfo(string debug);
+
+  /** String representation of an instance of this class. */
+  string ToString();
+
+private:
+  /// A vector of debug info.
+  vector<string> debug_info;
+};
+
+
 /** A class that represents a trace expression. */ 
 class Expr {
   public:
@@ -54,18 +69,18 @@ class Expr {
     virtual void Accept(analyzer::Analyzer *analyzer);
 
     /** Get the debug information corresponding to this expression. */
-    string GetDebugInfo() {
+    DebugInfo GetDebugInfo() {
       return debug_info;
     }
 
     /** Set the debug information for this expression. */
-    void SetDebugInfo(string debug_info_) {
-      debug_info = debug_info_;
+    void AddDebugInfo(string debug_info_) {
+      debug_info.AddDebugInfo(debug_info_);
     }
 
   private:
-    /// String corresponding to debug information about this expression.
-    string debug_info;
+    /// Debug information corresponding to this expression.
+    DebugInfo debug_info;
 };
 
 

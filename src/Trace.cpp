@@ -74,12 +74,24 @@ void ExecOp::Accept(analyzer::Analyzer *analyzer) {
 }
 
 
+void DebugInfo::AddDebugInfo(string debug) {
+  debug_info.push_back(debug);
+}
+
+
+string DebugInfo::ToString() {
+  string str = "";
+  for (auto const &debug : debug_info) {
+    str += " !" + debug;
+  }
+  return str;
+}
+
+
 string NewEventExpr::ToString() {
   string str = to_string(event_id);
-  string debug_info = GetDebugInfo();
-  debug_info = !debug_info.size() ?
-    "" : " !" + debug_info;
-  return "newEvent " + str + " " + event.ToString() + debug_info;
+  DebugInfo debug_info = GetDebugInfo();
+  return "newEvent " + str + " " + event.ToString() + debug_info.ToString();
 }
 
 
@@ -134,7 +146,7 @@ size_t Block::Size() {
 void Block::SetExprDebugInfo(size_t index, string debug_info) {
   assert(index < exprs.size());
   if (exprs[index]) {
-    exprs[index]->SetDebugInfo(debug_info);
+    exprs[index]->AddDebugInfo(debug_info);
   }
 }
 
