@@ -132,7 +132,8 @@ analyze_traces(FSracerSetup *setup)
 
 
 static void
-detect_faults(FSracerSetup *setup) {
+detect_faults(FSracerSetup *setup)
+{
   if (!setup || !setup->fault_detector) {
     return;
   }
@@ -248,7 +249,8 @@ init_analyzers(gengetopt_args_info &args_info,
 
 detector::FaultDetector *
 init_fault_detector(gengetopt_args_info &args_info,
-                    vector<pair<Analyzer*, writer::OutWriter*>> &analyzers)
+                    vector<pair<Analyzer*, writer::OutWriter*>> &analyzers,
+                    int offset)
 {
   detector::FaultDetector *fault_detector = nullptr;
   if (args_info.fault_detector_given) {
@@ -257,8 +259,10 @@ init_fault_detector(gengetopt_args_info &args_info,
       // We know the first analyzer corresponds to the `dep-infer` analyzer,
       // while the second one is the `fs` analyzer.
       DependencyInferenceAnalyzer *dep_analyzer =
-        static_cast<DependencyInferenceAnalyzer*>(analyzers[0].first);
-      FSAnalyzer *fs_analyzer = static_cast<FSAnalyzer*>(analyzers[1].first);
+        static_cast<DependencyInferenceAnalyzer*>(
+            analyzers[offset + 0].first);
+      FSAnalyzer *fs_analyzer = static_cast<FSAnalyzer*>(
+          analyzers[offset + 1].first);
       fault_detector = new detector::RaceDetector(
           fs_analyzer->GetFSAccesses(),
           dep_analyzer->GetDependencyGraph());
@@ -291,19 +295,29 @@ process_args(gengetopt_args_info &args_info)
   }
 
   vector<pair<Analyzer*, writer::OutWriter*>> analyzers;
+  // The offset of analyzers' vector used by function responsible
+  // for initializing the fault detector.
+  //
+  // The offset is used to extract the analyzers associated with each
+  // fault detector by the corresponding vector.
+  int offset = 0;
   if (args_info.dump_trace_given) {
     analyzers.push_back({ new DumpAnalyzer(),
         new writer::OutWriter(writer::OutWriter::WRITE_STDOUT, "") });
+    // Since we initialize one extra analyzer, we set the offset to 1.
+    offset = 1;
   }
 
   if (args_info.output_trace_given) {
     analyzers.push_back({ new DumpAnalyzer(),
         new writer::OutWriter(writer::OutWriter::WRITE_FILE,
                               args_info.output_trace_arg) });
+    // The same applies here.
+    offset = 1;
   }
   init_analyzers(args_info, analyzers);
   detector::FaultDetector *fault_detector = init_fault_detector(
-      args_info, analyzers);
+      args_info, analyzers, offset);
   setup = new FSracerSetup(new NodeTraceGenerator(), analyzers,
                            fault_detector);
 }
