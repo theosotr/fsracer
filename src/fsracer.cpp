@@ -99,15 +99,24 @@ stop_trace_gen(FSracerSetup *setup)
     return;
   }
   setup->trace_gen->Stop();
-  debug::info(setup->trace_gen->GetName()) << "Trace collected in "
-    << setup->trace_gen->GetTraceGenerationTime() << " seconds";
+  if (!setup->trace_gen->HasFailed()) {
+    debug::info(setup->trace_gen->GetName()) << "Trace collected in "
+      << setup->trace_gen->GetTraceGenerationTime() << " seconds";
+  } else {
+    // The trace section has aborten, so we dump the error message.
+    debug::err(setup->trace_gen->GetName())
+      << "Trace collection aborted: "
+      << setup->trace_gen->GetErr();
+  }
 }
 
 
 static void
 analyze_traces(FSracerSetup *setup)
 {
-  if (!setup || !setup->trace_gen) {
+  if (!setup || !setup->trace_gen || setup->trace_gen->HasFailed()) {
+    // We do not run the analyzers, if we encounter an error during
+    // trace collection.
     return;
   }
   for (auto const &pair_analyzer : setup->analyzers) {

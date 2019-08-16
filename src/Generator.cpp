@@ -161,7 +161,28 @@ string Generator::GetFuncName(string addr) {
 }
 
 
+void Generator::AbortWithErr(enum utils::err::ErrType err_type, string errmsg,
+                             string location) {
+  string desc = "";
+  if (trace) {
+    desc += "Current Trace:\n" + trace->ToString();
+  }
+  error = utils::err::Error(err_type, errmsg, desc, location);
+  dr_exit_process(1);
 }
+
+
+bool Generator::HasFailed() {
+  return error.has_value();
+}
+
+
+utils::err::Error Generator::GetErr() {
+  return error.value();
+}
+
+
+} // namespace generator
 
 
 namespace generator_utils {

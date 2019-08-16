@@ -90,6 +90,10 @@ class Generator {
     void AddFunc(string addr, string func_name);
     string GetFuncName(string addr);
     void Setup(const module_data_t *mod);
+    void AbortWithErr(enum utils::err::ErrType err_type, string errmsg,
+                      string location=__builtin_FUNCTION());
+    bool HasFailed();
+    utils::err::Error GetErr();
 
     virtual void Start();
     virtual void Stop();
@@ -110,6 +114,8 @@ class Generator {
     size_t sync_op_count;
     stack<string> call_stack;
     map<string, string> funcs;
+
+    optional<utils::err::Error> error;
 
     void RegisterFunc(const module_data_t *mod, string func_name,
                       pre_clb_t pre, post_clb_t post);
