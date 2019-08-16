@@ -58,6 +58,15 @@ class Table {
       return table.end();
     }
 
+    typename table_t::const_iterator begin() const {
+      // TODO use a custom iterator.
+      return table.begin();
+    }
+
+    typename table_t::const_iterator end() const {
+      return table.end();
+    }
+
   protected:
     map<T1, T2> table;
 };
