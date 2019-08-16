@@ -1,8 +1,10 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <execinfo.h>
 #include <chrono>
 #include <iostream>
+#include <ostream>
 #include <utility>
 #include <vector>
 
@@ -51,6 +53,44 @@ private:
   /// Time interval in micro seconds.
   long time;
 };
+
+
+namespace err {
+
+
+enum ErrType {
+  RUNTIME,
+  TRACE_ERROR,
+  ANALYZER_ERROR
+};
+
+
+inline std::string ErrToString(enum ErrType err_type);
+
+
+class Error {
+public:
+  Error(enum ErrType err_type_);
+  Error(enum ErrType err_type_, std::string msg_);
+  Error(enum ErrType err_type_, std::string msg_, std::string location_);
+  Error(enum ErrType err_type_, std::string msg_, std::string desc,
+        std::string location_);
+
+  std::string ToString() const;
+  friend std::ostream &operator<<(std::ostream &os, const Error &error) {
+    os << error.ToString();
+    return os;
+  }
+
+private:
+  enum ErrType err_type;
+  std::string msg;
+  std::string desc;
+  std::string location;
+};
+
+
+} // namespace err
 
 } //namespace utils
 

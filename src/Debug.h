@@ -4,6 +4,8 @@
 #include <iostream>
 #include <ostream>
 
+#include "Utils.h"
+
 
 namespace debug {
 
@@ -83,6 +85,7 @@ public:
   msg &operator<<(short N);
   msg &operator<<(double D);
   msg &operator<<(const void *P);
+  msg &operator<<(const utils::err::Error &error);
 
   /** Prints the ANSI character sequence that enables colors. */
   void PrintColor();

@@ -61,4 +61,56 @@ double timer::GetTimeMicros() const {
 }
 
 
+namespace err {
+
+
+std::string ErrToString(enum ErrType err_type) {
+  switch (err_type) {
+    case RUNTIME:
+      return "Runtime Error";
+    case TRACE_ERROR:
+      return "Trace Error";
+    case ANALYZER_ERROR:
+      return "Analyzer Error";
+  }
+}
+
+
+Error::Error(enum ErrType err_type_):
+  err_type(err_type_) {  }
+
+
+Error::Error(enum ErrType err_type_, std::string msg_):
+  err_type(err_type_),
+  msg(msg_) {  }
+
+
+Error::Error(enum ErrType err_type_, std::string msg_, std::string location_):
+  err_type(err_type_),
+  msg(msg_),
+  location(location_) {  }
+
+
+Error::Error(enum ErrType err_type_, std::string msg_, std::string desc_,
+             std::string location_):
+  err_type(err_type_),
+  msg(msg_),
+  desc(desc_),
+  location(location_) {  }
+
+
+std::string Error::ToString() const {
+  std::string str = desc + "\n" + ErrToString(err_type);
+  if (msg != "") {
+    str += ": " + msg;
+  }
+  if (location != "") {
+    str += " (loc: " + location + ")";
+  }
+  return str;
+}
+
+
+}// namespace err
+
 } // namespace utils

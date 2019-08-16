@@ -122,6 +122,12 @@ msg &msg::operator<<(const void *P) {
 }
 
 
+msg &msg::operator<<(const utils::err::Error &error) {
+  os << error;
+  return *this;
+}
+
+
 void msg::PrintColor() {
   switch (color) {
     case colors::NONE:
