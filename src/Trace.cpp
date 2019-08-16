@@ -44,7 +44,7 @@ string SubmitOp::ToString() const {
 }
 
 
-void SubmitOp::Accept(analyzer::Analyzer *analyzer) {
+void SubmitOp::Accept(analyzer::Analyzer *analyzer) const {
   analyzer->AnalyzeSubmitOp(this);
 }
 
@@ -77,7 +77,7 @@ string ExecOp::ToString() const {
 }
 
 
-void ExecOp::Accept(analyzer::Analyzer *analyzer) {
+void ExecOp::Accept(analyzer::Analyzer *analyzer) const {
   analyzer->AnalyzeExecOp(this);
 }
 
@@ -103,7 +103,7 @@ string NewEventExpr::ToString() const {
 }
 
 
-void NewEventExpr::Accept(analyzer::Analyzer *analyzer) {
+void NewEventExpr::Accept(analyzer::Analyzer *analyzer) const {
   analyzer->AnalyzeNewEvent(this);
 }
 
@@ -113,7 +113,7 @@ string LinkExpr::ToString() const {
 }
 
 
-void LinkExpr::Accept(analyzer::Analyzer *analyzer) {
+void LinkExpr::Accept(analyzer::Analyzer *analyzer) const {
   analyzer->AnalyzeLink(this);
 }
 
@@ -123,7 +123,7 @@ string Trigger::ToString() const {
 }
 
 
-void Trigger::Accept(analyzer::Analyzer *analyzer) {
+void Trigger::Accept(analyzer::Analyzer *analyzer) const {
   analyzer->AnalyzeTrigger(this);
 }
 
@@ -172,7 +172,7 @@ string Block::ToString() const {
 }
 
 
-void Block::Accept(analyzer::Analyzer *analyzer) {
+void Block::Accept(analyzer::Analyzer *analyzer) const {
   analyzer->AnalyzeBlock(this);
 }
 
@@ -207,7 +207,7 @@ string Trace::ToString() const {
 }
 
 
-void Trace::Accept(analyzer::Analyzer *analyzer) {
+void Trace::Accept(analyzer::Analyzer *analyzer) const {
   analyzer->AnalyzeTrace(this);
 }
 

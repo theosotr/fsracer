@@ -15,7 +15,7 @@ using namespace trace;
 namespace analyzer {
 
 
-void DependencyInferenceAnalyzer::Analyze(TraceNode *trace_node) {
+void DependencyInferenceAnalyzer::Analyze(const TraceNode *trace_node) {
   if (trace_node) {
     analysis_time.Start();
     trace_node->Accept(this);
@@ -24,7 +24,7 @@ void DependencyInferenceAnalyzer::Analyze(TraceNode *trace_node) {
 }
 
 
-void DependencyInferenceAnalyzer::AnalyzeTrace(Trace *trace) {
+void DependencyInferenceAnalyzer::AnalyzeTrace(const Trace *trace) {
   if (!trace) {
     return;
   }
@@ -36,7 +36,7 @@ void DependencyInferenceAnalyzer::AnalyzeTrace(Trace *trace) {
 }
 
 
-void DependencyInferenceAnalyzer::AnalyzeBlock(Block *block) {
+void DependencyInferenceAnalyzer::AnalyzeBlock(const Block *block) {
   if (!block) {
     return;
   }
@@ -78,14 +78,15 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(Block *block) {
 }
 
 
-void DependencyInferenceAnalyzer::AnalyzeExpr(Expr *expr) {
+void DependencyInferenceAnalyzer::AnalyzeExpr(const Expr *expr) {
   if (expr) {
     expr->Accept(this);
   }
 }
 
 
-void DependencyInferenceAnalyzer::AnalyzeNewEvent(NewEventExpr *new_event) {
+void
+DependencyInferenceAnalyzer::AnalyzeNewEvent(const NewEventExpr *new_event) {
   if (!new_event) {
     return;
   }
@@ -124,7 +125,7 @@ void DependencyInferenceAnalyzer::AnalyzeNewEvent(NewEventExpr *new_event) {
 }
 
 
-void DependencyInferenceAnalyzer::AnalyzeLink(LinkExpr *link_expr) {
+void DependencyInferenceAnalyzer::AnalyzeLink(const LinkExpr *link_expr) {
   if (!link_expr) {
     return;
   }
@@ -142,7 +143,7 @@ void DependencyInferenceAnalyzer::AnalyzeLink(LinkExpr *link_expr) {
 
 
 void
-DependencyInferenceAnalyzer::AnalyzeTrigger(Trigger *trigger_expr) {
+DependencyInferenceAnalyzer::AnalyzeTrigger(const Trigger *trigger_expr) {
   if (!trigger_expr) {
     return;
   }
@@ -162,15 +163,15 @@ void DependencyInferenceAnalyzer::RemoveAliveEvent(size_t event_id) {
   }
 }
 
-void DependencyInferenceAnalyzer::ProceedSEvent(EventInfo &new_event,
-                                                EventInfo &old_event) {
+void DependencyInferenceAnalyzer::ProceedSEvent(const EventInfo &new_event,
+                                                const EventInfo &old_event) {
   dep_graph.AddEdge(old_event.node_id, new_event.node_id,
                     graph::HAPPENS_BEFORE);
 }
 
 
-void DependencyInferenceAnalyzer::ProceedMEvent(EventInfo &new_event,
-                                                EventInfo &old_event) {
+void DependencyInferenceAnalyzer::ProceedMEvent(const EventInfo &new_event,
+                                                const EventInfo &old_event) {
   switch (new_event.node_obj.GetEventType()) {
     case Event::S:
       // The current event has higher priority (S > M).
@@ -197,8 +198,8 @@ void DependencyInferenceAnalyzer::ProceedMEvent(EventInfo &new_event,
 }
 
 
-void DependencyInferenceAnalyzer::ProceedWEvent(EventInfo &new_event,
-                                                EventInfo &old_event) {
+void DependencyInferenceAnalyzer::ProceedWEvent(const EventInfo &new_event,
+                                                const EventInfo &old_event) {
   switch (new_event.node_obj.GetEventType()) {
     case Event::S:
     case Event::M:
@@ -221,8 +222,8 @@ void DependencyInferenceAnalyzer::ProceedWEvent(EventInfo &new_event,
 }
 
 
-void DependencyInferenceAnalyzer::ProceedEXTEvent(EventInfo &new_event,
-                                                  EventInfo &old_event) {
+void DependencyInferenceAnalyzer::ProceedEXTEvent(const EventInfo &new_event,
+                                                  const EventInfo &old_event) {
   switch (new_event.node_obj.GetEventType()) {
     case Event::S:
     case Event::M:
@@ -235,7 +236,8 @@ void DependencyInferenceAnalyzer::ProceedEXTEvent(EventInfo &new_event,
 }
 
 
-void DependencyInferenceAnalyzer::AddDependencies(size_t event_id, Event event) {
+void DependencyInferenceAnalyzer::AddDependencies(size_t event_id,
+                                                  const Event &event) {
   for (auto alive_ev_id : alive_events) {
     optional<EventInfo> event_info_opt = dep_graph.GetNodeInfo(alive_ev_id);
     // We ignore events that are not present to the dependency graph.
@@ -265,7 +267,7 @@ void DependencyInferenceAnalyzer::AddDependencies(size_t event_id, Event event) 
 }
 
 
-void DependencyInferenceAnalyzer::ConnectWithWEvents(EventInfo event_info) {
+void DependencyInferenceAnalyzer::ConnectWithWEvents(const EventInfo &event_info) {
   switch (event_info.node_obj.GetEventType()) {
     case Event::S:
     case Event::M:

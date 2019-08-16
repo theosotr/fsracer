@@ -156,24 +156,24 @@ class DependencyInferenceAnalyzer : public Analyzer {
       return "DependencyInferenceAnalyzer";
     }
 
-    void Analyze(TraceNode *trace_node);
-    void AnalyzeTrace(Trace *trace);
-    void AnalyzeBlock(Block *block);
-    void AnalyzeExpr(Expr *expr);
-    void AnalyzeSubmitOp(SubmitOp *submit_op) {  };
-    void AnalyzeExecOp(ExecOp *exec_op) {  };
-    void AnalyzeNewEvent(NewEventExpr *new_ev_expr);
-    void AnalyzeLink(LinkExpr *link_expr);
-    void AnalyzeTrigger(Trigger *trigger_expr);
+    void Analyze(const TraceNode *trace_node);
+    void AnalyzeTrace(const Trace *trace);
+    void AnalyzeBlock(const Block *block);
+    void AnalyzeExpr(const Expr *expr);
+    void AnalyzeSubmitOp(const SubmitOp *submit_op) {  };
+    void AnalyzeExecOp(const ExecOp *exec_op) {  };
+    void AnalyzeNewEvent(const NewEventExpr *new_ev_expr);
+    void AnalyzeLink(const LinkExpr *link_expr);
+    void AnalyzeTrigger(const Trigger *trigger_expr);
 
-    void AnalyzeOperation(Operation *operation) {  }
-    void AnalyzeNewFd(NewFd *new_fd) {  }
-    void AnalyzeDelFd(DelFd *del_fd) {  }
-    void AnalyzeHpath(Hpath *hpath) {  }
-    void AnalyzeHpath(HpathSym *hpathsym) {  }
-    void AnalyzeLink(Link *link) {  }
-    void AnalyzeRename(Rename *rename) {  }
-    void AnalyzeSymlink(Symlink *symlink) {  }
+    void AnalyzeOperation(const Operation *operation) {  }
+    void AnalyzeNewFd(const NewFd *new_fd) {  }
+    void AnalyzeDelFd(const DelFd *del_fd) {  }
+    void AnalyzeHpath(const Hpath *hpath) {  }
+    void AnalyzeHpath(const HpathSym *hpathsym) {  }
+    void AnalyzeLink(const Link *link) {  }
+    void AnalyzeRename(const Rename *rename) {  }
+    void AnalyzeSymlink(const Symlink *symlink) {  }
 
     void DumpOutput(writer::OutWriter *out) const;
 
@@ -190,7 +190,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
      */
     set<size_t> alive_events;
     // The block that is currently being processed by the analyzer.
-    Block *current_block;
+    const Block *current_block;
     /**
      * This is the event that we need to connext with the first
      * created event in the current execution block. */
@@ -222,7 +222,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
      *
      * The old_event has type S.
      */
-    void ProceedSEvent(EventInfo &new_event, EventInfo &old_event);
+    void ProceedSEvent(const EventInfo &new_event, const EventInfo &old_event);
 
     /**
      * This method checks whether the new event is dependent on
@@ -230,7 +230,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
      *
      * The old_event has type M.
      */
-    void ProceedMEvent(EventInfo &new_event, EventInfo &old_event);
+    void ProceedMEvent(const EventInfo &new_event, const EventInfo &old_event);
 
     /**
      * This method checks whether the new event is dependent on
@@ -238,7 +238,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
      *
      * The old_event has type W.
      */
-    void ProceedWEvent(EventInfo &new_event, EventInfo &old_event);
+    void ProceedWEvent(const EventInfo &new_event, const EventInfo &old_event);
 
     /**
      * This method checks whether the new event is dependent on
@@ -246,7 +246,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
      *
      * The old_event has type EXT.
      */
-    void ProceedEXTEvent(EventInfo &new_event, EventInfo &old_event);
+    void ProceedEXTEvent(const EventInfo &new_event, const EventInfo &old_event);
 
     /**
      * This method processes an event with the given ID and type information.
@@ -254,7 +254,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
      * It inspects every existing event, and correlates it with the given one
      * if it is necessary.
      */
-    void AddDependencies(size_t event_id, Event event);
+    void AddDependencies(size_t event_id, const Event &event);
 
     /**
      * This method prunes redundant edges between the previous nodes
@@ -263,7 +263,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
     void PruneEdges(size_t event_id);
 
     /** Make all the event whose type is W dependent on the given event. */
-    void ConnectWithWEvents(EventInfo event_info);
+    void ConnectWithWEvents(const EventInfo &event_info);
 };
 
 

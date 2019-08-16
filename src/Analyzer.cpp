@@ -10,7 +10,7 @@ using namespace trace;
 namespace analyzer {
 
 
-void DumpAnalyzer::Analyze(TraceNode *trace_node) {
+void DumpAnalyzer::Analyze(const TraceNode *trace_node) {
   if (trace_node) {
     analysis_time.Start();
     trace_node->Accept(this);
@@ -19,7 +19,7 @@ void DumpAnalyzer::Analyze(TraceNode *trace_node) {
 }
 
 
-void DumpAnalyzer::AnalyzeTrace(Trace *trace) {
+void DumpAnalyzer::AnalyzeTrace(const Trace *trace) {
   if (!trace) {
     return;
   }
@@ -43,7 +43,7 @@ void DumpAnalyzer::AnalyzeTrace(Trace *trace) {
 }
 
 
-void DumpAnalyzer::AnalyzeBlock(Block *block) {
+void DumpAnalyzer::AnalyzeBlock(const Block *block) {
   if (!block) {
     return;
   }
@@ -60,14 +60,14 @@ void DumpAnalyzer::AnalyzeBlock(Block *block) {
 }
 
 
-void DumpAnalyzer::AnalyzeExpr(Expr *expr) {
+void DumpAnalyzer::AnalyzeExpr(const Expr *expr) {
   if (expr) {
     expr->Accept(this);
   }
 }
 
 
-void DumpAnalyzer::AnalyzeSubmitOp(SubmitOp *submit_op) {
+void DumpAnalyzer::AnalyzeSubmitOp(const SubmitOp *submit_op) {
   if (!submit_op) {
     return;
   }
@@ -76,7 +76,7 @@ void DumpAnalyzer::AnalyzeSubmitOp(SubmitOp *submit_op) {
 }
 
 
-void DumpAnalyzer::AnalyzeExecOp(ExecOp *exec_op) {
+void DumpAnalyzer::AnalyzeExecOp(const ExecOp *exec_op) {
   if (!exec_op) {
     return;
   }
@@ -86,7 +86,7 @@ void DumpAnalyzer::AnalyzeExecOp(ExecOp *exec_op) {
 }
 
 
-void DumpAnalyzer::AnalyzeNewEvent(NewEventExpr *new_ev_expr) {
+void DumpAnalyzer::AnalyzeNewEvent(const NewEventExpr *new_ev_expr) {
   if (!new_ev_expr) {
     return;
   }
@@ -96,7 +96,7 @@ void DumpAnalyzer::AnalyzeNewEvent(NewEventExpr *new_ev_expr) {
 }
 
 
-void DumpAnalyzer::AnalyzeLink(LinkExpr *link_expr) {
+void DumpAnalyzer::AnalyzeLink(const LinkExpr *link_expr) {
   if (!link_expr) {
     return;
   }
@@ -106,7 +106,7 @@ void DumpAnalyzer::AnalyzeLink(LinkExpr *link_expr) {
 }
 
 
-void DumpAnalyzer::AnalyzeTrigger(Trigger *trigger_expr) {
+void DumpAnalyzer::AnalyzeTrigger(const Trigger *trigger_expr) {
   if (!trigger_expr) {
     return;
   }
@@ -115,7 +115,7 @@ void DumpAnalyzer::AnalyzeTrigger(Trigger *trigger_expr) {
 }
 
 
-void DumpAnalyzer::AnalyzeOperation(Operation *operation) {
+void DumpAnalyzer::AnalyzeOperation(const Operation *operation) {
   if (operation) {
     operation->Accept(this);
   }

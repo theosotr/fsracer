@@ -29,7 +29,7 @@ class Operation {
     Operation():
       failed(false) {  }
     virtual ~Operation() {  };
-    virtual void Accept(analyzer::Analyzer *analyzer);
+    virtual void Accept(analyzer::Analyzer *analyzer) const;
     virtual string ToString() const;
     virtual string GetOpName() const;
 
@@ -74,7 +74,7 @@ class DelFd : public Operation {
       return GetOpName() + " " + to_string(fd) + ACTUAL_NAME + FAILED;
     }
 
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
   private:
     size_t fd;
@@ -109,7 +109,7 @@ class DupFd : public Operation {
         to_string(new_fd) + ACTUAL_NAME + FAILED;
     };
 
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
   private:
       size_t old_fd;
@@ -154,7 +154,7 @@ class Hpath : public Operation {
         Hpath::EffToString(effect_type) + ACTUAL_NAME + FAILED;
     };
 
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
     static string EffToString(enum EffectType effect);
 
@@ -174,7 +174,7 @@ class HpathSym : public Hpath {
       Hpath(dirfd_, path_, effect_type_) {  }
     ~HpathSym() {  }
 
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
     string GetOpName() const {
       return "hpathsym";
@@ -219,7 +219,7 @@ class Link : public Operation {
       return "link";
     }
 
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
   private:
     size_t old_dirfd;
@@ -262,7 +262,7 @@ class NewFd : public Operation {
         " " + to_string(fd) + ACTUAL_NAME + FAILED;
     };
 
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
   private:
     size_t dirfd;
@@ -331,7 +331,7 @@ class Rename : public Link {
       return "rename";
     }
 
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 };
 
 
@@ -353,7 +353,7 @@ class SetCwd : public Operation {
       return GetOpName() + " " + cwd + ACTUAL_NAME + FAILED;
     }
 
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
   private:
     string cwd;
 };
@@ -388,7 +388,7 @@ class Symlink : public Operation {
         target + ACTUAL_NAME + FAILED;
     }
 
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
   private:
     size_t dirfd;
@@ -408,7 +408,7 @@ class Nop : public Operation {
       return GetOpName();
     }
 
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
 };
 

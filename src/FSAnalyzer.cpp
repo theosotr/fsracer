@@ -12,7 +12,7 @@
 
 namespace analyzer {
 
-void FSAnalyzer::Analyze(TraceNode *trace_node) {
+void FSAnalyzer::Analyze(const TraceNode *trace_node) {
   if (trace_node) {
     analysis_time.Start();
     trace_node->Accept(this);
@@ -21,7 +21,7 @@ void FSAnalyzer::Analyze(TraceNode *trace_node) {
 }
 
 
-void FSAnalyzer::AnalyzeTrace(Trace *trace) {
+void FSAnalyzer::AnalyzeTrace(const Trace *trace) {
   if (!trace) {
     return;
   }
@@ -44,7 +44,7 @@ void FSAnalyzer::AnalyzeTrace(Trace *trace) {
 }
 
 
-void FSAnalyzer::AnalyzeExecOp(ExecOp *exec_op) {
+void FSAnalyzer::AnalyzeExecOp(const ExecOp *exec_op) {
   if (!exec_op) {
     return;
   }
@@ -52,7 +52,7 @@ void FSAnalyzer::AnalyzeExecOp(ExecOp *exec_op) {
 }
 
 
-void FSAnalyzer::AnalyzeBlock(Block *block) {
+void FSAnalyzer::AnalyzeBlock(const Block *block) {
   if (!block) {
     return;
   }
@@ -64,14 +64,14 @@ void FSAnalyzer::AnalyzeBlock(Block *block) {
 }
 
 
-void FSAnalyzer::AnalyzeExpr(Expr *expr) {
+void FSAnalyzer::AnalyzeExpr(const Expr *expr) {
   if (expr) {
     expr->Accept(this);
   }
 }
 
 
-void FSAnalyzer::AnalyzeNewEvent(NewEventExpr *new_ev_expr) {
+void FSAnalyzer::AnalyzeNewEvent(const NewEventExpr *new_ev_expr) {
   if (!new_ev_expr) {
     return;
   }
@@ -79,13 +79,13 @@ void FSAnalyzer::AnalyzeNewEvent(NewEventExpr *new_ev_expr) {
 }
 
 
-void FSAnalyzer::AnalyzeSubmitOp(SubmitOp *submit_op) {
+void FSAnalyzer::AnalyzeSubmitOp(const SubmitOp *submit_op) {
   if (!submit_op) {
     return;
   }
 
   string op_id = submit_op->GetOpId();
-  optional<ExecOp*> exec_op = op_table.GetValue(op_id);
+  optional<const ExecOp*> exec_op = op_table.GetValue(op_id);
   if (!exec_op.has_value()) {
     return;
   }
@@ -106,14 +106,14 @@ void FSAnalyzer::AnalyzeSubmitOp(SubmitOp *submit_op) {
 }
 
 
-void FSAnalyzer::AnalyzeOperation(Operation *operation) {
+void FSAnalyzer::AnalyzeOperation(const Operation *operation) {
   if (operation) {
     operation->Accept(this);
   }
 }
 
 
-void FSAnalyzer::AnalyzeNewFd(NewFd *new_fd) {
+void FSAnalyzer::AnalyzeNewFd(const NewFd *new_fd) {
   if (!new_fd) {
     return;
   }
@@ -141,7 +141,7 @@ void FSAnalyzer::AnalyzeNewFd(NewFd *new_fd) {
 }
 
 
-void FSAnalyzer::AnalyzeDelFd(DelFd *del_fd) {
+void FSAnalyzer::AnalyzeDelFd(const DelFd *del_fd) {
   if (!del_fd) {
     return;
   }
@@ -154,7 +154,7 @@ void FSAnalyzer::AnalyzeDelFd(DelFd *del_fd) {
 }
 
 
-void FSAnalyzer::AnalyzeHpath(Hpath *hpath) {
+void FSAnalyzer::AnalyzeHpath(const Hpath *hpath) {
   if (!hpath) {
     return;
   }
@@ -177,7 +177,7 @@ void FSAnalyzer::AnalyzeHpath(Hpath *hpath) {
 }
 
 
-void FSAnalyzer::AnalyzeHpathSym(HpathSym *hpathsym) {
+void FSAnalyzer::AnalyzeHpathSym(const HpathSym *hpathsym) {
   if (!hpathsym) {
     return;
   }
@@ -193,7 +193,7 @@ void FSAnalyzer::AnalyzeHpathSym(HpathSym *hpathsym) {
 }
 
 
-void FSAnalyzer::AnalyzeLink(Link *link) {
+void FSAnalyzer::AnalyzeLink(const Link *link) {
   if (!link) {
     return;
   }
@@ -213,7 +213,7 @@ void FSAnalyzer::AnalyzeLink(Link *link) {
 }
 
 
-void FSAnalyzer::AnalyzeRename(Rename *rename) {
+void FSAnalyzer::AnalyzeRename(const Rename *rename) {
   if (!rename) {
     return;
   }
@@ -241,7 +241,7 @@ void FSAnalyzer::AnalyzeRename(Rename *rename) {
 }
 
 
-void FSAnalyzer::AnalyzeSymlink(Symlink *symlink) {
+void FSAnalyzer::AnalyzeSymlink(const Symlink *symlink) {
   if (!symlink) {
     return;
   }

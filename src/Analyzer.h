@@ -29,42 +29,42 @@ class Analyzer {
     virtual string GetName() const;
 
     /** Analyze a node in the AST of traces. */
-    virtual void Analyze(TraceNode *trace_node);
+    virtual void Analyze(const TraceNode *trace_node);
     /** Analyze the whole trace. */
-    virtual void AnalyzeTrace(Trace *trace);
+    virtual void AnalyzeTrace(const Trace *trace);
     /** Analyze a single block */
-    virtual void AnalyzeBlock(Block *block);
+    virtual void AnalyzeBlock(const Block *block);
     /** Analyze a trace expression. */
-    virtual void AnalyzeExpr(Expr *expr);
+    virtual void AnalyzeExpr(const Expr *expr);
     /** Analyze the 'submitOp' construct. */
-    virtual void AnalyzeSubmitOp(SubmitOp *submit_op);
+    virtual void AnalyzeSubmitOp(const SubmitOp *submit_op);
     /** Analyze the 'execOp' construct. */
-    virtual void AnalyzeExecOp(ExecOp *exec_op);
+    virtual void AnalyzeExecOp(const ExecOp *exec_op);
     /** Analyze the 'newEvent' construct. */
-    virtual void AnalyzeNewEvent(NewEventExpr *new_ev_expr);
+    virtual void AnalyzeNewEvent(const NewEventExpr *new_ev_expr);
     /** Analyze the 'link' construct. */
-    virtual void AnalyzeLink(LinkExpr *link_expr);
+    virtual void AnalyzeLink(const LinkExpr *link_expr);
     /** Analyze the 'trigger' construct. */
-    virtual void AnalyzeTrigger(Trigger *trigger_expr);
+    virtual void AnalyzeTrigger(const Trigger *trigger_expr);
 
     // ----- Methods for analyzing FS-related operations -----
   
     /** Analyze an FS operation. */
-    virtual void AnalyzeOperation(Operation *operation);
+    virtual void AnalyzeOperation(const Operation *operation);
     /** Analzyze the 'newFd' construct. */
-    virtual void AnalyzeNewFd(NewFd *new_fd);
+    virtual void AnalyzeNewFd(const NewFd *new_fd);
     /** Analyze the 'delFd' construct. */
-    virtual void AnalyzeDelFd(DelFd *del_fd);
+    virtual void AnalyzeDelFd(const DelFd *del_fd);
     /** Analyze the 'hpath' construct. */
-    virtual void AnalyzeHpath(Hpath *hpath);
+    virtual void AnalyzeHpath(const Hpath *hpath);
     /** Analyze the 'hpathsym' construct. */
-    virtual void AnalyzeHpath(HpathSym *hpathsym);
+    virtual void AnalyzeHpath(const HpathSym *hpathsym);
     /** Analyze the 'link' construct. */
-    virtual void AnalyzeLink(Link *link);
+    virtual void AnalyzeLink(const Link *link);
     /** Analyze the 'rename' construct. */
-    virtual void AnalyzeRename(Rename *rename);
+    virtual void AnalyzeRename(const Rename *rename);
     /** Analyze the 'symlink' construct. */
-    virtual void AnalyzeSymlink(Symlink *symlink);
+    virtual void AnalyzeSymlink(const Symlink *symlink);
 
     /**
      * This method dumps the analysis output using the given
@@ -104,24 +104,24 @@ class DumpAnalyzer : public Analyzer {
       return "DumpAnalyzer";
     }
 
-    void Analyze(TraceNode *trace_node);
-    void AnalyzeTrace(Trace *trace);
-    void AnalyzeBlock(Block *block);
-    void AnalyzeExpr(Expr *expr);
-    void AnalyzeSubmitOp(SubmitOp *submit_op);
-    void AnalyzeExecOp(ExecOp *exec_op);
-    void AnalyzeNewEvent(NewEventExpr *new_ev_expr);
-    void AnalyzeLink(LinkExpr *link_expr);
-    void AnalyzeTrigger(Trigger *nested_ev_expr);
+    void Analyze(const TraceNode *trace_node);
+    void AnalyzeTrace(const Trace *trace);
+    void AnalyzeBlock(const Block *block);
+    void AnalyzeExpr(const Expr *expr);
+    void AnalyzeSubmitOp(const SubmitOp *submit_op);
+    void AnalyzeExecOp(const ExecOp *exec_op);
+    void AnalyzeNewEvent(const NewEventExpr *new_ev_expr);
+    void AnalyzeLink(const LinkExpr *link_expr);
+    void AnalyzeTrigger(const Trigger *nested_ev_expr);
 
-    void AnalyzeOperation(Operation *operation);
-    void AnalyzeNewFd(NewFd *new_fd) { trace_count++; }
-    void AnalyzeDelFd(DelFd *del_fd) { trace_count++; }
-    void AnalyzeHpath(Hpath *hpath) { trace_count++; }
-    void AnalyzeHpathSym(HpathSym *hpathsym) { trace_count++; }
-    void AnalyzeLink(Link *link) { trace_count++; }
-    void AnalyzeRename(Rename *rename) { trace_count++; }
-    void AnalyzeSymlink(Symlink *symlink) { trace_count++; }
+    void AnalyzeOperation(const Operation *operation);
+    void AnalyzeNewFd(const NewFd *new_fd) { trace_count++; }
+    void AnalyzeDelFd(const DelFd *del_fd) { trace_count++; }
+    void AnalyzeHpath(const Hpath *hpath) { trace_count++; }
+    void AnalyzeHpathSym(const HpathSym *hpathsym) { trace_count++; }
+    void AnalyzeLink(const Link *link) { trace_count++; }
+    void AnalyzeRename(const Rename *rename) { trace_count++; }
+    void AnalyzeSymlink(const Symlink *symlink) { trace_count++; }
 
     /** Gets the number of trace entries. */
     size_t GetTraceCount() const {

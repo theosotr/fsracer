@@ -37,7 +37,7 @@ class TraceNode {
      * This method accepts an analyzer, and delegates the analysis
      * of the current trace node through the visitor design pattern.
      */
-    virtual void Accept(analyzer::Analyzer *analyzer);
+    virtual void Accept(analyzer::Analyzer *analyzer) const;
 };
 
 
@@ -67,7 +67,7 @@ class Expr {
      * This methods accepts an analyzer that is responsible for
      * analyzing the current expression.
      */
-    virtual void Accept(analyzer::Analyzer *analyzer);
+    virtual void Accept(analyzer::Analyzer *analyzer) const;
 
     /** Get the debug information corresponding to this expression. */
     DebugInfo GetDebugInfo() const {
@@ -147,7 +147,7 @@ class Event {
     }
 
     /** Accept an analyzer for processing the current event object. */
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
     /** String representation of the current event object. */
     string ToString() const;
@@ -201,7 +201,7 @@ class SubmitOp : public Expr {
     ~SubmitOp() {  }
 
     /** Accepts an analyzer to process the current 'submitOp' expression. */
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
     /** String representation of the current object. */
     string ToString() const;
@@ -274,7 +274,7 @@ class ExecOp : public TraceNode {
      * This method accepts an analyzer that is responsible for processing
      * the current 'execOp' primtive.
      */
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
     /** String representation of the current expression. */
     string ToString() const;
@@ -325,7 +325,7 @@ class NewEventExpr : public Expr {
      * This method accepts an analyzer that is responsible to
      * process the current expression.
      */ 
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
     /** String representation of the current expression. */
     string ToString() const;
@@ -369,7 +369,7 @@ class LinkExpr : public Expr {
     /**
      * This method accepts an analyzer that is responsible for analyzing
      * the current `link` expression. */
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
     /** String representation of the current expression. */
     string ToString() const;
@@ -405,7 +405,7 @@ class Trigger : public Expr {
     /**
      * This method accepts an analyzer that is responsible for analyzing
      * the current `trigger` expression. */
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
     /** String representation of the current expression. */
     string ToString() const;
@@ -460,7 +460,7 @@ class Block : public TraceNode {
      * This method accepts an analyzer that is responsible for processing the
      * current execution block.
      */
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
     /** String representation of the current execution block. */
     string ToString() const;
@@ -554,7 +554,7 @@ class Trace : public TraceNode {
      * This method accepts an analyzer that is responsible for processing
      * the current trace.
      */
-    void Accept(analyzer::Analyzer *analyzer);
+    void Accept(analyzer::Analyzer *analyzer) const;
 
     /** String representation of the current trace. */
     string ToString() const;
