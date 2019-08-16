@@ -30,12 +30,12 @@ void DumpAnalyzer::AnalyzeTrace(const Trace *trace) {
   trace_buf += "!Working Directory: ";
   trace_buf += trace->GetCwd();
   trace_buf += "\n";
-  vector<ExecOp*> exec_ops = trace->GetExecOps();
+  vector<const ExecOp*> exec_ops = trace->GetExecOps();
   operation_count = exec_ops.size();
   for (auto const &exec_op : exec_ops) {
     AnalyzeExecOp(exec_op);
   }
-  vector<Block*> blocks = trace->GetBlocks();
+  vector<const Block*> blocks = trace->GetBlocks();
   block_count = blocks.size();
   for (auto const &block : blocks) {
     AnalyzeBlock(block);
@@ -47,7 +47,7 @@ void DumpAnalyzer::AnalyzeBlock(const Block *block) {
   if (!block) {
     return;
   }
-  vector<Expr*> exprs = block->GetExprs();
+  vector<const Expr*> exprs = block->GetExprs();
   size_t block_id = block->GetBlockId();
   trace_buf += "Begin ";
   trace_buf += (block_id == MAIN_BLOCK ? "MAIN" : to_string(block_id));

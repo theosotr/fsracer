@@ -49,12 +49,15 @@ void SubmitOp::Accept(analyzer::Analyzer *analyzer) const {
 }
 
 
-Operation *ExecOp::GetLastOperation() const {
+void ExecOp::MarkLastOperationFailed() {
   if (operations.empty()) {
-    return nullptr;
+    return;
   }
 
-  return *(operations.end() - 1);
+  Operation *op = *(operations.end() - 1);
+  if (op) {
+    op->MarkFailed();
+  }
 }
 
 

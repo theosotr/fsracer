@@ -31,12 +31,12 @@ void FSAnalyzer::AnalyzeTrace(const Trace *trace) {
 
   cwd_table.AddEntry(main_process, inode_table.ToInode(cwd));
 
-  vector<ExecOp*> exec_ops = trace->GetExecOps();
+  vector<const ExecOp*> exec_ops = trace->GetExecOps();
   for (auto const &exec_op : exec_ops) {
     AnalyzeExecOp(exec_op);
   }
 
-  vector<Block*> blocks = trace->GetBlocks();
+  vector<const Block*> blocks = trace->GetBlocks();
   for (auto const &block : blocks) {
     AnalyzeBlock(block);
   }
@@ -57,7 +57,7 @@ void FSAnalyzer::AnalyzeBlock(const Block *block) {
     return;
   }
   current_block = block;
-  vector<Expr*> exprs = block->GetExprs();
+  vector<const Expr*> exprs = block->GetExprs();
   for (auto const &expr : exprs) {
     AnalyzeExpr(expr);
   }
@@ -97,7 +97,7 @@ void FSAnalyzer::AnalyzeSubmitOp(const SubmitOp *submit_op) {
       block_id = stoi(utils::GetRightSubstr(op_id, "_"));
       break;
   }
-  vector<Operation*> ops = exec_op.value()->GetOperations();
+  vector<const Operation*> ops = exec_op.value()->GetOperations();
   for (auto const &op : ops) {
     AnalyzeOperation(op);
   }

@@ -258,12 +258,12 @@ class ExecOp : public TraceNode {
     }
 
     /** Get the list of FStrace operations. */
-    vector<Operation *> GetOperations() const {
-      return operations;
+    vector<const Operation *> GetOperations() const {
+      return vector<const Operation *>(operations.begin(), operations.end());
     }
 
-    /** Gets the last inserted operation. */
-    Operation *GetLastOperation() const;
+    /** Marks the last inserted operation as failed. */
+    void MarkLastOperationFailed();
 
     /** Getter for the `id` field. */
     string GetId() const {
@@ -439,8 +439,8 @@ class Block : public TraceNode {
     /**
      * Get the list of expressions triggered by the current execution block.
      */
-    vector<Expr*> GetExprs() const {
-      return exprs;
+    vector<const Expr*> GetExprs() const {
+      return vector<const Expr*>(exprs.begin(), exprs.end());
     }
 
     /** Add a new expression to the current execution block .*/
@@ -505,13 +505,13 @@ class Trace : public TraceNode {
     }
 
     /** Get the list of blocks. */
-    vector<Block*> GetBlocks() const {
-      return blocks;
+    vector<const Block*> GetBlocks() const {
+      return vector<const Block*>(blocks.begin(), blocks.end());
     };
 
     /** Get the list of `execOp` primitives. */
-    vector<ExecOp*> GetExecOps() const {
-      return exec_ops;
+    vector<const ExecOp*> GetExecOps() const {
+      return vector<const ExecOp*>(exec_ops.begin(), exec_ops.end());
     }
 
     /** Add the given block to the current trace. */

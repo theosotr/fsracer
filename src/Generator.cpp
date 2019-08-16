@@ -296,10 +296,7 @@ void MarkOperationStatus(void *wrapctx, void *user_data,
   CHECK_EXEC_OP;
   int ret_val = (int)(ptr_int_t) drwrap_get_retval(wrapctx);
   if (ret_val < 0) {
-    Operation *op = exec_op->GetLastOperation();
-    if (op) {
-      op->MarkFailed();
-    }
+    exec_op->MarkLastOperationFailed();
   }
 }
 

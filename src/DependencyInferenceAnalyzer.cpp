@@ -29,7 +29,7 @@ void DependencyInferenceAnalyzer::AnalyzeTrace(const Trace *trace) {
     return;
   }
 
-  vector<Block*> blocks = trace->GetBlocks();
+  vector<const Block*> blocks = trace->GetBlocks();
   for (auto const &block : blocks) {
     AnalyzeBlock(block);
   }
@@ -69,7 +69,7 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(const Block *block) {
   }
 
   current_block = block;
-  vector<Expr*> exprs = block->GetExprs();
+  vector<const Expr*> exprs = block->GetExprs();
   for (auto const &expr : exprs) {
     AnalyzeExpr(expr);
   }
