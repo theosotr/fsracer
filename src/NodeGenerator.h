@@ -31,11 +31,11 @@ namespace generator {
 
 class NodeTraceGenerator : public generator::Generator {
   public:
-    string GetName() {
+    string GetName() const {
       return "NodeTrace";
     }
 
-    wrapper_t GetWrappers();
+    wrapper_t GetWrappers() const;
     void Start();
     void Stop();
 };

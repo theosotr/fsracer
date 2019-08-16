@@ -281,7 +281,7 @@ void FSAnalyzer::ProcessPathEffect(fs::path p,
 }
 
 
-optional<fs::path> FSAnalyzer::GetParentDir(size_t dirfd) {
+optional<fs::path> FSAnalyzer::GetParentDir(size_t dirfd) const {
   optional<fs::path> cwd;
   optional<inode_t> inode;
   switch (dirfd) {
@@ -317,7 +317,7 @@ optional<fs::path> FSAnalyzer::GetParentDir(size_t dirfd) {
 }
 
 
-optional<fs::path> FSAnalyzer::GetAbsolutePath(size_t dirfd, fs::path p) {
+optional<fs::path> FSAnalyzer::GetAbsolutePath(size_t dirfd, fs::path p) const {
   if (p.is_absolute()) {
     return p;
   }
@@ -335,7 +335,7 @@ void FSAnalyzer::UnlinkResource(inode_t inode_p, string basename) {
 }
 
 
-void FSAnalyzer::DumpOutput(writer::OutWriter *out) {
+void FSAnalyzer::DumpOutput(writer::OutWriter *out) const {
   if (!out) {
     return;
   }
@@ -351,7 +351,7 @@ void FSAnalyzer::DumpOutput(writer::OutWriter *out) {
 }
 
 
-void FSAnalyzer::DumpJSON(ostream &os) {
+void FSAnalyzer::DumpJSON(ostream &os) const {
   os << "{" << endl;
   for (auto map_it = effect_table.begin(); map_it != effect_table.end(); map_it++) {
     auto entry = *map_it;
@@ -378,7 +378,7 @@ void FSAnalyzer::DumpJSON(ostream &os) {
 }
 
 
-void FSAnalyzer::DumpCSV(ostream &os) {
+void FSAnalyzer::DumpCSV(ostream &os) const {
   for (auto const &entry : effect_table) {
     for (auto const &fs_access : entry.second) {
       os << entry.first.native() << ","

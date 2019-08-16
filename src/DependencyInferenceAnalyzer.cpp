@@ -331,7 +331,7 @@ void DependencyInferenceAnalyzer::PruneEdges(size_t event_id) {
 }
 
 
-void DependencyInferenceAnalyzer::DumpOutput(writer::OutWriter *out) {
+void DependencyInferenceAnalyzer::DumpOutput(writer::OutWriter *out) const {
   if (!out) {
     return;
   }

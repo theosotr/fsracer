@@ -102,8 +102,8 @@ void Generator::AddToStore(string key, void *value) {
 }
 
 
-void *Generator::GetStoreValue(string key) {
-  map<string, void*>::iterator it;
+void *Generator::GetStoreValue(string key) const {
+  map<string, void*>::const_iterator it;
   it = store.find(key);
   if (it == store.end()) {
     return nullptr;
@@ -141,7 +141,7 @@ void Generator::PopStack() {
 }
 
 
-string Generator::TopStack() {
+string Generator::TopStack() const {
   return call_stack.top();
 }
 
@@ -151,8 +151,8 @@ void Generator::AddFunc(string addr, string func_name) {
 }
 
 
-string Generator::GetFuncName(string addr) {
-  map<string, string>::iterator it = funcs.find(addr);
+string Generator::GetFuncName(string addr) const {
+  map<string, string>::const_iterator it = funcs.find(addr);
 
   if (it != funcs.end()) {
     return it->second;
@@ -172,12 +172,12 @@ void Generator::AbortWithErr(enum utils::err::ErrType err_type, string errmsg,
 }
 
 
-bool Generator::HasFailed() {
+bool Generator::HasFailed() const {
   return error.has_value();
 }
 
 
-utils::err::Error Generator::GetErr() {
+utils::err::Error Generator::GetErr() const {
   return error.value();
 }
 

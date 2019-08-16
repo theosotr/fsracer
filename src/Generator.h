@@ -44,23 +44,23 @@ class Generator {
       }
     }
 
-    Trace *GetTrace() {
+    Trace *GetTrace() const {
       return trace;
     }
 
-    Block *GetCurrentBlock() {
+    Block *GetCurrentBlock() const {
       return current_block;
     } 
 
-    map<string, void*> GetStore() {
+    map<string, void*> GetStore() const {
       return store;
     }
 
-    size_t GetSyncOpCount() {
+    size_t GetSyncOpCount() const {
       return sync_op_count;
     }
 
-    size_t GetEventCount() {
+    size_t GetEventCount() const {
       return event_count;
     }
 
@@ -81,26 +81,26 @@ class Generator {
     }
 
     void AddToStore(string key, void *value);
-    void *GetStoreValue(string key);
+    void *GetStoreValue(string key) const;
     void DeleteFromStore(string key);
     void *PopFromStore(string key);
     void PushFunction(string func_name);
     void PopStack();
-    string TopStack();
+    string TopStack() const;
     void AddFunc(string addr, string func_name);
-    string GetFuncName(string addr);
+    string GetFuncName(string addr) const;
     void Setup(const module_data_t *mod);
     void AbortWithErr(enum utils::err::ErrType err_type, string errmsg,
                       string location=__builtin_FUNCTION());
-    bool HasFailed();
-    utils::err::Error GetErr();
+    bool HasFailed() const;
+    utils::err::Error GetErr() const;
 
     virtual void Start();
     virtual void Stop();
-    virtual wrapper_t GetWrappers();
-    virtual string GetName();
+    virtual wrapper_t GetWrappers() const;
+    virtual string GetName() const;
 
-    double GetTraceGenerationTime() {
+    double GetTraceGenerationTime() const {
       return gen_time.GetTimeSeconds();
     };
 

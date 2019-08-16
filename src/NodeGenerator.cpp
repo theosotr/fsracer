@@ -837,7 +837,7 @@ wrap_pre_new_async_id(void *wrapctx, OUT void **user_data)
 
 namespace generator {
 
-wrapper_t NodeTraceGenerator::GetWrappers() {
+wrapper_t NodeTraceGenerator::GetWrappers() const {
   wrapper_t wrappers;
 
   // system calls

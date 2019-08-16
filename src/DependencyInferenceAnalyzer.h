@@ -152,7 +152,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
     ~DependencyInferenceAnalyzer() {  };
 
     /** Display the pretty name of the analyzer. */
-    string GetName() {
+    string GetName() const {
       return "DependencyInferenceAnalyzer";
     }
 
@@ -175,9 +175,9 @@ class DependencyInferenceAnalyzer : public Analyzer {
     void AnalyzeRename(Rename *rename) {  }
     void AnalyzeSymlink(Symlink *symlink) {  }
 
-    void DumpOutput(writer::OutWriter *out);
+    void DumpOutput(writer::OutWriter *out) const;
 
-    const dep_graph_t &GetDependencyGraph() {
+    const dep_graph_t &GetDependencyGraph() const {
       return dep_graph;
     }
 

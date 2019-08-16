@@ -122,7 +122,7 @@ void DumpAnalyzer::AnalyzeOperation(Operation *operation) {
 }
 
 
-void DumpAnalyzer::DumpOutput(writer::OutWriter *out) {
+void DumpAnalyzer::DumpOutput(writer::OutWriter *out) const {
   if (out) {
     string preamble = "";
     preamble += "!Blocks: " + to_string(block_count) + "\n";

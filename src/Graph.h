@@ -166,7 +166,7 @@ class Graph {
     }
 
     /** Checks whether the given node has the given attribute. */
-    bool HasNodeAttr(size_t node_id, string attr) {
+    bool HasNodeAttr(size_t node_id, string attr) const {
       typename graph_t::iterator it = graph.find(node_id);
       if (it != graph.end()) {
         return it->second.HasAttribute(attr);
@@ -226,7 +226,7 @@ class Graph {
      * Print the current graph using the given output stream,
      * and in the specified format.
      */
-    void PrintGraph(enum GraphFormat graph_format, ostream &os) {
+    void PrintGraph(enum GraphFormat graph_format, ostream &os) const {
       switch (graph_format) {
         case DOT:
           PrintDot(os);
@@ -254,7 +254,7 @@ class Graph {
     GPrinter printer;
 
     /** Prints the current graph in DOT format. */
-    void PrintDot(ostream &os) {
+    void PrintDot(ostream &os) const {
       os << "digraph {\n";
       for (auto const &entry : graph) {
         NodeInfo node_info = entry.second;
@@ -285,7 +285,7 @@ class Graph {
     }
 
     /** Prints the current graph in CSV format. */
-    void PrintCSV(ostream &os) {
+    void PrintCSV(ostream &os) const {
       // We store the graph in uniform form,
       // the edge list is sorted by on the value of
       // each source and target.

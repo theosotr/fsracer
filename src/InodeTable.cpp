@@ -67,7 +67,7 @@ void InodeTable::RemoveEntry(inode_t inode_p, string basename) {
 }
 
 
-optional<inode_t> InodeTable::GetInode(inode_t inode_p, string basename) {
+optional<inode_t> InodeTable::GetInode(inode_t inode_p, string basename) const {
   return GetValue({ inode_p, basename });
 }
 
@@ -153,7 +153,7 @@ inode_t InodeTable::ToInode(fs::path path_val) {
 }
 
 
-optional<fs::path> InodeTable::ToPath(inode_t inode) {
+optional<fs::path> InodeTable::ToPath(inode_t inode) const {
   optional<fs::path> filename;
   set<fs::path> paths = ToPaths(inode);
   if (paths.size() == 1) {
@@ -172,9 +172,9 @@ optional<fs::path> InodeTable::ToPath(inode_t inode) {
 }
 
 
-set<fs::path> InodeTable::ToPaths(inode_t inode) {
+set<fs::path> InodeTable::ToPaths(inode_t inode) const {
   set<fs::path> paths;
-  map<inode_t, set<fs::path>>::iterator it = rev_table.find(inode);
+  map<inode_t, set<fs::path>>::const_iterator it = rev_table.find(inode);
   if (it != rev_table.end()) {
     return it->second;
   }

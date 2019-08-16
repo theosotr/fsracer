@@ -26,7 +26,7 @@ namespace analyzer {
 class Analyzer {
   public:
     /** Name of analyzer. */
-    virtual string GetName();
+    virtual string GetName() const;
 
     /** Analyze a node in the AST of traces. */
     virtual void Analyze(TraceNode *trace_node);
@@ -71,10 +71,10 @@ class Analyzer {
      * object responsible for writing the output either to
      * standard output or to a dedicated file.
      */
-    virtual void DumpOutput(writer::OutWriter *out);
+    virtual void DumpOutput(writer::OutWriter *out) const;
 
     /** Get the analysis time in milli seconds. */
-    double GetAnalysisTime() {
+    double GetAnalysisTime() const {
       return analysis_time.GetTimeMillis();
     }
 
@@ -100,7 +100,7 @@ class DumpAnalyzer : public Analyzer {
       block_count(0)
   {  }
 
-    string GetName() {
+    string GetName() const {
       return "DumpAnalyzer";
     }
 
@@ -124,11 +124,11 @@ class DumpAnalyzer : public Analyzer {
     void AnalyzeSymlink(Symlink *symlink) { trace_count++; }
 
     /** Gets the number of trace entries. */
-    size_t GetTraceCount() {
+    size_t GetTraceCount() const {
       return trace_count;
     }
 
-    void DumpOutput(writer::OutWriter *out);
+    void DumpOutput(writer::OutWriter *out) const;
 
   private:
     /// This is the string for holding the generated traces.

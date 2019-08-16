@@ -35,12 +35,12 @@ class InodeTable : public Table<inode_key_t, inode_t> {
     void AddEntry(inode_t inode_p, string basename, string p);
     void AddEntry(inode_t inode_p, string basename, string p, inode_t inode);
     void RemoveEntry(inode_t inode, string basename);
-    optional<inode_t> GetInode(inode_t inode_p, string basename);
+    optional<inode_t> GetInode(inode_t inode_p, string basename) const;
     void OpenInode(inode_t inode_p, string basename);
     void CloseInode(inode_t inode_p, string basename);
     inode_t ToInode(fs::path path_val);
-    optional<fs::path> ToPath(inode_t inode);
-    set<fs::path> ToPaths(inode_t inode);
+    optional<fs::path> ToPath(inode_t inode) const;
+    set<fs::path> ToPaths(inode_t inode) const;
 
   private:
     enum INodeType {

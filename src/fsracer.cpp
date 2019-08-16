@@ -103,7 +103,7 @@ stop_trace_gen(FSracerSetup *setup)
     debug::info(setup->trace_gen->GetName()) << "Trace collected in "
       << setup->trace_gen->GetTraceGenerationTime() << " seconds";
   } else {
-    // The trace section has aborten, so we dump the error message.
+    // The trace section has aborted, so we dump the error message.
     debug::err(setup->trace_gen->GetName())
       << "Trace collection aborted: "
       << setup->trace_gen->GetErr();

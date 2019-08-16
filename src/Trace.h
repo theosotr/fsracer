@@ -32,7 +32,7 @@ class TraceNode {
     /** Polymorphic destructor of the parent class. */
     virtual ~TraceNode() {  };
     /** This converts the current object to a string. */
-    virtual string ToString();
+    virtual string ToString() const;
     /**
      * This method accepts an analyzer, and delegates the analysis
      * of the current trace node through the visitor design pattern.
@@ -48,7 +48,7 @@ public:
   void AddDebugInfo(string debug);
 
   /** String representation of an instance of this class. */
-  string ToString();
+  string ToString() const;
 
 private:
   /// A vector of debug info.
@@ -62,7 +62,7 @@ class Expr {
     /** Polymorphic destructor. */
     virtual ~Expr() {  };
     /** This converts the current object to a string. */
-    virtual string ToString();
+    virtual string ToString() const;
     /**
      * This methods accepts an analyzer that is responsible for
      * analyzing the current expression.
@@ -70,7 +70,7 @@ class Expr {
     virtual void Accept(analyzer::Analyzer *analyzer);
 
     /** Get the debug information corresponding to this expression. */
-    DebugInfo GetDebugInfo() {
+    DebugInfo GetDebugInfo() const {
       return debug_info;
     }
 
@@ -137,12 +137,12 @@ class Event {
     }
 
     /** Getter for the event_type field. */
-    enum EventType GetEventType() {
+    enum EventType GetEventType() const {
       return event_type;
     }
 
     /** Getter for the event_value field. */
-    size_t GetEventValue() {
+    size_t GetEventValue() const {
       return event_value;
     }
 
@@ -204,19 +204,19 @@ class SubmitOp : public Expr {
     void Accept(analyzer::Analyzer *analyzer);
 
     /** String representation of the current object. */
-    string ToString();
+    string ToString() const;
 
     /** Getter of the `id` field. */
-    string GetOpId() {
+    string GetOpId() const {
       return op_id;
     }
 
-    optional<size_t> GetEventId() {
+    optional<size_t> GetEventId() const {
       return event_id;
     }
 
     /** Getter of the `type` field. */
-    enum Type GetType() {
+    enum Type GetType() const {
       return type;
     }
 
@@ -258,15 +258,15 @@ class ExecOp : public TraceNode {
     }
 
     /** Get the list of FStrace operations. */
-    vector<Operation *> GetOperations() {
+    vector<Operation *> GetOperations() const {
       return operations;
     }
 
     /** Gets the last inserted operation. */
-    Operation *GetLastOperation();
+    Operation *GetLastOperation() const;
 
     /** Getter for the `id` field. */
-    string GetId() {
+    string GetId() const {
       return id;
     }
 
@@ -277,7 +277,7 @@ class ExecOp : public TraceNode {
     void Accept(analyzer::Analyzer *analyzer);
 
     /** String representation of the current expression. */
-    string ToString();
+    string ToString() const;
 
   private:
     /// Id of the current high-level operation. */
@@ -312,12 +312,12 @@ class NewEventExpr : public Expr {
     ~NewEventExpr() {  }
 
     /** Getter for the 'event_id' field. */
-    size_t GetEventId() {
+    size_t GetEventId() const {
       return event_id;
     }
 
     /** Getter for the 'event' field. */
-    Event GetEvent() {
+    Event GetEvent() const {
       return event;
     }
 
@@ -328,7 +328,7 @@ class NewEventExpr : public Expr {
     void Accept(analyzer::Analyzer *analyzer);
 
     /** String representation of the current expression. */
-    string ToString();
+    string ToString() const;
 
   private:
     /// Id of the current event.
@@ -357,12 +357,12 @@ class LinkExpr : public Expr {
       target_ev(target_ev_) {  }
 
     /** Getter for the `source_ev` field. */
-    size_t GetSourceEvent() {
+    size_t GetSourceEvent() const {
       return source_ev;
     }
 
     /** Getter for the `target_ev` field. */
-    size_t GetTargetEvent() {
+    size_t GetTargetEvent() const {
       return target_ev;
     }
 
@@ -372,7 +372,7 @@ class LinkExpr : public Expr {
     void Accept(analyzer::Analyzer *analyzer);
 
     /** String representation of the current expression. */
-    string ToString();
+    string ToString() const;
 
   private:
     /**
@@ -398,7 +398,7 @@ class Trigger : public Expr {
       event_id(event_id_) {  }
 
     /** Getter of the `event_id` field. */
-    size_t GetEventId() {
+    size_t GetEventId() const {
       return event_id;
     }
 
@@ -408,7 +408,7 @@ class Trigger : public Expr {
     void Accept(analyzer::Analyzer *analyzer);
 
     /** String representation of the current expression. */
-    string ToString();
+    string ToString() const;
 
   private:
     /// The ID of the event whose callback is executed as part of the current
@@ -439,7 +439,7 @@ class Block : public TraceNode {
     /**
      * Get the list of expressions triggered by the current execution block.
      */
-    vector<Expr*> GetExprs() {
+    vector<Expr*> GetExprs() const {
       return exprs;
     }
 
@@ -449,7 +449,7 @@ class Block : public TraceNode {
     }
 
     /** Get the id of the current execution block */
-    size_t GetBlockId() {
+    size_t GetBlockId() const {
       return block_id;
     }
 
@@ -463,13 +463,13 @@ class Block : public TraceNode {
     void Accept(analyzer::Analyzer *analyzer);
 
     /** String representation of the current execution block. */
-    string ToString();
+    string ToString() const;
 
     /**
      * Get the size of the current block in terms of the number of
      * expressions.
      */
-    size_t Size();
+    size_t Size() const;
 
     /**
      * Set the debug information of the expression located at the given index.
@@ -505,12 +505,12 @@ class Trace : public TraceNode {
     }
 
     /** Get the list of blocks. */
-    vector<Block*> GetBlocks() {
+    vector<Block*> GetBlocks() const {
       return blocks;
     };
 
     /** Get the list of `execOp` primitives. */
-    vector<ExecOp*> GetExecOps() {
+    vector<ExecOp*> GetExecOps() const {
       return exec_ops;
     }
 
@@ -528,7 +528,7 @@ class Trace : public TraceNode {
      * Get the id of the main thread of the program associated with
      * the current trace.
      */
-    size_t GetThreadId() {
+    size_t GetThreadId() const {
       return thread_id;
     }
 
@@ -541,7 +541,7 @@ class Trace : public TraceNode {
      * Get the initial working directory of the program associated
      * with the current trace.
      */
-    string GetCwd() {
+    string GetCwd() const {
       return cwd;
     }
 
@@ -557,7 +557,7 @@ class Trace : public TraceNode {
     void Accept(analyzer::Analyzer *analyzer);
 
     /** String representation of the current trace. */
-    string ToString();
+    string ToString() const;
 
   private:
     /// Vector of execution blocks included in the current trace. */

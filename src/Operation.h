@@ -30,14 +30,14 @@ class Operation {
       failed(false) {  }
     virtual ~Operation() {  };
     virtual void Accept(analyzer::Analyzer *analyzer);
-    virtual string ToString();
-    virtual string GetOpName();
+    virtual string ToString() const;
+    virtual string GetOpName() const;
 
     void MarkFailed() {
       failed = true;
     }
 
-    bool isFailed() {
+    bool isFailed() const {
       return failed;
     }
 
@@ -45,7 +45,7 @@ class Operation {
       actual_op_name = actual_op_name_;
     }
 
-    string GetActualOpName() {
+    string GetActualOpName() const {
       return actual_op_name;
     }
 
@@ -62,15 +62,15 @@ class DelFd : public Operation {
 
     ~DelFd() {  }
 
-    size_t GetFd() {
+    size_t GetFd() const {
       return fd;
     }
 
-    string GetOpName() {
+    string GetOpName() const {
       return "delFd";
     }
 
-    string ToString() {
+    string ToString() const {
       return GetOpName() + " " + to_string(fd) + ACTUAL_NAME + FAILED;
     }
 
@@ -88,11 +88,11 @@ class DupFd : public Operation {
       new_fd(0) {  }
     ~DupFd() {  }
 
-    size_t GetOldFd() {
+    size_t GetOldFd() const {
       return old_fd;
     }
 
-    size_t GetNewFd() {
+    size_t GetNewFd() const {
       return new_fd;
     }
 
@@ -100,11 +100,11 @@ class DupFd : public Operation {
       new_fd = fd;
     }
 
-    string GetOpName() {
+    string GetOpName() const {
       return "dupFd";
     }
 
-    string ToString() {
+    string ToString() const {
       return GetOpName() + " "  + to_string(old_fd) + " " +
         to_string(new_fd) + ACTUAL_NAME + FAILED;
     };
@@ -132,23 +132,23 @@ class Hpath : public Operation {
       effect_type(effect_type_) {  }
     ~Hpath() {  }
 
-    size_t GetDirFd() {
+    size_t GetDirFd() const {
       return dirfd;
     }
 
-    string GetPath() {
+    string GetPath() const {
       return path;
     }
 
-    enum EffectType GetEffectType() {
+    enum EffectType GetEffectType() const {
       return effect_type;
     }
 
-    string GetOpName() {
+    string GetOpName() const {
       return "hpath";
     }
 
-    string ToString() {
+    string ToString() const {
       string str = DirfdToString(dirfd);
       return GetOpName() + " " + str + " " + path + " " +
         Hpath::EffToString(effect_type) + ACTUAL_NAME + FAILED;
@@ -176,7 +176,7 @@ class HpathSym : public Hpath {
 
     void Accept(analyzer::Analyzer *analyzer);
 
-    string GetOpName() {
+    string GetOpName() const {
       return "hpathsym";
     }
 };
@@ -192,30 +192,30 @@ class Link : public Operation {
       new_path(new_path_) {  }
     ~Link() {  };
 
-    size_t GetOldDirfd() {
+    size_t GetOldDirfd() const {
       return old_dirfd;
     }
 
-    size_t GetNewDirfd() {
+    size_t GetNewDirfd() const {
       return new_dirfd;
     }
 
-    string GetOldPath() {
+    string GetOldPath() const {
       return old_path;
     }
 
-    string GetNewPath() {
+    string GetNewPath() const {
       return new_path;
     }
 
-    string ToString() {
+    string ToString() const {
       string old_dirfd_str = DirfdToString(old_dirfd);
       string new_dirfd_str = DirfdToString(new_dirfd);
       return GetOpName() + " " + old_dirfd_str + " " +
         old_path + " " + new_dirfd_str + " " + new_path + ACTUAL_NAME + FAILED;
     };
 
-    string GetOpName() {
+    string GetOpName() const {
       return "link";
     }
 
@@ -240,23 +240,23 @@ class NewFd : public Operation {
 
     ~NewFd() {  }
 
-    string GetPath() {
+    string GetPath() const {
       return path;
     }
 
-    size_t GetDirFd() {
+    size_t GetDirFd() const {
       return dirfd;
     }
 
-    int GetFd() {
+    int GetFd() const {
       return fd;
     }
 
-    string GetOpName() {
+    string GetOpName() const {
       return "newFd";
     }
 
-    string ToString() {
+    string ToString() const {
       string dirfd_str = DirfdToString(dirfd);
       return GetOpName() + " " + dirfd_str + " " + path +
         " " + to_string(fd) + ACTUAL_NAME + FAILED;
@@ -285,11 +285,11 @@ class NewProc : public Operation {
       pid(0) {  }
     ~NewProc() {  }
 
-    enum CloneMode GetCloneMode() {
+    enum CloneMode GetCloneMode() const {
       return clone_mode;
     }
 
-    size_t GetPID() {
+    size_t GetPID() const {
       return pid;
     }
 
@@ -297,11 +297,11 @@ class NewProc : public Operation {
       pid = pid_;
     }
 
-    string GetOpName() {
+    string GetOpName() const  {
       return "newProc";
     }
 
-    string ToString() {
+    string ToString() const {
       switch (clone_mode) {
         case SHARE_FD:
           return GetOpName() + " FD " + to_string(pid) + ACTUAL_NAME + FAILED;
@@ -327,7 +327,7 @@ class Rename : public Link {
       Link(old_dirfd_, old_path_, new_dirfd_, new_path_) {  }
     ~Rename();
 
-    string GetOpName() {
+    string GetOpName() const {
       return "rename";
     }
 
@@ -341,15 +341,15 @@ class SetCwd : public Operation {
       cwd(cwd_) {  }
     ~SetCwd() {  }
 
-    string GetCwd() {
+    string GetCwd() const {
       return cwd;
     }
 
-    string GetOpName() {
+    string GetOpName() const {
       return "setCwd";
     }
 
-    string ToString() {
+    string ToString() const {
       return GetOpName() + " " + cwd + ACTUAL_NAME + FAILED;
     }
 
@@ -367,23 +367,23 @@ class Symlink : public Operation {
       target(target_) {  }
     ~Symlink() {  }
 
-    size_t GetDirFd() {
+    size_t GetDirFd() const {
       return dirfd;
     }
 
-    string GetPath() {
+    string GetPath() const {
       return path;
     }
 
-    string GetTargetPath() {
+    string GetTargetPath() const {
       return target;
     }
 
-    string GetOpName() {
+    string GetOpName() const {
       return "symlink";
     }
 
-    string ToString() {
+    string ToString() const {
       return GetOpName() + " " + to_string(dirfd) + " " + path + " " +
         target + ACTUAL_NAME + FAILED;
     }
@@ -400,11 +400,11 @@ class Symlink : public Operation {
 
 class Nop : public Operation {
   public:
-    string GetOpName() {
+    string GetOpName() const {
       return "nop";
     }
 
-    string ToString() {
+    string ToString() const {
       return GetOpName();
     }
 

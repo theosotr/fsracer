@@ -26,7 +26,7 @@ string Event::ToString() const {
 }
 
 
-string SubmitOp::ToString() {
+string SubmitOp::ToString() const {
   string type_str = "";
   switch (type) {
     case ASYNC:
@@ -49,7 +49,7 @@ void SubmitOp::Accept(analyzer::Analyzer *analyzer) {
 }
 
 
-Operation *ExecOp::GetLastOperation() {
+Operation *ExecOp::GetLastOperation() const {
   if (operations.empty()) {
     return nullptr;
   }
@@ -66,7 +66,7 @@ void ExecOp::ClearOperations() {
 }
 
 
-string ExecOp::ToString() {
+string ExecOp::ToString() const {
   string str = "Operation " + id + " do\n";
   for (Operation *operation : operations) {
     str += operation->ToString();
@@ -87,7 +87,7 @@ void DebugInfo::AddDebugInfo(string debug) {
 }
 
 
-string DebugInfo::ToString() {
+string DebugInfo::ToString() const {
   string str = "";
   for (auto const &debug : debug_info) {
     str += " !" + debug;
@@ -96,7 +96,7 @@ string DebugInfo::ToString() {
 }
 
 
-string NewEventExpr::ToString() {
+string NewEventExpr::ToString() const {
   string str = to_string(event_id);
   DebugInfo debug_info = GetDebugInfo();
   return "newEvent " + str + " " + event.ToString() + debug_info.ToString();
@@ -108,7 +108,7 @@ void NewEventExpr::Accept(analyzer::Analyzer *analyzer) {
 }
 
 
-string LinkExpr::ToString() {
+string LinkExpr::ToString() const {
   return "link " + to_string(source_ev) + " " + to_string(target_ev);
 }
 
@@ -118,7 +118,7 @@ void LinkExpr::Accept(analyzer::Analyzer *analyzer) {
 }
 
 
-string Trigger::ToString() {
+string Trigger::ToString() const {
   return "trigger " + to_string(event_id);
 }
 
@@ -146,7 +146,7 @@ void Block::ClearExprs() {
 }
 
 
-size_t Block::Size() {
+size_t Block::Size() const {
   return exprs.size();
 }
 
@@ -159,7 +159,7 @@ void Block::SetExprDebugInfo(size_t index, string debug_info) {
 }
 
 
-string Block::ToString() {
+string Block::ToString() const {
   string str = "Begin ";
   str += block_id == MAIN_BLOCK ? "MAIN" : to_string(block_id);
   str += "\n";
@@ -193,7 +193,7 @@ void Trace::ClearExecOps() {
 }
 
 
-string Trace::ToString() {
+string Trace::ToString() const {
   string str = "";
   for (auto const &exec_op : exec_ops) {
     str += exec_op->ExecOp::ToString();

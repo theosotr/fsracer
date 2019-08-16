@@ -43,7 +43,7 @@ class FSAnalyzer : public Analyzer {
       out_format(out_format_)
   {  }
 
-    string GetName() {
+    string GetName() const {
       return "FSAnalyzer";
     }
 
@@ -66,9 +66,9 @@ class FSAnalyzer : public Analyzer {
     void AnalyzeRename(Rename *rename);
     void AnalyzeSymlink(Symlink *symlink);
 
-    void DumpOutput(writer::OutWriter *out);
+    void DumpOutput(writer::OutWriter *out) const;
 
-    const EffectTable &GetFSAccesses() {
+    const EffectTable &GetFSAccesses() const {
       return effect_table;
     }
 
@@ -92,12 +92,12 @@ class FSAnalyzer : public Analyzer {
 
     void ProcessPathEffect(fs::path p, enum Hpath::EffectType effect,
                            string operation_name);
-    optional<fs::path> GetParentDir(size_t dirfd);
-    optional<fs::path> GetAbsolutePath(size_t dirfd, fs::path p);
+    optional<fs::path> GetParentDir(size_t dirfd) const;
+    optional<fs::path> GetAbsolutePath(size_t dirfd, fs::path p) const;
     void UnlinkResource(inode_t inode_p, string basename);
 
-    void DumpJSON(ostream &os);
-    void DumpCSV(ostream &os);
+    void DumpJSON(ostream &os) const;
+    void DumpCSV(ostream &os) const;
 
 };
 
