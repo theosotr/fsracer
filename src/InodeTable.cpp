@@ -25,7 +25,7 @@ void InodeTable::AddEntry(inode_t inode_p, string basename,
 }
 
 
-void InodeTable::RemoveEntry(inode_t inode_p, string basename) {
+void InodeTable::RemoveEntry(inode_t inode_p, const string &basename) {
   optional<fs::path> path_p = ToPath(inode_p);
   if (!path_p.has_value()) {
     return;
@@ -67,12 +67,13 @@ void InodeTable::RemoveEntry(inode_t inode_p, string basename) {
 }
 
 
-optional<inode_t> InodeTable::GetInode(inode_t inode_p, string basename) const {
+optional<inode_t> InodeTable::GetInode(inode_t inode_p,
+                                       const string &basename) const {
   return GetValue({ inode_p, basename });
 }
 
 
-void InodeTable::OpenInode(inode_t inode_p, string basename) {
+void InodeTable::OpenInode(inode_t inode_p, const string &basename) {
   inode_key_t key = { inode_p, basename };
   auto val = open_inodes.GetValue(key);
   if (!val.has_value()) {
@@ -86,7 +87,7 @@ void InodeTable::OpenInode(inode_t inode_p, string basename) {
 }
 
 
-void InodeTable::CloseInode(inode_t inode_p, string basename) {
+void InodeTable::CloseInode(inode_t inode_p, const string &basename) {
   inode_key_t key = { inode_p, basename };
   auto val = open_inodes.GetValue(key);
   if (!val.has_value()) {
@@ -131,7 +132,7 @@ void InodeTable::CloseInode(inode_t inode_p, string basename) {
 }
 
 
-inode_t InodeTable::ToInode(fs::path path_val) {
+inode_t InodeTable::ToInode(const fs::path &path_val) {
   if (path_val.native() == "/") {
     return ROOT_INODE + 1;
   }

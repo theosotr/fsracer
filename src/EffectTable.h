@@ -37,7 +37,7 @@ class EffectTable :
   public Table<fs::path, vector<FSAccess>> {
 
     public:
-      void AddPathEffect(fs::path p, FSAccess fs_access);
+      void AddPathEffect(const fs::path &p, FSAccess fs_access);
 
 };
 

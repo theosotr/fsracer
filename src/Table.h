@@ -23,7 +23,7 @@ class Table {
       table[key] = value;
     }
 
-    T2 PopEntry(T1 key) {
+    T2 PopEntry(const T1 &key) {
       typename table_t::iterator it = table.find(key);
       if (it != table.end()) {
         T2 val = it->second;
@@ -32,11 +32,11 @@ class Table {
       }
     }
 
-    void RemoveEntry(T1 key) {
+    void RemoveEntry(const T1 &key) {
       PopEntry(key);
     }
 
-    optional<T2> GetValue(T1 key) const {
+    optional<T2> GetValue(const T1 &key) const {
       optional<T2> val;
       typename table_t::const_iterator it = table.find(key);
       if (it != table.end()) {

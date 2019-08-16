@@ -52,10 +52,6 @@ class Generator {
       return current_block;
     } 
 
-    map<string, void*> GetStore() const {
-      return store;
-    }
-
     size_t GetSyncOpCount() const {
       return sync_op_count;
     }

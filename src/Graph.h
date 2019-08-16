@@ -47,7 +47,7 @@ struct Node {
   {  }
 
   /** Checks whether this node has the given attribute. */
-  bool HasAttribute(string attr) const {
+  bool HasAttribute(const string &attr) const {
     return attributes.find(attr) != attributes.end();
   }
 
@@ -57,7 +57,7 @@ struct Node {
   }
 
   /** Removes the given attribute from the current node. */
-  void RemoveAttribute(string attr) {
+  void RemoveAttribute(const string &attr) {
     attributes.erase(attr);
   }
 
@@ -166,7 +166,7 @@ class Graph {
     }
 
     /** Checks whether the given node has the given attribute. */
-    bool HasNodeAttr(size_t node_id, string attr) const {
+    bool HasNodeAttr(size_t node_id, const string &attr) const {
       typename graph_t::iterator it = graph.find(node_id);
       if (it != graph.end()) {
         return it->second.HasAttribute(attr);
@@ -175,7 +175,7 @@ class Graph {
     }
 
     /** Remove the specified attribute from the given node. */
-    void RemoveNodeAttr(size_t node_id, string attr) {
+    void RemoveNodeAttr(size_t node_id, const string &attr) {
       typename graph_t::iterator it = graph.find(node_id);
       if (it != graph.end()) {
         it->second.RemoveAttribute(attr);
