@@ -27,3 +27,4 @@ End
 @IGNORE@
 @CURRENT_DIR@/foo,8,consumed
 @CURRENT_DIR@/timers-nested-err.js,1,consumed
+@IGNORE@

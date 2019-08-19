@@ -171,3 +171,4 @@ End
 @CURRENT_DIR@/foo,23,produced
 @CURRENT_DIR@/foo,31,expunged
 @CURRENT_DIR@/http.js,1,consumed
+@IGNORE@

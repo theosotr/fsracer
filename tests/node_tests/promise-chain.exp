@@ -47,3 +47,4 @@ End
 @IGNORE@
 @CURRENT_DIR@/foo,14,consumed
 @CURRENT_DIR@/promise-chain.js,1,consumed
+@IGNORE@

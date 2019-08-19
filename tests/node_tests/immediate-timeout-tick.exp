@@ -36,3 +36,4 @@ End
 @CURRENT_DIR@/foo,5,produced
 @CURRENT_DIR@/foo,7,expunged
 @CURRENT_DIR@/immediate-timeout-tick.js,1,consumed
+@IGNORE@

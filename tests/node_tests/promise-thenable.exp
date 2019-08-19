@@ -38,3 +38,4 @@ End
 @CURRENT_DIR@/bar,9,consumed
 @CURRENT_DIR@/foo,8,consumed
 @CURRENT_DIR@/promise-thenable.js,1,consumed
+@IGNORE@

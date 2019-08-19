@@ -72,3 +72,4 @@ End
 @CURRENT_DIR@/foo,7,consumed
 @CURRENT_DIR@/foo,11,expunged
 @CURRENT_DIR@/io-nested.js,1,consumed
+@IGNORE@

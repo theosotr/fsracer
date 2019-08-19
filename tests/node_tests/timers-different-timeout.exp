@@ -58,3 +58,4 @@ End
 @CURRENT_DIR@/baz,13,consumed
 @CURRENT_DIR@/foo,12,consumed
 @CURRENT_DIR@/timers-different-timeout.js,1,consumed
+@IGNORE@

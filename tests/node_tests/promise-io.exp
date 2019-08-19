@@ -61,3 +61,4 @@ End
 @CURRENT_DIR@/foo,5,consumed
 @CURRENT_DIR@/foo,10,expunged
 @CURRENT_DIR@/promise-io.js,1,consumed
+@IGNORE@

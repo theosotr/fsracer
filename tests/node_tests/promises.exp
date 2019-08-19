@@ -99,3 +99,23 @@ End
 @CURRENT_DIR@/foo,11,consumed
 @CURRENT_DIR@/foo,16,expunged
 @CURRENT_DIR@/promises.js,1,consumed
+@IGNORE@
+Detected Data Races
+-------------------
+Number of data races: 4
+* Event: 9 (tags: !fs !node_open) and Event: 10 (tags: !fs !node_access):
+  - Path @CURRENT_DIR@/foo:
+    produced by the first event (operation: open)
+    consumed by the second event (operation: access)
+* Event: 9 (tags: !fs !node_open) and Event: 11 (tags: !fs !node_open):
+  - Path @CURRENT_DIR@/foo:
+    produced by the first event (operation: open)
+    consumed by the second event (operation: open)
+* Event: 10 (tags: !fs !node_access) and Event: 16 (tags: !fs !node_unlink):
+  - Path @CURRENT_DIR@/foo:
+    consumed by the first event (operation: access)
+    expunged by the second event (operation: unlink)
+* Event: 11 (tags: !fs !node_open) and Event: 16 (tags: !fs !node_unlink):
+  - Path @CURRENT_DIR@/foo:
+    consumed by the first event (operation: open)
+    expunged by the second event (operation: unlink)

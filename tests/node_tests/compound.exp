@@ -59,3 +59,11 @@ End
 @CURRENT_DIR@/compound.js,1,consumed
 @CURRENT_DIR@/foo,4,produced
 @CURRENT_DIR@/foo,6,produced
+@IGNORE@
+Detected Data Races
+-------------------
+Number of data races: 1
+* Event: 4 (tags: !fs !node_copyFile) and Event: 6 (tags: !fs !node_copyFile):
+  - Path @CURRENT_DIR@/foo:
+    produced by the first event (operation: open)
+    produced by the second event (operation: open)

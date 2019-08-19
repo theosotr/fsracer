@@ -30,3 +30,4 @@ End
 @CURRENT_DIR@/foo,1,produced
 @CURRENT_DIR@/foo,5,expunged
 @CURRENT_DIR@/next-tick.js,1,consumed
+@IGNORE@

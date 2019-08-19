@@ -110,3 +110,9 @@ End
 @CURRENT_DIR@/foo,4,consumed
 @CURRENT_DIR@/foo,14,expunged
 @CURRENT_DIR@/stream.js,1,consumed
+@IGNORE@
+Number of data races: 1
+* Event: 5 (tags: !fs !node_open) and Event: 14 (tags: !fs !node_close):
+  - Path @CURRENT_DIR@/bar:
+    produced by the first event (operation: open)
+    expunged by the second event (operation: unlink)

@@ -12,12 +12,11 @@ add_test(build_fsracer
 message("${DynamoRIO_BUILD_DIR}")
 
 string(CONCAT cmd_options
-  "--analyzer=dep-infer "
   "--dep-graph-format=csv "
   "--dump-dep-graph "
-  "--analyzer=fs "
   "--fs-accesses-format=csv "
   "--dump-fs-accesses "
+  "--fault-detector=race "
   "--dump-trace"
 )
 set(DEFAULT_FSRACER_ARGS ${cmd_options})

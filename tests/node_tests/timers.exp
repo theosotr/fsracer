@@ -47,3 +47,11 @@ End
 @CURRENT_DIR@/tmp,1,produced
 @CURRENT_DIR@/tmp,7,expunged
 @CURRENT_DIR@/tmp,8,consumed
+@IGNORE@
+Detected Data Races
+-------------------
+Number of data races: 1
+* Event: 7 (tags: !fs !node_unlink) and Event: 8 (tags: !fs !node_access):
+  - Path @CURRENT_DIR@/tmp:
+    expunged by the first event (operation: unlink)
+    consumed by the second event (operation: access)
