@@ -58,7 +58,7 @@ class Analyzer {
     /** Analyze the 'hpath' construct. */
     virtual void AnalyzeHpath(const Hpath *hpath);
     /** Analyze the 'hpathsym' construct. */
-    virtual void AnalyzeHpath(const HpathSym *hpathsym);
+    virtual void AnalyzeHpathSym(const HpathSym *hpathsym);
     /** Analyze the 'link' construct. */
     virtual void AnalyzeLink(const Link *link);
     /** Analyze the 'rename' construct. */

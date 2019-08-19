@@ -49,7 +49,7 @@ bool Hpath::Consumes(enum EffectType effect) {
 
 void HpathSym::Accept(analyzer::Analyzer *analyzer) const {
   if (analyzer) {
-    analyzer->AnalyzeHpath(this);
+    analyzer->AnalyzeHpathSym(this);
   }
 };
 
