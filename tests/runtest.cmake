@@ -110,6 +110,8 @@ string(CONCAT prologue_block_repl
 if (EXISTS "${expected_filename}")
   # Opens the pattern file.
   file(READ ${expected_filename} pattern)
+  # Escape special characters, such as +, ., *, etc.
+  string(REGEX REPLACE "([][+.*()^])" "\\\\\\1" pattern ${pattern})
 
   #We replace boilerplate patterns.
   string (REGEX REPLACE
