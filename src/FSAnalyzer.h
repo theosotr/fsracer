@@ -5,9 +5,9 @@
 #include <iostream>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 #include "Analyzer.h"
-#include "EffectTable.h"
 #include "InodeTable.h"
 #include "Operation.h"
 #include "Table.h"
@@ -27,6 +27,7 @@ namespace analyzer {
 
 
 class FSAnalyzer : public Analyzer {
+
   using proc_t = size_t;
   using addr_t = size_t;
   using fd_t = size_t;
@@ -36,6 +37,22 @@ class FSAnalyzer : public Analyzer {
       JSON,
       CSV
     };
+
+    struct FSAccess {
+      size_t event_id;
+      enum Hpath::EffectType effect_type;
+      DebugInfo debug_info;
+      string operation_name;
+
+      FSAccess(size_t event_id_, enum Hpath::EffectType effect_type_,
+               DebugInfo debug_info_, string operation_name_):
+        event_id(event_id_),
+        effect_type(effect_type_),
+        debug_info(debug_info_),
+        operation_name(operation_name_) {  }
+    };
+
+    using fs_accesses_table_t = Table<fs::path, vector<FSAccess>>;
 
     FSAnalyzer(enum OutFormat out_format_):
       current_block(nullptr),
@@ -68,7 +85,7 @@ class FSAnalyzer : public Analyzer {
 
     void DumpOutput(writer::OutWriter *out) const;
 
-    const EffectTable &GetFSAccesses() const {
+    const fs_accesses_table_t &GetFSAccesses() const {
       return effect_table;
     }
 
@@ -77,8 +94,9 @@ class FSAnalyzer : public Analyzer {
     Table<pair<proc_t, fd_t>, inode_key_t> fd_table;
     Table<inode_t, fs::path> symlink_table;
     Table<proc_t, pair<addr_t, addr_t>> proc_table;
-    EffectTable effect_table;
     InodeTable inode_table;
+
+    fs_accesses_table_t effect_table;
 
     Table<string, const ExecOp*> op_table;
     Table<size_t, const NewEventExpr*> event_info;
@@ -99,8 +117,11 @@ class FSAnalyzer : public Analyzer {
     void DumpJSON(ostream &os) const;
     void DumpCSV(ostream &os) const;
 
+    void AddPathEffect(const fs::path &p, FSAccess fs_access);
+
 };
 
 
-}
+} // namespace analyzer
+
 #endif

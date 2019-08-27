@@ -41,7 +41,7 @@ bool RaceDetector::HasConflict(const fs_access_t &acc1,
 
 RaceDetector::faults_t RaceDetector::GetFaults() const {
   faults_t faults;
-  table::EffectTable::table_t table = fs_accesses.GetTable();
+  fs_accesses_table_t::table_t table = fs_accesses.GetTable();
   for (auto it = table.begin(); it != table.end(); it++) {
     auto fs_access = *it;
     fs::path p = fs_access.first;

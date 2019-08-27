@@ -5,8 +5,8 @@
 #include <string>
 
 #include "DependencyInferenceAnalyzer.h"
-#include "EffectTable.h"
 #include "FaultDetector.h"
+#include "FSAnalyzer.h"
 #include "Operation.h"
 
 
@@ -23,7 +23,8 @@ class RaceDetector : public FaultDetector {
 public:
   // Some type aliases.
   using dep_graph_t = analyzer::DependencyInferenceAnalyzer::dep_graph_t;
-  using fs_access_t = table::FSAccess;
+  using fs_accesses_table_t = analyzer::FSAnalyzer::fs_accesses_table_t;
+  using fs_access_t = analyzer::FSAnalyzer::FSAccess;
 
   /**
    * This struct describes a fault associated with two
@@ -65,7 +66,7 @@ public:
    * The arguments are const references of the outputs of
    * the analyzers utilized by this fault detector.
    */
-  RaceDetector(const table::EffectTable &fs_accesses_,
+  RaceDetector(const fs_accesses_table_t &fs_accesses_,
                const dep_graph_t &dep_graph_):
     fs_accesses(fs_accesses_),
     dep_graph(dep_graph_) {  }
@@ -87,7 +88,7 @@ public:
 
 private:
   /// File accesses per block.
-  const table::EffectTable &fs_accesses;
+  const fs_accesses_table_t &fs_accesses;
   /// The dependency graph of events.
   const dep_graph_t &dep_graph;
 

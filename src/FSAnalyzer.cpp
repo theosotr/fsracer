@@ -268,13 +268,13 @@ void FSAnalyzer::ProcessPathEffect(fs::path p,
   switch (effect) {
     case Hpath::CONSUMED:
     case Hpath::PRODUCED:
-      effect_table.AddPathEffect(
+      AddPathEffect(
           p, FSAccess(block_id, effect, debug_info, operation_name));
       break;
     case Hpath::EXPUNGED:
       inode_t inode_p = inode_table.ToInode(p.parent_path());
       string basename = p.filename().native();
-      effect_table.AddPathEffect(
+      AddPathEffect(
           p, FSAccess(block_id, Hpath::EXPUNGED, debug_info, operation_name));
       UnlinkResource(inode_p, basename);
   }
@@ -389,4 +389,15 @@ void FSAnalyzer::DumpCSV(ostream &os) const {
 }
 
 
+void FSAnalyzer::AddPathEffect(const fs::path &p, FSAccess fs_access) {
+  optional<vector<FSAccess>> fs_acc_opt = effect_table.GetValue(p);
+  vector<FSAccess> fs_acc;
+  if (fs_acc_opt.has_value()) {
+    fs_acc = fs_acc_opt.value();
+  }
+  fs_acc.push_back(fs_access);
+  effect_table.AddEntry(p, fs_acc);
 }
+
+
+} // namespace analyzer
