@@ -10,19 +10,24 @@
 #define NEW_TIMERWRAP "node::(anonymous namespace)::TimerWrap::New"
 #define WORKER_OFFSET 336
 #define PRE_WRAP(FUNC) pre_wrap<decltype(&FUNC), &FUNC>
-#define CHECK_BLOCK                                      \
-  do {                                                   \
-    if (!trace_gen->GetCurrentBlock()) {                 \
-      trace_gen->AbortWithErr(utils::err::RUNTIME,       \
-                              "Block points to `NULL`"); \
-    }                                                    \
-  }                                                      \
-  while (false)                                          \
-
 
 
 using namespace generator_utils;
 using namespace generator_keys;
+
+
+static inline void check_block(trace_generator::TraceGenerator *trace_gen,
+                               const string &msg) {
+  if (!trace_gen->GetCurrentBlock()) {
+    string errmsg = "Block points to `NULL`";
+    if (msg != "") {
+      errmsg += ": " + msg;
+    }
+    errmsg += ". Trace is not generated properly.";
+    errmsg += " Perhaps, a wrapper to a native function is missing";
+    trace_gen->AbortWithErr(utils::err::RUNTIME, errmsg);
+  }
+}
 
 
 namespace node_utils {
@@ -54,7 +59,7 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
     id = "async_" + to_string(*event_ptr);
     delete event_ptr;
   }
-  CHECK_BLOCK;
+  check_block(trace_gen, "Submit operation " + op_name);
   Block *current_block = trace_gen->GetCurrentBlock();
   // We use the address that this pointer points to as an indicator
   // of the event associated with this operation.
@@ -92,7 +97,7 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
 }
 
 
-}
+} // namespace node_utils
 
 
 static void
@@ -656,7 +661,8 @@ add_new_event_expr(trace_generator::TraceGenerator *trace_gen,
   if (!trace_gen) {
     return;
   }
-  CHECK_BLOCK;
+  check_block(trace_gen,
+              "Create event " + to_string(event_id) + " " + event.ToString());
   NewEventExpr *new_event = new NewEventExpr(event_id, event);
   if (debug_info != "") {
     new_event->AddDebugInfo(debug_info);
@@ -741,7 +747,8 @@ wrap_pre_new_tick_info(void *wrapctx, OUT void **user_data)
 {
   trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
   Event event = Event(Event::S, 0);
-  CHECK_BLOCK;
+  check_block(trace_gen,
+              "Create newTick " + to_string(trace_gen->GetEventCount()));
   // We remove the last expression created by the NewAsyncId function.
   trace_gen->GetCurrentBlock()->PopExpr();
   NewEventExpr *new_event = new NewEventExpr(trace_gen->GetEventCount(),
@@ -756,7 +763,8 @@ wrap_pre_timerwrap(void *wrapctx, OUT void **user_data)
 {
   trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
   Event event = Event(Event::W, 1);
-  CHECK_BLOCK;
+  check_block(trace_gen,
+              "Create timerwrap " + to_string(trace_gen->GetEventCount()));
   // We remove the last expression created by the NewAsyncId function.
   trace_gen->GetCurrentBlock()->PopExpr();
   NewEventExpr *new_event = new NewEventExpr(trace_gen->GetEventCount(),
@@ -773,7 +781,7 @@ wrap_pre_promise_resolve(void *wrapctx, OUT void **user_data)
   trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
   dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
   int async_id = *(double *) ctx->ymm; // xmm0 register
-  CHECK_BLOCK;
+  check_block(trace_gen, "Resolve promise " + to_string(async_id));
   trace_gen->IncrEventCount();
   Event event = Event(Event::S, 0);
   NewEventExpr *new_event = new NewEventExpr(async_id, event);
@@ -810,7 +818,7 @@ wrap_pre_thenable(void *wrapctx, OUT void **user_data)
   // the function responsible for fulfilling the promise (e.g., foo()).
   //
   trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
-  CHECK_BLOCK;
+  check_block(trace_gen, "");
   trace_gen->GetCurrentBlock()->PopExpr();
 }
 
@@ -830,7 +838,8 @@ wrap_pre_new_async_id(void *wrapctx, OUT void **user_data)
   trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
   trace_gen->IncrEventCount();
   Event event = Event(Event::W, 3);
-  CHECK_BLOCK;
+  check_block(trace_gen,
+              "Create setImmediate " + to_string(trace_gen->GetEventCount()));
   NewEventExpr *new_event = new NewEventExpr(
       trace_gen->GetEventCount(), event);
   new_event->AddDebugInfo("setImmediate");

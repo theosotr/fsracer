@@ -105,7 +105,7 @@ std::string Error::ToString() const {
     str += ": " + msg;
   }
   if (location != "") {
-    str += " (loc: " + location + ")";
+    str += " (location: " + location + ")";
   }
   return str;
 }
