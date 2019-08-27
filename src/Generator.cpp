@@ -102,7 +102,7 @@ void Generator::AddToStore(string key, void *value) {
 }
 
 
-void *Generator::GetStoreValue(string key) const {
+void *Generator::GetStoreValue(const string &key) const {
   map<string, void*>::const_iterator it;
   it = store.find(key);
   if (it == store.end()) {
@@ -113,12 +113,12 @@ void *Generator::GetStoreValue(string key) const {
 }
 
 
-void Generator::DeleteFromStore(string key) {
+void Generator::DeleteFromStore(const string &key) {
   PopFromStore(key);
 }
 
 
-void *Generator::PopFromStore(string key) {
+void *Generator::PopFromStore(const string &key) {
   map<string, void*>::iterator it = store.find(key);
   void *value = nullptr;
   if (it != store.end()) {
@@ -129,7 +129,7 @@ void *Generator::PopFromStore(string key) {
 }
 
 
-void Generator::PushFunction(string func_name) {
+void Generator::PushFunction(const string func_name) {
   call_stack.push(func_name);
 }
 
@@ -151,7 +151,7 @@ void Generator::AddFunc(string addr, string func_name) {
 }
 
 
-string Generator::GetFuncName(string addr) const {
+string Generator::GetFuncName(const string &addr) const {
   map<string, string>::const_iterator it = funcs.find(addr);
 
   if (it != funcs.end()) {
