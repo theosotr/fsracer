@@ -18,17 +18,18 @@ file(MAKE_DIRECTORY ${CLI_GEN_DIR})
 
 # Generate command-line interface through GNU gengetopt.
 add_custom_command(
-    OUTPUT ${CLI_GEN_DIR}/cmdline.h ${CLI_GEN_DIR}/cmdline.c
+    OUTPUT ${CLI_GEN_DIR}/fsracer_cli.h ${CLI_GEN_DIR}/fsracer_cli.c
     COMMAND ${GENGETOPT_BIN} -i ${CMAKE_CURRENT_SOURCE_DIR}/fsracer_cli.ggo
     --output-dir=${CLI_GEN_DIR}
+    --file-name=fsracer_cli
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/fsracer_cli.ggo
 )
 file(GLOB src_files ${CMAKE_SOURCE_DIR}/src/*.cpp)
 
 add_library(fsracer SHARED fsracer.cpp
   ${src_files}
-  ${CLI_GEN_DIR}/cmdline.h
-  ${CLI_GEN_DIR}/cmdline.c)
+  ${CLI_GEN_DIR}/fsracer_cli.h
+  ${CLI_GEN_DIR}/fsracer_cli.c)
 target_include_directories(fsracer PRIVATE ${CLI_GEN_DIR})
 target_include_directories(fsracer PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
