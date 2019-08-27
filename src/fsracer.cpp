@@ -17,6 +17,7 @@
 #include "NodeGenerator.h"
 #include "OutWriter.h"
 #include "RaceDetector.h"
+#include "TraceGenerator.h"
 
 
 #define INIT_OUT(arg_prefix)                                               \
@@ -32,9 +33,6 @@
   while (false)                                                            \
 
 
-using namespace generator;
-using namespace analyzer;
-
 /**
  * This struct contains all the information about the current instance
  * of FSracer.
@@ -44,14 +42,14 @@ using namespace analyzer;
  */
 struct FSracerSetup {
   /// Generator used for creating traces.
-  Generator *trace_gen;
+  trace_generator::TraceGenerator *trace_gen;
   /// A list of analyzers that operate on traces.
-  vector<pair<Analyzer*, writer::OutWriter*>> analyzers;
+  vector<pair<analyzer::Analyzer*, writer::OutWriter*>> analyzers;
   /// Component used to detect faults.
   detector::FaultDetector *fault_detector;
 
-  FSracerSetup(Generator *trace_gen_,
-               vector<pair<Analyzer*, writer::OutWriter*>> analyzers_,
+  FSracerSetup(trace_generator::TraceGenerator *trace_gen_,
+               vector<pair<analyzer::Analyzer*, writer::OutWriter*>> analyzers_,
                detector::FaultDetector *fault_detector_):
     trace_gen(trace_gen_),
     analyzers(analyzers_),
@@ -66,7 +64,7 @@ bool module_loaded = false;
 static void
 module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
 {
-  Generator *trace_gen = setup->trace_gen;
+  trace_generator::TraceGenerator *trace_gen = setup->trace_gen;
   trace_gen->Setup(mod);
   if (!module_loaded) {
     size_t pid = dr_get_thread_id(drcontext);
@@ -120,7 +118,7 @@ analyze_traces(FSracerSetup *setup)
     return;
   }
   for (auto const &pair_analyzer : setup->analyzers) {
-    Analyzer *analyzer = pair_analyzer.first;
+    analyzer::Analyzer *analyzer = pair_analyzer.first;
     writer::OutWriter *out = pair_analyzer.second;
     // TODO: Currently the analysis of traces is done offline
     // (after the execution of the program).
@@ -163,7 +161,7 @@ clear_fsracer_setup(FSracerSetup *setup)
     delete setup->trace_gen;
   }
   for (auto &entry : setup->analyzers) {
-    Analyzer *analyzer = entry.first;
+    analyzer::Analyzer *analyzer = entry.first;
     if (analyzer) {
       delete analyzer;
     }
@@ -206,14 +204,14 @@ get_graph_format(gengetopt_args_info &args_info)
 }
 
 
-static FSAnalyzer::OutFormat
+static analyzer::FSAnalyzer::OutFormat
 get_fs_out_format(gengetopt_args_info &args_info)
 {
   string out_format = args_info.fs_accesses_format_arg;
   if (out_format == "json") {
-    return FSAnalyzer::JSON;
+    return analyzer::FSAnalyzer::JSON;
   }
-  return FSAnalyzer::CSV;
+  return analyzer::FSAnalyzer::CSV;
 }
 
 
@@ -221,7 +219,7 @@ static void
 init_analyzers(gengetopt_args_info &args_info,
                vector<pair<Analyzer*, writer::OutWriter*>> &analyzers)
 {
-  Analyzer *analyzer_ptr = nullptr;
+  analyzer::Analyzer *analyzer_ptr = nullptr;
   writer::OutWriter *out = nullptr;
   vector<string> enabled_analyzers;
   if (args_info.analyzer_given) {
@@ -242,12 +240,12 @@ init_analyzers(gengetopt_args_info &args_info,
   }
   for (auto const &analyzer : enabled_analyzers) {
     if (analyzer == "dep-infer") {
-      analyzer_ptr = new DependencyInferenceAnalyzer(
+      analyzer_ptr = new analyzer::DependencyInferenceAnalyzer(
           get_graph_format(args_info));
       INIT_OUT(dep_graph);
     }
     if (analyzer == "fs") {
-      analyzer_ptr = new FSAnalyzer(get_fs_out_format(args_info));
+      analyzer_ptr = new analyzer::FSAnalyzer(get_fs_out_format(args_info));
       INIT_OUT(fs_accesses);
     }
     analyzers.push_back({ analyzer_ptr, out });
@@ -257,9 +255,10 @@ init_analyzers(gengetopt_args_info &args_info,
 
 
 detector::FaultDetector *
-init_fault_detector(gengetopt_args_info &args_info,
-                    vector<pair<Analyzer*, writer::OutWriter*>> &analyzers,
-                    int offset)
+init_fault_detector(
+    gengetopt_args_info &args_info,
+    vector<pair<analyzer::Analyzer*, writer::OutWriter*>> &analyzers,
+    int offset)
 {
   detector::FaultDetector *fault_detector = nullptr;
   if (args_info.fault_detector_given) {
@@ -267,10 +266,10 @@ init_fault_detector(gengetopt_args_info &args_info,
     if (fault_detector_str == "race") {
       // We know the first analyzer corresponds to the `dep-infer` analyzer,
       // while the second one is the `fs` analyzer.
-      DependencyInferenceAnalyzer *dep_analyzer =
-        static_cast<DependencyInferenceAnalyzer*>(
+      analyzer::DependencyInferenceAnalyzer *dep_analyzer =
+        static_cast<analyzer::DependencyInferenceAnalyzer*>(
             analyzers[offset + 0].first);
-      FSAnalyzer *fs_analyzer = static_cast<FSAnalyzer*>(
+      analyzer::FSAnalyzer *fs_analyzer = static_cast<analyzer::FSAnalyzer*>(
           analyzers[offset + 1].first);
       fault_detector = new detector::RaceDetector(
           fs_analyzer->GetFSAccesses(),
@@ -281,12 +280,12 @@ init_fault_detector(gengetopt_args_info &args_info,
 }
 
 
-Generator *
+trace_generator::TraceGenerator *
 init_trace_generator(gengetopt_args_info &args_info)
 {
   string trace_gen_val = args_info.trace_generator_arg;
   if (trace_gen_val == "node") {
-    return new NodeTraceGenerator();
+    return new trace_generator::NodeTraceGenerator();
   }
   return nullptr;
 }
@@ -314,7 +313,7 @@ process_args(gengetopt_args_info &args_info)
       << "are mutually exclusive";
   }
 
-  vector<pair<Analyzer*, writer::OutWriter*>> analyzers;
+  vector<pair<analyzer::Analyzer*, writer::OutWriter*>> analyzers;
   // The offset of analyzers' vector used by function responsible
   // for initializing the fault detector.
   //
@@ -322,14 +321,14 @@ process_args(gengetopt_args_info &args_info)
   // fault detector by the corresponding vector.
   int offset = 0;
   if (args_info.dump_trace_given) {
-    analyzers.push_back({ new DumpAnalyzer(),
+    analyzers.push_back({ new analyzer::DumpAnalyzer(),
         new writer::OutWriter(writer::OutWriter::WRITE_STDOUT, "") });
     // Since we initialize one extra analyzer, we set the offset to 1.
     offset = 1;
   }
 
   if (args_info.output_trace_given) {
-    analyzers.push_back({ new DumpAnalyzer(),
+    analyzers.push_back({ new analyzer::DumpAnalyzer(),
         new writer::OutWriter(writer::OutWriter::WRITE_FILE,
                               args_info.output_trace_arg) });
     // The same applies here.

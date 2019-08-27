@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "Generator.h"
+#include "TraceGenerator.h"
 
 
 using namespace trace;
@@ -26,10 +26,10 @@ namespace node_utils {
 }
 
 
-namespace generator {
+namespace trace_generator {
 
 
-class NodeTraceGenerator : public generator::Generator {
+class NodeTraceGenerator : public trace_generator::TraceGenerator {
   public:
     string GetName() const {
       return "NodeTrace";
@@ -41,6 +41,6 @@ class NodeTraceGenerator : public generator::Generator {
 };
 
 
-}
+} // namespace trace_generator
 
 #endif

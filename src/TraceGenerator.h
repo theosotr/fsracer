@@ -25,7 +25,7 @@ using pre_clb_t = void (*)(void *wrapctx, OUT void **user_data);
 using post_clb_t = void (*)(void *wrapctx, void *user_data);
 
 
-namespace generator {
+namespace trace_generator {
 
 /**
  * This class represents a trace generator.
@@ -33,14 +33,14 @@ namespace generator {
  * A trace generator is used to produce traces derived from the
  * execution of a program by wrapping function through DynamoRIO.
  */
-class Generator {
+class TraceGenerator {
   public:
     /// This data structures hold the wrappers associated with
     /// every native function name.
     using wrapper_t = map<string, pair<pre_clb_t, post_clb_t>>;
 
     /** Default Constructor. */
-    Generator():
+    TraceGenerator():
       current_block(nullptr),
       event_count(0),
       sync_op_count(0) {
@@ -48,7 +48,7 @@ class Generator {
     }
 
     /** Deallocate the trace generator. */
-    ~Generator() {
+    ~TraceGenerator() {
       if (trace) {
         delete trace; 
       }
@@ -195,7 +195,7 @@ class Generator {
 };
 
 
-} // namespace generator
+} // namespace trace_generator
 
 
 namespace generator_utils {
@@ -203,7 +203,7 @@ namespace generator_utils {
 using exec_op_t = ExecOp *(*)(void *wrapctx, OUT void **user_data);
 using exec_op_post_t = ExecOp *(*)(void *wrapctx, void *user_data);
 
-generator::Generator *GetTraceGenerator(void **data);
+trace_generator::TraceGenerator *GetTraceGenerator(void **data);
 
 void DefaultPre(void *wrapctx, OUT void **user_data);
 

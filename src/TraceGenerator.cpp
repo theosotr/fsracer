@@ -7,7 +7,7 @@
 #include "drsyms.h"
 
 
-#include "Generator.h"
+#include "TraceGenerator.h"
 
 #define CHECK_EXEC_OP                                \
   if (!get_exec_op) {                                \
@@ -20,7 +20,7 @@
 
 
 #define MULTIPATH                                                         \
-  generator::Generator *trace_gen = GetTraceGenerator(user_data);         \
+  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);         \
   string old_path = (const char *) drwrap_get_arg(wrapctx, old_path_pos); \
   string new_path = (const char *) drwrap_get_arg(wrapctx, new_path_pos); \
 
@@ -64,11 +64,12 @@ get_pc_by_symbol(const module_data_t *mod, const char *symbol)
 }
 
 
-namespace generator {
+namespace trace_generator {
 
 
-void Generator::RegisterFunc(const module_data_t *mod, string func_name,
-                             pre_clb_t pre , post_clb_t post) {
+void TraceGenerator::RegisterFunc(const module_data_t *mod,
+                                        string func_name,
+                                        pre_clb_t pre , post_clb_t post) {
   app_pc towrap = get_pc_by_symbol(mod, func_name.c_str());
   void *user_data  = this;
   if (towrap != NULL) {
@@ -88,7 +89,7 @@ void Generator::RegisterFunc(const module_data_t *mod, string func_name,
 }
 
 
-void Generator::Setup(const module_data_t *mod) {
+void TraceGenerator::Setup(const module_data_t *mod) {
   for (pair<string, pair<pre_clb_t, post_clb_t>> entry : GetWrappers()) {
     string func_name = entry.first;
     pair<pre_clb_t, post_clb_t> func_pair = entry.second;
@@ -97,12 +98,12 @@ void Generator::Setup(const module_data_t *mod) {
 }
 
 
-void Generator::AddToStore(string key, void *value) {
+void TraceGenerator::AddToStore(string key, void *value) {
   store[key] = value;
 }
 
 
-void *Generator::GetStoreValue(const string &key) const {
+void *TraceGenerator::GetStoreValue(const string &key) const {
   map<string, void*>::const_iterator it;
   it = store.find(key);
   if (it == store.end()) {
@@ -113,12 +114,12 @@ void *Generator::GetStoreValue(const string &key) const {
 }
 
 
-void Generator::DeleteFromStore(const string &key) {
+void TraceGenerator::DeleteFromStore(const string &key) {
   PopFromStore(key);
 }
 
 
-void *Generator::PopFromStore(const string &key) {
+void *TraceGenerator::PopFromStore(const string &key) {
   map<string, void*>::iterator it = store.find(key);
   void *value = nullptr;
   if (it != store.end()) {
@@ -129,29 +130,29 @@ void *Generator::PopFromStore(const string &key) {
 }
 
 
-void Generator::PushFunction(const string func_name) {
+void TraceGenerator::PushFunction(const string func_name) {
   call_stack.push(func_name);
 }
 
 
-void Generator::PopStack() {
+void TraceGenerator::PopStack() {
   if (!call_stack.empty()) {
     call_stack.pop();
   }
 }
 
 
-string Generator::TopStack() const {
+string TraceGenerator::TopStack() const {
   return call_stack.top();
 }
 
 
-void Generator::AddFunc(string addr, string func_name) {
+void TraceGenerator::AddFunc(string addr, string func_name) {
   funcs[addr] = func_name;
 }
 
 
-string Generator::GetFuncName(const string &addr) const {
+string TraceGenerator::GetFuncName(const string &addr) const {
   map<string, string>::const_iterator it = funcs.find(addr);
 
   if (it != funcs.end()) {
@@ -161,7 +162,7 @@ string Generator::GetFuncName(const string &addr) const {
 }
 
 
-void Generator::AbortWithErr(enum utils::err::ErrType err_type, string errmsg,
+void TraceGenerator::AbortWithErr(enum utils::err::ErrType err_type, string errmsg,
                              string location) {
   string desc = "";
   if (trace) {
@@ -172,30 +173,31 @@ void Generator::AbortWithErr(enum utils::err::ErrType err_type, string errmsg,
 }
 
 
-bool Generator::HasFailed() const {
+bool TraceGenerator::HasFailed() const {
   return error.has_value();
 }
 
 
-utils::err::Error Generator::GetErr() const {
+utils::err::Error TraceGenerator::GetErr() const {
   return error.value();
 }
 
 
-} // namespace generator
+} // namespace trace_generator
 
 
 namespace generator_utils {
 
 
-generator::Generator *
+trace_generator::TraceGenerator *
 GetTraceGenerator(void **data)
 {
   if (!data) {
     return nullptr;
   }
 
-  generator::Generator *trace_gen = (generator::Generator *) *data;
+  trace_generator::TraceGenerator *trace_gen =
+    (trace_generator::TraceGenerator *) *data;
   return trace_gen;
 }
 
@@ -206,7 +208,7 @@ DefaultPre(void *wrapctx, OUT void **user_data)
   // Push the name of the function we wrap onto the stack.
   void *ptr = drwrap_get_func(wrapctx);
   string addr = utils::PtrToString(ptr);
-  generator::Generator *trace_gen = GetTraceGenerator(user_data);
+  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
   string func_name = trace_gen->GetFuncName(addr);
   if (func_name != "") {
     trace_gen->PushFunction(func_name);
@@ -217,7 +219,7 @@ DefaultPre(void *wrapctx, OUT void **user_data)
 void
 DefaultPost(void *wrapctx, void *user_data)
 {
-  generator::Generator *trace_gen = (generator::Generator *) (user_data);
+  trace_generator::TraceGenerator *trace_gen = (trace_generator::TraceGenerator *) (user_data);
   trace_gen->PopStack();
 }
 
@@ -240,7 +242,7 @@ EmitHpath(void *wrapctx, OUT void **user_data, size_t path_pos,
           exec_op_t get_exec_op, string op_name)
 {
   CHECK_EXEC_OP;
-  generator::Generator *generator = GetTraceGenerator(user_data);
+  trace_generator::TraceGenerator *generator = GetTraceGenerator(user_data);
   string path = (const char *) drwrap_get_arg(wrapctx, path_pos);
   if (follow_symlink) {
     Hpath *hpath = new Hpath(AT_FDCWD, path, effect_type);
@@ -301,4 +303,4 @@ void MarkOperationStatus(void *wrapctx, void *user_data,
 }
 
 
-}
+} // namespace generator_utils
