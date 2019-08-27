@@ -1,6 +1,8 @@
 package "fsracer"
 version "0.1dev"
 
+option "trace-generator" g "The component used to generate traces"
+  values="node" required
 
 defmode "fault" modedesc="FSRacer is used to detect faults"
 defmode "analysis" modedesc="FSRAcer is used to analyze traces"

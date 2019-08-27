@@ -281,6 +281,17 @@ init_fault_detector(gengetopt_args_info &args_info,
 }
 
 
+Generator *
+init_trace_generator(gengetopt_args_info &args_info)
+{
+  string trace_gen_val = args_info.trace_generator_arg;
+  if (trace_gen_val == "node") {
+    return new NodeTraceGenerator();
+  }
+  return nullptr;
+}
+
+
 static void
 process_args(gengetopt_args_info &args_info)
 {
@@ -327,7 +338,8 @@ process_args(gengetopt_args_info &args_info)
   init_analyzers(args_info, analyzers);
   detector::FaultDetector *fault_detector = init_fault_detector(
       args_info, analyzers, offset);
-  setup = new FSracerSetup(new NodeTraceGenerator(), analyzers,
+  setup = new FSracerSetup(init_trace_generator(args_info),
+                           analyzers,
                            fault_detector);
 }
 

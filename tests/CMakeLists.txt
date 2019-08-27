@@ -12,6 +12,7 @@ add_test(build_fsracer
 message("${DynamoRIO_BUILD_DIR}")
 
 string(CONCAT cmd_options
+  "--trace-generator=node "
   "--dep-graph-format=csv "
   "--dump-dep-graph "
   "--fs-accesses-format=csv "
