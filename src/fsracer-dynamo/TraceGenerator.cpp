@@ -189,6 +189,12 @@ utils::err::Error TraceGenerator::GetErr() const {
 namespace generator_utils {
 
 
+size_t GetCurrentThread(void *wrapctx) {
+  void *drcontext = drwrap_get_drcontext(wrapctx);
+  return dr_get_thread_id(drcontext);
+}
+
+
 trace_generator::TraceGenerator *
 GetTraceGenerator(void **data)
 {

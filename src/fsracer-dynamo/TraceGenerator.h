@@ -203,6 +203,8 @@ namespace generator_utils {
 using exec_op_t = ExecOp *(*)(void *wrapctx, OUT void **user_data);
 using exec_op_post_t = ExecOp *(*)(void *wrapctx, void *user_data);
 
+size_t GetCurrentThread(void *wrapctx);
+
 trace_generator::TraceGenerator *GetTraceGenerator(void **data);
 
 void DefaultPre(void *wrapctx, OUT void **user_data);

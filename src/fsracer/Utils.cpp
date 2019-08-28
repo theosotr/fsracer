@@ -3,9 +3,6 @@
 #include <sstream>
 #include <string>
 
-#include "dr_api.h"
-#include "drwrap.h"
-
 #include "Utils.h"
 
 
@@ -18,11 +15,6 @@ std::string PtrToString(const void *ptr) {
   return ss.str();
 }
 
-
-size_t GetCurrentThread(void *wrapctx) {
-  void *drcontext = drwrap_get_drcontext(wrapctx);
-  return dr_get_thread_id(drcontext);
-}
 
 
 std::string GetRightSubstr(std::string &str, std::string delm) {

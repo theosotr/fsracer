@@ -134,7 +134,7 @@ get_exec_op(void *wrapctx, OUT void **user_data)
 {
 
   trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
-  size_t thread_id = utils::GetCurrentThread(wrapctx);
+  size_t thread_id = generator_utils::GetCurrentThread(wrapctx);
   return (ExecOp *) trace_gen->GetStoreValue(
       THREADS + to_string(thread_id));
 }
@@ -145,7 +145,7 @@ get_exec_op_post(void *wrapctx, void *user_data) {
   
   trace_generator::TraceGenerator *trace_gen =
     (trace_generator::TraceGenerator *) user_data;
-  size_t thread_id = utils::GetCurrentThread(wrapctx);
+  size_t thread_id = generator_utils::GetCurrentThread(wrapctx);
   return (ExecOp *) trace_gen->GetStoreValue(
       THREADS + to_string(thread_id));
 }
@@ -258,7 +258,7 @@ wrap_post_open(void *wrapctx, void *user_data)
     (trace_generator::TraceGenerator *) user_data;
   string path = (const char *) trace_gen->PopFromStore(FUNC_ARGS + "open");
   int ret_val = (int)(ptr_int_t) drwrap_get_retval(wrapctx);
-  size_t thread_id = utils::GetCurrentThread(wrapctx);
+  size_t thread_id = generator_utils::GetCurrentThread(wrapctx);
   ExecOp *exec_op = (ExecOp *) trace_gen->GetStoreValue(
       THREADS + to_string(thread_id));
   if (!exec_op) {
@@ -364,7 +364,7 @@ wrap_pre_uv_fs_work(void *wrapctx, OUT void **user_data)
   // operation.
   string addr = utils::PtrToString(uv_fs_t_ptr);
 
-  string thread_str = to_string(utils::GetCurrentThread(wrapctx));
+  string thread_str = to_string(generator_utils::GetCurrentThread(wrapctx));
   string key = FUNC_INVOCATIONS + thread_str + "/uv__fs_work";
   // We get the number of `uv__fs_work` invocations in the current call
   // stack.
@@ -413,7 +413,7 @@ wrap_post_uv_fs_work(void *wrapctx, void *user_data)
 
   trace_generator::TraceGenerator *trace_gen =
     (trace_generator::TraceGenerator *) user_data;
-  size_t thread_id = utils::GetCurrentThread(wrapctx);
+  size_t thread_id = generator_utils::GetCurrentThread(wrapctx);
   string thread_str = to_string(thread_id);
 
   // We examine the store to see the number of
