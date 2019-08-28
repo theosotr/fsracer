@@ -56,7 +56,7 @@ set(test_file ${TEST_FILE})
 
 # Define the command to run.
 separate_arguments(args UNIX_COMMAND ${FSRACER_ARGS})
-set (cmd ${DYNAMO_FILE} -c ../tools/fsracer/libfsracer.so ${args} -- ${TEST_CMD} ${test_file})
+set (cmd ${DYNAMO_FILE} -c ../tools/fsracer-dynamo/libfsracer.so ${args} -- ${TEST_CMD} ${test_file})
 
 # Running Test Application using DynamoRIO and capturing its standard output
 # to a file.
