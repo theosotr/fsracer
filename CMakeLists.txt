@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 option(ENABLE_TESTS "Enable tests for the client" ON)
 
+add_subdirectory(src)
 add_subdirectory(tools)
 
 if (ENABLE_TESTS)
