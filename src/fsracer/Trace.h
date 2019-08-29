@@ -29,15 +29,16 @@ namespace trace {
 /** A generic class that represents a node of the AST of traces. */
 class TraceNode {
   public:
+    TraceNode() {  }
     /** Polymorphic destructor of the parent class. */
     virtual ~TraceNode() {  };
     /** This converts the current object to a string. */
-    virtual string ToString() const;
+    virtual string ToString() const = 0;
     /**
      * This method accepts an analyzer, and delegates the analysis
      * of the current trace node through the visitor design pattern.
      */
-    virtual void Accept(analyzer::Analyzer *analyzer) const;
+    virtual void Accept(analyzer::Analyzer *analyzer) const = 0;
 };
 
 
@@ -59,15 +60,16 @@ private:
 /** A class that represents a trace expression. */ 
 class Expr {
   public:
+    Expr() {  }
     /** Polymorphic destructor. */
     virtual ~Expr() {  };
     /** This converts the current object to a string. */
-    virtual string ToString() const;
+    virtual string ToString() const = 0;
     /**
      * This methods accepts an analyzer that is responsible for
      * analyzing the current expression.
      */
-    virtual void Accept(analyzer::Analyzer *analyzer) const;
+    virtual void Accept(analyzer::Analyzer *analyzer) const = 0;
 
     /** Get the debug information corresponding to this expression. */
     DebugInfo GetDebugInfo() const {

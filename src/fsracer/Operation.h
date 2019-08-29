@@ -29,9 +29,9 @@ class Operation {
     Operation():
       failed(false) {  }
     virtual ~Operation() {  };
-    virtual void Accept(analyzer::Analyzer *analyzer) const;
-    virtual string ToString() const;
-    virtual string GetOpName() const;
+    virtual void Accept(analyzer::Analyzer *analyzer) const = 0;
+    virtual string ToString() const = 0;
+    virtual string GetOpName() const = 0;
 
     void MarkFailed() {
       failed = true;
