@@ -14,6 +14,11 @@
 
 namespace fstrace {
 
+
+void AddOperationDebugInfo(operation::Operation *op,
+                           std::vector<std::string> &debug_info);
+
+
 class driver {
 
 public:

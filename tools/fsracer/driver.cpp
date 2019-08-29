@@ -5,6 +5,21 @@
 namespace fstrace {
 
 
+void AddOperationDebugInfo(operation::Operation *op,
+                           std::vector<std::string> &debug_info) {
+  if (!op) {
+    return;
+  }
+  for (auto const &debug_entry : debug_info) {
+    if (debug_entry == "!failed") {
+      op->MarkFailed();
+    } else {
+      op->SetActualOpName(debug_entry);
+    }
+  }
+}
+
+
 driver::driver() {
   trace_f = new trace::Trace();
 }

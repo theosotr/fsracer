@@ -40,8 +40,9 @@
 %define api.token.prefix {TOK_}
 
 %token
-  END 0 "end of file"
-  COLON ":"
+  END 0        "end of file"
+  COLON        ":"
+  EXCLAMATION  "!"
 ;
 
 %token <std::string>
@@ -71,20 +72,20 @@
   EXPUNGED      "expunged"
 ;
 %token <std::string>
-  META "meta variable"
-  ID
+  NUMBER "number"
   OPID "operation id"
-  PATH "path"
+  IDENTIFIER "identifier"
 
 %type <int> dirfd
 %type <operation::Hpath::EffectType> effect_type
 %type <trace::Event> event_type
+%type <std::vector<std::string>> meta_vars
 
 %start program
 
 %%
 
-program : PID COLON ID CWD COLON PATH op_defs block_defs {
+program : PID COLON NUMBER CWD COLON IDENTIFIER op_defs block_defs {
           driver.trace_f->SetThreadId(std::stoi($3));
           driver.trace_f->SetCwd($6);
         }
@@ -116,40 +117,47 @@ operations : oper {  }
            ;
 
 
-oper : HPATH dirfd PATH effect_type meta_vars {
+oper : HPATH dirfd IDENTIFIER effect_type meta_vars {
        operation::Hpath *hpath = new operation::Hpath($2, $3, $4);
+       AddOperationDebugInfo(hpath, $5);
        driver.opers.push_back(hpath);
      }
-     | HPATHSYM dirfd PATH effect_type meta_vars {
-       operation::HpathSym *hpath = new operation::HpathSym($2, $3, $4);
-       driver.opers.push_back(hpath);
+     | HPATHSYM dirfd IDENTIFIER effect_type meta_vars {
+       operation::HpathSym *hpathsym = new operation::HpathSym($2, $3, $4);
+       AddOperationDebugInfo(hpathsym, $5);
+       driver.opers.push_back(hpathsym);
      }
-     | NEWFD dirfd PATH ID meta_vars {
+     | NEWFD dirfd IDENTIFIER NUMBER meta_vars {
        operation::NewFd *new_fd = new operation::NewFd(
            $2, $3, std::stoi($4));
+       AddOperationDebugInfo(new_fd, $5);
        driver.opers.push_back(new_fd);
      }
-     | DELFD ID meta_vars {
+     | DELFD NUMBER meta_vars {
        operation::DelFd *del_fd = new operation::DelFd(std::stoi($2));
+       AddOperationDebugInfo(del_fd, $3);
        driver.opers.push_back(del_fd);
      }
-     | LINK dirfd PATH dirfd PATH meta_vars {
+     | LINK dirfd IDENTIFIER dirfd IDENTIFIER meta_vars {
        operation::Link *link = new operation::Link($2, $3, $4, $5);
+       AddOperationDebugInfo(link, $6);
        driver.opers.push_back(link);
      }
-     | RENAME dirfd PATH dirfd PATH meta_vars {
+     | RENAME dirfd IDENTIFIER dirfd IDENTIFIER meta_vars {
        operation::Rename *rename = new operation::Rename($2, $3, $4, $5);
+       AddOperationDebugInfo(rename, $6);
        driver.opers.push_back(rename);
      }
-     | SYMLINK dirfd PATH PATH meta_vars {
+     | SYMLINK dirfd IDENTIFIER IDENTIFIER meta_vars {
        operation::Symlink *symlink = new operation::Symlink($2, $3, $4);
+       AddOperationDebugInfo(symlink, $5);
        driver.opers.push_back(symlink);
      }
      ;
 
 
 dirfd : ATFDCWD { $$ = AT_FDCWD; }
-      | ID { $$ = std::stoi($1); }
+      | NUMBER { $$ = std::stoi($1); }
       ;
 
 
@@ -172,7 +180,7 @@ block_def : BEGIN_BLOCK MAIN exprs END_BLOCK {
             driver.trace_f->AddBlock(block);
             driver.exprs.clear();
           }
-          | BEGIN_BLOCK ID exprs END_BLOCK {
+          | BEGIN_BLOCK NUMBER exprs END_BLOCK {
             trace::Block *block = new trace::Block(std::stoi($2));
             for (auto const &expr_entry : driver.exprs) {
               block->AddExpr(expr_entry);
@@ -180,7 +188,7 @@ block_def : BEGIN_BLOCK MAIN exprs END_BLOCK {
             driver.trace_f->AddBlock(block);
             driver.exprs.clear();
           }
-          | BEGIN_BLOCK ID END_BLOCK {
+          | BEGIN_BLOCK NUMBER END_BLOCK {
             driver.trace_f->AddBlock(new trace::Block(std::stoi($2)));
             driver.exprs.clear();
           }
@@ -192,33 +200,45 @@ exprs : expr {  }
       ;
 
 
-expr : NEW_EVENT ID event_type meta_vars {
+expr : NEW_EVENT NUMBER event_type meta_vars {
+       trace::NewEventExpr *new_event = new trace::NewEventExpr(std::stoi($2), $3);
+       for (auto const &debug_info : $4) {
+         new_event->AddDebugInfo(debug_info);
+       }
+       driver.exprs.push_back(new_event);
+     }
+     | NEW_EVENT NUMBER event_type {
        driver.exprs.push_back(new trace::NewEventExpr(std::stoi($2), $3));
      }
-     | NEW_EVENT ID event_type {
-       driver.exprs.push_back(new trace::NewEventExpr(std::stoi($2), $3));
-     }
-     | LINK ID ID {
+     | LINK NUMBER NUMBER {
        driver.exprs.push_back(new trace::LinkExpr(std::stoi($2), std::stoi($3)));
      }
      | SUBMIT_OP OPID SYNC meta_vars {
-       driver.exprs.push_back(new trace::SubmitOp($2));
+       trace::SubmitOp *submit_op = new trace::SubmitOp($2);
+       for (auto const &debug_info : $4) {
+         submit_op->AddDebugInfo(debug_info);
+       }
+       driver.exprs.push_back(submit_op);
      }
-     | SUBMIT_OP OPID ID ASYNC meta_vars {
-       driver.exprs.push_back(new trace::SubmitOp($2, std::stoi($3)));
+     | SUBMIT_OP OPID NUMBER ASYNC meta_vars {
+       trace::SubmitOp *submit_op = new trace::SubmitOp($2, std::stoi($3));
+       for (auto const &debug_info : $5) {
+         submit_op->AddDebugInfo(debug_info);
+       }
+       driver.exprs.push_back(submit_op);
      }
      ;
 
 
-event_type : S ID { $$ = trace::Event(trace::Event::S, std::stoi($2)); }
-           | M ID { $$ = trace::Event(trace::Event::M, std::stoi($2)); }
-           | W ID { $$ = trace::Event(trace::Event::W, std::stoi($2)); }
+event_type : S NUMBER { $$ = trace::Event(trace::Event::S, std::stoi($2)); }
+           | M NUMBER { $$ = trace::Event(trace::Event::M, std::stoi($2)); }
+           | W NUMBER { $$ = trace::Event(trace::Event::W, std::stoi($2)); }
            | EXTERNAL { $$ = trace::Event(trace::Event::EXT, 0); }
            ;
 
 
-meta_vars : META {  }
-          | meta_vars META  { }
+meta_vars : EXCLAMATION IDENTIFIER { $$ = std::vector<std::string>(); $$.push_back($2); }
+          | meta_vars EXCLAMATION IDENTIFIER  { $1.push_back($3); }
           ;
 %%
 

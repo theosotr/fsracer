@@ -37,10 +37,13 @@
 [ \t\r ]+                location.step();
 \n+                      location.lines (yyleng); location.step();
 
-":"                      return SINGLE_TOKEN(COLON);
 
 "!PID"                   return TOKEN(PID);
 "!Working Directory"     return TOKEN(CWD);
+
+":"                      return SINGLE_TOKEN(COLON);
+"!"                      return SINGLE_TOKEN(EXCLAMATION);
+
 "Operation"              return TOKEN(OP);
 "do"                     return TOKEN(DO);
 "done"                   return TOKEN(DONE);
@@ -68,9 +71,8 @@
 "EXTERNAL"               return TOKEN(EXTERNAL);
 
 [a]?sync_[0-9]+          return TOKEN(OPID);
-[0-9]+                   return TOKEN(ID);
-[a-zA-Z0-9_\/\-.]+       return TOKEN(PATH);
-[!][a-zA-Z_]+            return TOKEN(META);
+[0-9]+                   return TOKEN(NUMBER);
+[a-zA-Z0-9_\/\-.]+       return TOKEN(IDENTIFIER);
 
 .                        { 
                            debug::err("Parser")
