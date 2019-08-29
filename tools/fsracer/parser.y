@@ -238,7 +238,7 @@ event_type : S NUMBER { $$ = trace::Event(trace::Event::S, std::stoi($2)); }
 
 
 meta_vars : EXCLAMATION IDENTIFIER { $$ = std::vector<std::string>(); $$.push_back($2); }
-          | meta_vars EXCLAMATION IDENTIFIER  { $1.push_back($3); }
+          | meta_vars EXCLAMATION IDENTIFIER  { $1.push_back($3); $$ = $1; }
           ;
 %%
 
