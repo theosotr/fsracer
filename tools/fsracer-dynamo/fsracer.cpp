@@ -17,7 +17,7 @@
 #include "NodeGenerator.h"
 #include "OutWriter.h"
 #include "RaceDetector.h"
-#include "TraceGenerator.h"
+#include "DynamoTraceGenerator.h"
 
 
 #define INIT_OUT(arg_prefix)                                               \
@@ -42,13 +42,13 @@
  */
 struct FSracerSetup {
   /// Generator used for creating traces.
-  trace_generator::TraceGenerator *trace_gen;
+  trace_generator::DynamoTraceGenerator *trace_gen;
   /// A list of analyzers that operate on traces.
   vector<pair<analyzer::Analyzer*, writer::OutWriter*>> analyzers;
   /// Component used to detect faults.
   detector::FaultDetector *fault_detector;
 
-  FSracerSetup(trace_generator::TraceGenerator *trace_gen_,
+  FSracerSetup(trace_generator::DynamoTraceGenerator *trace_gen_,
                vector<pair<analyzer::Analyzer*, writer::OutWriter*>> analyzers_,
                detector::FaultDetector *fault_detector_):
     trace_gen(trace_gen_),
@@ -64,7 +64,7 @@ bool module_loaded = false;
 static void
 module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
 {
-  trace_generator::TraceGenerator *trace_gen = setup->trace_gen;
+  trace_generator::DynamoTraceGenerator *trace_gen = setup->trace_gen;
   trace_gen->Setup(mod);
   if (!module_loaded) {
     size_t pid = dr_get_thread_id(drcontext);
@@ -280,7 +280,7 @@ init_fault_detector(
 }
 
 
-trace_generator::TraceGenerator *
+trace_generator::DynamoTraceGenerator *
 init_trace_generator(gengetopt_args_info &args_info)
 {
   string trace_gen_val = args_info.trace_generator_arg;

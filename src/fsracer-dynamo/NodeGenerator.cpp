@@ -4,7 +4,7 @@
 
 #include "NodeGenerator.h"
 #include "Utils.h"
-#include "TraceGenerator.h"
+#include "DynamoTraceGenerator.h"
 
 
 #define NEW_TIMERWRAP "node::(anonymous namespace)::TimerWrap::New"
@@ -16,7 +16,7 @@ using namespace generator_utils;
 using namespace generator_keys;
 
 
-static inline void check_block(trace_generator::TraceGenerator *trace_gen,
+static inline void check_block(trace_generator::DynamoTraceGenerator *trace_gen,
                                const string &msg) {
   if (!trace_gen->GetCurrentBlock()) {
     string errmsg = "Block points to `NULL`";
@@ -37,7 +37,8 @@ void
 AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
             size_t async_pos)
 {
-  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
+  trace_generator::DynamoTraceGenerator *trace_gen = GetTraceGenerator(
+      user_data);
   // First, we get the pointer that refers to the `uv_fs_t` struct
   // of the libuv library.
   //
@@ -101,7 +102,8 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
 
 
 static void
-add_to_set(trace_generator::TraceGenerator *trace_gen, int event_id, string key)
+add_to_set(trace_generator::DynamoTraceGenerator *trace_gen, int event_id,
+           string key)
 {
   void *value = trace_gen->GetStoreValue(key);
   if (!value) {
@@ -114,7 +116,7 @@ add_to_set(trace_generator::TraceGenerator *trace_gen, int event_id, string key)
 
 
 static bool
-has_event_id(trace_generator::TraceGenerator *trace_gen, int event_id,
+has_event_id(trace_generator::DynamoTraceGenerator *trace_gen, int event_id,
              string key)
 {
 
@@ -133,7 +135,8 @@ ExecOp *
 get_exec_op(void *wrapctx, OUT void **user_data)
 {
 
-  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    GetTraceGenerator(user_data);
   size_t thread_id = generator_utils::GetCurrentThread(wrapctx);
   return (ExecOp *) trace_gen->GetStoreValue(
       THREADS + to_string(thread_id));
@@ -143,8 +146,8 @@ get_exec_op(void *wrapctx, OUT void **user_data)
 ExecOp *
 get_exec_op_post(void *wrapctx, void *user_data) {
   
-  trace_generator::TraceGenerator *trace_gen =
-    (trace_generator::TraceGenerator *) user_data;
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    (trace_generator::DynamoTraceGenerator *) user_data;
   size_t thread_id = generator_utils::GetCurrentThread(wrapctx);
   return (ExecOp *) trace_gen->GetStoreValue(
       THREADS + to_string(thread_id));
@@ -228,7 +231,8 @@ wrap_pre_mkdir(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_open(void *wrapctx, OUT void **user_data)
 {
-  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    GetTraceGenerator(user_data);
   void *drcontext = drwrap_get_drcontext(wrapctx);
   char *path = (char *) drwrap_get_arg(wrapctx, 0);
   int flags = (int)(intptr_t) drwrap_get_arg(wrapctx, 1);
@@ -254,8 +258,8 @@ wrap_pre_open(void *wrapctx, OUT void **user_data)
 static void
 wrap_post_open(void *wrapctx, void *user_data)
 {
-  trace_generator::TraceGenerator *trace_gen =
-    (trace_generator::TraceGenerator *) user_data;
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    (trace_generator::DynamoTraceGenerator *) user_data;
   string path = (const char *) trace_gen->PopFromStore(FUNC_ARGS + "open");
   int ret_val = (int)(ptr_int_t) drwrap_get_retval(wrapctx);
   size_t thread_id = generator_utils::GetCurrentThread(wrapctx);
@@ -342,7 +346,8 @@ wrap_pre_utime(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_uv_fs_work(void *wrapctx, OUT void **user_data)
 {
-  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    GetTraceGenerator(user_data);
   // This is implementation specific.
   //
   // The argument of the `uv__fs_work` function is a pointer
@@ -411,8 +416,8 @@ static void
 wrap_post_uv_fs_work(void *wrapctx, void *user_data)
 {
 
-  trace_generator::TraceGenerator *trace_gen =
-    (trace_generator::TraceGenerator *) user_data;
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    (trace_generator::DynamoTraceGenerator *) user_data;
   size_t thread_id = generator_utils::GetCurrentThread(wrapctx);
   string thread_str = to_string(thread_id);
 
@@ -573,7 +578,8 @@ wrap_pre_uv_fs_utime(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
 {
-  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    GetTraceGenerator(user_data);
   /* node::Environment::AsyncHooks::push_async_ids(double, double)
    *
    * Get the value of the second argument that is stored
@@ -628,7 +634,8 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
 {
-  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    GetTraceGenerator(user_data);
   dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
   int async_id = *(double *) ctx->ymm; // xmm0 register
 
@@ -655,7 +662,7 @@ wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
 
 
 inline static void
-add_new_event_expr(trace_generator::TraceGenerator *trace_gen,
+add_new_event_expr(trace_generator::DynamoTraceGenerator *trace_gen,
                    size_t event_id, Event event, string debug_info)
 {
   if (!trace_gen) {
@@ -677,7 +684,8 @@ add_new_event_expr(trace_generator::TraceGenerator *trace_gen,
 static void
 wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
 {
-  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    GetTraceGenerator(user_data);
   dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
   int async_id = *(double *) ctx->ymm; // xmm0 register
   int trigger_async_id = *((double *) ctx->ymm + 8); // xmm1 register
@@ -726,7 +734,8 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_start(void *wrapctx, OUT void **user_data)
 {
-  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    GetTraceGenerator(user_data);
   // This is the block corresponding to the execution of the top-level
   // code.
   //
@@ -745,7 +754,8 @@ wrap_pre_start(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_new_tick_info(void *wrapctx, OUT void **user_data)
 {
-  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    GetTraceGenerator(user_data);
   Event event = Event(Event::S, 0);
   check_block(trace_gen,
               "Create newTick " + to_string(trace_gen->GetEventCount()));
@@ -761,7 +771,8 @@ wrap_pre_new_tick_info(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_timerwrap(void *wrapctx, OUT void **user_data)
 {
-  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    GetTraceGenerator(user_data);
   Event event = Event(Event::W, 1);
   check_block(trace_gen,
               "Create timerwrap " + to_string(trace_gen->GetEventCount()));
@@ -778,7 +789,8 @@ wrap_pre_timerwrap(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_promise_resolve(void *wrapctx, OUT void **user_data)
 {
-  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    GetTraceGenerator(user_data);
   dr_mcontext_t *ctx = drwrap_get_mcontext(wrapctx);
   int async_id = *(double *) ctx->ymm; // xmm0 register
   check_block(trace_gen, "Resolve promise " + to_string(async_id));
@@ -817,7 +829,8 @@ wrap_pre_thenable(void *wrapctx, OUT void **user_data)
   // A similar expression is added *after* the execution of
   // the function responsible for fulfilling the promise (e.g., foo()).
   //
-  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    GetTraceGenerator(user_data);
   check_block(trace_gen, "");
   trace_gen->GetCurrentBlock()->PopExpr();
 }
@@ -826,7 +839,8 @@ wrap_pre_thenable(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_promise_wrap(void *wrapctx, OUT void **user_data)
 {
-  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    GetTraceGenerator(user_data);
   bool *is_promise = new bool(true);
   trace_gen->AddToStore(PROMISE_EVENT, (void *) is_promise);
 }
@@ -835,7 +849,8 @@ wrap_pre_promise_wrap(void *wrapctx, OUT void **user_data)
 static void
 wrap_pre_new_async_id(void *wrapctx, OUT void **user_data)
 {
-  trace_generator::TraceGenerator *trace_gen = GetTraceGenerator(user_data);
+  trace_generator::DynamoTraceGenerator *trace_gen =
+    GetTraceGenerator(user_data);
   trace_gen->IncrEventCount();
   Event event = Event(Event::W, 3);
   check_block(trace_gen,
@@ -849,7 +864,7 @@ wrap_pre_new_async_id(void *wrapctx, OUT void **user_data)
 
 namespace trace_generator {
 
-TraceGenerator::wrapper_t NodeTraceGenerator::GetWrappers() const {
+DynamoTraceGenerator::wrapper_t NodeTraceGenerator::GetWrappers() const {
   wrapper_t wrappers;
 
   // system calls

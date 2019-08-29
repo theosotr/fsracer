@@ -13,6 +13,7 @@
 
 #include "Utils.h"
 #include "Trace.h"
+#include "TraceGenerator.h"
 
 
 using namespace trace;
@@ -33,14 +34,14 @@ namespace trace_generator {
  * A trace generator is used to produce traces derived from the
  * execution of a program by wrapping function through DynamoRIO.
  */
-class TraceGenerator {
+class DynamoTraceGenerator : public TraceGenerator {
   public:
     /// This data structures hold the wrappers associated with
     /// every native function name.
     using wrapper_t = map<string, pair<pre_clb_t, post_clb_t>>;
 
     /** Default Constructor. */
-    TraceGenerator():
+    DynamoTraceGenerator():
       current_block(nullptr),
       event_count(0),
       sync_op_count(0) {
@@ -48,7 +49,7 @@ class TraceGenerator {
     }
 
     /** Deallocate the trace generator. */
-    ~TraceGenerator() {
+    ~DynamoTraceGenerator() {
       if (trace) {
         delete trace; 
       }
@@ -205,7 +206,7 @@ using exec_op_post_t = ExecOp *(*)(void *wrapctx, void *user_data);
 
 size_t GetCurrentThread(void *wrapctx);
 
-trace_generator::TraceGenerator *GetTraceGenerator(void **data);
+trace_generator::DynamoTraceGenerator *GetTraceGenerator(void **data);
 
 void DefaultPre(void *wrapctx, OUT void **user_data);
 

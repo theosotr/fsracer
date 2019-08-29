@@ -10,7 +10,7 @@ main (int argc, char *argv[])
   if (driver.Parse(argv[1])) {
     exit(EXIT_FAILURE);
   }
-  std::cout << driver.trace_f->ToString() << std::endl;
+  std::cout << driver.GetTrace()->ToString() << std::endl;
   return res;
 }
 
