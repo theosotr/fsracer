@@ -325,7 +325,7 @@ class Rename : public Link {
     Rename(size_t old_dirfd_, string old_path_, size_t new_dirfd_,
          string new_path_):
       Link(old_dirfd_, old_path_, new_dirfd_, new_path_) {  }
-    ~Rename();
+    ~Rename() {  };
 
     string GetOpName() const {
       return "rename";
