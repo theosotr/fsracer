@@ -1,3 +1,0 @@
-[submodule "engines/node"]
-	path = engines/node
-	url = git@github.com:theosotr/node.git
