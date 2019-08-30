@@ -92,7 +92,11 @@ Error::Error(enum ErrType err_type_, std::string msg_, std::string desc_,
 
 
 std::string Error::ToString() const {
-  std::string str = desc + "\n" + ErrToString(err_type);
+  std::string str = "";
+  if (desc != "") {
+    str += desc + "\n";
+  }
+  str += ErrToString(err_type);
   if (msg != "") {
     str += ": " + msg;
   }
