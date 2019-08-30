@@ -9,11 +9,12 @@
 %code requires {
     #include <iostream>
     #include <string>
+    #include <sstream>
     #include <vector>
-    #include <stdint.h>
 
     #include "Operation.h"
     #include "Trace.h"
+    #include "Utils.h"
 
     namespace fstrace {
         class TraceGeneratorDriver;
@@ -64,6 +65,7 @@
   END_BLOCK     "End"
   NEW_EVENT     "newEvent"
   LINK          "link"
+  TRIGGER       "trigger"
   SUBMIT_OP     "submitOp"
   SYNC          "SYNC"
   ASYNC         "ASYNC"
@@ -73,9 +75,10 @@
   EXPUNGED      "expunged"
 ;
 %token <std::string>
-  NUMBER "number"
-  OPID "operation id"
+  NUMBER     "number"
+  OPID       "operation id"
   IDENTIFIER "identifier"
+  ERROR      "character"
 
 %type <int> dirfd
 %type <operation::Hpath::EffectType> effect_type
@@ -174,7 +177,7 @@ block_defs : block_def { }
 
 
 block_def : BEGIN_BLOCK MAIN exprs END_BLOCK {
-            trace::Block *block = new trace::Block(0);
+            trace::Block *block = new trace::Block(MAIN_BLOCK);
             for (auto const &expr_entry : driver.exprs) {
               block->AddExpr(expr_entry);
             }
@@ -214,6 +217,9 @@ expr : NEW_EVENT NUMBER event_type meta_vars {
      | LINK NUMBER NUMBER {
        driver.exprs.push_back(new trace::LinkExpr(std::stoi($2), std::stoi($3)));
      }
+     | TRIGGER NUMBER {
+       driver.exprs.push_back(new trace::Trigger(std::stoi($2)));
+     }
      | SUBMIT_OP OPID SYNC meta_vars {
        trace::SubmitOp *submit_op = new trace::SubmitOp($2);
        for (auto const &debug_info : $4) {
@@ -241,8 +247,11 @@ event_type : S NUMBER { $$ = trace::Event(trace::Event::S, std::stoi($2)); }
 meta_vars : EXCLAMATION IDENTIFIER { $$ = std::vector<std::string>(); $$.push_back($2); }
           | meta_vars EXCLAMATION IDENTIFIER  { $1.push_back($3); $$ = $1; }
           ;
+
 %%
 
 void fstrace::TraceParser::error (const location_type& l, const std::string& m) {
-  std::cerr << l << ": " << m << '\n';  
+  std::stringstream ss;
+  ss << l;
+  driver.AddError(utils::err::TRACE_ERROR, m, ss.str());
 }

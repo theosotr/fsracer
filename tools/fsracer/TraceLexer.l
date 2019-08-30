@@ -61,6 +61,7 @@
 "MAIN"                   return TOKEN(MAIN);
 "newEvent"               return TOKEN(NEW_EVENT);
 "link"                   return TOKEN(LINK);
+"trigger"                return TOKEN(TRIGGER);
 "submitOp"               return TOKEN(SUBMIT_OP);
 "SYNC"                   return TOKEN(SYNC);
 "ASYNC"                  return TOKEN(ASYNC);
@@ -73,10 +74,10 @@
 [0-9]+                   return TOKEN(NUMBER);
 [a-zA-Z0-9_\/\-.]+       return TOKEN(IDENTIFIER);
 
-.                        { 
+.                        {
                            debug::err("TraceParser")
-                             << "unknown character [" << yytext << "]\n";
-                           return SINGLE_TOKEN(END);
+                             << "Unknown character [" << yytext << "]";
+                           return TOKEN(ERROR);
                          }
             
 <<EOF>>                  return SINGLE_TOKEN(END);
