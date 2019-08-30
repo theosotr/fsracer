@@ -170,7 +170,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
     void AnalyzeNewFd(const NewFd *new_fd) {  }
     void AnalyzeDelFd(const DelFd *del_fd) {  }
     void AnalyzeHpath(const Hpath *hpath) {  }
-    void AnalyzeHpath(const HpathSym *hpathsym) {  }
+    void AnalyzeHpathSym(const HpathSym *hpathsym) {  }
     void AnalyzeLink(const Link *link) {  }
     void AnalyzeRename(const Rename *rename) {  }
     void AnalyzeSymlink(const Symlink *symlink) {  }

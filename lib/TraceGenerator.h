@@ -20,6 +20,9 @@ namespace trace_generator {
  */
 class TraceGenerator {
 public:
+  /** Polymorphic Destructor. */
+  virtual ~TraceGenerator() {  };
+
   /** Gets the name of the trace generator. */
   virtual std::string GetName() const = 0; 
 

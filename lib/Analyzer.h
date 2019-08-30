@@ -25,53 +25,54 @@ namespace analyzer {
  */
 class Analyzer {
   public:
+    virtual ~Analyzer() {  }
     /** Name of analyzer. */
-    virtual string GetName() const;
+    virtual string GetName() const = 0;
 
     /** Analyze a node in the AST of traces. */
-    virtual void Analyze(const TraceNode *trace_node);
+    virtual void Analyze(const TraceNode *trace_node) = 0;
     /** Analyze the whole trace. */
-    virtual void AnalyzeTrace(const Trace *trace);
+    virtual void AnalyzeTrace(const Trace *trace) = 0;
     /** Analyze a single block */
-    virtual void AnalyzeBlock(const Block *block);
+    virtual void AnalyzeBlock(const Block *block) = 0;
     /** Analyze a trace expression. */
-    virtual void AnalyzeExpr(const Expr *expr);
+    virtual void AnalyzeExpr(const Expr *expr) = 0;
     /** Analyze the 'submitOp' construct. */
-    virtual void AnalyzeSubmitOp(const SubmitOp *submit_op);
+    virtual void AnalyzeSubmitOp(const SubmitOp *submit_op) = 0;
     /** Analyze the 'execOp' construct. */
-    virtual void AnalyzeExecOp(const ExecOp *exec_op);
+    virtual void AnalyzeExecOp(const ExecOp *exec_op) = 0;
     /** Analyze the 'newEvent' construct. */
-    virtual void AnalyzeNewEvent(const NewEventExpr *new_ev_expr);
+    virtual void AnalyzeNewEvent(const NewEventExpr *new_ev_expr) = 0;
     /** Analyze the 'link' construct. */
-    virtual void AnalyzeLink(const LinkExpr *link_expr);
+    virtual void AnalyzeLink(const LinkExpr *link_expr) = 0;
     /** Analyze the 'trigger' construct. */
-    virtual void AnalyzeTrigger(const Trigger *trigger_expr);
+    virtual void AnalyzeTrigger(const Trigger *trigger_expr) = 0;
 
     // ----- Methods for analyzing FS-related operations -----
   
     /** Analyze an FS operation. */
-    virtual void AnalyzeOperation(const Operation *operation);
+    virtual void AnalyzeOperation(const Operation *operation) = 0;
     /** Analzyze the 'newFd' construct. */
-    virtual void AnalyzeNewFd(const NewFd *new_fd);
+    virtual void AnalyzeNewFd(const NewFd *new_fd) = 0;
     /** Analyze the 'delFd' construct. */
-    virtual void AnalyzeDelFd(const DelFd *del_fd);
+    virtual void AnalyzeDelFd(const DelFd *del_fd) = 0;
     /** Analyze the 'hpath' construct. */
-    virtual void AnalyzeHpath(const Hpath *hpath);
+    virtual void AnalyzeHpath(const Hpath *hpath) = 0;
     /** Analyze the 'hpathsym' construct. */
-    virtual void AnalyzeHpathSym(const HpathSym *hpathsym);
+    virtual void AnalyzeHpathSym(const HpathSym *hpathsym) = 0;
     /** Analyze the 'link' construct. */
-    virtual void AnalyzeLink(const Link *link);
+    virtual void AnalyzeLink(const Link *link) = 0;
     /** Analyze the 'rename' construct. */
-    virtual void AnalyzeRename(const Rename *rename);
+    virtual void AnalyzeRename(const Rename *rename) = 0;
     /** Analyze the 'symlink' construct. */
-    virtual void AnalyzeSymlink(const Symlink *symlink);
+    virtual void AnalyzeSymlink(const Symlink *symlink) = 0;
 
     /**
      * This method dumps the analysis output using the given
      * object responsible for writing the output either to
      * standard output or to a dedicated file.
      */
-    virtual void DumpOutput(writer::OutWriter *out) const;
+    virtual void DumpOutput(writer::OutWriter *out) const = 0;
 
     /** Get the analysis time in milli seconds. */
     double GetAnalysisTime() const {

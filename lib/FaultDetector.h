@@ -14,6 +14,7 @@ namespace detector {
 class FaultDetector {
 
 public:
+  virtual ~FaultDetector() {  }
   /** Gets the name of the fault detector. */
   virtual std::string GetName() const = 0;
 
