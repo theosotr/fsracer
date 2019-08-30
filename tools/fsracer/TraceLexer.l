@@ -72,7 +72,7 @@
 
 [a]?sync_[0-9]+          return TOKEN(OPID);
 [0-9]+                   return TOKEN(NUMBER);
-[a-zA-Z0-9_\/\-.]+       return TOKEN(IDENTIFIER);
+[a-zA-Z0-9_\/\-.]+      return TOKEN(IDENTIFIER);
 
 .                        {
                            debug::err("TraceParser")

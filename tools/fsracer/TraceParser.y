@@ -89,9 +89,9 @@
 
 %%
 
-program : PID COLON NUMBER CWD COLON IDENTIFIER op_defs block_defs {
-          driver.trace_f->SetThreadId(std::stoi($3));
-          driver.trace_f->SetCwd($6);
+program : stats PID COLON NUMBER CWD COLON IDENTIFIER op_defs block_defs {
+          driver.trace_f->SetThreadId(std::stoi($4));
+          driver.trace_f->SetCwd($7);
         }
         ;
 
@@ -205,7 +205,8 @@ exprs : expr {  }
 
 
 expr : NEW_EVENT NUMBER event_type meta_vars {
-       trace::NewEventExpr *new_event = new trace::NewEventExpr(std::stoi($2), $3);
+       trace::NewEventExpr *new_event = new trace::NewEventExpr(
+           std::stoi($2), $3);
        for (auto const &debug_info : $4) {
          new_event->AddDebugInfo(debug_info);
        }
@@ -215,7 +216,8 @@ expr : NEW_EVENT NUMBER event_type meta_vars {
        driver.exprs.push_back(new trace::NewEventExpr(std::stoi($2), $3));
      }
      | LINK NUMBER NUMBER {
-       driver.exprs.push_back(new trace::LinkExpr(std::stoi($2), std::stoi($3)));
+       driver.exprs.push_back(new trace::LinkExpr(
+           std::stoi($2), std::stoi($3)));
      }
      | TRIGGER NUMBER {
        driver.exprs.push_back(new trace::Trigger(std::stoi($2)));
@@ -243,14 +245,20 @@ event_type : S NUMBER { $$ = trace::Event(trace::Event::S, std::stoi($2)); }
            | EXTERNAL { $$ = trace::Event(trace::Event::EXT, 0); }
            ;
 
+stats : EXCLAMATION IDENTIFIER COLON NUMBER
+      | stats EXCLAMATION IDENTIFIER COLON NUMBER
+      ;
 
-meta_vars : EXCLAMATION IDENTIFIER { $$ = std::vector<std::string>(); $$.push_back($2); }
+meta_vars : EXCLAMATION IDENTIFIER {
+            $$ = std::vector<std::string>(); $$.push_back($2);
+          }
           | meta_vars EXCLAMATION IDENTIFIER  { $1.push_back($3); $$ = $1; }
           ;
 
 %%
 
-void fstrace::TraceParser::error (const location_type& l, const std::string& m) {
+void fstrace::TraceParser::error (const location_type& l,
+                                  const std::string& m) {
   std::stringstream ss;
   ss << l;
   driver.AddError(utils::err::TRACE_ERROR, m, ss.str());
