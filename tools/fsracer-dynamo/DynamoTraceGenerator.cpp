@@ -175,16 +175,6 @@ void DynamoTraceGenerator::AbortWithErr(enum utils::err::ErrType err_type,
 }
 
 
-bool DynamoTraceGenerator::HasFailed() const {
-  return error.has_value();
-}
-
-
-utils::err::Error DynamoTraceGenerator::GetErr() const {
-  return error.value();
-}
-
-
 } // namespace trace_generator
 
 

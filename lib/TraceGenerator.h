@@ -1,9 +1,12 @@
 #ifndef TRACE_GENERATOR_H
 #define TRACE_GENERATOR_H
 
+#include <optional>
 #include <string>
 
+#include "Utils.h"
 #include "Trace.h"
+
 
 
 namespace trace_generator {
@@ -26,14 +29,32 @@ public:
   /** Stop generating trace. */
   virtual void Stop() = 0;
 
+  /** Checks whether trace collection has failed. */
+  bool HasFailed() const;
+
+  /**
+   * Gets the error associated with the trace collection.
+   *
+   * It should be invoked only when `HasFailed()` returns true.
+   */
+  utils::err::Error GetErr() const;
+
+  /** Adds a new error related to the current trace collection. */
+  void AddError(utils::err::ErrType err_type, std::string errmsg,
+                std::string location);
+
   /** Getter for the `trace_f` field. */
   trace::Trace *GetTrace() const {
     return trace_f;
   }
 
-private:
-  /** Trace to generate. */
+protected:
+  /// Trace to generate.
   trace::Trace *trace_f;
+
+  /// A field that indicates whether there was an error associated with
+  /// this trace collection.
+  optional<utils::err::Error> error;
 
 };
 

@@ -100,14 +100,6 @@ class DynamoTraceGenerator : public TraceGenerator {
     void AbortWithErr(enum utils::err::ErrType err_type, string errmsg,
                       string location=__builtin_FUNCTION());
 
-    /** Checks whether trace collection has failed. */
-    bool HasFailed() const;
-    /**
-     * Gets the error associated it with the failure of the
-     * trace collector.
-     */
-    utils::err::Error GetErr() const;
-
     /** Setups the wrapper functions defined by the trace collector. */
     void Setup(const module_data_t *mod);
 
@@ -181,11 +173,6 @@ class DynamoTraceGenerator : public TraceGenerator {
     /// A data structure that maps addresses to the function they point to.
     map<string, string> funcs;
 
-    /// Field that indicates whether there was an error during
-    /// trace collection.
-    optional<utils::err::Error> error;
-
-    /// Register the specified function pointers to the function
     /// corresponding to the given name.
     void RegisterFunc(const module_data_t *mod, string func_name,
                       pre_clb_t pre, post_clb_t post);
