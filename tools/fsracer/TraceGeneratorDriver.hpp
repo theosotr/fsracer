@@ -42,7 +42,6 @@ public:
 
 private:
   std::string file;
-  trace::Trace *trace_f;
   TraceLexer *lexer;
   TraceParser *parser;
 

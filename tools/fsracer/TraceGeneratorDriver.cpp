@@ -1,6 +1,9 @@
+#include <cstring>
 #include <fstream>
+#include <sstream>
 
 #include "TraceGeneratorDriver.hpp"
+#include "Utils.h"
 
 
 namespace fstrace {
@@ -12,7 +15,7 @@ void AddOperationDebugInfo(operation::Operation *op,
     return;
   }
   for (auto const &debug_entry : debug_info) {
-    if (debug_entry == "!failed") {
+    if (debug_entry == "failed") {
       op->MarkFailed();
     } else {
       op->SetActualOpName(debug_entry);
@@ -22,9 +25,11 @@ void AddOperationDebugInfo(operation::Operation *op,
 
 
 TraceGeneratorDriver::TraceGeneratorDriver(std::string file_):
-  file(file_) {
+  file(file_),
+  lexer(nullptr),
+  parser(nullptr) {
     trace_f = new trace::Trace();
-}
+  }
 
 
 TraceGeneratorDriver::~TraceGeneratorDriver() {
@@ -45,7 +50,11 @@ TraceGeneratorDriver::~TraceGeneratorDriver() {
 void TraceGeneratorDriver::Start() {
   std::ifstream in_file (file);
   if (!in_file.good()) {
-    exit(EXIT_FAILURE);
+    std::stringstream ss;
+    ss << strerror(errno);
+    AddError(utils::err::TRACE_ERROR, "Error while opening file "
+        + file + ": " + ss.str(), "");
+    return;
   }
   lexer = new TraceLexer(&in_file);
   parser = new TraceParser(*lexer, *this);
