@@ -127,7 +127,7 @@ void DumpAnalyzer::DumpOutput(writer::OutWriter *out) const {
     string preamble = "";
     preamble += "!Blocks: " + to_string(block_count) + "\n";
     preamble += "!Operations: " + to_string(operation_count) + "\n";
-    preamble += "!Trace entries: " + to_string(trace_count) + "\n";
+    preamble += "!Entries: " + to_string(trace_count) + "\n";
     out->OutStream() << preamble << trace_buf;
 
     // The same object cannot be used again.
