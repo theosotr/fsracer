@@ -25,16 +25,15 @@ add_custom_command(
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/fsracer_cli.ggo
 )
 
-include_directories(${CMAKE_SOURCE_DIR}/src/fsracer)
-link_directories(${CMAKE_SOURCE_DIR}/src/fsracer)
-file(GLOB src_files ${CMAKE_SOURCE_DIR}/src/fsracer-dynamo/*.cpp)
+include_directories(${CMAKE_SOURCE_DIR}/lib)
+link_directories(${CMAKE_SOURCE_DIR}/lib)
+file(GLOB src_files *.cpp)
 
 add_library(fsracer SHARED fsracer.cpp
   ${src_files}
   ${CLI_GEN_DIR}/fsracer_cli.h
   ${CLI_GEN_DIR}/fsracer_cli.c)
 target_include_directories(fsracer PRIVATE ${CLI_GEN_DIR})
-target_include_directories(fsracer PRIVATE ${CMAKE_SOURCE_DIR}/src/fsracer-dynamo)
 target_link_libraries(fsracer fsracer-lib)
 
 set(CMAKE_CXX_FLAGS  "-std=c++17 -lstdc++fs -fPIC")
