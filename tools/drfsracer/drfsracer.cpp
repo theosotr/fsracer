@@ -6,7 +6,7 @@
 #include "drwrap.h"
 #include "drsyms.h"
 
-#include "fsracer_cli.h"
+#include "drfsracer_cli.h"
 
 #include "Analyzer.h"
 #include "Debug.h"
