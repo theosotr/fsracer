@@ -16,55 +16,19 @@
 #include "FSAnalyzer.h"
 #include "NodeGenerator.h"
 #include "OutWriter.h"
+#include "Processor.h"
 #include "RaceDetector.h"
 #include "DynamoTraceGenerator.h"
 
 
-#define INIT_OUT(arg_prefix)                                               \
-  do {                                                                     \
-    if (args_info.dump_##arg_prefix##_given) {                             \
-      out = new writer::OutWriter(writer::OutWriter::WRITE_STDOUT, "");    \
-    }                                                                      \
-    if (args_info.output_##arg_prefix##_given) {                           \
-      out = new writer::OutWriter(writer::OutWriter::WRITE_FILE,           \
-                                  args_info.output_##arg_prefix##_arg);    \
-    }                                                                      \
-  }                                                                        \
-  while (false)                                                            \
-
-
-/**
- * This struct contains all the information about the current instance
- * of FSracer.
- *
- * Specifically, it contains the generator responsible for creating
- * traces, and a vector of analyzers working on the generated traces.
- */
-struct FSracerSetup {
-  /// Generator used for creating traces.
-  trace_generator::DynamoTraceGenerator *trace_gen;
-  /// A list of analyzers that operate on traces.
-  vector<pair<analyzer::Analyzer*, writer::OutWriter*>> analyzers;
-  /// Component used to detect faults.
-  detector::FaultDetector *fault_detector;
-
-  FSracerSetup(trace_generator::DynamoTraceGenerator *trace_gen_,
-               vector<pair<analyzer::Analyzer*, writer::OutWriter*>> analyzers_,
-               detector::FaultDetector *fault_detector_):
-    trace_gen(trace_gen_),
-    analyzers(analyzers_),
-    fault_detector(fault_detector_) { }
-};
-
-
-static FSracerSetup *setup;
+static trace_generator::DynamoTraceGenerator *trace_gen;
+static processor::Processor *trace_proc;
 bool module_loaded = false;
 
 
 static void
 module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
 {
-  trace_generator::DynamoTraceGenerator *trace_gen = setup->trace_gen;
   trace_gen->Setup(mod);
   if (!module_loaded) {
     size_t pid = dr_get_thread_id(drcontext);
@@ -90,88 +54,34 @@ module_load_event(void *drcontext, const module_data_t *mod, bool loaded)
 
 
 static void
-stop_trace_gen(FSracerSetup *setup)
+stop_trace_gen()
 {
 
-  if (!setup || !setup->trace_gen) {
+  if (!trace_gen) {
     return;
   }
-  setup->trace_gen->Stop();
-  if (!setup->trace_gen->HasFailed()) {
-    debug::info(setup->trace_gen->GetName()) << "Trace collected in "
-      << setup->trace_gen->GetTraceGenerationTime() << " seconds";
+  trace_gen->Stop();
+  if (!trace_gen->HasFailed()) {
+    debug::info(trace_gen->GetName()) << "Trace collected in "
+      << trace_gen->GetTraceGenerationTime() << " seconds";
   } else {
     // The trace section has aborted, so we dump the error message.
-    debug::err(setup->trace_gen->GetName())
+    debug::err(trace_gen->GetName())
       << "Trace collection aborted: "
-      << setup->trace_gen->GetErr();
+      << trace_gen->GetErr();
   }
 }
 
 
 static void
-analyze_traces(FSracerSetup *setup)
+clear_fsracer_setup()
 {
-  if (!setup || !setup->trace_gen || setup->trace_gen->HasFailed()) {
-    // We do not run the analyzers, if we encounter an error during
-    // trace collection.
-    return;
+  if (trace_proc) {
+    delete trace_proc;
   }
-  for (auto const &pair_analyzer : setup->analyzers) {
-    analyzer::Analyzer *analyzer = pair_analyzer.first;
-    writer::OutWriter *out = pair_analyzer.second;
-    // TODO: Currently the analysis of traces is done offline
-    // (after the execution of the program).
-    //
-    // Add support for both offline and online trace analysis.
-    debug::info(analyzer->GetName()) << "Start analyzing traces...";
-    analyzer->Analyze(setup->trace_gen->GetTrace());
-    debug::info(analyzer->GetName()) << "Analysis is done in "
-      << analyzer->GetAnalysisTime() << "ms";
-    if (out) {
-      debug::info(analyzer->GetName())
-        << "Dumping analysis output to "
-        << out->ToString();
-      analyzer->DumpOutput(out);
-    }
+  if (trace_gen) {
+    delete trace_gen;
   }
-}
-
-
-static void
-detect_faults(FSracerSetup *setup)
-{
-  if (!setup || !setup->fault_detector) {
-    return;
-  }
-  detector::FaultDetector *fault_detector = setup->fault_detector;
-  debug::info(fault_detector->GetName())
-    << "Detecting faults...";
-  fault_detector->Detect();
-}
-
-
-static void
-clear_fsracer_setup(FSracerSetup *setup)
-{
-  if (!setup) {
-    return;
-  }
-  if (setup->trace_gen) {
-    delete setup->trace_gen;
-  }
-  for (auto &entry : setup->analyzers) {
-    analyzer::Analyzer *analyzer = entry.first;
-    if (analyzer) {
-      delete analyzer;
-    }
-  }
-  setup->analyzers.clear();
-
-  if (setup->fault_detector) {
-    delete setup->fault_detector;
-  }
-  delete setup;
 }
 
 
@@ -183,100 +93,15 @@ event_exit(void)
   drsym_exit();
 
   // Traces collected. Stop trace generator.
-  stop_trace_gen(setup);
-  // Analyze generated traces.
-  analyze_traces(setup);
-  // Detect faults using the analysis output.
-  detect_faults(setup);
+  stop_trace_gen();
+  if (trace_gen && !trace_gen->HasFailed()) {
+    trace_proc->Setup();
+    trace_proc->AnalyzeTraces(trace_gen->GetTrace());
+    trace_proc->DetectFaults();
+  }
   // Deallocate memory and clear things.
-  clear_fsracer_setup(setup);
+  clear_fsracer_setup();
 
-}
-
-static graph::GraphFormat
-get_graph_format(gengetopt_args_info &args_info)
-{
-  string graph_format = args_info.dep_graph_format_arg;
-  if (graph_format == "dot") {
-    return graph::DOT;
-  }
-  return graph::CSV;
-}
-
-
-static analyzer::FSAnalyzer::OutFormat
-get_fs_out_format(gengetopt_args_info &args_info)
-{
-  string out_format = args_info.fs_accesses_format_arg;
-  if (out_format == "json") {
-    return analyzer::FSAnalyzer::JSON;
-  }
-  return analyzer::FSAnalyzer::CSV;
-}
-
-
-static void
-init_analyzers(gengetopt_args_info &args_info,
-               vector<pair<Analyzer*, writer::OutWriter*>> &analyzers)
-{
-  analyzer::Analyzer *analyzer_ptr = nullptr;
-  writer::OutWriter *out = nullptr;
-  vector<string> enabled_analyzers;
-  if (args_info.analyzer_given) {
-    for (int i = 0; i < args_info.analyzer_given; i++) {
-      enabled_analyzers.push_back(args_info.analyzer_arg[i]);
-    }
-  }
-
-  if (args_info.fault_detector_given) {
-    string fault_detector = args_info.fault_detector_arg;
-    if (fault_detector == "race") {
-      // The race detector uses two analyzers:
-      // (1) the dependency inference analyzer.
-      // (2) the analyzer responsible for computing the file accesses
-      //     per execution block.
-      enabled_analyzers = { "dep-infer", "fs" }; 
-    }
-  }
-  for (auto const &analyzer : enabled_analyzers) {
-    if (analyzer == "dep-infer") {
-      analyzer_ptr = new analyzer::DependencyInferenceAnalyzer(
-          get_graph_format(args_info));
-      INIT_OUT(dep_graph);
-    }
-    if (analyzer == "fs") {
-      analyzer_ptr = new analyzer::FSAnalyzer(get_fs_out_format(args_info));
-      INIT_OUT(fs_accesses);
-    }
-    analyzers.push_back({ analyzer_ptr, out });
-    out = nullptr;
-  }
-}
-
-
-detector::FaultDetector *
-init_fault_detector(
-    gengetopt_args_info &args_info,
-    vector<pair<analyzer::Analyzer*, writer::OutWriter*>> &analyzers,
-    int offset)
-{
-  detector::FaultDetector *fault_detector = nullptr;
-  if (args_info.fault_detector_given) {
-    string fault_detector_str = args_info.fault_detector_arg;
-    if (fault_detector_str == "race") {
-      // We know the first analyzer corresponds to the `dep-infer` analyzer,
-      // while the second one is the `fs` analyzer.
-      analyzer::DependencyInferenceAnalyzer *dep_analyzer =
-        static_cast<analyzer::DependencyInferenceAnalyzer*>(
-            analyzers[offset + 0].first);
-      analyzer::FSAnalyzer *fs_analyzer = static_cast<analyzer::FSAnalyzer*>(
-          analyzers[offset + 1].first);
-      fault_detector = new detector::RaceDetector(
-          fs_analyzer->GetFSAccesses(),
-          dep_analyzer->GetDependencyGraph());
-    }
-  }
-  return fault_detector;
 }
 
 
@@ -313,33 +138,63 @@ process_args(gengetopt_args_info &args_info)
       << "are mutually exclusive";
   }
 
-  vector<pair<analyzer::Analyzer*, writer::OutWriter*>> analyzers;
-  // The offset of analyzers' vector used by function responsible
-  // for initializing the fault detector.
-  //
-  // The offset is used to extract the analyzers associated with each
-  // fault detector by the corresponding vector.
-  int offset = 0;
+  processor::CLIArgs args;
   if (args_info.dump_trace_given) {
-    analyzers.push_back({ new analyzer::DumpAnalyzer(),
-        new writer::OutWriter(writer::OutWriter::WRITE_STDOUT, "") });
-    // Since we initialize one extra analyzer, we set the offset to 1.
-    offset = 1;
+    args.dump_trace = true;
+  }
+  if (args_info.output_trace_given) {
+    args.output_trace = args_info.output_trace_arg;
+  }
+  if (args_info.analyzer_given) {
+    for (int i = 0; i < args_info.analyzer_given; i++) {
+      args.analyzers.push_back(args_info.analyzer_arg[i]);
+    }
   }
 
-  if (args_info.output_trace_given) {
-    analyzers.push_back({ new analyzer::DumpAnalyzer(),
-        new writer::OutWriter(writer::OutWriter::WRITE_FILE,
-                              args_info.output_trace_arg) });
-    // The same applies here.
-    offset = 1;
+  if (args_info.fault_detector_given) {
+    args.fault_detector = args_info.fault_detector_arg;
+    string fault_detector = args_info.fault_detector_arg;
+
+    if (fault_detector == "race") {
+      // The race detector uses two analyzers:
+      // (1) the dependency inference analyzer.
+      // (2) the analyzer responsible for computing the file accesses
+      //     per execution block.
+      args.analyzers.push_back("dep-infer");
+      args.analyzers.push_back("fs");
+    }
   }
-  init_analyzers(args_info, analyzers);
-  detector::FaultDetector *fault_detector = init_fault_detector(
-      args_info, analyzers, offset);
-  setup = new FSracerSetup(init_trace_generator(args_info),
-                           analyzers,
-                           fault_detector);
+
+  if (args_info.dep_graph_format_given) {
+    args.cli_options.AddEntry("dep_graph_format",
+                              args_info.dep_graph_format_arg);
+  }
+
+  if (args_info.fs_accesses_format_given) {
+    args.cli_options.AddEntry("fs_accesses_format",
+                              args_info.fs_accesses_format_arg);
+  }
+
+  if (args_info.dump_dep_graph_given) {
+    args.cli_options.AddEntry("stdout-dep_graph", "true");
+  }
+
+  if (args_info.output_dep_graph_given) {
+    args.cli_options.AddEntry("output-dep_graph",
+                              args_info.output_dep_graph_arg);
+  }
+
+  if (args_info.dump_fs_accesses_given) {
+    args.cli_options.AddEntry("stdout-fs_accesses", "true");
+  }
+
+  if (args_info.output_dep_graph_given) {
+    args.cli_options.AddEntry("output-fs_accesses",
+                              args_info.output_fs_accesses_arg);
+  }
+
+  trace_gen = init_trace_generator(args_info);
+  trace_proc = new processor::Processor(args);
 }
 
 
