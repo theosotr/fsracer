@@ -80,7 +80,7 @@ process_args(gengetopt_args_info &args_info, processor::Processor &trace_proc)
     args.cli_options.AddEntry("stdout-fs_accesses", "true");
   }
 
-  if (args_info.output_dep_graph_given) {
+  if (args_info.output_fs_accesses_given) {
     args.cli_options.AddEntry("output-fs_accesses",
                               args_info.output_fs_accesses_arg);
   }
