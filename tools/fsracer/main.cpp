@@ -1,15 +1,15 @@
 #include <iostream>
-#include "driver.hpp"
+
+#include "TraceGeneratorDriver.hpp"
 
 
 int
 main (int argc, char *argv[])
 {
   int res = 0;
-  fstrace::driver driver;
-  if (driver.Parse(argv[1])) {
-    exit(EXIT_FAILURE);
-  }
+  string file = argv[1];
+  fstrace::TraceGeneratorDriver driver (file);
+  driver.Start();
   std::cout << driver.GetTrace()->ToString() << std::endl;
   return res;
 }

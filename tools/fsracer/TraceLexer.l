@@ -1,16 +1,15 @@
 %{
     #include <string>
 
-    #include "driver.hpp"
-    #include "scanner.hpp"
-    #include "parser.hpp"
+    #include "TraceLexer.hpp"
+    #include "TraceParser.hpp"
 
     #include "Debug.h"
 
     #define SAVE_TOKEN yylval.string = new std::string(yytext, yyleng)
 
-    #define TOKEN(t) fstrace::parser::make_##t(yytext, location)
-    #define SINGLE_TOKEN(t) fstrace::parser::make_##t(location)
+    #define TOKEN(t) fstrace::TraceParser::make_##t(yytext, location)
+    #define SINGLE_TOKEN(t) fstrace::TraceParser::make_##t(location)
 %}
 
 
@@ -18,7 +17,7 @@
 %option nodefault
 %option noyywrap
 %option c++
-%option yyclass="fstrace::Scanner"
+%option yyclass="fstrace::TraceLexer"
 
 
 %{
@@ -75,7 +74,7 @@
 [a-zA-Z0-9_\/\-.]+       return TOKEN(IDENTIFIER);
 
 .                        { 
-                           debug::err("Parser")
+                           debug::err("TraceParser")
                              << "unknown character [" << yytext << "]\n";
                            return SINGLE_TOKEN(END);
                          }

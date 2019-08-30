@@ -1,6 +1,7 @@
 #include <fstream>
 
-#include "driver.hpp"
+#include "TraceGeneratorDriver.hpp"
+
 
 namespace fstrace {
 
@@ -20,34 +21,40 @@ void AddOperationDebugInfo(operation::Operation *op,
 }
 
 
-driver::driver() {
-  trace_f = new trace::Trace();
+TraceGeneratorDriver::TraceGeneratorDriver(std::string file_):
+  file(file_) {
+    trace_f = new trace::Trace();
 }
 
-driver::~driver() {
+
+TraceGeneratorDriver::~TraceGeneratorDriver() {
   if (trace_f) {
     delete trace_f;
   }
 
-  if (scanner) {
-    delete scanner;
+  if (lexer) {
+    delete lexer;
   }
 
-  if (m_parser) {
-    delete m_parser;
+  if (parser) {
+    delete parser;
   }
 }
 
 
-int driver::Parse(const std::string &f) {
-  std::ifstream in_file (f);
+void TraceGeneratorDriver::Start() {
+  std::ifstream in_file (file);
   if (!in_file.good()) {
     exit(EXIT_FAILURE);
   }
-  scanner = new Scanner(&in_file);
-  m_parser = new parser(*scanner, *this);
-  return m_parser->parse();
+  lexer = new TraceLexer(&in_file);
+  parser = new TraceParser(*lexer, *this);
+  parser->parse();
+  return;
 }
+
+
+void TraceGeneratorDriver::Stop() {  }
 
 
 } // namespace fstrace

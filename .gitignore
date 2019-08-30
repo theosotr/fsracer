@@ -53,3 +53,11 @@ dkms.conf
 
 # Build directory
 build
+
+# Generated files
+location.hh
+stack.hh
+position.hh
+TraceParser.cpp
+TraceParser.hpp
+TraceLexer.cpp

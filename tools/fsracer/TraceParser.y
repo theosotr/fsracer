@@ -1,6 +1,7 @@
 %skeleton "lalr1.cc" /* -*- C++ -*- */
 %defines
 %define api.namespace {fstrace}
+%define parser_class_name {TraceParser}
 %define api.token.constructor
 %define api.value.type variant
 %define parse.assert
@@ -15,24 +16,24 @@
     #include "Trace.h"
 
     namespace fstrace {
-        class driver;
-        class Scanner;
+        class TraceGeneratorDriver;
+        class TraceLexer;
     }
 }
 
-%lex-param { fstrace::Scanner &scanner  }
-%parse-param { fstrace::Scanner &scanner  }
-%parse-param { fstrace::driver &driver  }
+%lex-param { fstrace::TraceLexer &lexer  }
+%parse-param { fstrace::TraceLexer &lexer  }
+%parse-param { fstrace::TraceGeneratorDriver &driver  }
 %locations
 %define parse.trace
 %define parse.error verbose
 
 %code top {
-    #include "driver.hpp"
-    #include "scanner.hpp"
+    #include "TraceGeneratorDriver.hpp"
+    #include "TraceLexer.hpp"
 
-    static fstrace::parser::symbol_type yylex(fstrace::Scanner &scanner) {
-      return scanner.get_next_token();           
+    static fstrace::TraceParser::symbol_type yylex(fstrace::TraceLexer &lexer) {
+      return lexer.get_next_token();           
     }
 }
 
@@ -242,6 +243,6 @@ meta_vars : EXCLAMATION IDENTIFIER { $$ = std::vector<std::string>(); $$.push_ba
           ;
 %%
 
-void fstrace::parser::error (const location_type& l, const std::string& m) {
+void fstrace::TraceParser::error (const location_type& l, const std::string& m) {
   std::cerr << l << ": " << m << '\n';  
 }
