@@ -29,20 +29,20 @@ include_directories(${CMAKE_SOURCE_DIR}/lib)
 link_directories(${CMAKE_SOURCE_DIR}/lib)
 file(GLOB src_files *.cpp)
 
-add_library(fsracer SHARED fsracer.cpp
+add_library(drfsracer SHARED drfsracer.cpp
   ${src_files}
   ${CLI_GEN_DIR}/fsracer_cli.h
   ${CLI_GEN_DIR}/fsracer_cli.c)
-target_include_directories(fsracer PRIVATE ${CLI_GEN_DIR})
-target_link_libraries(fsracer fsracer-lib)
+target_include_directories(drfsracer PRIVATE ${CLI_GEN_DIR})
+target_link_libraries(drfsracer fsracer-lib)
 
 set(CMAKE_CXX_FLAGS  "-std=c++17 -lstdc++fs -fPIC")
-target_link_libraries(fsracer stdc++fs)
+target_link_libraries(drfsracer stdc++fs)
 
 find_package(DynamoRIO REQUIRED)
 
-use_DynamoRIO_extension(fsracer "drwrap")
-use_DynamoRIO_extension(fsracer "drmgr")
-use_DynamoRIO_extension(fsracer "drsyms")
+use_DynamoRIO_extension(drfsracer "drwrap")
+use_DynamoRIO_extension(drfsracer "drmgr")
+use_DynamoRIO_extension(drfsracer "drsyms")
 
-configure_DynamoRIO_client(fsracer)
+configure_DynamoRIO_client(drfsracer)

@@ -1,4 +1,4 @@
 cmake_minimum_required(VERSION 3.5)
 
 add_subdirectory(fsracer)
-add_subdirectory(fsracer-dynamo)
+add_subdirectory(drfsracer)

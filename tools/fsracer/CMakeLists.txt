@@ -32,14 +32,14 @@ link_directories(${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 file(GLOB src_files *.cpp *.cc)
 
-add_executable(fsracer-exe
+add_executable(fsracer
   ${src_files}
   ${BISON_parser_OUTPUTS}
   ${FLEX_scanner_OUTPUTS}
   ${CLI_GEN_DIR}/fsracer_cli.h
   ${CLI_GEN_DIR}/fsracer_cli.c)
 
-target_include_directories(fsracer-exe PRIVATE ${CLI_GEN_DIR})
-target_link_libraries(fsracer-exe fsracer-lib)
+target_include_directories(fsracer PRIVATE ${CLI_GEN_DIR})
+target_link_libraries(fsracer fsracer-lib)
 set(CMAKE_CXX_FLAGS  "-std=c++17 -lstdc++fs -fPIC")
-target_link_libraries(fsracer-exe stdc++fs)
+target_link_libraries(fsracer stdc++fs)
