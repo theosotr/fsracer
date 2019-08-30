@@ -1,4 +1,4 @@
-package "fsracer"
+package "drfsracer"
 version "0.1dev"
 
 option "trace-generator" g "The component used to generate traces"
