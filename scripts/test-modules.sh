@@ -30,5 +30,4 @@ do
     printf "\nTesting $module...\n"
     npm test
   fi
-  break
 done < $modules
