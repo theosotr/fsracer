@@ -8,8 +8,12 @@ function enable_async_hooks()
   # Enable the async hooks by adding the necessary code at the beginning
   # of the file that corresponds to the entry point of the package.
   local preamble="const ah = require('async_hooks');\n \
-    function ahf() {  }\n \
-    ah.createHook({ ahf, ahf, ahf, ahf, ahf }).enable();\n";
+    function init() {}\n \
+    function before() {}\n \
+    function after() {}\n \
+    function destroy() {}\n \
+    function presolve() {}\n \
+    ah.createHook({init, before, after, destroy, presolve}).enable();\n";
   local code="$preamble"
   if [ -f index.js ];
   then
@@ -17,7 +21,7 @@ function enable_async_hooks()
     return 0
   else
     main=$(cat package.json | jq -r '.main')
-    if [ ! -z $main ];
+    if [ -z $main ];
     then
       return 1
     fi
@@ -32,7 +36,14 @@ function get_test_options()
 {
   # Replace the test command so that we run all tests sequenatially.
   # TODO: Support more testing frameworks.
-  local tcmd=$(cat package.json | jq -r '.scripts.test')
+  local tcmd=$(cat package.json |
+  jq -r '.scripts.test' |
+  sed 's/\(&&\)\?[ ]\?xo[ ]\?&&//g' |
+  sed 's/\(&&\)\?[ ]\?tsd//g' |
+  sed 's/\(&&\)\?[ ]\?standard[ ]\?&&//g')
+
+  # Now replace the package.json with the new test script command.
+  jq -e "(.scripts.test) = \"$tcmd\"" package.json > tmp && mv tmp package.json
   if [[ $tcmd == *"tap"* ]];
   then
     echo "-j 1"
@@ -45,7 +56,7 @@ function get_test_options()
   then
     echo "--runInBand --detectOpenHandles"
     return 0
-  elif [[ $tcmd == *"mocha "* ]];
+  elif [[ $tcmd == *"mocha"* ]];
   then
     return 0
   else
@@ -71,10 +82,24 @@ do
 
   if [ "true" = $(echo "$metadata" | jq -r ".hasTestScript") ];
   then
+    if [ -d "$module" ];
+    then
+      # The module has already been analyzed.
+      continue
+    fi
+
     repo=$(echo "$metadata" | jq -r ".links.repository")
     echo "Cloning $module..."
     git clone $repo $module > /dev/null 2>&1
     cd $module
+
+    if [ ! -f package.json ];
+    then
+      # We are unable to find the package.json file.
+      cd ..
+      rm $module -rf
+      continue
+    fi
 
     enable_async_hooks
     if [ $? -ne 0 ];
@@ -82,6 +107,7 @@ do
       # We were not able to find the entry point of the package.
       echo "$module: Unable to find its entry point" >> ../warnings.txt
       cd ..
+      rm $module -rf
       continue
     fi
 
@@ -100,6 +126,7 @@ do
     then
       echo "$module: Unable to find the testing framework" >> ../warnings.txt
       cd ..
+      rm $module -rf
       continue
     fi
     eval "timeout -s KILL 2m npm test -- $opts"
