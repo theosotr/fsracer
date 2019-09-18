@@ -8,6 +8,7 @@ size=250
 while [ $start -le $limit ];
 do
   curl -s -X GET "https://api.npms.io/v2/search?q=$term+not:deprecated&from=$start&size=$size" |
-  jq '.results[] | .package.name'
+  jq '.results[] | .package.name' |
+  cut -d "\"" -f 2
   start=$((start + $size))
 done
