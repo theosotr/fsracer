@@ -34,16 +34,22 @@ function enable_async_hooks()
 
 function get_test_options()
 {
-  # Replace the test command so that we run all tests sequenatially.
   # TODO: Support more testing frameworks.
+  # This function returns the necessary options (based on the supported
+  # testing framework) to run tests sequentially.
+
+  # FIXME: This is a hack.
+  # Modify test script and package.json to ignore all linters.
   local tcmd=$(cat package.json |
   jq -r '.scripts.test' |
-  sed 's/\(&&\)\?[ ]\?xo[ ]\?&&//g' |
-  sed 's/\(&&\)\?[ ]\?tsd//g' |
-  sed 's/\(&&\)\?[ ]\?standard[ ]\?&&//g')
-
+  sed 's/\(&&\)\?[ ]\?xo.*&&//g' |
+  sed 's/\(&&\)\?[ ]\?tsd.*//g' |
+  sed 's/\(&&\)\?[ ]\?standard.*\?&&//g')
   # Now replace the package.json with the new test script command.
-  jq -e "(.scripts.test) = \"$tcmd\"" package.json > tmp && mv tmp package.json
+  jq -e "(.scripts.test) = \"$tcmd\"" package.json |
+  jq 'del(.scripts.lint)' > tmp && mv tmp package.json
+
+  sed -i 's/npm run lint//g;s/standard//g' package.json
   if [[ $tcmd == *"tap"* ]];
   then
     echo "-j 1"
