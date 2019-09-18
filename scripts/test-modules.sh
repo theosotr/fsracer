@@ -8,12 +8,12 @@ function enable_async_hooks()
   # Enable the async hooks by adding the necessary code at the beginning
   # of the file that corresponds to the entry point of the package.
   local preamble="const ah = require('async_hooks');\n \
-    function init() {}\n \
-    function before() {}\n \
-    function after() {}\n \
-    function destroy() {}\n \
-    function presolve() {}\n \
-    ah.createHook({init, before, after, destroy, presolve}).enable();\n";
+    function _init_() {}\n \
+    function _before_() {}\n \
+    function _after_() {}\n \
+    function _destroy_() {}\n \
+    function _presolve_() {}\n \
+    ah.createHook({_init_, _before_, _after_, _destroy_, _presolve_}).enable();\n";
   local code="$preamble"
   if [ -f index.js ];
   then
