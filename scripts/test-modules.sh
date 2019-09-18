@@ -42,9 +42,9 @@ function get_test_options()
   # Modify test script and package.json to ignore all linters.
   local tcmd=$(cat package.json |
   jq -r '.scripts.test' |
-  sed 's/\(&&\)\?[ ]\?xo.*&&//g' |
-  sed 's/\(&&\)\?[ ]\?tsd.*//g' |
-  sed 's/\(&&\)\?[ ]\?standard.*\?&&//g')
+  sed 's/\(&&\)\?[ ]\?xo[^&]*&&[ ]\?//g' |
+  sed 's/[ ]\?\(&&\)\?[ ]\?tsd[^&]*//g' |
+  sed 's/\(&&\)\?[ ]\?standard[^&]*&&[ ]\?//g')
   # Now replace the package.json with the new test script command.
   jq -e "(.scripts.test) = \"$tcmd\"" package.json |
   jq 'del(.scripts.lint)' > tmp && mv tmp package.json
@@ -132,7 +132,7 @@ do
     then
       echo "$module: Unable to find the testing framework" >> ../warnings.txt
       cd ..
-      rm $module -rf
+      #rm $module -rf
       continue
     fi
     eval "timeout -s KILL 2m npm test -- $opts"
