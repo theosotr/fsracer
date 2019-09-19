@@ -15,7 +15,7 @@
       out = new writer::OutWriter(writer::OutWriter::WRITE_STDOUT, "");    \
     }                                                                      \
     std::optional<std::string> val = cli_args.cli_options.GetValue(        \
-        "output" + key);                                                   \
+        "output-" + key);                                                   \
     if (val.has_value()) {                                                 \
       out = new writer::OutWriter(writer::OutWriter::WRITE_FILE,           \
                                   val.value());                            \
