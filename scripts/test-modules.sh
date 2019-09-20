@@ -1,6 +1,8 @@
 #! /bin/bash
 
 modules=$(realpath $1)
+dynamo_dir=$(realpath $2)
+fsracer_dir=$(realpath $3)
 
 
 function enable_async_hooks()
@@ -135,7 +137,13 @@ do
       #rm $module -rf
       continue
     fi
-    eval "timeout -s KILL 2m npm test -- $opts"
+
+    # TODO fix commands.
+    dynamo_cmd="$dynamo_dir/bin64/drrun \
+      -c $fsracer_dir/drfsracer/libdrfsracer.so \
+      -g node \
+      --output-trace $module.trace"
+    eval "timeout -s KILL 10m $dynamo_cmd -- npm test -- $opts"
     echo "$module" >> ../success.txt
     cd ..
   fi
