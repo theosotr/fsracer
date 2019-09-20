@@ -1,4 +1,5 @@
 #include <iostream>
+#include <optional>
 
 #include "fsracer_cli.h"
 
@@ -113,7 +114,8 @@ main(int argc, char **argv)
     exit(EXIT_FAILURE);
   }
 
-  trace_proc.Setup();
+  optional<size_t> pid;
+  trace_proc.Setup(pid);
   trace_proc.AnalyzeTraces(trace_gen.GetTrace());
   trace_proc.DetectFaults();
   return 0;

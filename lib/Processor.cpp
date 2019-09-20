@@ -15,10 +15,14 @@
       out = new writer::OutWriter(writer::OutWriter::WRITE_STDOUT, "");    \
     }                                                                      \
     std::optional<std::string> val = cli_args.cli_options.GetValue(        \
-        "output-" + key);                                                   \
+        "output-" + key);                                                  \
     if (val.has_value()) {                                                 \
+      std::string filename = val.value();                                  \
+      if (pid.has_value()) {                                               \
+        filename += std::to_string(pid.value());                           \
+      }                                                                    \
       out = new writer::OutWriter(writer::OutWriter::WRITE_FILE,           \
-                                  val.value());                            \
+                                  filename);                               \
     }                                                                      \
   }                                                                        \
   while (false)                                                            \
@@ -79,14 +83,14 @@ Processor::~Processor() {
 }
 
 
-void Processor::Setup() {
-  InitAnalyzers();
+void Processor::Setup(std::optional<size_t> pid) {
+  InitAnalyzers(pid);
   InitFaultDetector();
 }
 
 
 
-void Processor::InitAnalyzers() {
+void Processor::InitAnalyzers(std::optional<size_t> pid) {
 
   analyzer::Analyzer *analyzer_ptr = nullptr;
   writer::OutWriter *out = nullptr;
@@ -95,9 +99,13 @@ void Processor::InitAnalyzers() {
     if (cli_args.dump_trace) {
       out = new writer::OutWriter(writer::OutWriter::WRITE_STDOUT, "");
     }
+    std::string filename = cli_args.output_trace.value();
+    if (pid.has_value()) {
+      filename += std::to_string(pid.value());
+    }
     if (cli_args.output_trace.has_value()) {
       out = new writer::OutWriter(writer::OutWriter::WRITE_FILE,
-                                  cli_args.output_trace.value());
+                                  filename);
     }
     analyzers.push_back({ analyzer_ptr, out });
     analyzer_ptr = nullptr;

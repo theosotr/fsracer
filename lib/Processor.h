@@ -28,7 +28,7 @@ public:
   Processor(CLIArgs cli_args);
   ~Processor();
 
-  void Setup();
+  void Setup(std::optional<size_t> pid);
 
   void AnalyzeTraces(const trace::Trace *trace);
 
@@ -45,7 +45,7 @@ private:
   /// Component used to detect faults.
   detector::FaultDetector *fault_detector;
 
-  void InitAnalyzers();
+  void InitAnalyzers(std::optional<size_t> pid);
 
   void InitFaultDetector();
 };
