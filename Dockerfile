@@ -38,6 +38,11 @@ COPY ./scripts fsracer/scripts
 COPY ./tests fsracer/tests
 COPY ./CMakeLists.txt fsracer/CMakeLists.txt
 
+USER root
+WORKDIR $HOME
+RUN chown -R fsracer:fsracer fsracer
+
+USER fsracer
 WORKDIR $HOME/fsracer
 
 # Build fsracer
