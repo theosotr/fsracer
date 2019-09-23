@@ -3,6 +3,7 @@
 modules=$(realpath $1)
 dynamo_dir=$(realpath $2)
 fsracer_dir=$(realpath $3)
+output_dir=$(realpath $4)
 
 
 function enable_async_hooks()
@@ -34,7 +35,53 @@ function enable_async_hooks()
 }
 
 
-function get_test_options()
+function execute_dynamo()
+{
+  base_cmd=$1
+  test_cmd=$2
+  test_file=$3
+
+  cmd="$base_cmd -- $test_cmd"
+
+  if [ ! -z $test_file ];
+  then
+    cmd="$cmd $test_file"
+  fi
+  echo "Invoking the command: $cmd"
+
+  module=$(basename $(pwd))
+  pre_out=$(find $output_dir/$module)
+  out=$(eval "$cmd")
+  if [ "$pre_out" = "$(find $output_dir/$module)" ];
+  then
+    echo "$module: No trace file is generated. Command: $cmd" >> ../errors.txt
+    echo "$out" >> $output_dir/$module/$module.err
+    return 1
+  fi
+  return 0
+}
+
+
+function code_to_framework()
+{
+  case $1 in
+  1)
+    echo "tap"
+    ;;
+  2)
+    echo "ava"
+    ;;
+  3)
+    echo "jest"
+    ;;
+  4)
+    echo "mocha"
+    ;;
+  esac
+}
+
+
+function call_tests()
 {
   # TODO: Support more testing frameworks.
   # This function returns the necessary options (based on the supported
@@ -42,6 +89,7 @@ function get_test_options()
 
   # FIXME: This is a hack.
   # Modify test script and package.json to ignore all linters.
+  base_cmd=$1
   local tcmd=$(cat package.json |
   jq -r '.scripts.test' |
   sed 's/\(&&\)\?[ ]\?xo[^&]*&&[ ]\?//g' |
@@ -54,26 +102,51 @@ function get_test_options()
   sed -i 's/npm run lint//g;s/standard//g' package.json
   if [[ $tcmd == *"tap"* ]];
   then
-    echo "-j 1"
-    return 0
+    test_files=$(echo "$tcmd" |
+    grep -oP "tap([ ][a-zA-Z0-9\.\/\*]+)?$" |
+    sed 's/tap//g' |
+    xargs)
+
+    if [ -z "$test_files" ];
+    then
+      test_files="test/*.js"
+    fi
+    for f in test/*.js; do
+      execute_dynamo "$base_cmd" "node" "$f"
+    done
+    return 1
   elif [[ $tcmd == *"ava"* ]];
   then
-    echo "--serial"
-    return 0
+    execute_dynamo "$base_cmd" "node ./node_modules/ava/cli.js --serial"
+    if [ $? -ne 0 ];
+    then
+      return -1
+    fi
+    return 2
   elif [[ $tcmd == *"jest"* ]];
   then
-    echo "--runInBand --detectOpenHandles"
-    return 0
+    execute_dynamo "$base_cmd" "node ./node_modules/jest/bin/jest.js --runInBand --detectOpenHandles"
+    if [ $? -ne 0 ];
+    then
+      return -1
+    fi
+    return 3
   elif [[ $tcmd == *"mocha"* ]];
   then
-    return 0
+    execute_dynamo "$base_cmd" "node ./node_modules/mocha/bin/mocha"
+    if [ $? -ne 0 ];
+    then
+      return -1
+    fi
+    return 4
   else
-    return 1;
+    echo "$(basename $(pwd)): No supported testing framework" >> ../errors.txt
+    return 5;
   fi
 }
 
 
-cp /dev/null warnings.txt
+cp /dev/null errors.txt
 cp /dev/null success.txt
 
 
@@ -113,7 +186,7 @@ do
     if [ $? -ne 0 ];
     then
       # We were not able to find the entry point of the package.
-      echo "$module: Unable to find its entry point" >> ../warnings.txt
+      echo "$module: Unable to find its entry point" >> ../errors.txt
       cd ..
       rm $module -rf
       continue
@@ -128,23 +201,25 @@ do
     npm install > /dev/null 2>&1
 
     echo "Testing $module..."
+    mkdir -p $output_dir/$module
 
-    opts=$(get_test_options)
-    if [ $? -ne 0 ];
-    then
-      echo "$module: Unable to find the testing framework" >> ../warnings.txt
-      cd ..
-      #rm $module -rf
-      continue
-    fi
-
-    # TODO fix commands.
+    # This is the base command that invokes DynamoRIO along with the
+    # DRFSracer client.
     dynamo_cmd="$dynamo_dir/bin64/drrun \
       -c $fsracer_dir/drfsracer/libdrfsracer.so \
       -g node \
-      --output-trace $module.trace"
-    eval "timeout -s KILL 10m $dynamo_cmd -- npm test -- $opts"
-    echo "$module" >> ../success.txt
+      --output-trace $output_dir/$module/$module.trace"
+    base_cmd="timeout -s KILL 10m $dynamo_cmd"
+
+
+    call_tests "$base_cmd"
+    exc=$?
+    if [ $exc -eq -1 ];
+    then
+      cd ..
+      continue
+    fi
+    echo "$module,$(code_to_framework $exc)" >> ../success.txt
     cd ..
   fi
 done < $modules
