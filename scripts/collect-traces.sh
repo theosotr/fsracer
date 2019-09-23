@@ -1,10 +1,42 @@
 #! /bin/bash
+while getopts "m:d:f:o:" opt; do
+  case "$opt" in
+    m)  modules=$OPTARG
+        ;;
+    d)  dynamo_dir=$(realpath $OPTARG)
+        ;;
+    f)  fsracer_dir=$(realpath $OPTARG)
+        ;;
+    o)  output_dir=$(realpath $OPTARG)
+        ;;
+  esac
+done
+shift $(($OPTIND - 1));
 
-modules=$(realpath $1)
-dynamo_dir=$(realpath $2)
-fsracer_dir=$(realpath $3)
-output_dir=$(realpath $4)
 
+if [ -z  $modules ];
+then
+  echo "You have to specify the path to the modules file (option -m)"
+  exit 1
+fi
+
+if [ -z  $dynamo_dir ];
+then
+  echo "You have to specify the path to the DynamoRIO installation (option -d)"
+  exit 1
+fi
+
+if [ -z  $fsracer_dir ];
+then
+  echo "You have to specify the path to the FSracer targets (option -f)"
+  exit 1
+fi
+
+if [ -z  $modules ];
+then
+  echo "You have to specify the path to output directory (option -o)"
+  exit 1
+fi
 
 function enable_async_hooks()
 {
@@ -65,18 +97,14 @@ function execute_dynamo()
 function code_to_framework()
 {
   case $1 in
-  1)
-    echo "tap"
-    ;;
-  2)
-    echo "ava"
-    ;;
-  3)
-    echo "jest"
-    ;;
-  4)
-    echo "mocha"
-    ;;
+  1) echo "tap"
+     ;;
+  2) echo "ava"
+     ;;
+  3) echo "jest"
+     ;;
+  4) echo "mocha"
+     ;;
   esac
 }
 
