@@ -198,11 +198,10 @@ do
       # The module has already been analyzed.
       continue
     fi
-
     repo=$(echo "$metadata" | jq -r ".links.repository")
 
     echo "Cloning $module..."
-    if [ ! -z $repo ];
+    if [ "$repo" != "null" ];
     then
       # Cloning repo with git
       git clone $repo $module > /dev/null 2>&1
