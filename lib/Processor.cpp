@@ -99,11 +99,11 @@ void Processor::InitAnalyzers(std::optional<size_t> pid) {
     if (cli_args.dump_trace) {
       out = new writer::OutWriter(writer::OutWriter::WRITE_STDOUT, "");
     }
-    std::string filename = cli_args.output_trace.value();
-    if (pid.has_value()) {
-      filename += std::to_string(pid.value());
-    }
     if (cli_args.output_trace.has_value()) {
+      std::string filename = cli_args.output_trace.value();
+      if (pid.has_value()) {
+        filename += std::to_string(pid.value());
+      }
       out = new writer::OutWriter(writer::OutWriter::WRITE_FILE,
                                   filename);
     }
