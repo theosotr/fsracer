@@ -84,8 +84,9 @@ function execute_dynamo()
 
   module=$(basename $(pwd))
   pre_out=$(find $output_dir/$module)
-  out=$(eval "$cmd")
-  if [ "$pre_out" = "$(find $output_dir/$module)" ];
+  out=$(eval "$cmd" 2>&1)
+  if [[ "$pre_out" == "$(find $output_dir/$module)"
+      || "$out" =~ "Runtime Error" || "$out" =~ "SEGV" ]];
   then
     echo "$module: No trace file is generated. Command: $cmd" >> ../errors.txt
     echo "$out" >> $output_dir/$module/$module.err
