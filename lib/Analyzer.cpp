@@ -49,6 +49,10 @@ void DumpAnalyzer::AnalyzeBlock(const Block *block) {
   }
   vector<const Expr*> exprs = block->GetExprs();
   size_t block_id = block->GetBlockId();
+
+  if (exprs.empty() && block_id == MAIN_BLOCK) {
+    return;
+  }
   trace_buf += "Begin ";
   trace_buf += (block_id == MAIN_BLOCK ? "MAIN" : to_string(block_id));
   trace_buf += "\n";

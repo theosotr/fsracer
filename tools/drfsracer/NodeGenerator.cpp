@@ -632,6 +632,14 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
 
 
 static void
+add_main_block(trace_generator::DynamoTraceGenerator *trace_gen)
+{
+  trace_gen->SetCurrentBlock(new Block(MAIN_BLOCK));
+  trace_gen->GetTrace()->AddBlock(trace_gen->GetCurrentBlock());
+}
+
+
+static void
 wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
 {
   trace_generator::DynamoTraceGenerator *trace_gen =
@@ -648,7 +656,7 @@ wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
   if (block_id == async_id) {
     // The current block id matches with the id of the block
     // we are going to close.
-    trace_gen->SetCurrentBlock(nullptr);
+    add_main_block(trace_gen);
     return;
   }
 
@@ -656,7 +664,7 @@ wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
     // The id of the block we are going to close is promise-related.
     // We close it because we know that promise-related blocks are not
     // nested. XXX: revisit.
-    trace_gen->SetCurrentBlock(nullptr);
+    add_main_block(trace_gen);
   }
 }
 
@@ -745,8 +753,7 @@ wrap_pre_start(void *wrapctx, OUT void **user_data)
   set<int> *timers = new set<int>(initial_set);
   trace_gen->AddToStore(PROMISE_SET, (void *) promises);
   trace_gen->AddToStore(TIMER_SET, (void *) timers);
-  trace_gen->SetCurrentBlock(new Block(MAIN_BLOCK));
-  trace_gen->GetTrace()->AddBlock(trace_gen->GetCurrentBlock());
+  add_main_block(trace_gen);
   trace_gen->IncrEventCount();
 }
 

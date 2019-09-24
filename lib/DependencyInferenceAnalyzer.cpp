@@ -42,6 +42,10 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(const Block *block) {
   }
 
   size_t block_id = block->GetBlockId();
+  vector<const Expr*> exprs = block->GetExprs();
+  if (exprs.empty() && block_id == MAIN_BLOCK) {
+    return;
+  }
   current_context = block_id;
   if (block_id != MAIN_BLOCK) {
     optional<EventInfo> event_info = dep_graph.GetNodeInfo(block_id);
@@ -69,7 +73,6 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(const Block *block) {
   }
 
   current_block = block;
-  vector<const Expr*> exprs = block->GetExprs();
   for (auto const &expr : exprs) {
     AnalyzeExpr(expr);
   }
