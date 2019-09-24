@@ -198,9 +198,22 @@ do
       # The module has already been analyzed.
       continue
     fi
-    # Get the source code from the npm registry.
-    npm v $module dist.tarball | xargs curl -s | tar -xz > /dev/null
-    mv package $module
+    repo=$(echo "$metadata" | jq -r ".links.repository")
+
+    echo "Cloning $module..."
+    if [ "$repo" != "null" ];
+    then
+      # Cloning repo with git
+      git clone "$repo" "$module" > /dev/null
+      if [ $? -ne 0 ];
+      then
+        continue
+      fi
+    else
+      # Get the source code from the npm registry.
+      npm v $module dist.tarball | xargs curl -s | tar -xz > /dev/null
+      mv package $module
+    fi
     cd $module
 
     if [ ! -f package.json ];
