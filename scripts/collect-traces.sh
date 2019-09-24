@@ -200,8 +200,17 @@ do
     fi
 
     repo=$(echo "$metadata" | jq -r ".links.repository")
+
     echo "Cloning $module..."
-    git clone $repo $module > /dev/null 2>&1
+    if [ ! -z $repo ];
+    then
+      # Cloning repo with git
+      git clone $repo $module > /dev/null 2>&1
+    else
+      # Get the source code from the npm registry.
+      npm v $module dist.tarball | xargs curl -s | tar -xz > /dev/null 2>&1
+      mv package $module
+    fi
     cd $module
 
     if [ ! -f package.json ];
