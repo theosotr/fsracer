@@ -103,7 +103,13 @@ function call_tests()
     then
       test_files="test/*.js"
     fi
-    for f in test/*.js; do
+
+    if [ -d "$test_files" ];
+    then
+      # Create a glob pattern.
+      test_files="$test_files/*.js"
+    fi
+    for f in $test_files; do
       execute_dynamo "$base_cmd" "node" "$f"
     done
     return 1
@@ -188,8 +194,6 @@ then
   echo "You have to specify the path to output directory (option -o)"
   exit 1
 fi
-
-
 
 
 cp /dev/null errors.txt
