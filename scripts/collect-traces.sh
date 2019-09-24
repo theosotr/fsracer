@@ -38,6 +38,7 @@ then
   exit 1
 fi
 
+
 function enable_async_hooks()
 {
   # Enable the async hooks by adding the necessary code at the beginning
@@ -169,7 +170,7 @@ function call_tests()
     return 4
   else
     echo "$(basename $(pwd)): No supported testing framework" >> ../errors.txt
-    return 5;
+    return -1;
   fi
 }
 
