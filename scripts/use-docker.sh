@@ -11,7 +11,7 @@ mkdir -p $output_dir
 sudo docker run \
   -v $output_dir:$HOME/out \
   -v $modules:$HOME/modules.txt fsracer /bin/bash \
-  -c $HOME/fsracer/scripts/collect-traces \
+  -c $HOME/fsracer/scripts/collect-traces.sh \
   -m $HOME/modules.txt \
   -d $dynamo_dir \
   -f $fsracer_dir \
