@@ -204,10 +204,10 @@ do
     if [ "$repo" != "null" ];
     then
       # Cloning repo with git
-      git clone $repo $module > /dev/null 2>&1
+      git clone "$repo" "$module" > /dev/null
     else
       # Get the source code from the npm registry.
-      npm v $module dist.tarball | xargs curl -s | tar -xz > /dev/null 2>&1
+      npm v $module dist.tarball | xargs curl -s | tar -xz > /dev/null
       mv package $module
     fi
     cd $module
@@ -255,6 +255,7 @@ do
     if [ $exc -eq -1 ];
     then
       cd ..
+      rm $module -rf
       continue
     fi
     echo "$module,$(code_to_framework $exc)" >> ../success.txt
