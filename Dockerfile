@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
 
-ENV deps="sudo git vim wget gcc g++ clang python2.7 make cmake flex bison gengetopt"
+ENV deps="sudo git vim wget gcc g++ clang python2.7 make cmake flex bison gengetopt curl jq"
 ENV NODE_REPO="https://github.com/theosotr/node"
 
 # INSTALL PACKAGES
