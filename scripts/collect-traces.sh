@@ -1,42 +1,4 @@
 #! /bin/bash
-while getopts "m:d:f:o:" opt; do
-  case "$opt" in
-    m)  modules=$OPTARG
-        ;;
-    d)  dynamo_dir=$(realpath $OPTARG)
-        ;;
-    f)  fsracer_dir=$(realpath $OPTARG)
-        ;;
-    o)  output_dir=$(realpath $OPTARG)
-        ;;
-  esac
-done
-shift $(($OPTIND - 1));
-
-
-if [ -z  $modules ];
-then
-  echo "You have to specify the path to the modules file (option -m)"
-  exit 1
-fi
-
-if [ -z  $dynamo_dir ];
-then
-  echo "You have to specify the path to the DynamoRIO installation (option -d)"
-  exit 1
-fi
-
-if [ -z  $fsracer_dir ];
-then
-  echo "You have to specify the path to the FSracer targets (option -f)"
-  exit 1
-fi
-
-if [ -z  $modules ];
-then
-  echo "You have to specify the path to output directory (option -o)"
-  exit 1
-fi
 
 
 function enable_async_hooks()
@@ -147,7 +109,8 @@ function call_tests()
     return 1
   elif [[ $tcmd == *"ava"* ]];
   then
-    test_cmd=$(echo "$tcmd" | sed 's/ava/node .\/node_modules\/ava\/cli.js --serial/g')
+    test_cmd=$(echo "$tcmd" |
+    sed 's/ava/node .\/node_modules\/ava\/cli.js --serial/g')
     execute_dynamo "$base_cmd" "node ./node_modules/ava/cli.js --serial"
     if [ $? -ne 0 ];
     then
@@ -156,7 +119,8 @@ function call_tests()
     return 2
   elif [[ $tcmd == *"jest"* ]];
   then
-    execute_dynamo "$base_cmd" "node ./node_modules/jest/bin/jest.js --runInBand --detectOpenHandles"
+    test_cmd="node ./node_modules/jest/bin/jest.js --runInBand --detectOpenHandlers"
+    execute_dynamo "$base_cmd" "node $test_cmd"
     if [ $? -ne 0 ];
     then
       return -1
@@ -164,7 +128,8 @@ function call_tests()
     return 3
   elif [[ $tcmd == *"mocha"* ]];
   then
-    test_cmd=$(echo "$tcmd" | sed 's/mocha/node .\/node_modules\/mocha\/bin\/mocha/g')
+    test_cmd=$(echo "$tcmd" |
+    sed 's/mocha/node .\/node_modules\/mocha\/bin\/mocha/g')
     execute_dynamo "$base_cmd" "$test_cmd"
     if [ $? -ne 0 ];
     then
@@ -176,6 +141,55 @@ function call_tests()
     return -1;
   fi
 }
+
+
+function clear_repo()
+{
+  cd ..
+  rm -rf $1
+}
+
+
+while getopts "m:d:f:o:" opt; do
+  case "$opt" in
+    m)  modules=$OPTARG
+        ;;
+    d)  dynamo_dir=$(realpath $OPTARG)
+        ;;
+    f)  fsracer_dir=$(realpath $OPTARG)
+        ;;
+    o)  output_dir=$(realpath $OPTARG)
+        ;;
+  esac
+done
+shift $(($OPTIND - 1));
+
+
+if [ -z  $modules ];
+then
+  echo "You have to specify the path to the modules file (option -m)"
+  exit 1
+fi
+
+if [ -z  $dynamo_dir ];
+then
+  echo "You have to specify the path to the DynamoRIO installation (option -d)"
+  exit 1
+fi
+
+if [ -z  $fsracer_dir ];
+then
+  echo "You have to specify the path to the FSracer targets (option -f)"
+  exit 1
+fi
+
+if [ -z  $modules ];
+then
+  echo "You have to specify the path to output directory (option -o)"
+  exit 1
+fi
+
+
 
 
 cp /dev/null errors.txt
@@ -221,8 +235,7 @@ do
     if [ ! -f package.json ];
     then
       # We are unable to find the package.json file.
-      cd ..
-      rm $module -rf
+      clear_repo $module
       continue
     fi
 
@@ -231,8 +244,7 @@ do
     then
       # We were not able to find the entry point of the package.
       echo "$module: Unable to find its entry point" >> ../errors.txt
-      cd ..
-      rm $module -rf
+      clear_repo $module
       continue
     fi
 
@@ -260,13 +272,11 @@ do
     exc=$?
     if [ $exc -eq -1 ];
     then
-      cd ..
-      rm $module -rf
+      clear_repo $module
       continue
     fi
     echo "$module,$(code_to_framework $exc)" >> ../success.txt
-    cd ..
-    rm $module -rf
+    clear_repo $module
   fi
 done < $modules
 
