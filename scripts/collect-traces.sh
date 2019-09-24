@@ -251,6 +251,7 @@ do
     fi
     echo "$module,$(code_to_framework $exc)" >> ../success.txt
     cd ..
+    rm $module -rf
   fi
 done < $modules
 
