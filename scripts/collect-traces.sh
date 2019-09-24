@@ -147,6 +147,7 @@ function call_tests()
     return 1
   elif [[ $tcmd == *"ava"* ]];
   then
+    test_cmd=$(echo "$tcmd" | sed 's/ava/node .\/node_modules\/ava\/cli.js --serial/g')
     execute_dynamo "$base_cmd" "node ./node_modules/ava/cli.js --serial"
     if [ $? -ne 0 ];
     then
@@ -163,7 +164,8 @@ function call_tests()
     return 3
   elif [[ $tcmd == *"mocha"* ]];
   then
-    execute_dynamo "$base_cmd" "node ./node_modules/mocha/bin/mocha"
+    test_cmd=$(echo "$tcmd" | sed 's/mocha/node .\/node_modules\/mocha\/bin\/mocha/g')
+    execute_dynamo "$base_cmd" "$test_cmd"
     if [ $? -ne 0 ];
     then
       return -1
