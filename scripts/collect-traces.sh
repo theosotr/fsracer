@@ -174,7 +174,7 @@ function call_tests()
     return 3
   elif [[ $tcmd == *"mocha"* ]]; then
     test_cmd=$(echo "$tcmd" |
-    sed 's/mocha/node .\/node_modules\/mocha\/bin\/mocha/g')
+    sed 's/mocha/node .\/node_modules\/mocha\/bin\/mocha/g; s/--async-only//g')
     run_tests_with_dynamorio "$base_cmd" "$test_cmd" "$test_cmd" "mocha"
     return 4
   else
