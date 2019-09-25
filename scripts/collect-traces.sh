@@ -115,7 +115,7 @@ function run_tests_with_dynamorio()
   logs=$(add_key "$logs" "$module" "framework" "$framework")
   logs=$(add_key "$logs" "$module" "test-cmd" "$test_cmd")
   logs=$(init_dynamorio_cmds "$logs" "$module")
-  execute_dynamo "$base_cmd" "node $dynamo_test_cmd"
+  execute_dynamo "$base_cmd" "$dynamo_test_cmd"
 }
 
 
@@ -134,7 +134,8 @@ function call_tests()
   jq -r '.scripts.test' |
   sed 's/\(&&\)\?[ ]\?xo[^&]*&&[ ]\?//g' |
   sed 's/[ ]\?\(&&\)\?[ ]\?tsd[^&]*//g' |
-  sed 's/\(&&\)\?[ ]\?standard[^&]*&&[ ]\?//g')
+  sed 's/\(&&\)\?[ ]\?standard[^&]*&&[ ]\?//g' |
+  sed 's/nyc//g')
   # Now replace the package.json with the new test script command.
   jq -e "(.scripts.test) = \"$tcmd\"" package.json |
   jq 'del(.scripts.lint)' > tmp && mv tmp package.json
@@ -165,8 +166,7 @@ function call_tests()
   elif [[ $tcmd == *"ava"* ]]; then
     test_cmd=$(echo "$tcmd" |
     sed 's/ava/node .\/node_modules\/ava\/cli.js --serial/g')
-    dynamo_tcmd="node ./node_modules/ava/cli.js --serial"
-    run_tests_with_dynamorio "$base_cmd" "$dynamo_cmd" "$test_cmd" "ava"
+    run_tests_with_dynamorio "$base_cmd" "$test_cmd" "$test_cmd" "ava"
     return 2
   elif [[ $tcmd == *"jest"* ]]; then
     test_cmd="node ./node_modules/jest/bin/jest.js --runInBand --detectOpenHandlers"
