@@ -32,7 +32,7 @@ function add_to_dynamorio_cmds()
   success=$4
 
   echo "$json" |
-  jq ".$module.dynamorio += [{\"cmd\": \"$cmd\", \"success\": $success}]"
+  jq ".\"$module\".dynamorio += [{\"cmd\": \"$cmd\", \"success\": $success}]"
 }
 
 
@@ -175,7 +175,7 @@ function call_tests()
   elif [[ $tcmd == *"mocha"* ]]; then
     test_cmd=$(echo "$tcmd" |
     sed 's/mocha/node .\/node_modules\/mocha\/bin\/mocha/g')
-    run_tests_with_dynamorio "$base_cmd" "$test_cmd" "$test_cmd" "jest"
+    run_tests_with_dynamorio "$base_cmd" "$test_cmd" "$test_cmd" "mocha"
     return 4
   else
     logs=$(add_key "$logs" "$module" "error" "Unknown testing framework")
