@@ -179,7 +179,7 @@ function call_tests()
     return 4
   else
     logs=$(add_key "$logs" "$module" "error" "Unknown testing framework")
-    return -1;
+    return -1
   fi
 }
 
@@ -226,8 +226,7 @@ if [ -z  $modules ]; then
   exit 1
 fi
 
-
-while IFS= read module
+for module in $(cat $modules);
 do
   echo "Processing $module..."
   metadata=$(curl -s -X GET "https://api.npms.io/v2/package/$module" |
@@ -305,7 +304,7 @@ do
   else
     logs=$(add_key "$logs" "$module" "test-script" "false")
   fi
-done < $modules
+done
 
 echo "$logs" > logs.json
 exit 0
