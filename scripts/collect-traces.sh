@@ -76,6 +76,7 @@ function enable_async_hooks()
 
 function execute_dynamo()
 {
+  local base_cmd test_cmd test_file
   base_cmd=$1
   test_cmd=$2
   test_file=$3
@@ -105,17 +106,91 @@ function execute_dynamo()
 
 function run_tests_with_dynamorio()
 {
+  local base_cmd dynamo_cmd test_cmd framework
   base_cmd=$1
-  dynamo_test_cmd=$2
-  test_cmd=$3
-  framework=$4
+  test_cmd=$2
+  framework=$3
 
   module=$(basename $(pwd))
 
   logs=$(add_key "$logs" "$module" "framework" "$framework")
   logs=$(add_key "$logs" "$module" "test-cmd" "$test_cmd")
   logs=$(init_dynamorio_cmds "$logs" "$module")
-  execute_dynamo "$base_cmd" "$dynamo_test_cmd"
+  execute_dynamo "$base_cmd" "$test_cmd"
+}
+
+
+function add_cli_option()
+{
+  local tcmd
+  tcmd=$1
+  if ! echo "$tcmd" | grep -qoP ".*$2.*"; then
+    echo "$tcmd $2"
+  else
+    echo "$tcmd"
+  fi
+}
+
+
+function get_ava_cmd()
+{
+  local tcmd
+  tcmd=$1
+
+
+  if echo "$tcmd" | grep -qoP ".*\/ava\/cli.js"; then
+    if ! echo "$tcmd" | grep -qoP "^node[ ].*"; then
+      tcmd="node $tcmd"
+    fi
+  else
+    tcmd=$(echo "$tcmd" | sed 's/ava/node .\/node_modules\/ava\/cli.js/g')
+  fi
+
+  add_cli_option "$tcmd" "--serial" |
+  sed -r 's/.*(&&[ ])?(node[ ][^&]+)([ ]&&)?.*/\2/g'
+}
+
+
+function get_jest_cmd()
+{
+  local tcmd
+  tcmd=$1
+  if echo "$tcmd" | grep -qoP ".*\/jest\/bin"; then
+    if ! echo "$tcmd" | grep -qoP "^node[ ].*"; then
+      tcmd="node $tcmd"
+    fi
+  else
+    tcmd=$(echo "$tcmd" | sed 's/jest/node .\/node_modules\/jest\/bin\/jest.js/g')
+  fi
+  tcmd=$(add_cli_option "$tcmd" "--runInBand")
+  add_cli_option "$tcmd" "--detectOpenHandles" |
+  sed -r 's/.*(&&[ ])?(node[ ][^&]+)([ ]&&)?.*/\2/g'
+}
+
+
+function get_mocha_cmd()
+{
+  local tcmd
+  tcmd=$1
+
+  # Some preprocessing first: Do some necessary replacements.
+  tcmd=$(echo "$tcmd" |
+  sed 's/--async-only//g' |
+  sed 's/_mocha/mocha/g' |
+  sed 's/.bin\/mocha/mocha\/bin\/mocha/g' |
+  sed -r 's/--timeout[ ][0-9]+s?//g; s/-t[ ][0-9]+s?//g')
+  if echo "$tcmd" | grep -qoP ".*\/mocha\/bin\/mocha"; then
+    # Maybe the test script uses the path to the mocha script.
+    if ! echo $tcmd | grep -qoP "^node[ ].*"; then
+      # However, it does not use the node executable explicitly.
+      tcmd="node $tcmd"
+    fi
+  else
+    # The test script simply uses "mocha".
+    tcmd=$(echo "$tcmd" | sed 's/mocha/node .\/node_modules\/mocha\/bin\/mocha/g')
+  fi
+  echo "$tcmd" |
+  sed -r 's/.*(&&[ ])?(node[ ][^&]+)([ ]&&)?.*/\2/g'
 }
 
 
@@ -127,20 +202,17 @@ function call_tests()
 
   # FIXME: This is a hack.
   # Modify test script and package.json to ignore all linters.
+  local tcmd test_cmd base_cmd module
   base_cmd=$1
   module="$(basename $(pwd))"
 
-  local tcmd=$(cat package.json |
+  tcmd=$(cat package.json |
   jq -r '.scripts.test' |
   sed 's/\(&&\)\?[ ]\?xo[^&]*&&[ ]\?//g' |
   sed 's/[ ]\?\(&&\)\?[ ]\?tsd[^&]*//g' |
   sed 's/\(&&\)\?[ ]\?standard[^&]*&&[ ]\?//g' |
-  sed 's/nyc//g')
-  # Now replace the package.json with the new test script command.
-  jq -e "(.scripts.test) = \"$tcmd\"" package.json |
-  jq 'del(.scripts.lint)' > tmp && mv tmp package.json
+  sed 's/nyc//g; s/npx//g; s/"/\\"/g')
 
-  sed -i 's/npm run lint//g;s/standard//g' package.json
   logs=$(add_key "$logs" "$module" "original-test-cmd" "$tcmd")
   if [[ $tcmd == *"tap"* ]]; then
     logs=$(add_key "$logs" "$module" "framework" "tap")
@@ -162,24 +234,17 @@ function call_tests()
     for f in $test_files; do
       execute_dynamo "$base_cmd" "node" "$f"
     done
-    return 1
   elif [[ $tcmd == *"ava"* ]]; then
-    test_cmd=$(echo "$tcmd" |
-    sed 's/ava/node .\/node_modules\/ava\/cli.js --serial/g')
-    run_tests_with_dynamorio "$base_cmd" "$test_cmd" "$test_cmd" "ava"
-    return 2
+    test_cmd=$(get_ava_cmd "$tcmd")
+    run_tests_with_dynamorio "$base_cmd" "$test_cmd" "ava"
   elif [[ $tcmd == *"jest"* ]]; then
-    test_cmd="node ./node_modules/jest/bin/jest.js --runInBand --detectOpenHandlers"
-    run_tests_with_dynamorio "$base_cmd" "$test_cmd" "$test_cmd" "jest"
-    return 3
+    test_cmd=$(get_jest_cmd "$tcmd")
+    run_tests_with_dynamorio "$base_cmd" "$test_cmd" "jest"
   elif [[ $tcmd == *"mocha"* ]]; then
-    test_cmd=$(echo "$tcmd" |
-    sed 's/mocha/node .\/node_modules\/mocha\/bin\/mocha/g; s/--async-only//g')
-    run_tests_with_dynamorio "$base_cmd" "$test_cmd" "$test_cmd" "mocha"
-    return 4
+    test_cmd=$(get_mocha_cmd "$tcmd")
+    run_tests_with_dynamorio "$base_cmd" "$test_cmd" "mocha"
   else
     logs=$(add_key "$logs" "$module" "error" "Unknown testing framework")
-    return -1
   fi
 }
 
@@ -256,7 +321,15 @@ do
       fi
     else
       # Get the source code from the npm registry.
-      npm v $module dist.tarball | xargs curl -s | tar -xz > /dev/null
+      npm v $module dist.tarball |
+      xargs curl -s |
+      tar -xz > /dev/null
+
+      if [ $? -ne 0 ]; then
+        logs=$(add_key "$logs" "$module" "error" "Unable to extract")
+        continue
+      fi
+
       mv package $module
     fi
     cd $module
