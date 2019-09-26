@@ -296,7 +296,7 @@ do
 
     call_tests "$base_cmd"
     exc=$?
-    if [ -z "ls $output_dir/$module" ]; then
+    if [ -z "$(ls $output_dir/$module)" ]; then
       # The directory of traces is empty; so remove it.
       rm -r $output_dir/$module
     fi
