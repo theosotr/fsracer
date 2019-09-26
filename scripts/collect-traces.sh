@@ -88,14 +88,16 @@ function enable_async_hooks()
     function _presolve_() {}\n \
     ah.createHook({_init_, _before_, _after_, _destroy_, _presolve_}).enable();\n";
   local code="$preamble"
-  module=$(basename $(pwd))
+  local module=$(basename $(pwd))
 
   # Try the first case first.
   # Check whether there exist a file named 'index.js'
   rc=1
   for main in $(find . -type f -name 'index.js'); do
     rc=0
-    sed -i "1s/^/${code}/" $main
+    if ! grep -qoP "const ah = require\('async_hooks'\)" $main; then
+      sed -i "1s/^/${code}/" $main
+    fi
     logs=$(add_key "$logs" "$module" "entry" "$main")
   done
   if [ $rc -eq 1 ]; then
@@ -105,7 +107,9 @@ function enable_async_hooks()
     main=$(cat package.json | jq -r '.main')
     if [ ! -z $main  ]; then
       # The entry point was found, so add the preable code.
-      sed -i "1s/^/${code}/" $main
+      if ! grep -qoP "const ah = require\('async_hooks'\)" $main; then
+        sed -i "1s/^/${code}/" $main
+      fi
       logs=$(add_key "$logs" "$module" "entry" "$main")
       rc=0
     fi
@@ -316,10 +320,9 @@ function clone_module()
     return 0
   fi
 
-  echo "Cloning $module..."
   if [ "$repo" != "null" ]; then
     # Cloning repo with git
-    git clone "$repo" "$module" > /dev/null
+    git clone "$repo" "$module" > /dev/null 2>&1
     if [ $? -ne 0 ]; then
       return 1
     fi
@@ -344,6 +347,12 @@ function install_module()
   local module
   module=$1
 
+  if [ -d node_modules ]; then
+    # Heuristic: if a directory named 'node_modules' exist, we presume
+    # that we have already installed the npm package.
+    return 0
+  fi
+
   enable_async_hooks
   if [ $? -ne 0 ]; then
     # We were not able to find the entry point of the package.
@@ -351,13 +360,6 @@ function install_module()
     return 1
   fi
 
-  if [ -d node_modules ]; then
-    # Heuristic: if a directory named 'node_modules' exist, we presume
-    # that we have already installed the npm package.
-    return 0
-  fi
-
-  echo "Installing $module..."
   if [ ! -f package-lock.json ]; then
     npm i --package-lock-only > /dev/null 2>&1
   fi
@@ -416,6 +418,7 @@ do
     return 1
   fi
   if [ $install -eq 1 ]; then
+    echo "Installing $module..."
     install_module "$module"
     if [ $? -ne 0 ]; then
       cd ..
