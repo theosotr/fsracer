@@ -27,15 +27,13 @@ if [ -z  $modules ]; then
   exit 1
 fi
 
-if [ -z  $dynamo_dir ]; then
-  echo "You have to specify the path to the DynamoRIO installation (option -d)"
-  exit 1
+if [ ! -z  $dynamo_dir ]; then
+  if [ -z  $fsracer_dir ]; then
+    echo "The -d option requires the path to the FSracer targets (option -f)"
+    exit 1
+  fi
 fi
 
-if [ -z  $fsracer_dir ]; then
-  echo "You have to specify the path to the FSracer targets (option -f)"
-  exit 1
-fi
 
 if [ -z  $modules ]; then
   echo "You have to specify the path to output directory (option -o)"
@@ -56,17 +54,17 @@ function add_key()
 }
 
 
-function init_dynamorio_cmds()
+function init_test_cmds()
 {
   json=$1
   module=$2
 
   echo "$json" |
-  jq ". * {\"$module\": {\"dynamorio\": []}}"
+  jq ". * {\"$module\": {\"test-runs\": []}}"
 }
 
 
-function add_to_dynamorio_cmds()
+function add_to_test_cmds()
 {
   json=$1
   module=$2
@@ -74,7 +72,7 @@ function add_to_dynamorio_cmds()
   success=$4
 
   echo "$json" |
-  jq ".\"$module\".dynamorio += [{\"cmd\": \"$cmd\", \"success\": $success}]"
+  jq ".\"$module\".\"test-runs\" += [{\"cmd\": \"$cmd\", \"success\": $success}]"
 }
 
 
@@ -116,53 +114,60 @@ function enable_async_hooks()
 }
 
 
-function execute_dynamo()
+function run_tests()
 {
-  local base_cmd test_cmd test_file
-  base_cmd=$1
-  test_cmd=$2
-  test_file=$3
+  local cmd test_cmd
+  test_cmd=$1
 
-  cmd="$base_cmd -- $test_cmd"
-
-  if [ ! -z $test_file ]; then
-    cmd="$cmd $test_file"
+  if [ ! -z $dynamo_dir ]; then
+    cmd="$dynamo_dir/bin64/drrun \
+      -c $fsracer_dir/drfsracer/libdrfsracer.so \
+      -g node \
+      --output-trace $output_dir/$module/$module.trace"
+    cmd="$cmd -- $test_cmd"
+  else
+    cmd="$test_cmd"
   fi
-  echo "Invoking the command: $cmd"
+  cmd="timeout -s KILL 10m $cmd"
 
   module=$(basename $(pwd))
   pre_out=$(find $output_dir/$module)
   if [ $run -eq 0 ]; then
-    logs=$(add_to_dynamorio_cmds "$logs" "$module" "$cmd" true)
-    return 0
+    logs=$(add_to_test_cmds "$logs" "$module" "$cmd" true)
+    return
   fi
   out=$(eval "$cmd" 2>&1)
+  rc=$?
   success=true
-  rc=0
-  if [[ "$pre_out" == "$(find $output_dir/$module)"
-      || "$out" =~ "Runtime Error" || "$out" =~ "SEGV" ]]; then
-    echo "$out" >> $output_dir/$module/$module.err
-    success=false
-    rc=1
+
+  if [ ! -z $dynamo_dir ]; then
+    if [[ "$pre_out" == "$(find $output_dir/$module)"
+        || "$out" =~ "Runtime Error" || "$out" =~ "SEGV" ]]; then
+      echo "$out" >> $output_dir/$module/$module.err
+      success=false
+    fi
+  else
+    if [ $rc -ne 0 ]; then
+      echo "$out" >> $output_dir/$module/$module.test.err
+      success=false
+    fi
   fi
-  logs=$(add_to_dynamorio_cmds "$logs" "$module" "$cmd" $success)
-  return $rc
+  logs=$(add_to_test_cmds "$logs" "$module" "$cmd" $success)
 }
 
 
-function run_tests_with_dynamorio()
+function prepare_and_run_tests()
 {
-  local base_cmd dynamo_cmd test_cmd framework
-  base_cmd=$1
-  test_cmd=$2
-  framework=$3
+  local test_cmd framework
+  test_cmd=$1
+  framework=$2
 
   module=$(basename $(pwd))
 
   logs=$(add_key "$logs" "$module" "framework" "$framework")
   logs=$(add_key "$logs" "$module" "test-cmd" "$test_cmd")
-  logs=$(init_dynamorio_cmds "$logs" "$module")
-  execute_dynamo "$base_cmd" "$test_cmd"
+  logs=$(init_test_cmds "$logs" "$module")
+  run_tests "$test_cmd"
 }
 
 
@@ -248,8 +253,7 @@ function call_tests()
 
   # FIXME: This is a hack.
   # Modify test script and package.json to ignore all linters.
-  local tcmd test_cmd base_cmd module
-  base_cmd=$1
+  local tcmd test_cmd module
   module="$(basename $(pwd))"
 
   tcmd=$(cat package.json |
@@ -276,19 +280,19 @@ function call_tests()
       test_files="$test_files/*.js"
     fi
     logs=$(add_key "$logs" "$module" "test-cmd" "node $test_files")
-    logs=$(init_dynamorio_cmds "$logs" "$module")
+    logs=$(init_test_cmds "$logs" "$module")
     for f in $test_files; do
-      execute_dynamo "$base_cmd" "node" "$f"
+      run_tests "node $f"
     done
   elif [[ $tcmd == *"ava"* ]]; then
     test_cmd=$(get_ava_cmd "$tcmd")
-    run_tests_with_dynamorio "$base_cmd" "$test_cmd" "ava"
+    prepare_and_run_tests "$test_cmd" "ava"
   elif [[ $tcmd == *"jest"* ]]; then
     test_cmd=$(get_jest_cmd "$tcmd")
-    run_tests_with_dynamorio "$base_cmd" "$test_cmd" "jest"
+    prepare_and_run_tests "$test_cmd" "jest"
   elif [[ $tcmd == *"mocha"* ]]; then
     test_cmd=$(get_mocha_cmd "$tcmd")
-    run_tests_with_dynamorio "$base_cmd" "$test_cmd" "mocha"
+    prepare_and_run_tests "$test_cmd" "mocha"
   else
     logs=$(add_key "$logs" "$module" "error" "Unknown testing framework")
   fi
@@ -400,16 +404,7 @@ do
 
     echo "Testing $module..."
     mkdir -p $output_dir/$module
-
-    # This is the base command that invokes DynamoRIO along with the
-    # DRFSracer client.
-    dynamo_cmd="$dynamo_dir/bin64/drrun \
-      -c $fsracer_dir/drfsracer/libdrfsracer.so \
-      -g node \
-      --output-trace $output_dir/$module/$module.trace"
-    base_cmd="timeout -s KILL 10m $dynamo_cmd"
-
-    call_tests "$base_cmd"
+    call_tests
     exc=$?
     if [ -z "$(ls $output_dir/$module)" ]; then
       # The directory of traces is empty; so remove it.
