@@ -1,6 +1,48 @@
 #! /bin/bash
 
 
+run=0
+install=0
+while getopts "m:d:f:o:ri" opt; do
+  case "$opt" in
+    m)  modules=$OPTARG
+        ;;
+    d)  dynamo_dir=$(realpath $OPTARG)
+        ;;
+    f)  fsracer_dir=$(realpath $OPTARG)
+        ;;
+    o)  output_dir=$(realpath $OPTARG)
+        ;;
+    r) run=1
+        ;;
+    i) install=1
+        ;;
+  esac
+done
+shift $(($OPTIND - 1));
+
+
+if [ -z  $modules ]; then
+  echo "You have to specify the path to the modules file (option -m)"
+  exit 1
+fi
+
+if [ -z  $dynamo_dir ]; then
+  echo "You have to specify the path to the DynamoRIO installation (option -d)"
+  exit 1
+fi
+
+if [ -z  $fsracer_dir ]; then
+  echo "You have to specify the path to the FSracer targets (option -f)"
+  exit 1
+fi
+
+if [ -z  $modules ]; then
+  echo "You have to specify the path to output directory (option -o)"
+  exit 1
+fi
+
+
 logs=$(echo '{}')
 function add_key()
 {
@@ -90,6 +132,10 @@ function execute_dynamo()
 
   module=$(basename $(pwd))
   pre_out=$(find $output_dir/$module)
+  if [ $run -eq 0 ]; then
+    logs=$(add_to_dynamorio_cmds "$logs" "$module" "$cmd" true)
+    return 0
+  fi
   out=$(eval "$cmd" 2>&1)
   success=true
   rc=0
@@ -256,40 +302,71 @@ function clear_repo()
 }
 
 
-while getopts "m:d:f:o:" opt; do
-  case "$opt" in
-    m)  modules=$OPTARG
-        ;;
-    d)  dynamo_dir=$(realpath $OPTARG)
-        ;;
-    f)  fsracer_dir=$(realpath $OPTARG)
-        ;;
-    o)  output_dir=$(realpath $OPTARG)
-        ;;
-  esac
-done
-shift $(($OPTIND - 1));
+function clone_module()
+{
+  local module repo
+  module=$1
+  repo=$2
+
+  if [ -d "$module" ]; then
+    return 0
+  fi
+
+  echo "Cloning $module..."
+  if [ "$repo" != "null" ]; then
+    # Cloning repo with git
+    git clone "$repo" "$module" > /dev/null
+    if [ $? -ne 0 ]; then
+      return 1
+    fi
+  else
+    # Get the source code from the npm registry.
+    npm v $module dist.tarball |
+    xargs curl -s |
+    tar -xz > /dev/null
+
+    if [ $? -ne 0 ]; then
+      return 1
+    fi
+
+    mv package $module
+  fi
+  return 0
+}
 
 
-if [ -z  $modules ]; then
-  echo "You have to specify the path to the modules file (option -m)"
-  exit 1
-fi
+function install_module()
+{
+  local module
+  module=$1
+  if [ ! -f package.json ]; then
+    # We are unable to find the package.json file.
+    logs=$(add_key "$logs" "$module" "error" "Unable to find package.json")
+    return 1
+  fi
 
-if [ -z  $dynamo_dir ]; then
-  echo "You have to specify the path to the DynamoRIO installation (option -d)"
-  exit 1
-fi
+  enable_async_hooks
+  if [ $? -ne 0 ]; then
+    # We were not able to find the entry point of the package.
+    logs=$(add_key "$logs" "$module" "error" "Unable to find entry point")
+    return 1
+  fi
 
-if [ -z  $fsracer_dir ]; then
-  echo "You have to specify the path to the FSracer targets (option -f)"
-  exit 1
-fi
+  if [ -d node_modules ]; then
+    # Heuristic: if a directory named 'node_modules' exist, we presume
+    # that we have already installed the npm package.
+    return 0
+  fi
 
-if [ -z  $modules ]; then
-  echo "You have to specify the path to output directory (option -o)"
-  exit 1
-fi
+  echo "Installing $module..."
+  if [ ! -f package-lock.json ]; then
+    npm i --package-lock-only > /dev/null 2>&1
+  fi
+  npm audit fix --force > /dev/null 2>&1
+  npm install > /dev/null 2>&1
+  return 0
+}
+
 
 for module in $(cat $modules);
 do
@@ -304,57 +381,22 @@ do
   fi
 
   if [ "true" = $(echo "$metadata" | jq -r ".hasTestScript") ]; then
-    if [ -d "$module" ]; then
-      # The module has already been analyzed.
-      logs=$(add_key "$logs" "$module" "skipped" "true")
-      continue
-    fi
     repo=$(echo "$metadata" | jq -r ".links.repository")
 
-    echo "Cloning $module..."
-    if [ "$repo" != "null" ]; then
-      # Cloning repo with git
-      git clone "$repo" "$module" > /dev/null
-      if [ $? -ne 0 ]; then
-        logs=$(add_key "$logs" "$module" "error" "Unable to clone")
-        continue
-      fi
-    else
-      # Get the source code from the npm registry.
-      npm v $module dist.tarball |
-      xargs curl -s |
-      tar -xz > /dev/null
-
-      if [ $? -ne 0 ]; then
-        logs=$(add_key "$logs" "$module" "error" "Unable to extract")
-        continue
-      fi
-
-      mv package $module
+    clone_module "$module" "$repo"
+    if [ $? -ne 0 ]; then
+      logs=$(add_key "$logs" "$module" "error" "Unable to clone")
+      continue
     fi
     cd $module
 
-    if [ ! -f package.json ]; then
-      # We are unable to find the package.json file.
-      logs=$(add_key "$logs" "$module" "error" "Unable to find package.json")
-      clear_repo $module
-      continue
+    if [ $install -eq 1 ]; then
+      install_module "$module"
+      if [ $? -ne 0 ]; then
+        cd ..
+        continue
+      fi
     fi
-
-    enable_async_hooks
-    if [ $? -ne 0 ]; then
-      # We were not able to find the entry point of the package.
-      logs=$(add_key "$logs" "$module" "error" "Unable to find entry point")
-      clear_repo $module
-      continue
-    fi
-
-    echo "Installing $module..."
-    if [ ! -f package-lock.json ]; then
-      npm i --package-lock-only > /dev/null 2>&1
-    fi
-    npm audit fix --force > /dev/null 2>&1
-    npm install > /dev/null 2>&1
 
     echo "Testing $module..."
     mkdir -p $output_dir/$module
@@ -373,7 +415,7 @@ do
       # The directory of traces is empty; so remove it.
       rm -r $output_dir/$module
     fi
-    clear_repo $module
+    cd ..
   else
     logs=$(add_key "$logs" "$module" "test-script" "false")
   fi
