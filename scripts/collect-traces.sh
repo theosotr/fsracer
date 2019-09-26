@@ -343,11 +343,6 @@ function install_module()
 {
   local module
   module=$1
-  if [ ! -f package.json ]; then
-    # We are unable to find the package.json file.
-    logs=$(add_key "$logs" "$module" "error" "Unable to find package.json")
-    return 1
-  fi
 
   enable_async_hooks
   if [ $? -ne 0 ]; then
@@ -372,48 +367,69 @@ function install_module()
 }
 
 
+function fetch_module()
+{
+  local module
+  module=$1
+  if [ -d "$module" ]; then
+    return 0
+  else
+    metadata=$(curl -s -X GET "https://api.npms.io/v2/package/$module" |
+    jq -r '.collected.metadata')
+
+    logs=$(echo "$logs" | jq ". + {\"$module\": {}}")
+    if echo "$metadata" | jq -e 'has("deprecated")' > /dev/null; then
+      logs=$(add_key "$logs" "$module" "deprecated" "true")
+      return 1
+    fi
+
+    if [ "true" = $(echo "$metadata" | jq -r ".hasTestScript") ]; then
+      repo=$(echo "$metadata" | jq -r ".links.repository")
+
+      clone_module "$module" "$repo"
+      if [ $? -ne 0 ]; then
+        logs=$(add_key "$logs" "$module" "error" "Unable to clone")
+        return 1
+      fi
+    else
+      logs=$(add_key "$logs" "$module" "test-script" "false")
+      return 1
+    fi
+  fi
+  return 0
+}
+
+
 for module in $(cat $modules);
 do
   echo "Processing $module..."
-  metadata=$(curl -s -X GET "https://api.npms.io/v2/package/$module" |
-  jq -r '.collected.metadata')
+  fetch_module "$module"
 
-  logs=$(echo "$logs" | jq ". + {\"$module\": {}}")
-  if echo "$metadata" | jq -e 'has("deprecated")' > /dev/null; then
-    logs=$(add_key "$logs" "$module" "deprecated" "true")
+  if [ $? -ne 0 ]; then
     continue
   fi
 
-  if [ "true" = $(echo "$metadata" | jq -r ".hasTestScript") ]; then
-    repo=$(echo "$metadata" | jq -r ".links.repository")
-
-    clone_module "$module" "$repo"
+  cd $module
+  if [ ! -f package.json ]; then
+    # We are unable to find the package.json file.
+    logs=$(add_key "$logs" "$module" "error" "Unable to find package.json")
+    return 1
+  fi
+  if [ $install -eq 1 ]; then
+    install_module "$module"
     if [ $? -ne 0 ]; then
-      logs=$(add_key "$logs" "$module" "error" "Unable to clone")
+      cd ..
       continue
     fi
-    cd $module
-
-    if [ $install -eq 1 ]; then
-      install_module "$module"
-      if [ $? -ne 0 ]; then
-        cd ..
-        continue
-      fi
-    fi
-
-    echo "Testing $module..."
-    mkdir -p $output_dir/$module
-    call_tests
-    exc=$?
-    if [ -z "$(ls $output_dir/$module)" ]; then
-      # The directory of traces is empty; so remove it.
-      rm -r $output_dir/$module
-    fi
-    cd ..
-  else
-    logs=$(add_key "$logs" "$module" "test-script" "false")
   fi
+  echo "Testing $module..."
+  mkdir -p $output_dir/$module
+  call_tests
+  if [ -z "$(ls $output_dir/$module)" ]; then
+    # The directory of traces is empty; so remove it.
+    rm -r $output_dir/$module
+  fi
+  cd ..
 done
 
 echo "$logs" > logs.json
