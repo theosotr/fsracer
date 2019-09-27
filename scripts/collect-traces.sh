@@ -286,7 +286,7 @@ function call_tests()
     logs=$(add_key "$logs" "$module" "test-cmd" "node $test_files")
     logs=$(init_test_cmds "$logs" "$module")
     for f in $test_files; do
-      run_tests "node $f"
+      run_tests "node ./node_modules/tap/bin/run.js $f -j 1"
     done
   elif [[ $tcmd == *"ava"* ]]; then
     test_cmd=$(get_ava_cmd "$tcmd")
