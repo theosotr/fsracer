@@ -415,13 +415,14 @@ do
   if [ ! -f package.json ]; then
     # We are unable to find the package.json file.
     logs=$(add_key "$logs" "$module" "error" "Unable to find package.json")
-    return 1
+    clear_repo "$module"
+    continue
   fi
   if [ $install -eq 1 ]; then
     echo "Installing $module..."
     install_module "$module"
     if [ $? -ne 0 ]; then
-      cd ..
+      clear_repo "$module"
       continue
     fi
   fi
@@ -432,7 +433,7 @@ do
     # The directory of traces is empty; so remove it.
     rm -r $output_dir/$module
   fi
-  cd ..
+  clear_repo "$module"
 done
 
 echo "$logs" > logs.json
