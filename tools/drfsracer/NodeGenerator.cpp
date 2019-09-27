@@ -54,8 +54,11 @@ AddSubmitOp(void *wrapctx, OUT void **user_data, const string op_name,
     trace_gen->IncrSyncOpCount();
     id = "sync_" + to_string(trace_gen->GetSyncOpCount());
   } else {
-    int *event_ptr = (int *) trace_gen->GetStoreValue(
+    int *event_ptr = (int *) trace_gen->PopFromStore(
         FUNC_ARGS + "wrap_pre_emit_init");
+    if (!event_ptr) {
+      return;
+    }
     event_id = *event_ptr;
     id = "async_" + to_string(*event_ptr);
     delete event_ptr;
@@ -677,7 +680,8 @@ wrap_pre_emit_after(void *wrapctx, OUT void **user_data)
 
 inline static void
 add_new_event_expr(trace_generator::DynamoTraceGenerator *trace_gen,
-                   size_t event_id, Event event, string debug_info)
+                   size_t event_id, Event event, string debug_info,
+                   bool add_store)
 {
   if (!trace_gen) {
     return;
@@ -690,8 +694,12 @@ add_new_event_expr(trace_generator::DynamoTraceGenerator *trace_gen,
   }
   trace_gen->GetCurrentBlock()->AddExpr(new_event);
   int *event_id_ptr = new int(event_id);
-  trace_gen->AddToStore(FUNC_ARGS + "wrap_pre_emit_init",
-      (void *) event_id_ptr);
+  if (add_store) {
+    // We should add the freshly created event to the trace generator's store
+    // for later use.
+    trace_gen->AddToStore(FUNC_ARGS + "wrap_pre_emit_init",
+        (void *) event_id_ptr);
+  }
 }
 
 
@@ -712,7 +720,11 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
     //
     // The execution order of the related callbacks follows the
     // order that appear in traces.
-    add_new_event_expr(trace_gen, async_id, Event(Event::W, 0), "timerWrap");
+    //
+    // Note that we do not add the id of the event that correspond to
+    // timerwraps to the trace generator's store.
+    add_new_event_expr(trace_gen, async_id, Event(Event::W, 0), "timerWrap",
+                       false);
     return;
   }
 
@@ -736,7 +748,10 @@ wrap_pre_emit_init(void *wrapctx, OUT void **user_data)
 
   // The default event is of type W 2.
   Event last_event = Event(Event::EXT, 0);
-  add_new_event_expr(trace_gen, async_id, last_event, "");
+  // Create a `newEvent` expression and add the id of the freshly-created
+  // event to the trace generator's store for later use (e.g., it's currently
+  // used by the `AddSubmitOp` function).
+  add_new_event_expr(trace_gen, async_id, last_event, "", true);
   // We link the event with `trigger_async_id` with the event
   // with id related to `async_id`.
   Block *current_block = trace_gen->GetCurrentBlock();
