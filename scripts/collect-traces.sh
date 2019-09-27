@@ -132,7 +132,7 @@ function run_tests()
   else
     cmd="$test_cmd"
   fi
-  cmd="timeout -s KILL 10m $cmd"
+  cmd="timeout 10m $cmd"
 
   module=$(basename $(pwd))
   pre_out=$(find $output_dir/$module)
