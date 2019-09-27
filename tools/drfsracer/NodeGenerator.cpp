@@ -250,7 +250,12 @@ wrap_pre_open(void *wrapctx, OUT void **user_data)
     EmitHpath(wrapctx, user_data, 0, Hpath::PRODUCED, true, get_exec_op,
               "open");
   }
-  string key = FUNC_ARGS + "open";
+  size_t thread_id = generator_utils::GetCurrentThread(wrapctx);
+  // Create a key to store the argument (corresponding to the file path)
+  // passed in `open`. Use the current thread id, in case when another thread
+  // calls open, and its invocation interleaves the post callback of the
+  // current thread.
+  string key = FUNC_ARGS + "/" + to_string(thread_id) + "/open";
   trace_gen->AddToStore(key, path);
 }
 
@@ -260,11 +265,12 @@ wrap_post_open(void *wrapctx, void *user_data)
 {
   trace_generator::DynamoTraceGenerator *trace_gen =
     (trace_generator::DynamoTraceGenerator *) user_data;
-  string path = (const char *) trace_gen->PopFromStore(FUNC_ARGS + "open");
+  string thread_id = to_string(generator_utils::GetCurrentThread(wrapctx));
+  string path = (const char *) trace_gen->PopFromStore(
+      FUNC_ARGS + "/" + thread_id + "/open");
   int ret_val = (int)(ptr_int_t) drwrap_get_retval(wrapctx);
-  size_t thread_id = generator_utils::GetCurrentThread(wrapctx);
   ExecOp *exec_op = (ExecOp *) trace_gen->GetStoreValue(
-      THREADS + to_string(thread_id));
+      THREADS + thread_id);
   if (!exec_op) {
     return;
   }
