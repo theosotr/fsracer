@@ -3,7 +3,8 @@
 
 run=0
 install=0
-while getopts "m:d:f:o:ri" opt; do
+remove_repo=0
+while getopts "m:d:f:o:ric" opt; do
   case "$opt" in
     m)  modules=$OPTARG
         ;;
@@ -16,6 +17,8 @@ while getopts "m:d:f:o:ri" opt; do
     r) run=1
         ;;
     i) install=1
+        ;;
+    c) remove_repo=1
         ;;
   esac
 done
@@ -313,7 +316,9 @@ function call_tests()
 function clear_repo()
 {
   cd ..
-  rm -rf $1
+  if [ $remove_repo -eq 1 ]; then
+    rm -rf $1
+  fi
 }
 
 

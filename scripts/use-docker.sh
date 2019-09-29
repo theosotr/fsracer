@@ -15,4 +15,4 @@ sudo docker run \
   -m $HOME/modules.txt \
   -d $dynamo_dir \
   -f $fsracer_dir \
-  -o $HOME/out -r -i"
+  -o $HOME/out -r -i -c"
