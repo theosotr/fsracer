@@ -42,6 +42,13 @@ fi
 
 
 logs=$(echo '{}')
+function handle_sigint()
+{
+  echo "$logs" > logs.json
+  exit 0
+}
+trap handle_sigint SIGINT
+
 function add_key()
 {
   json=$1
