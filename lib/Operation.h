@@ -258,6 +258,10 @@ class NewFd : public Operation {
 
     string ToString() const {
       string dirfd_str = DirfdToString(dirfd);
+      if (failed) {
+        return GetOpName() + " " + dirfd_str + " " + path +
+          ACTUAL_NAME + FAILED;
+      }
       return GetOpName() + " " + dirfd_str + " " + path +
         " " + to_string(fd) + ACTUAL_NAME + FAILED;
     };

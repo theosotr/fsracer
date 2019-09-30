@@ -137,6 +137,12 @@ oper : HPATH dirfd IDENTIFIER effect_type meta_vars {
        AddOperationDebugInfo(new_fd, $5);
        driver.opers.push_back(new_fd);
      }
+     | NEWFD dirfd IDENTIFIER meta_vars {
+       operation::NewFd *new_fd = new operation::NewFd($2, $3, -1);
+       new_fd->MarkFailed();
+       AddOperationDebugInfo(new_fd, $4);
+       driver.opers.push_back(new_fd);
+     }
      | DELFD NUMBER meta_vars {
        operation::DelFd *del_fd = new operation::DelFd(std::stoi($2));
        AddOperationDebugInfo(del_fd, $3);
