@@ -7,7 +7,7 @@ set(TEST_BINARY_PATH "" CACHE STRING "Path to the test binary")
 # Build FSracer before running the tests.
 # TODO: Check if there is another workround.
 add_test(build_fsracer
-        "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target fsracer)
+        "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target drfsracer)
 
 message("${DynamoRIO_BUILD_DIR}")
 
