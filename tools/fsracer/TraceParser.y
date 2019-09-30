@@ -258,6 +258,9 @@ stats : EXCLAMATION IDENTIFIER COLON NUMBER
 meta_vars : EXCLAMATION IDENTIFIER {
             $$ = std::vector<std::string>(); $$.push_back($2);
           }
+          | EXCLAMATION RENAME {
+            $$ = std::vector<std::string>(); $$.push_back("rename");
+          }
           | meta_vars EXCLAMATION IDENTIFIER  { $1.push_back($3); $$ = $1; }
           ;
 
