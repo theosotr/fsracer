@@ -54,7 +54,7 @@ void DumpAnalyzer::AnalyzeBlock(const Block *block) {
     return;
   }
   trace_buf += "Begin ";
-  trace_buf += (block_id == MAIN_BLOCK ? "MAIN " + to_string(block_id) :
+  trace_buf += (block->IsMain() ? "MAIN " + to_string(block_id) :
       to_string(block_id));
   trace_buf += "\n";
   trace_count += exprs.size();
