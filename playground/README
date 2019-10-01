@@ -7,3 +7,10 @@ Makefile with missing dependency
 $(OBJECTS): main.c s1.c s1.h s2.h
         $(CC) -c main.c s1.c s2.c $(CFLAGS)
 ```
+
+Examples
+========
+
+* `make` (expand SHELL)
+
+* `make -f mOBJ --debug -i` (debug mode)
