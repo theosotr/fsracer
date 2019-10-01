@@ -279,6 +279,20 @@ class Graph {
       return visited;
     }
 
+    size_t Empty() const {
+      return graph.empty(); 
+    }
+
+    set<size_t> GetSinks() const {
+      set<size_t> sinks;
+      for (auto const &elem : graph) {
+        if (elem.second.dependents.empty()) {
+          sinks.insert(elem.first);
+        }
+      }
+      return sinks;
+    }
+
   private:
     /// Instantiate a new graph printer using the parameters of the template.
     using GPrinter = GraphPrinter<T, L>;

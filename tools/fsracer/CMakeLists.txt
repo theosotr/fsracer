@@ -41,5 +41,5 @@ add_executable(fsracer
 
 target_include_directories(fsracer PRIVATE ${CLI_GEN_DIR})
 target_link_libraries(fsracer fsracer-lib)
-set(CMAKE_CXX_FLAGS  "-std=c++17 -lstdc++fs -fPIC")
+set(CMAKE_CXX_FLAGS  "-std=c++17 -lstdc++fs -fPIC -pg")
 target_link_libraries(fsracer stdc++fs)

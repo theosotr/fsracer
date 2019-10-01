@@ -43,11 +43,11 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(const Block *block) {
 
   size_t block_id = block->GetBlockId();
   vector<const Expr*> exprs = block->GetExprs();
-  if (exprs.empty() && block_id == MAIN_BLOCK) {
+  if (exprs.empty() && block->IsMain()) {
     return;
   }
   current_context = block_id;
-  if (block_id != MAIN_BLOCK) {
+  if (!block->IsMain()) {
     optional<EventInfo> event_info = dep_graph.GetNodeInfo(block_id);
     if (!event_info.has_value()) {
       return;
@@ -68,7 +68,12 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(const Block *block) {
       if (current_block) {
         pending_ev = current_block->GetBlockId();
       }
+    }
+  }
 
+  if (block->IsMain() && !dep_graph.Empty()) {
+    for (auto const &sink : dep_graph.GetSinks()) {
+      dep_graph.AddEdge(sink, block_id, graph::HAPPENS_BEFORE);
     }
   }
 
@@ -95,11 +100,11 @@ DependencyInferenceAnalyzer::AnalyzeNewEvent(const NewEventExpr *new_event) {
   }
 
   size_t block_id = current_block->GetBlockId();
-  if (block_id == MAIN_BLOCK) {
+  if (current_block->IsMain()) {
     // This is the MAIN block, so we add it to the dependency graph
     // since there is not any preceding "newEvent" construct associated with
     // the ID of the current block.
-    dep_graph.AddNode(block_id, construct_default_event());
+    dep_graph.AddNode(block_id, Event(Event::MAIN, 0));
   }
 
   size_t event_id = new_event->GetEventId();
@@ -177,6 +182,7 @@ void DependencyInferenceAnalyzer::ProceedMEvent(const EventInfo &new_event,
                                                 const EventInfo &old_event) {
   switch (new_event.node_obj.GetEventType()) {
     case Event::S:
+    case Event::MAIN:
       // The current event has higher priority (S > M).
       dep_graph.AddEdge(new_event.node_id, old_event.node_id,
                         graph::HAPPENS_BEFORE);
@@ -205,6 +211,7 @@ void DependencyInferenceAnalyzer::ProceedWEvent(const EventInfo &new_event,
                                                 const EventInfo &old_event) {
   switch (new_event.node_obj.GetEventType()) {
     case Event::S:
+    case Event::MAIN:
     case Event::M:
       dep_graph.AddEdge(new_event.node_id, old_event.node_id,
                         graph::HAPPENS_BEFORE);
@@ -229,6 +236,7 @@ void DependencyInferenceAnalyzer::ProceedEXTEvent(const EventInfo &new_event,
                                                   const EventInfo &old_event) {
   switch (new_event.node_obj.GetEventType()) {
     case Event::S:
+    case Event::MAIN:
     case Event::M:
       // The current event has higher priority (S > W and M > W).
       dep_graph.AddEdge(new_event.node_id, old_event.node_id,
@@ -254,6 +262,7 @@ void DependencyInferenceAnalyzer::AddDependencies(size_t event_id,
     EventInfo new_event_info = EventInfo(event_id, event);
     switch (event_info.node_obj.GetEventType()) {
       case Event::S:
+      case Event::MAIN:
         ProceedSEvent(new_event_info, event_info);
         break;
       case Event::M:
@@ -273,6 +282,7 @@ void DependencyInferenceAnalyzer::AddDependencies(size_t event_id,
 void DependencyInferenceAnalyzer::ConnectWithWEvents(const EventInfo &event_info) {
   switch (event_info.node_obj.GetEventType()) {
     case Event::S:
+    case Event::MAIN:
     case Event::M:
     case Event::EXT:
       // This event does not have a W type, so we do nothing.
@@ -294,6 +304,7 @@ void DependencyInferenceAnalyzer::ConnectWithWEvents(const EventInfo &event_info
         EventInfo ei = node_info_opt.value();
         switch (ei.node_obj.GetEventType()) {
           case Event::S:
+          case Event::MAIN:
           case Event::M:
           case Event::EXT:
             break;

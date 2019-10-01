@@ -20,12 +20,6 @@ using namespace operation;
 using namespace trace;
 
 
-inline Event
-construct_default_event() {
-  return Event(Event::S, 0);
-}
-
-
 namespace graph {
 
 /**
@@ -57,10 +51,11 @@ struct GraphPrinter<Event, enum EdgeLabel> : public GraphPrinterDefault {
       if (!node_info.HasAttribute(EXECUTED_ATTR)) {
         return "";
       }
-      if (node_id == MAIN_BLOCK) {
+      if (node_info.node_obj.GetEventType() == Event::MAIN) {
         // Special treatment on the node corresponding to the main
         // event.
-        return to_string(MAIN_BLOCK) + "[label=\"MAIN\"]";
+        return to_string(node_id) + "[label=\"MAIN_" +
+          to_string(node_id) + "\"]";
       } else {
         string node_str = to_string(node_id);
         return node_str + "[label=\"" + node_str + "["
@@ -184,6 +179,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
   private:
     /// The dependency graph of events.
     dep_graph_t dep_graph;
+
     /**
      * The set of alive events (i.e., events whose corresponding callbacks)
      * have not been executed yet.
@@ -191,6 +187,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
     set<size_t> alive_events;
     // The block that is currently being processed by the analyzer.
     const Block *current_block;
+
     /**
      * This is the event that we need to connext with the first
      * created event in the current execution block. */
@@ -264,6 +261,8 @@ class DependencyInferenceAnalyzer : public Analyzer {
 
     /** Make all the event whose type is W dependent on the given event. */
     void ConnectWithWEvents(const EventInfo &event_info);
+
+    void ConnectSubGraph();
 };
 
 
