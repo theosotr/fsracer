@@ -44,6 +44,8 @@ class FSAnalyzer : public Analyzer {
       DebugInfo debug_info;
       string operation_name;
 
+      FSAccess() {  }
+
       FSAccess(size_t event_id_, enum Hpath::EffectType effect_type_,
                DebugInfo debug_info_, string operation_name_):
         event_id(event_id_),
@@ -97,6 +99,7 @@ class FSAnalyzer : public Analyzer {
     InodeTable inode_table;
 
     fs_accesses_table_t effect_table;
+    Table<pair<fs::path, size_t>, FSAccess> block_accesses;
 
     Table<string, const ExecOp*> op_table;
     Table<size_t, const NewEventExpr*> event_info;
@@ -116,9 +119,7 @@ class FSAnalyzer : public Analyzer {
 
     void DumpJSON(ostream &os) const;
     void DumpCSV(ostream &os) const;
-
     void AddPathEffect(const fs::path &p, FSAccess fs_access);
-
 };
 
 
