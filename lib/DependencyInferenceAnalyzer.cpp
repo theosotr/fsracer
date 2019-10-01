@@ -70,11 +70,20 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(const Block *block) {
       }
     }
   }
-
-  if (block->IsMain() && !dep_graph.Empty()) {
-    for (auto const &sink : dep_graph.GetSinks()) {
-      dep_graph.AddEdge(sink, block_id, graph::HAPPENS_BEFORE);
+  if (block->IsMain()) {
+    // This is the MAIN block, so we add it to the dependency graph
+    // since there is not any preceding "newEvent" construct associated with
+    // the ID of the current block.
+    dep_graph.AddNode(block_id, Event(Event::MAIN, 0));
+    if (prev_main_block) {
+      for (auto const &sink : dep_graph.GetSinks()) {
+        dep_graph.AddEdge(sink, block_id, graph::HAPPENS_BEFORE);
+      }
+      dep_graph.AddEdge(prev_main_block->GetBlockId(), block_id,
+                        graph::HAPPENS_BEFORE);
+      prev_main_block = block;
     }
+    
   }
 
   current_block = block;
@@ -100,12 +109,6 @@ DependencyInferenceAnalyzer::AnalyzeNewEvent(const NewEventExpr *new_event) {
   }
 
   size_t block_id = current_block->GetBlockId();
-  if (current_block->IsMain()) {
-    // This is the MAIN block, so we add it to the dependency graph
-    // since there is not any preceding "newEvent" construct associated with
-    // the ID of the current block.
-    dep_graph.AddNode(block_id, Event(Event::MAIN, 0));
-  }
 
   size_t event_id = new_event->GetEventId();
   dep_graph.AddNode(event_id, new_event->GetEvent());

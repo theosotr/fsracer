@@ -70,6 +70,9 @@ void FSAnalyzer::AnalyzeBlock(const Block *block) {
   if (!block) {
     return;
   }
+  if (block->IsMain()) {
+    main_events.insert(block->GetBlockId());
+  }
   current_block = block;
   vector<const Expr*> exprs = block->GetExprs();
   for (auto const &expr : exprs) {
@@ -273,7 +276,7 @@ void FSAnalyzer::ProcessPathEffect(fs::path p,
     enum Hpath::EffectType effect,
     string operation_name) {
   DebugInfo debug_info;
-  if (block_id == MAIN_BLOCK) {
+  if (main_events.find(block_id) != main_events.end()) {
     debug_info.AddDebugInfo("main");
   } else {
     auto expr = event_info.GetValue(block_id);

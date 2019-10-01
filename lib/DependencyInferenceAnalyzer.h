@@ -139,6 +139,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
     /** Default Constructor of the analyzer. */
     DependencyInferenceAnalyzer(enum graph::GraphFormat graph_format_):
       current_block(nullptr),
+      prev_main_block(nullptr),
       pending_ev(0),
       current_context(MAIN_BLOCK),
       graph_format(graph_format_)
@@ -188,6 +189,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
     // The block that is currently being processed by the analyzer.
     const Block *current_block;
 
+    const Block *prev_main_block;
     /**
      * This is the event that we need to connext with the first
      * created event in the current execution block. */

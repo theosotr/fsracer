@@ -103,6 +103,7 @@ class FSAnalyzer : public Analyzer {
 
     Table<string, const ExecOp*> op_table;
     Table<size_t, const NewEventExpr*> event_info;
+    set<size_t> main_events;
 
     const Block *current_block;
     size_t main_process;
