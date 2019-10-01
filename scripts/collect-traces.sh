@@ -47,7 +47,7 @@ fi
 logs=$(echo '{}')
 function handle_sigint()
 {
-  echo "$logs" > logs.json
+  echo "$logs" > $output_dir/logs.json
   exit 0
 }
 trap handle_sigint SIGINT
@@ -448,5 +448,5 @@ do
   clear_repo "$module"
 done
 
-echo "$logs" > logs.json
+echo "$logs" > $output_dir/logs.json
 exit 0

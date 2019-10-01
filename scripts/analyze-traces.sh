@@ -28,7 +28,7 @@ fi
 logs=$(echo '{}')
 function handle_sigint()
 {
-  echo "$logs" > logs.json
+  echo "$logs" > $output_dir/logs.json
   exit 0
 }
 trap handle_sigint SIGINT
@@ -61,5 +61,5 @@ for module_dir in $trace_dir/*; do
   done
 done
 
-echo "$logs" > logs.json
+echo "$logs" > $output_dir/logs.json
 exit 0
