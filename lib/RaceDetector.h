@@ -2,6 +2,7 @@
 #define RACE_DETECTOR_H
 
 #include <map>
+#include <unordered_map>
 #include <string>
 
 #include "DependencyInferenceAnalyzer.h"
@@ -96,6 +97,8 @@ private:
   /// Useful for fault reporting.
   mutable table::Table<size_t, trace::DebugInfo> event_info;
 
+  mutable unordered_map<size_t, set<size_t>> cache_dfs;
+
   /**
    * Gets the list of faults by exploiting the dependency graph
    * and the table of file accesses per block.
@@ -104,6 +107,8 @@ private:
   
   /** Dumps reported faults to the standard output. */
   void DumpFaults(const faults_t &faults) const;
+
+  bool HappensBefore(size_t source, size_t target) const;
 
   /**
    * Checks whether there is a conflict between the first file access

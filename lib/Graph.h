@@ -37,6 +37,8 @@ struct Node {
   /// Set of node attributes.
   set<string> attributes;
 
+  Node() {  }
+
   /**
    * Constructs a new node with the specified ID.
    * This node is described by the given `node_obj`.
@@ -245,6 +247,38 @@ class Graph {
       return visited.find(target) != visited.end();
     }
 
+    /**
+     * Gets the set of nodes that are reachable from the given node.
+     */
+    set<size_t> DFS(size_t source) const {
+      set<size_t> visited;
+      stack<size_t> pool;
+      pool.push(source);
+
+      while (!pool.empty()) {
+        size_t node = pool.top();
+        pool.pop();
+        if (visited.find(node) != visited.end()) {
+          // We have already visited this node.
+          continue;
+        }
+
+        visited.insert(node);
+        optional<NodeInfo> node_info_opt = GetNodeInfo(node);
+        assert(node_info_opt.has_value());
+        NodeInfo node_info = node_info_opt.value();
+        for (auto &n : node_info.dependents) {
+          if (visited.find(n.first) == visited.end()) {
+            // We have not visited this node, so we add it
+            // to the pool.
+            pool.push(n.first);
+          }
+        }
+      }
+
+      return visited;
+    }
+
   private:
     /// Instantiate a new graph printer using the parameters of the template.
     using GPrinter = GraphPrinter<T, L>;
@@ -314,35 +348,6 @@ class Graph {
       }
     }
 
-    /**
-     * Gets the set of nodes that are reachable from the given node.
-     */
-    set<size_t> DFS(size_t source) const {
-      set<size_t> visited;
-      stack<size_t> pool;
-      pool.push(source);
-      while (!pool.empty()) {
-        size_t node = pool.top();
-        pool.pop();
-        if (visited.find(node) != visited.end()) {
-          // We have already visited this node.
-          continue;
-        }
-
-        visited.insert(node);
-        optional<NodeInfo> node_info = GetNodeInfo(node);
-        assert(node_info.has_value());
-        for (auto &n : node_info.value().dependents) {
-          if (visited.find(n.first) == visited.end()) {
-            // We have not visited this node, so we add it
-            // to the pool.
-            pool.push(n.first);
-          }
-        }
-      }
-
-      return visited;
-    }
 };
 
 
