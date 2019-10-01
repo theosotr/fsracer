@@ -1,0 +1,9 @@
+Makefile with missing dependency
+================================
+
+* Missing **s2.c** or use `%.o: %.c`
+
+```make
+$(OBJECTS): main.c s1.c s1.h s2.h
+        $(CC) -c main.c s1.c s2.c $(CFLAGS)
+```
