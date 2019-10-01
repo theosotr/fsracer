@@ -1,3 +1,5 @@
+#include <signal.h>
+#include <unistd.h>
 #include <iostream>
 #include <optional>
 
@@ -89,11 +91,20 @@ process_args(gengetopt_args_info &args_info, processor::Processor &trace_proc)
 }
 
 
+void
+sig_handler(int signo)
+{
+  if (signo == SIGINT) {
+    debug::msg() << "Exiting program after SIGINT signal";
+    exit(0);
+  }
+}
+
 
 int
 main(int argc, char **argv)
 {
-
+  signal(SIGINT, sig_handler);
   gengetopt_args_info args_info;
   processor::Processor trace_proc;
   // Let's copy the given arguments, so that we do not break things,
