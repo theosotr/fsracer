@@ -470,6 +470,8 @@ class Block : public TraceNode {
       return block_type;
     }
 
+    string GetPrettyBlockId();
+
     bool IsMain() const {
       return block_type == MAIN;
     }
