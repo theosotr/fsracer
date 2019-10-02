@@ -1,5 +1,6 @@
-OLD_SHELL := $(SHELL)
-SHELL = $(warning Building $@$(if $^, (prerequisites $^)))$(OLD_SHELL)
+.ONESHELL:
+OLD_SHELL := ./post-shell
+SHELL = $(info \#BEGIN)$(warning $*,$@,$^)$(OLD_SHELL)
 
 C=gcc
 CFLAGS=-I.

@@ -1,3 +1,7 @@
+.ONESHELL:
+OLD_SHELL := ./post-shell
+SHELL = $(info \#BEGIN)$(warning $*,$@,$^)$(OLD_SHELL)
+
 C=gcc
 CFLAGS=-I.
 OBJ = main.o s1.o s2.o

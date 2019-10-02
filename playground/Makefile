@@ -1,5 +1,6 @@
-OLD_SHELL := $(SHELL)
-SHELL = $(warning Building $@$(if $^, (prerequisites $^)))$(OLD_SHELL)
+.ONESHELL:
+OLD_SHELL := ./post-shell
+SHELL = $(info \#BEGIN)$(warning $*,$@,$^)$(OLD_SHELL)
 
 C=gcc
 CFLAGS=-I.
@@ -8,9 +9,6 @@ CFLAGS=-I.
 .PHONY: obj clean all
 
 all: main
-
-#$(OBJECTS): main.c s1.c s1.h s2.h
-#	$(CC) -c main.c s1.c s2.c $(CFLAGS)
 
 main.o: main.c 
 	$(CC) -c main.c $(CFLAGS)
@@ -22,7 +20,7 @@ s2.o: s2.h
 	$(CC) -c s2.c $(CFLAGS)
 
 main: s1.o s2.o main.o
-	gcc $^ -o $@
+	$(CC) $^ -o $@
 
 clean:
 	rm -rf *.o main

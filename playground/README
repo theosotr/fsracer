@@ -11,6 +11,8 @@ $(OBJECTS): main.c s1.c s1.h s2.h
 Examples
 ========
 
-* `make` (expand SHELL)
+* `make` 
 
-* `make -f mOBJ --debug -i` (debug mode)
+* `make -f mOBJ` 
+
+* `strace -s 200 -f make 2> traces`
