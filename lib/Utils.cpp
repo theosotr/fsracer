@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <chrono>
 #include <iostream>
 #include <sstream>
@@ -16,6 +17,9 @@ std::string PtrToString(const void *ptr) {
 }
 
 
+bool StartsWith(const std::string &str, std::string prefix) {
+  return str.find(prefix) == 0;
+}
 
 std::string GetRightSubstr(std::string &str, std::string delm) {
   size_t pos = str.find(delm);
@@ -23,6 +27,15 @@ std::string GetRightSubstr(std::string &str, std::string delm) {
     return str;
   }
   return str.substr(pos + 1, std::string::npos);
+}
+
+
+bool IsNumber(const std::string &str) {
+  return !str.empty() && std::find_if(
+      str.begin(),
+      str.end(),
+      [](char c) { return !std::isdigit(c);  }
+    ) == str.end();
 }
 
 
