@@ -10,7 +10,7 @@ done
 Operation sync_14 do
 hpath AT_FDCWD foo expunged !unlink
 done
-Begin MAIN
+Begin MAIN 1
 @PROLOGUE_BLOCK@
 newEvent 4 W 3 !setImmediate
 newEvent 5 S 0 !nextTick
@@ -28,12 +28,12 @@ trigger 6
 submitOp sync_14 SYNC !node_unlink
 End
 @IGNORE@
-1,4,creates
-1,5,creates
 4,7,creates
 5,4,before
+MAIN_1,4,creates
+MAIN_1,5,creates
 @IGNORE@
 @CURRENT_DIR@/foo,5,produced
 @CURRENT_DIR@/foo,7,expunged
-@CURRENT_DIR@/immediate-timeout-tick.js,1,consumed
+@CURRENT_DIR@/immediate-timeout-tick.js,MAIN_1,consumed
 @IGNORE@

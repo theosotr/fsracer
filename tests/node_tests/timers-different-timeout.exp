@@ -9,7 +9,7 @@ done
 Operation async_13 do
 hpath AT_FDCWD baz consumed !access
 done
-Begin MAIN
+Begin MAIN 1
 @PROLOGUE_BLOCK@
 newEvent 4 W 1 !setTimeout
 newEvent 5 W 0 !timerWrap
@@ -45,17 +45,17 @@ End
 Begin 13
 End
 @IGNORE@
-1,5,creates
-1,7,creates
-5,7,before
-5,9,creates
 5,11,creates
 5,12,creates
+5,7,before
+5,9,creates
 7,11,before
 7,13,creates
+MAIN_1,5,creates
+MAIN_1,7,creates
 @IGNORE@
 @CURRENT_DIR@/bar,9,consumed
 @CURRENT_DIR@/baz,13,consumed
 @CURRENT_DIR@/foo,12,consumed
-@CURRENT_DIR@/timers-different-timeout.js,1,consumed
+@CURRENT_DIR@/timers-different-timeout.js,MAIN_1,consumed
 @IGNORE@

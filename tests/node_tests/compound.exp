@@ -27,7 +27,7 @@ newFd AT_FDCWD foo @NUM@ !open
 delFd @NUM@ !close
 delFd @NUM@ !close
 done
-Begin MAIN
+Begin MAIN 1
 @PROLOGUE_BLOCK@
 submitOp sync_12 SYNC !node_open
 submitOp sync_13 SYNC !node_close
@@ -48,15 +48,15 @@ End
 Begin 6
 End
 @IGNORE@
-1,4,creates
-1,5,creates
 5,6,creates
+MAIN_1,4,creates
+MAIN_1,5,creates
 @IGNORE@
-@CURRENT_DIR@/bar,1,produced
 @CURRENT_DIR@/bar,4,consumed
 @CURRENT_DIR@/bar,6,consumed
+@CURRENT_DIR@/bar,MAIN_1,produced
 @CURRENT_DIR@/baz,5,consumed
-@CURRENT_DIR@/compound.js,1,consumed
+@CURRENT_DIR@/compound.js,MAIN_1,consumed
 @CURRENT_DIR@/foo,4,produced
 @CURRENT_DIR@/foo,6,produced
 @IGNORE@

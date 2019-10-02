@@ -10,7 +10,7 @@ done
 Operation async_5 do
 hpath AT_FDCWD foo expunged !unlink
 done
-Begin MAIN
+Begin MAIN 1
 @PROLOGUE_BLOCK@
 newEvent 4 S 0 !nextTick
 submitOp sync_12 SYNC !node_open
@@ -24,10 +24,10 @@ End
 Begin 5
 End
 @IGNORE@
-1,4,creates
 4,5,creates
+MAIN_1,4,creates
 @IGNORE@
-@CURRENT_DIR@/foo,1,produced
 @CURRENT_DIR@/foo,5,expunged
-@CURRENT_DIR@/next-tick.js,1,consumed
+@CURRENT_DIR@/foo,MAIN_1,produced
+@CURRENT_DIR@/next-tick.js,MAIN_1,consumed
 @IGNORE@

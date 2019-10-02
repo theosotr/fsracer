@@ -3,7 +3,7 @@
 Operation async_10 do
 hpath AT_FDCWD foo consumed !access
 done
-Begin MAIN
+Begin MAIN 1
 @PROLOGUE_BLOCK@
 newEvent 4 W 1 !setTimeout
 newEvent 5 W 0 !timerWrap
@@ -27,11 +27,11 @@ End
 Begin 10
 End
 @IGNORE@
-1,5,creates
 5,7,creates
 7,9,creates
 9,10,creates
+MAIN_1,5,creates
 @IGNORE@
 @CURRENT_DIR@/foo,10,consumed
-@CURRENT_DIR@/timers-nested2.js,1,consumed
+@CURRENT_DIR@/timers-nested2.js,MAIN_1,consumed
 @IGNORE@
