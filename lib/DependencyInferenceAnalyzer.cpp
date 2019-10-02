@@ -41,7 +41,7 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(const Block *block) {
     return;
   }
 
-  size_t block_id = block->GetBlockId();
+  string block_id = block->GetPrettyBlockId();
   vector<const Expr*> exprs = block->GetExprs();
   if (exprs.empty() && block->IsMain()) {
     return;
@@ -66,7 +66,7 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(const Block *block) {
     // that is created inside the current one.
     if (event_info.value().HasAttribute(EXECUTED_ATTR)) {
       if (current_block) {
-        pending_ev = current_block->GetBlockId();
+        pending_ev = current_block->GetPrettyBlockId();
       }
     }
   }
@@ -79,7 +79,7 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(const Block *block) {
       for (auto const &sink : dep_graph.GetSinks()) {
         dep_graph.AddEdge(sink, block_id, graph::HAPPENS_BEFORE);
       }
-      dep_graph.AddEdge(prev_main_block->GetBlockId(), block_id,
+      dep_graph.AddEdge(prev_main_block->GetPrettyBlockId(), block_id,
                         graph::HAPPENS_BEFORE);
       prev_main_block = block;
     }
@@ -90,8 +90,8 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(const Block *block) {
   for (auto const &expr : exprs) {
     AnalyzeExpr(expr);
   }
-  RemoveAliveEvent(block->GetBlockId());
-  dep_graph.AddNodeAttr(block->GetBlockId(), EXECUTED_ATTR);
+  RemoveAliveEvent(block->GetPrettyBlockId());
+  dep_graph.AddNodeAttr(block->GetPrettyBlockId(), EXECUTED_ATTR);
 }
 
 
@@ -108,9 +108,9 @@ DependencyInferenceAnalyzer::AnalyzeNewEvent(const NewEventExpr *new_event) {
     return;
   }
 
-  size_t block_id = current_block->GetBlockId();
+  string block_id = current_block->GetPrettyBlockId();
 
-  size_t event_id = new_event->GetEventId();
+  string event_id = to_string(new_event->GetEventId());
   dep_graph.AddNode(event_id, new_event->GetEvent());
 
   // There is a pending event that we need to connect with the newly-created
@@ -118,9 +118,9 @@ DependencyInferenceAnalyzer::AnalyzeNewEvent(const NewEventExpr *new_event) {
   //
   // This pending event came from the same block, but it was created
   // the first time the corresponding block was executed.
-  if (pending_ev) {
+  if (pending_ev != "") {
     dep_graph.AddEdge(pending_ev, event_id, graph::HAPPENS_BEFORE);
-    pending_ev = 0;
+    pending_ev = "";
   }
   // We add the dependency between the event corresponding to the current block
   // and the newly created event.
@@ -140,16 +140,16 @@ void DependencyInferenceAnalyzer::AnalyzeLink(const LinkExpr *link_expr) {
   if (!link_expr) {
     return;
   }
-  size_t source_ev = link_expr->GetSourceEvent();
+  string source_ev = to_string(link_expr->GetSourceEvent());
   // If the source event corresponds to the current block
   // or to the current context, we presume that we have already
   // created this dependency.
-  if (source_ev == current_block->GetBlockId() ||
+  if (source_ev == current_block->GetPrettyBlockId() ||
       source_ev == current_context) {
     return;
   }
-  dep_graph.AddEdge(source_ev, link_expr->GetTargetEvent(),
-                    graph::HAPPENS_BEFORE);
+  string target_ev = to_string(link_expr->GetTargetEvent());
+  dep_graph.AddEdge(source_ev, target_ev, graph::HAPPENS_BEFORE);
 }
 
 
@@ -162,13 +162,13 @@ DependencyInferenceAnalyzer::AnalyzeTrigger(const Trigger *trigger_expr) {
 }
 
 
-void DependencyInferenceAnalyzer::AddAliveEvent(size_t event_id) {
+void DependencyInferenceAnalyzer::AddAliveEvent(string event_id) {
   alive_events.insert(event_id);
 }
 
 
-void DependencyInferenceAnalyzer::RemoveAliveEvent(size_t event_id) {
-  set<size_t>::iterator it = alive_events.find(event_id);
+void DependencyInferenceAnalyzer::RemoveAliveEvent(string event_id) {
+  set<string>::iterator it = alive_events.find(event_id);
   if (it != alive_events.end()) {
     alive_events.erase(it);
   }
@@ -250,7 +250,7 @@ void DependencyInferenceAnalyzer::ProceedEXTEvent(const EventInfo &new_event,
 }
 
 
-void DependencyInferenceAnalyzer::AddDependencies(size_t event_id,
+void DependencyInferenceAnalyzer::AddDependencies(string event_id,
                                                   const Event &event) {
   for (auto alive_ev_id : alive_events) {
     optional<EventInfo> event_info_opt = dep_graph.GetNodeInfo(alive_ev_id);
@@ -258,7 +258,7 @@ void DependencyInferenceAnalyzer::AddDependencies(size_t event_id,
     // events identical to the current block,
     // as well as inactive events.
     if (!event_info_opt.has_value() ||
-        current_block->GetBlockId() == event_info_opt.value().node_id) {
+        current_block->GetPrettyBlockId() == event_info_opt.value().node_id) {
       continue;
     }
     EventInfo event_info = event_info_opt.value();
@@ -323,7 +323,7 @@ void DependencyInferenceAnalyzer::ConnectWithWEvents(const EventInfo &event_info
 }
 
 
-void DependencyInferenceAnalyzer::PruneEdges(size_t event_id) {
+void DependencyInferenceAnalyzer::PruneEdges(string event_id) {
   optional<EventInfo> event_info_opt = dep_graph.GetNodeInfo(event_id);
   if (!event_info_opt.has_value()) {
     return;

@@ -40,7 +40,7 @@ bool RaceDetector::HasConflict(const fs_access_t &acc1,
 }
 
 
-bool RaceDetector::HappensBefore(size_t source, size_t target) const {
+bool RaceDetector::HappensBefore(string source, string target) const {
   auto cache_it = cache_dfs.find(source);
   optional<DependencyInferenceAnalyzer::EventInfo> source_info =
     dep_graph.GetNodeInfo(source);
@@ -56,7 +56,7 @@ bool RaceDetector::HappensBefore(size_t source, size_t target) const {
     return true;
   }
   if (cache_it == cache_dfs.end()) {
-    set<size_t> visited = dep_graph.DFS(source); 
+    set<string> visited = dep_graph.DFS(source); 
     cache_dfs[source] = visited;
     return visited.find(target) != visited.end(); 
   } else {

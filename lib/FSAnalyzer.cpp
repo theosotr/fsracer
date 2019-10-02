@@ -70,9 +70,6 @@ void FSAnalyzer::AnalyzeBlock(const Block *block) {
   if (!block) {
     return;
   }
-  if (block->IsMain()) {
-    main_events.insert(block->GetBlockId());
-  }
   current_block = block;
   vector<const Expr*> exprs = block->GetExprs();
   for (auto const &expr : exprs) {
@@ -92,7 +89,7 @@ void FSAnalyzer::AnalyzeNewEvent(const NewEventExpr *new_ev_expr) {
   if (!new_ev_expr) {
     return;
   }
-  event_info.AddEntry(new_ev_expr->GetEventId(), new_ev_expr);
+  event_info.AddEntry(to_string(new_ev_expr->GetEventId()), new_ev_expr);
 }
 
 
@@ -108,10 +105,10 @@ void FSAnalyzer::AnalyzeSubmitOp(const SubmitOp *submit_op) {
   }
   switch (submit_op->GetType()) {
     case SubmitOp::SYNC:
-      block_id = current_block->GetBlockId();
+      block_id = current_block->GetPrettyBlockId();
       break;
     case SubmitOp::ASYNC:
-      block_id = stoi(utils::GetRightSubstr(op_id, "_"));
+      block_id = utils::GetRightSubstr(op_id, "_");
       break;
   }
   vector<const Operation*> ops = exec_op.value()->GetOperations();
@@ -276,7 +273,7 @@ void FSAnalyzer::ProcessPathEffect(fs::path p,
     enum Hpath::EffectType effect,
     string operation_name) {
   DebugInfo debug_info;
-  if (main_events.find(block_id) != main_events.end()) {
+  if (utils::StartsWith(block_id, "MAIN_")) {
     debug_info.AddDebugInfo("main");
   } else {
     auto expr = event_info.GetValue(block_id);
@@ -407,7 +404,7 @@ void FSAnalyzer::DumpCSV(ostream &os) const {
 
 
 void FSAnalyzer::AddPathEffect(const fs::path &p, FSAccess fs_access) {
-  size_t event_id = fs_access.event_id;
+  string event_id = fs_access.event_id;
   auto key_pair = make_pair(p, event_id);
   optional<FSAccess> fs_acc_opt = block_accesses.GetValue(key_pair);
   if (!fs_acc_opt.has_value()) {

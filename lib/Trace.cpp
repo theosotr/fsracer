@@ -136,7 +136,7 @@ void Trigger::Accept(analyzer::Analyzer *analyzer) const {
 string Block::GetPrettyBlockId() const {
   switch (block_type) {
     case REG:
-      return "REG_" + to_string(block_id);
+      return to_string(block_id);
     case MAIN:
       return "MAIN_" + to_string(block_id);
   }

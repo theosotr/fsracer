@@ -39,14 +39,14 @@ class FSAnalyzer : public Analyzer {
     };
 
     struct FSAccess {
-      size_t event_id;
+      string event_id;
       enum Hpath::EffectType effect_type;
       DebugInfo debug_info;
       string operation_name;
 
       FSAccess() {  }
 
-      FSAccess(size_t event_id_, enum Hpath::EffectType effect_type_,
+      FSAccess(string event_id_, enum Hpath::EffectType effect_type_,
                DebugInfo debug_info_, string operation_name_):
         event_id(event_id_),
         effect_type(effect_type_),
@@ -99,16 +99,15 @@ class FSAnalyzer : public Analyzer {
     InodeTable inode_table;
 
     fs_accesses_table_t effect_table;
-    Table<pair<fs::path, size_t>, FSAccess> block_accesses;
+    Table<pair<fs::path, string>, FSAccess> block_accesses;
 
     Table<string, const ExecOp*> op_table;
-    Table<size_t, const NewEventExpr*> event_info;
-    set<size_t> main_events;
+    Table<string, const NewEventExpr*> event_info;
 
     const Block *current_block;
     size_t main_process;
     fs::path cwd;
-    size_t block_id;
+    string block_id;
 
     enum OutFormat out_format;
 

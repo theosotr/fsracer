@@ -45,7 +45,7 @@ template<>
 struct GraphPrinter<Event, enum EdgeLabel> : public GraphPrinterDefault {
   public:
     using NodeInfo = Node<Event, enum EdgeLabel>;
-    static string PrintNodeDot(size_t node_id, const NodeInfo &node_info) {
+    static string PrintNodeDot(string node_id, const NodeInfo &node_info) {
       // If the given node (i.e., event) has not been executed,
       // then omit printing it.
       if (!node_info.HasAttribute(EXECUTED_ATTR)) {
@@ -54,22 +54,20 @@ struct GraphPrinter<Event, enum EdgeLabel> : public GraphPrinterDefault {
       if (node_info.node_obj.GetEventType() == Event::MAIN) {
         // Special treatment on the node corresponding to the main
         // event.
-        return to_string(node_id) + "[label=\"MAIN_" +
-          to_string(node_id) + "\"]";
+        return node_id + "[label=\"" + node_id + "\"]";
       } else {
-        string node_str = to_string(node_id);
-        return node_str + "[label=\"" + node_str + "["
+        return node_id + "[label=\"" + node_id + "["
           + node_info.node_obj.ToString() + "]\"]";
       }
     }
 
-    static string PrintNodeCSV(size_t node_id, const NodeInfo &node_info) {
+    static string PrintNodeCSV(string node_id, const NodeInfo &node_info) {
       // If the given node (i.e., event) has not been executed,
       // then omit printing it.
       if (!node_info.HasAttribute(EXECUTED_ATTR)) {
         return "";
       }
-      return to_string(node_info.node_id);
+      return node_info.node_id;
     }
 
     static string PrintEdgeLabel(enum EdgeLabel label) {
@@ -140,8 +138,8 @@ class DependencyInferenceAnalyzer : public Analyzer {
     DependencyInferenceAnalyzer(enum graph::GraphFormat graph_format_):
       current_block(nullptr),
       prev_main_block(nullptr),
-      pending_ev(0),
-      current_context(MAIN_BLOCK),
+      pending_ev(""),
+      current_context("MAIN_1"),
       graph_format(graph_format_)
   {  }
     /** Default Destructor. */
@@ -185,7 +183,7 @@ class DependencyInferenceAnalyzer : public Analyzer {
      * The set of alive events (i.e., events whose corresponding callbacks)
      * have not been executed yet.
      */
-    set<size_t> alive_events;
+    set<string> alive_events;
     // The block that is currently being processed by the analyzer.
     const Block *current_block;
 
@@ -193,12 +191,12 @@ class DependencyInferenceAnalyzer : public Analyzer {
     /**
      * This is the event that we need to connext with the first
      * created event in the current execution block. */
-    size_t pending_ev;
+    string pending_ev;
     /**
      * The ID of the event that corresponds to the context where
      * the current block is executed.
      */
-    size_t current_context;
+    string current_context;
 
     /// Specifies the format of the generated dependency graph.
     enum graph::GraphFormat graph_format;
@@ -207,10 +205,10 @@ class DependencyInferenceAnalyzer : public Analyzer {
     // the set of alive events.
     
     /** Adds new event to the set of alive events. */
-    void AddAliveEvent(size_t event_id);
+    void AddAliveEvent(string event_id);
 
     /** Removes the given event from the set of alive events. */
-    void RemoveAliveEvent(size_t event_id);
+    void RemoveAliveEvent(string event_id);
 
     // Methods for constructing the dependency graph based on
     // the type of events.
@@ -253,13 +251,13 @@ class DependencyInferenceAnalyzer : public Analyzer {
      * It inspects every existing event, and correlates it with the given one
      * if it is necessary.
      */
-    void AddDependencies(size_t event_id, const Event &event);
+    void AddDependencies(string event_id, const Event &event);
 
     /**
      * This method prunes redundant edges between the previous nodes
      * of the given event and its next nodes.
      */
-    void PruneEdges(size_t event_id);
+    void PruneEdges(string event_id);
 
     /** Make all the event whose type is W dependent on the given event. */
     void ConnectWithWEvents(const EventInfo &event_info);
