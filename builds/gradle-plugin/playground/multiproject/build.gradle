@@ -1,0 +1,12 @@
+buildscript {
+    dependencies{
+      classpath files('../../build/libs/gradle-plugin.jar') 
+    }
+}
+
+apply plugin: "org.fsracer.gradle.fsracer-plugin"
+task root {
+  doLast {
+    println 'This is the root task'
+  }
+}
