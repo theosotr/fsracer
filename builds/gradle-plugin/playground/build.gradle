@@ -1,0 +1,19 @@
+buildscript {
+    dependencies{
+      classpath files('../build/libs/gradle-plugin.jar') 
+    }
+}
+
+apply plugin: "org.fsracer.gradle.fsracer-plugin"
+
+task A {
+  doLast {
+    println 'Hello A'
+  }
+}
+
+task B {
+  doLast {
+    println 'Hello C'
+  }
+}
