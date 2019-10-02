@@ -76,14 +76,14 @@ void DependencyInferenceAnalyzer::AnalyzeBlock(const Block *block) {
     // the ID of the current block.
     dep_graph.AddNode(block_id, Event(Event::MAIN, 0));
     if (prev_main_block) {
+      // If there was a previous main block, we get the sink nodes of the
+      // current dep graph and we add dependencies with the current main
+      // block.
       for (auto const &sink : dep_graph.GetSinks()) {
         dep_graph.AddEdge(sink, block_id, graph::HAPPENS_BEFORE);
       }
-      dep_graph.AddEdge(prev_main_block->GetPrettyBlockId(), block_id,
-                        graph::HAPPENS_BEFORE);
-      prev_main_block = block;
     }
-    
+    prev_main_block = block;
   }
 
   current_block = block;
