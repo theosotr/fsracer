@@ -14,6 +14,14 @@ task A {
 
 task B {
   doLast {
+    println 'Hello B'
+  }
+}
+
+task C {
+  dependsOn 'A'
+  dependsOn 'B'
+  doLast {
     println 'Hello C'
   }
 }

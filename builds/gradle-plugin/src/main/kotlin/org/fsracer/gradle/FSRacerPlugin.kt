@@ -10,6 +10,12 @@ class FSRacerPlugin : Plugin<Project> {
             p.gradle.taskGraph.whenReady { taskGraph ->
                 taskGraph.allTasks.forEach { task ->
                     println(task)
+                    task.doFirst {
+                        println("Begin" + task.name)
+                    }
+                    task.doLast {
+                        println("End")
+                    }
                 }
             }
         }
