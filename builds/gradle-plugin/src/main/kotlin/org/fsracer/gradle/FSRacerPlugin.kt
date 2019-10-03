@@ -5,9 +5,8 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 
 
-fun constructTaskName(task : Task) : String {
-    return ":${task.project.name}:${task.name}"
-}
+fun constructTaskName(task : Task) : String =
+    "${task.project.name}:${task.name}"
 
 
 class FSRacerPlugin : Plugin<Project> {
@@ -16,13 +15,12 @@ class FSRacerPlugin : Plugin<Project> {
         var state = State()
     } 
 
-    override fun apply(project: Project) {
+    override fun apply(project: Project) =
         project.gradle.taskGraph.whenReady { taskGraph ->
             println("Begin MAIN ${project.name}")
             taskGraph.allTasks.forEach { task ->
                 val taskName = constructTaskName(task)
                 println("newEvent ${taskName} W 1")
-                println("input ${task.inputs.dir}")
                 task.inputs.files.forEach { input ->
                     println("input ${input.absolutePath}")
                 }
@@ -44,5 +42,4 @@ class FSRacerPlugin : Plugin<Project> {
            }
            println("End")
         }
-    }
 }
