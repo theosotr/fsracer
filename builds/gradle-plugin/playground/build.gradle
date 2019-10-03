@@ -13,12 +13,18 @@ task A {
 }
 
 task B {
+  def generatedFileDir = file("$buildDir/generated")
+  outputs.dir generatedFileDir
   doLast {
     println 'Hello B'
+    def outFile = file("$buildDir/generated/foo")
+    outFile.text = "bar file"
   }
 }
 
 task C {
+  def generatedFileDir = file("$buildDir/generated")
+  inputs.dir generatedFileDir
   dependsOn 'A'
   dependsOn 'B'
   doLast {

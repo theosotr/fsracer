@@ -22,6 +22,13 @@ class FSRacerPlugin : Plugin<Project> {
             taskGraph.allTasks.forEach { task ->
                 val taskName = constructTaskName(task)
                 println("newEvent ${taskName} W 1")
+                println("input ${task.inputs.dir}")
+                task.inputs.files.forEach { input ->
+                    println("input ${input.absolutePath}")
+                }
+                task.outputs.files.forEach { output ->
+                    println("output ${output.absolutePath}")
+                }
                 task.getTaskDependencies()
                   .getDependencies(task)
                   .forEach { d ->
