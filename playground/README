@@ -16,3 +16,5 @@ Examples
 * `make -f mOBJ` 
 
 * `strace -s 200 -f make 2> traces`
+
+* `make SHELL='$(info \#BEGIN)$(warning $*,$@,$^)./post-shell'`

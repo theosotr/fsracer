@@ -1,7 +1,3 @@
-.ONESHELL:
-OLD_SHELL := ./post-shell
-SHELL = $(info \#BEGIN)$(warning $*,$@,$^)$(OLD_SHELL)
-
 C=gcc
 CFLAGS=-I.
 #OBJECTS = main.o s1.o s2.o
@@ -12,6 +8,7 @@ all: main
 
 main.o: main.c 
 	$(CC) -c main.c $(CFLAGS)
+	$(MAKE) -C foo
 
 s1.o: s1.c s1.h 
 	$(CC) -c s1.c $(CFLAGS)
