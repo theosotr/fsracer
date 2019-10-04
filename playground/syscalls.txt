@@ -42,3 +42,4 @@ unlinkat
 utime
 utimensat
 utimes
+write
