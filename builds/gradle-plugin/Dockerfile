@@ -10,4 +10,13 @@ RUN wget -O sdk.install.sh "https://get.sdkman.io" && bash sdk.install.sh
 RUN bash -c "source ~/.sdkman/bin/sdkman-init.sh && sdk install kotlin"
 
 
+RUN mkdir /root/plugin
+COPY ./build.gradle /root/plugin
+COPY ./src /root/plugin
+COPY ./scripts /root/plugin
+
+WORKDIR /root/plugin
+RUN gradle build
+
+ENV PLUGIN_JAR_DIR=/root/plugin/build/libs/
 WORKDIR /root
