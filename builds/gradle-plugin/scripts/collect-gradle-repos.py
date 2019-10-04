@@ -23,6 +23,8 @@ def fetch_plugins(plugin, limit=1000, start_offset=0):
         try:
             soup = BeautifulSoup(response.text, 'html.parser')
             plugin_rows = soup.findAll('h3', {'class': H3_CLASS})
+            if plugin_rows is None:
+                break
             plugins.extend([
                 p.find('a').text.replace('\n', '')
                 for p in plugin_rows
