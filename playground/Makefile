@@ -8,7 +8,7 @@ all: main
 
 main.o: main.c 
 	$(CC) -c main.c $(CFLAGS)
-	$(MAKE) -C foo
+	#$(MAKE) -C foo
 
 s1.o: s1.c s1.h 
 	$(CC) -c s1.c $(CFLAGS)
