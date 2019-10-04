@@ -4,7 +4,9 @@
 run=0
 install=0
 remove_repo=0
-while getopts "m:d:f:o:ric" opt; do
+verify=0
+timeout=20m
+while getopts "m:d:f:o:ricvt:" opt; do
   case "$opt" in
     m)  modules=$OPTARG
         ;;
@@ -20,10 +22,15 @@ while getopts "m:d:f:o:ric" opt; do
         ;;
     c) remove_repo=1
         ;;
+    v) verify=1
+        ;;
+    t) timeout=$OPTARG
+        ;;
   esac
 done
 shift $(($OPTIND - 1));
 
+dir=$(realpath $(dirname $0))
 
 if [ -z  $modules ]; then
   echo "You have to specify the path to the modules file (option -m)"
@@ -148,6 +155,16 @@ function run_tests()
   pre_out=$(find $output_dir/$module)
   if [ $run -eq 0 ]; then
     logs=$(add_to_test_cmds "$logs" "$module" "$cmd" true)
+    return
+  fi
+  if [ $verify -eq 1 ]; then
+    timeout $timeout bash \
+      -c "$dir/verify_loop.sh \"$cmd\" \"$output_dir/$module\""
+    if [ $? -ne 0 ]; then
+      logs=$(add_key "$logs" "$module" "verify" "pass")
+    else
+      logs=$(add_key "$logs" "$module" "verify" "no-pass")
+    fi
     return
   fi
   out=$(eval "$cmd" 2>&1)
