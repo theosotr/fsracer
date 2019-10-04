@@ -307,7 +307,7 @@ wrap_pre_rename(void *wrapctx, OUT void **user_data)
 {
   EmitHpath(wrapctx, user_data, 0, Hpath::EXPUNGED, true, get_exec_op,
             "rename");
-  EmitHpath(wrapctx, user_data, 0, Hpath::PRODUCED, true, get_exec_op,
+  EmitHpath(wrapctx, user_data, 1, Hpath::PRODUCED, true, get_exec_op,
             "rename");
   EmitRename(wrapctx, user_data, 0, 1, get_exec_op, "rename");
 }

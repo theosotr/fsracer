@@ -388,7 +388,7 @@ class Symlink : public Operation {
     }
 
     string ToString() const {
-      return GetOpName() + " " + to_string(dirfd) + " " + path + " " +
+      return GetOpName() + " " + DirfdToString(dirfd) + " " + path + " " +
         target + ACTUAL_NAME + FAILED;
     }
 
