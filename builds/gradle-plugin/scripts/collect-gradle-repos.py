@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-
 import argparse
 import requests
 from bs4 import BeautifulSoup
@@ -16,6 +14,7 @@ def fetch_plugins(plugin, limit=1000, start_offset=0):
     while limit > offset:
         url = ALL_PLUGINS_URL.format(offset)
         response = requests.get(url)
+        offset += 1
         if response is None:
             break
         if response.status_code != 200:
@@ -29,7 +28,6 @@ def fetch_plugins(plugin, limit=1000, start_offset=0):
                 p.find('a').text.replace('\n', '')
                 for p in plugin_rows
             ])
-            offset += 1
         except:
             break
     return plugins
@@ -64,7 +62,6 @@ def main():
     if args.plugin == 'all':
         plugins = fetch_plugins(args.plugin, limit=args.limit,
                                 start_offset=args.start)
-        import pdb; pdb.set_trace()
         print ('\n'.join(plugins))
     else:
         repo = fetch_plugin_repo(args.plugin)
