@@ -12,18 +12,30 @@
 # trace = [pid, syscall_name, syscall_args, syscall_ret_val]
 import re
 import sys
+import collections
 
 ##############################     TEST DATA     ##############################
 
 TRACES = [
-    '31565 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)'
+    '31565 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)',
+    '14333 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fc298fcfa10) = 14334',
+    '14352 close(3) = 0'
 ]
 
-############################## HELPER FUNCTIONS  ##############################
+################################# STRUCTURES ##################################
 
 MATCHES = {
     '[': ']', '(': ')', '{': '}', '"': '"'
 }
+
+# A Trace is composed of process id, system call name, system call arguments,
+# and system call return value.
+# pid,name,ret are strings, args is a list of strings
+Trace = collections.namedtuple(
+    'Trace', 'pid syscall_name syscall_args syscall_ret'
+)
+
+############################## HELPER FUNCTIONS  ##############################
 
 def safe_split(string):
     """Split a string using commas as delimiter safely.
@@ -204,20 +216,210 @@ def parse_line(line, unfinished):
         syscall_name, rest_syscall_args, syscall_ret_val =\
                 match_resumed(trace)
         syscall_args = unfinished[(pid, syscall_name)] + rest_syscall_args
-        return [pid, syscall_name, syscall_args, syscall_ret_val]
+        return Trace(pid, syscall_name, syscall_args, syscall_ret_val)
         del unfinished[(pid, syscall_name)]
     else:
         temp_trace = parse_trace(trace)
         if temp_trace:
-            return [pid,] + temp_trace
+            return Trace(pid, temp_trace[0], temp_trace[1], temp_trace[2])
 
 ############################# TRANSLATE FUNCTIONS #############################
 
 # def translate_<system_call_name>(trace):
 #   return [operation_expression, ...]
 
+hpath   = 'hpath {} {} {}'      # 'hpath' dirfd PATH access
+setcwd  = 'setcwd {}'           # 'setcwd' PATH
+newproc = 'newproc {} {}'       # 'newproc' ['fd'/'fs'/'fdfs'/'none'] ret
+delfd   = 'delfd {}'            # 'delfd' fd
+dupfd   = 'dupfd {} {}'         # 'dupfd' fd fd
+
+
 def translate_access(trace):
-    return 'hpath AT_FDCWD {} consumed !{}'.format(trace[2][0], trace[1])
+    return hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed')
+
+
+def translate_chdir(trace):
+    return setcwd.format(trace.syscall_args[0])
+
+
+def translate_chmod(trace):
+    return hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed')
+
+
+def translate_chown(trace):
+    return hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed')
+
+
+def translate_clone(trace):
+    if 'CLONE_FS' in trace.syscall_args[1]:
+        return newproc.format('fs', trace.syscall_ret)
+    elif 'CLONE_FILES' in trace.syscall_args[1]:
+        return newproc.format('fd', trace.syscall_ret)
+    elif all(x in trace.syscall_args[1] for x in ['CLONE_FS', 'CLONE_FILES']):
+        return newproc.format('fdfs', trace.syscall_ret)
+    else:
+        return newproc.format('none', trace.syscall_ret)
+
+
+def translate_close(trace):
+    return delfd.format(trace.syscall_args[0])
+
+
+def translate_dup(trace):
+    return dupfd.format(trace.syscall_args[0], trace.syscall_ret)
+
+
+def translate_dup2(trace):
+    return dupfd.format(trace.syscall_args[0], trace.syscall_args[1])
+
+
+def translate_dup3(trace):
+    return dupfd.format(trace.syscall_args[0], trace.syscall_args[1])
+
+
+def translate_execve(trace):
+    return hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed')
+
+
+def translate_fchdir(trace):
+    return
+
+
+def translate_fchmodat(trace):
+    return
+
+
+def translate_fchownat(trace):
+    return
+
+
+def translate_fcntl(trace):
+    return
+
+
+def translate_fork(trace):
+    return
+
+
+def translate_getxattr(trace):
+    return
+
+
+def translate_getcwd(trace):
+    return
+
+
+def translate_lchown(trace):
+    return
+
+
+def translate_lgetxattr(trace):
+    return
+
+
+def translate_lremovexattr(trace):
+    return
+
+
+def translate_lsetxattr(trace):
+    return
+
+
+def translate_lstat(trace):
+    return
+
+
+def translate_link(trace):
+    return
+
+
+def translate_linkat(trace):
+    return
+
+
+def translate_mkdir(trace):
+    return
+
+
+def translate_mkdirat(trace):
+    return
+
+
+def translate_mknod(trace):
+    return
+
+
+def translate_open(trace):
+    return
+
+
+def translate_openat(trace):
+    return
+
+
+def translate_readlink(trace):
+    return
+
+
+def translate_readlinkat(trace):
+    return
+
+
+def translate_removexattr(trace):
+    return
+
+
+def translate_rename(trace):
+    return
+
+
+def translate_renameat(trace):
+    return
+
+
+def translate_rmdir(trace):
+    return
+
+
+def translate_stat(trace):
+    return
+
+
+def translate_statfs(trace):
+    return
+
+
+def translate_symlink(trace):
+    return
+
+
+def translate_symlinkat(trace):
+    return
+
+
+def translate_unlink(trace):
+    return
+
+
+def translate_unlinkat(trace):
+    return
+
+
+def translate_utime(trace):
+    return
+
+
+def translate_utimensat(trace):
+    return
+
+
+def translate_utimes(trace):
+    return
+
+
+def translate_write(trace):
+    return
 
 ##############################  MAIN FUNCTIONS   ##############################
 
@@ -231,7 +433,7 @@ def main(inp):
             print(80*"#")
             print(trace)
             traces.append(trace)
-            opexp = globals()["translate_" + trace[1]](trace)
+            opexp = globals()["translate_" + trace.syscall_name](trace)
             print(opexp)
             operation_expressions.append(opexp)
             print(80*"#")
