@@ -13,32 +13,52 @@ import sys
 from pprint import pprint
 
 
+def split_line(line):
+    """Split an fsracer line into pid and trace.
+
+    We use the following regex to capture two groups: pid and trace.
+
+    ^([0-9]+)[ ]+(.*)
+
+    Args:
+        line: string (fsracer output line)
+
+    Returns:
+        (pid, trace)
+
+    Example:
+        input: "12498 openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3"
+        returns: ('12498', 'openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3')
+    """
+    return re.search("^([0-9]+)[ ]+(.*)", line).groups()
+
+
 def match_unfinished(trace):
-    """Match unfinished trace line.
+    """Match unfinished trace.
 
     We use the following regex to match unfinished traces
 
-    ^([0-9]+)[ ]+([a-z0-9_]+)\((.*)[ ]+<unfinished ...>
+    ^([a-z0-9_]+)\((.*)[ ]+<unfinished ...>
 
-    If it matches return pid, system call name, and system call arguments.
+    If it matches return system call name, and system call arguments.
     Otherwise, return None.
 
     Args:
         trace: string
 
     Returns:
-        [pid, syscall_name, syscall_args] or None
+        (syscall_name, syscall_args) or None
 
     Example:
      1)
-        input: "12498 openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3"
+        input: "openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3"
         returns: None
     2)
-        input: "12496 rt_sigprocmask(SIG_SETMASK, [],  <unfinished ...>"
-        returns: ['12496', 'rt_sigprocmask', SIG_SETMASK, [],]
+        input: "rt_sigprocmask(SIG_SETMASK, [],  <unfinished ...>"
+        returns: ('rt_sigprocmask', SIG_SETMASK, [],)
     """
-    syscall_unfinished_re = r'^{}[ ]+{}\({}[ ]+<unfinished ...>'.format(
-        "([0-9]+)", "([a-z0-9_]+)", "(.*)"
+    syscall_unfinished_re = r'^{}\({}[ ]+<unfinished ...>'.format(
+        "([a-z0-9_]+)", "(.*)"
     )
     syscall_unfinished = re.search(syscall_unfinished_re, trace)
     if syscall_unfinished:
@@ -47,11 +67,11 @@ def match_unfinished(trace):
 
 
 def match_resumed(trace):
-    """Match resumed trace line.
+    """Match resumed trace.
 
     We use the following regex to match resumed traces
 
-    ^([0-9]+)[ ]+<...[ ]+([a-z0-9_]+)[ ]+resumed>[ ]*(.*)\)[ ]*=[ ]*(-?[0-9\?]+)[ ]*.*?
+    ^<...[ ]+([a-z0-9_]+)[ ]+resumed>[ ]*(.*)\)[ ]*=[ ]*(-?[0-9\?]+)[ ]*.*?
 
     If it matches return system call name, rest of system call arguments, and
     system call return value. Otherwise, return None.
@@ -60,19 +80,19 @@ def match_resumed(trace):
         trace: string
 
     Returns:
-        [pid, syscall_name, syscall_args, syscall_ret_val] or None
+        (syscall_name, syscall_args, syscall_ret_val) or None
 
     Example:
      1)
-        input: "12498 openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3"
+        input: "openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3"
         returns: None
     2)
-        input: "12496 <... rt_sigprocmask resumed> NULL, 8) = 0"
-        returns: ['12496', 'rt_sigprocmask', 'NULL, 8', '0']
+        input: "<... rt_sigprocmask resumed> NULL, 8) = 0"
+        returns: ('rt_sigprocmask', 'NULL, 8', '0')
     """
     syscall_res_re =\
-        r'^{}[ ]+<...[ ]+{}[ ]+resumed>[ ]*{}\)[ ]*=[ ]*{}[ ]*.*?'.format(
-            "([0-9]+)", "([a-z0-9_]+)", "(.*)", "(-?[0-9\?]+)"
+        r'^<...[ ]+{}[ ]+resumed>[ ]*{}\)[ ]*=[ ]*{}[ ]*.*?'.format(
+            "([a-z0-9_]+)", "(.*)", "(-?[0-9\?]+)"
         )
     syscall_resumed = re.search(syscall_res_re, trace)
     if syscall_resumed:
@@ -81,31 +101,31 @@ def match_resumed(trace):
 
 
 def parse_trace(trace):
-    """Parse a trace on strace's format.
+    """Parse a trace
 
-    We use the following regex to match pid, system call name, system call
-    arguments, and system call return value. The four groups of the regex
-    match pid, syscall name, syscall args, and syscall return value.
+    We use the following regex to match system call name, system call
+    arguments, and system call return value. The three groups of the regex
+    match syscall name, syscall args, and syscall return value.
 
-    ^([0-9]+)[ ]+([a-z0-9_]+)\((.*)\)[ ]*=[ ]*(-?[0-9\?]+)[ ]*.*?
+    ^([a-z0-9_]+)\((.*)\)[ ]*=[ ]*(-?[0-9\?]+)[ ]*.*?
 
     Args:
-        trace: str
+        trace: String
 
     Returns:
-        [pid, syscall_name, syscall_args, syscall_ret_val]
+        [syscall_name, syscall_args, syscall_ret_val]
 
     Example:
      1)
-        input: "12498 openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3"
-        returns: ['12498', 'openat', 'AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY', '3']
+        input: "openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3"
+        returns: ['openat', 'AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY', '3']
      2)
-        input: "12499 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)"
-        returns: ['12498', 'access', 'openat', '"/etc/ld.so.preload", R_OK', '-1']
+        input: "access("/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)"
+        returns: ['access', 'openat', '"/etc/ld.so.preload", R_OK', '-1']
     """
 
-    syscall_re = r'^{}[ ]+{}\({}\)[ ]*=[ ]*{}[ ]*.*?'.format(
-        "([0-9]+)", "([a-z0-9_]+)", "(.*)", "(-?[0-9\?]+)"
+    syscall_re = r'^{}\({}\)[ ]*=[ ]*{}[ ]*.*?'.format(
+        "([a-z0-9_]+)", "(.*)", "(-?[0-9\?]+)"
     )
     try:
         syscall_re_groups = re.search(syscall_re, trace).groups()
@@ -118,25 +138,26 @@ def parse_trace(trace):
 def main():
     traces = []
     unfinished = {}
-    for trace_line in sys.stdin:
-        trace_line = trace_line.rstrip()
-        if any(x in trace_line for x in ['---', '+++']):  # Skip Signals
+    for line in sys.stdin:
+        line = line.rstrip()
+        pid, trace = split_line(line)
+        if any(trace.startswith(x) for x in ['---', '+++']):  # Skip Signals
             pass
-        elif '<unfinished ...>' in trace_line:
-            pid, syscall_name, syscall_args = match_unfinished(trace_line)
+        elif trace.endswith('>'):
+            syscall_name, syscall_args = match_unfinished(trace)
             # Warning: What happens if there are two unfinished system call
             # from the same pid with the same system call names?
             unfinished[(pid, syscall_name)] = syscall_args
-        elif ' resumed>' in trace_line:
-            pid, syscall_name, rest_syscall_args, syscall_ret_val =\
-                match_resumed(trace_line)
+        elif trace.startswith('<'):
+            syscall_name, rest_syscall_args, syscall_ret_val =\
+                    match_resumed(trace)
             syscall_args = unfinished[(pid, syscall_name)] + rest_syscall_args
             traces.append((pid, syscall_name, syscall_args, syscall_ret_val))
             del unfinished[(pid, syscall_name)]
         else:
-            trace = parse_trace(trace_line)
-            if trace:
-                traces.append(trace)
+            temp_trace = parse_trace(trace)
+            if temp_trace:
+                traces.append((pid,) + temp_trace)
     pprint(traces)
     print(len(traces))
 
