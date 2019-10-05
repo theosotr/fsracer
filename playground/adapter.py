@@ -10,8 +10,14 @@
 #          done
 import re
 import sys
-from pprint import pprint
 
+##############################     TEST DATA     ##############################
+
+TRACES = [
+    '31565 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)'
+]
+
+############################## PARSING FUNCTIONS ##############################
 
 def split_line(line):
     """Split an fsracer line into pid and trace.
@@ -113,32 +119,30 @@ def parse_trace(trace):
     return syscall_re_groups
 
 
-def parse_line(line, traces, unfinished):
+def parse_line(line, unfinished):
     """Parse strace line.
 
     Args:
         line: An strace line
-        traces: A list to save parsed traces
         unfinished: A dict to save unfinished traces
+
+    Returns:
+        trace or None
 
     Example:
      1)
-        traces = []
         input = {}
         input: '12498 openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3', traces, input
         result:
-            traces = [('12498', 'openat', 'AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY', '3')]
+            return [('12498', 'openat', 'AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY', '3')]
             unfinished = {}
         input: '12499 rt_sigprocmask(SIG_SETMASK, [],  <unfinished ...>', traces, input
         result:
-            traces = [('12498', 'openat', 'AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY', '3')]
+            return None
             unfinished = {(12499, rt_sigprocmask): 'SIG_SETMASK, [], '}
         input: '12499 <... rt_sigprocmask resumed> NULL, 8) = 0', traces, input
         result:
-            traces = [
-                ('12498', 'openat', 'AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY', '3'),
-                ('12499', 'rt_sigprocmask', 'SIG_SETMASK, [], NULL, 8', '0')
-            ]
+            return ('12499', 'rt_sigprocmask', 'SIG_SETMASK, [], NULL, 8', '0')
             unfinished = {}
     """
     line = line.rstrip()
@@ -154,22 +158,26 @@ def parse_line(line, traces, unfinished):
         syscall_name, rest_syscall_args, syscall_ret_val =\
                 match_resumed(trace)
         syscall_args = unfinished[(pid, syscall_name)] + rest_syscall_args
-        traces.append((pid, syscall_name, syscall_args, syscall_ret_val))
+        return (pid, syscall_name, syscall_args, syscall_ret_val)
         del unfinished[(pid, syscall_name)]
     else:
         temp_trace = parse_trace(trace)
         if temp_trace:
-            traces.append((pid,) + temp_trace)
+            return (pid,) + temp_trace
 
+##############################  MAIN FUNCTIONS   ##############################
 
-def main():
+def main(inp):
     traces = []
     unfinished = {}
-    for line in sys.stdin:
-        parse_line(line, traces, unfinished)
-    pprint(traces)
+    for line in inp:
+        trace = parse_line(line, unfinished)
+        if trace:
+            print(trace)
+            traces.append(trace)
     print(len(traces))
 
 
 if __name__ == "__main__":
-    main()
+    test = TRACES if len(sys.argv) > 1 and sys.argv[1] == "test" else sys.stdin
+    main(test)
