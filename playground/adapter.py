@@ -8,6 +8,8 @@
 #               newfd AT_FCWD s1.c 3
 #               hpath AT_FCWD s1.c consumed
 #          done
+#
+# trace = [pid, syscall_name, syscall_args, syscall_ret_val]
 import re
 import sys
 
@@ -209,16 +211,30 @@ def parse_line(line, unfinished):
         if temp_trace:
             return [pid,] + temp_trace
 
+############################# TRANSLATE FUNCTIONS #############################
+
+# def translate_<system_call_name>(trace):
+#   return [operation_expression, ...]
+
+def translate_access(trace):
+    return 'hpath AT_FDCWD {} consumed !{}'.format(trace[2][0], trace[1])
+
 ##############################  MAIN FUNCTIONS   ##############################
 
 def main(inp):
     traces = []
+    operation_expressions = []
     unfinished = {}
     for line in inp:
         trace = parse_line(line, unfinished)
         if trace:
+            print(80*"#")
             print(trace)
             traces.append(trace)
+            opexp = globals()["translate_" + trace[1]](trace)
+            print(opexp)
+            operation_expressions.append(opexp)
+            print(80*"#")
     print(len(traces))
 
 
