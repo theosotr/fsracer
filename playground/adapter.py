@@ -17,6 +17,45 @@ TRACES = [
     '31565 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)'
 ]
 
+############################## HELPER FUNCTIONS  ##############################
+
+MATCHES = {
+    '[': ']', '(': ')', '{': '}', '"': '"'
+}
+
+def safe_split(string):
+    """Split a string using commas as delimiter safely.
+
+    Args:
+        string
+
+    Returns:
+        list
+
+    Examples:
+     1)
+        input: 'AT_FDCWD, "s1.c, s2.c", O_RDONLY|O_NOCTTY'
+        returns: ['AT_FDCWD', '"s1.c, s2.c"', 'O_RDONLY|O_NOCTTY']
+     2)
+        input: 'AT_FDCWD, "(s1.c, s2.c), s3.c", O_RDONLY|O_NOCTTY'
+        returns: ['AT_FDCWD', '"(s1.c, s2.c), s3.c"', 'O_RDONLY|O_NOCTTY']
+    """
+    index = 0
+    inside = None
+    res = []
+    for counter, c in enumerate(string):
+        if c in ('[', '(', '{', '"') and not inside:
+            inside = c
+            continue
+        if inside and c == MATCHES[inside]:
+            inside = None
+            continue
+        if c == ',' and not inside:
+            res.append(string[index:counter].strip())
+            index = counter + 1
+    res.append(string[index:len(string)].strip())  # Add last element
+    return res
+
 ############################## PARSING FUNCTIONS ##############################
 
 def split_line(line):
@@ -52,13 +91,14 @@ def match_unfinished(trace):
         input: "rt_sigprocmask(SIG_SETMASK, [],  <unfinished ...>"
         returns: ('rt_sigprocmask', SIG_SETMASK, [],)
     """
-    syscall_unfinished_re = r'^{}\({}[ ]+<unfinished ...>'.format(
+    syscall_re = r'^{}\({}[ ]+<unfinished ...>'.format(
         "([a-z0-9_]+)", "(.*)"
     )
-    syscall_unfinished = re.search(syscall_unfinished_re, trace)
-    if syscall_unfinished:
-        return syscall_unfinished.groups()
-    return None
+    try:
+        return re.search(syscall_re, trace).groups()
+    except AttributeError:
+        print("AttributeError occured: " + trace, file=sys.stderr)
+        return None
 
 
 def match_resumed(trace):
@@ -70,7 +110,7 @@ def match_resumed(trace):
     Args:
         trace: string
     Returns:
-        (syscall_name, syscall_args, syscall_ret_val) or None
+        [syscall_name, syscall_args, syscall_ret_val] or None
     Example:
      1)
         input: "openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3"
@@ -79,14 +119,17 @@ def match_resumed(trace):
         input: "<... rt_sigprocmask resumed> NULL, 8) = 0"
         returns: ('rt_sigprocmask', 'NULL, 8', '0')
     """
-    syscall_res_re =\
+    syscall_re =\
         r'^<...[ ]+{}[ ]+resumed>[ ]*{}\)[ ]*=[ ]*{}[ ]*.*?'.format(
             "([a-z0-9_]+)", "(.*)", "(-?[0-9\?]+)"
         )
-    syscall_resumed = re.search(syscall_res_re, trace)
-    if syscall_resumed:
-        return syscall_resumed.groups()
-    return None
+    try:
+        res = list(re.search(syscall_re, trace).groups())
+        res[1] = safe_split(res[1])
+        return res
+    except AttributeError:
+        print("AttributeError occured: " + trace, file=sys.stderr)
+        return None
 
 
 def parse_trace(trace):
@@ -112,11 +155,12 @@ def parse_trace(trace):
         "([a-z0-9_]+)", "(.*)", "(-?[0-9\?]+)"
     )
     try:
-        syscall_re_groups = re.search(syscall_re, trace).groups()
+        res = list(re.search(syscall_re, trace).groups())
+        res[1] = safe_split(res[1])
+        return res
     except AttributeError:
         print("AttributeError occured: " + trace, file=sys.stderr)
         return None
-    return syscall_re_groups
 
 
 def parse_line(line, unfinished):
@@ -158,12 +202,12 @@ def parse_line(line, unfinished):
         syscall_name, rest_syscall_args, syscall_ret_val =\
                 match_resumed(trace)
         syscall_args = unfinished[(pid, syscall_name)] + rest_syscall_args
-        return (pid, syscall_name, syscall_args, syscall_ret_val)
+        return [pid, syscall_name, syscall_args, syscall_ret_val]
         del unfinished[(pid, syscall_name)]
     else:
         temp_trace = parse_trace(trace)
         if temp_trace:
-            return (pid,) + temp_trace
+            return [pid,] + temp_trace
 
 ##############################  MAIN FUNCTIONS   ##############################
 
