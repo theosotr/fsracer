@@ -17,9 +17,11 @@ class FSRacerPlugin : Plugin<Project> {
 
     override fun apply(project: Project) =
         project.gradle.taskGraph.whenReady { taskGraph ->
-            println("Begin MAIN ${project.name}")
+            println("Begin ${project.name}:")
+            state.addNode("${project.name}:")
             taskGraph.allTasks.forEach { task ->
                 val taskName = constructTaskName(task)
+                state.addNode(taskName)
                 println("newEvent ${taskName} W 1")
                 task.inputs.files.forEach { input ->
                     println("input ${input.absolutePath}")
@@ -31,15 +33,18 @@ class FSRacerPlugin : Plugin<Project> {
                   .getDependencies(task)
                   .forEach { d ->
                       val depTask = constructTaskName(d)
+                      state.addNode(depTask)
+                      state.addEdge(depTask, taskName)
                       println("link ${depTask} ${taskName}")
                 }
                 task.doFirst {
                     println("Begin ${taskName}")
                 }
                 task.doLast {
-                    println("End")
+                    println("End ${taskName}")
                 }
+                state.toDot()
            }
-           println("End")
+           println("End ${project.name}")
         }
 }

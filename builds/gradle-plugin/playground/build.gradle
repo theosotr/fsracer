@@ -8,17 +8,20 @@ apply plugin: "org.fsracer.gradle.fsracer-plugin"
 
 task A {
   doLast {
-    println 'Hello A'
+    println "Writing to file"
+    file("foo").text = "The content of file foo"
+    println "File foo end"
   }
 }
 
 task B {
   def generatedFileDir = file("$buildDir/generated")
-  outputs.dir generatedFileDir
+  //outputs.dir generatedFileDir
   doLast {
     println 'Hello B'
     def outFile = file("$buildDir/generated/foo")
     outFile.text = "bar file"
+    println file("foo").text
   }
 }
 
