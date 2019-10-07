@@ -1,9 +1,0 @@
-#!/bin/bash
-
-postaction()
-{
-	echo "#END"
-}
-
-/bin/bash "$@" && postaction
-	
