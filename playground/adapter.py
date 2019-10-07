@@ -238,6 +238,7 @@ fchdir      = 'fchdir {}'             # 'fchdir' fd
 symlink     = 'symlink {} {} {} {}'   # 'symlink' dirfd PATH PATH
 link        = 'link {} {} {} {}'      # 'link' dirfd PATH dirfd PATH
 rename      = 'rename {} {} {} {}'    # 'rename' dirfd PATH dirfd PATH
+newfd       = 'newfd {} {} {}'        # 'newfd' dirfd PATH ret
 
 
 def translate_access(trace):
@@ -324,7 +325,7 @@ def translate_getxattr(trace):
 
 
 def translate_getcwd(trace):
-    return [setcwd.format(syscall.args[0])]
+    return [setcwd.format(trace.syscall_args[0])]
 
 
 def translate_lchown(trace):
