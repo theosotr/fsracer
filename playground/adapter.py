@@ -257,11 +257,13 @@ def translate_chown(trace):
 
 
 def translate_clone(trace):
-    if all(x in trace.syscall_args[1] for x in ['CLONE_FS', 'CLONE_FILES']):
+    has_clone_fs = 'CLONE_FS' in trace.syscall_args[1]
+    has_clone_files = 'CLONE_FILES' in trace.syscall_args[1]
+    if (has_clone_fs and has_clone_files):
         return [newproc.format('fdfs', trace.syscall_ret)]
-    elif 'CLONE_FS' in trace.syscall_args[1]:
+    elif has_clone_fs:
         return [newproc.format('fs', trace.syscall_ret)]
-    elif 'CLONE_FILES' in trace.syscall_args[1]:
+    elif has_clone_files:
         return [newproc.format('fd', trace.syscall_ret)]
     else:
         return [newproc.format('none', trace.syscall_ret)]
@@ -309,7 +311,7 @@ def translate_fchownat(trace):
 
 def translate_fcntl(trace):
     if 'F_DUPFD' in trace.syscall_args[1]:
-        [return dupfd.format(trace.syscall_args[0], trace.syscall_ret)]
+        return [dupfd.format(trace.syscall_args[0], trace.syscall_ret)]
     return
 
 
