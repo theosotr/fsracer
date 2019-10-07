@@ -238,7 +238,6 @@ fchdir      = 'fchdir {}'             # 'fchdir' fd
 symlink     = 'symlink {} {} {} {}'   # 'symlink' dirfd PATH dirfd PATH
 link        = 'link {} {} {} {}'      # 'link' dirfd PATH dirfd PATH
 rename      = 'rename {} {} {} {}'    # 'rename' dirfd PATH dirfd PATH
-open_       = 'open {} {} {} {}'      # 'open' dirfd PATH flags ret
 
 
 def translate_access(trace):
@@ -379,22 +378,29 @@ def translate_mknod(trace):
     return [hpath.format('AT_FDCWD', trace.syscall_args[0], 'produced')]
 
 
-open_       = 'open {} {} {} {}'      # 'open' dirfd PATH flags ret
 def translate_open(trace):
+    if any(x in trace.syscall_args[1] for x in ['O_CREAT', 'O_TRUNC']):
+        access = 'produced'
+    else:
+        access = 'consumed'
     return [
-        open_.format(
-            'AT_FDCWD', trace.syscall_args[0],
-            trace.syscall_args[1], trace.syscall_ret
-        )
+        newfd.format('AT_FDCWD', trace.syscall_args[0], trace.syscall_ret),
+        hpath.format('AT_FDCWD', trace.syscall_args[0], access)
     ]
 
 
 def translate_openat(trace):
+    if any(x in trace.syscall_args[2] for x in ['O_CREAT', 'O_TRUNC']):
+        access = 'produced'
+    else:
+        access = 'consumed'
     return [
-        open_.format(
-            trace.syscall_args[0], trace.syscall_args[1],
-            trace.syscall_args[2], trace.syscall_ret
-        )
+        newfd.format(
+            trace.syscall_args[0], trace.syscall_args[1], trace.syscall_ret
+        ),
+        hpath.format(
+            trace.syscall_args[0], trace.syscall_args[1], access
+        ),
     ]
 
 
@@ -414,7 +420,6 @@ def translate_removexattr(trace):
     return [hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
-rename      = 'rename {} {} {} {}'    # 'rename' dirfd PATH dirfd PATH
 def translate_rename(trace):
     return [
         rename.format(
