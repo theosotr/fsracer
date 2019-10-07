@@ -1,0 +1,21 @@
+.ONESHELL:
+OLD_SHELL := ./post-shell
+SHELL = $(info \#BEGIN)$(warning $*,$@,$^)$(OLD_SHELL)
+
+C=gcc
+CFLAGS=-I.
+OBJ = main.o s1.o s2.o
+
+.PHONY: obj clean all
+
+all: main
+
+$(OBJ): main.c s1.c s1.h s2.h
+	$(CC) -c main.c s1.c s2.c $(CFLAGS)
+	$(CC) -c main.c s1.c s2.c $(CFLAGS)
+
+main: s1.o s2.o main.o
+	gcc $^ -o $@
+
+clean:
+	rm -rf *.o main
