@@ -18,7 +18,7 @@ done
 Operation async_11 do
 hpath AT_FDCWD foo expunged !unlink
 done
-Begin MAIN
+Begin MAIN 1
 @PROLOGUE_BLOCK@
 newEvent 4 EXTERNAL !fs !node_open
 link 1 4
@@ -59,17 +59,17 @@ End
 Begin 11
 End
 @IGNORE@
-1,4,creates
+10,11,creates
 4,5,creates
 5,6,creates
 6,7,creates
 7,8,creates
 8,9,creates
 9,10,creates
-10,11,creates
+MAIN_1,4,creates
 @IGNORE@
+@CURRENT_DIR@/foo,11,expunged
 @CURRENT_DIR@/foo,4,produced
 @CURRENT_DIR@/foo,7,consumed
-@CURRENT_DIR@/foo,11,expunged
-@CURRENT_DIR@/io-nested.js,1,consumed
+@CURRENT_DIR@/io-nested.js,MAIN_1,consumed
 @IGNORE@

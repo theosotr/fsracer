@@ -13,7 +13,7 @@ done
 Operation async_8 do
 hpath AT_FDCWD tmp consumed !access
 done
-Begin MAIN
+Begin MAIN 1
 @PROLOGUE_BLOCK@
 submitOp sync_12 SYNC !node_open
 submitOp sync_13 SYNC !node_close
@@ -37,16 +37,16 @@ End
 Begin 8
 End
 @IGNORE@
-1,4,creates
-1,6,creates
 4,7,before
 4,8,creates
 6,7,creates
+MAIN_1,4,creates
+MAIN_1,6,creates
 @IGNORE@
-@CURRENT_DIR@/timers.js,1,consumed
-@CURRENT_DIR@/tmp,1,produced
+@CURRENT_DIR@/timers.js,MAIN_1,consumed
 @CURRENT_DIR@/tmp,7,expunged
 @CURRENT_DIR@/tmp,8,consumed
+@CURRENT_DIR@/tmp,MAIN_1,produced
 @IGNORE@
 Detected Data Races
 -------------------

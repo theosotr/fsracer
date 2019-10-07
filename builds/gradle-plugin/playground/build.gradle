@@ -1,0 +1,36 @@
+buildscript {
+    dependencies{
+      classpath files('../build/libs/gradle-plugin.jar') 
+    }
+}
+
+apply plugin: "org.fsracer.gradle.fsracer-plugin"
+
+task A {
+  doLast {
+    println "Writing to file"
+    file("foo").text = "The content of file foo"
+    println "File foo end"
+  }
+}
+
+task B {
+  def generatedFileDir = file("$buildDir/generated")
+  //outputs.dir generatedFileDir
+  doLast {
+    println 'Hello B'
+    def outFile = file("$buildDir/generated/foo")
+    outFile.text = "bar file"
+    println file("foo").text
+  }
+}
+
+task C {
+  def generatedFileDir = file("$buildDir/generated")
+  inputs.dir generatedFileDir
+  dependsOn 'A'
+  dependsOn 'B'
+  doLast {
+    println 'Hello C'
+  }
+}

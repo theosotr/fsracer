@@ -6,6 +6,7 @@
 #include <ostream>
 #include <set>
 #include <stack>
+#include <string>
 #include <unordered_map>
 #include <utility>
 
@@ -25,23 +26,25 @@ namespace graph {
 template<typename T, typename L>
 struct Node {
   /// The ID of the current node.
-  size_t node_id;
+  string node_id;
   /// Type information of the node.
   T node_obj;
   /// The set of nodes that are dependent on the current one.
-  set<pair<size_t, L>> dependents;
+  set<pair<string, L>> dependents;
   /// Set of nodes executed before the current one.
-  set<size_t> before;
+  set<string> before;
   /// Set of nodes executed after the current one.
-  set<size_t> after;
+  set<string> after;
   /// Set of node attributes.
   set<string> attributes;
+
+  Node() {  }
 
   /**
    * Constructs a new node with the specified ID.
    * This node is described by the given `node_obj`.
    */
-  Node(size_t node_id_, T node_obj_):
+  Node(string node_id_, T node_obj_):
     node_id(node_id_),
     node_obj(node_obj_)
   {  }
@@ -76,14 +79,14 @@ struct GraphPrinterDefault {
   public:
     /** Prints the given node in DOT format. */
     template<typename T>
-    static string PrintNodeDot(size_t node_id, const T &node_obj) {
-      return to_string(node_id);
+    static string PrintNodeDot(string node_id, const T &node_obj) {
+      return node_id;
     }
 
     /** Prints the given node in CSV format. */
     template<typename T>
-    static string PrintNodeCSV(size_t node_id, const T &node_obj) {
-      return to_string(node_id);
+    static string PrintNodeCSV(string node_id, const T &node_obj) {
+      return node_id;
     }
 
     /** Prints the given edge label. */
@@ -95,13 +98,13 @@ struct GraphPrinterDefault {
     /** Prints the given edge in CSV format. */
     template<typename T>
     static string PrintEdgeCSV(const T &source, const T &target) {
-      return to_string(source.node_id) + "," + to_string(target.node_id);
+      return source.node_id + "," + target.node_id;
     }
 
     /** Prints the given edge in DOT format. */
     template<typename T>
     static string PrintEdgeDot(const T &source, const T &target) {
-      return to_string(source.node_id) + "->" + to_string(target.node_id);
+      return source.node_id + "->" + target.node_id;
     }
 };
 
@@ -148,17 +151,17 @@ class Graph {
      */
     using NodeInfo = Node<T, L>;
     /// Representation of the underlying graph.
-    using graph_t = unordered_map<size_t, NodeInfo>;
+    using graph_t = unordered_map<string, NodeInfo>;
 
     /** Adds a new node to the graph. */
-    void AddNode(size_t node_id, T node_obj) {
+    void AddNode(string node_id, T node_obj) {
       NodeInfo node_info = NodeInfo(node_id, node_obj);
       graph.emplace(node_id, node_info);
 
     }
 
     /** Adds a new attribute to the given node. */
-    void AddNodeAttr(size_t node_id, string attr) {
+    void AddNodeAttr(string node_id, string attr) {
       typename graph_t::iterator it = graph.find(node_id);
       if (it != graph.end()) {
         it->second.AddAttribute(attr);
@@ -166,7 +169,7 @@ class Graph {
     }
 
     /** Checks whether the given node has the given attribute. */
-    bool HasNodeAttr(size_t node_id, const string &attr) const {
+    bool HasNodeAttr(string node_id, const string &attr) const {
       typename graph_t::iterator it = graph.find(node_id);
       if (it != graph.end()) {
         return it->second.HasAttribute(attr);
@@ -175,7 +178,7 @@ class Graph {
     }
 
     /** Remove the specified attribute from the given node. */
-    void RemoveNodeAttr(size_t node_id, const string &attr) {
+    void RemoveNodeAttr(string node_id, const string &attr) {
       typename graph_t::iterator it = graph.find(node_id);
       if (it != graph.end()) {
         it->second.RemoveAttribute(attr);
@@ -183,7 +186,7 @@ class Graph {
     }
 
     /** Gets the information associated with the given node. */
-    optional<NodeInfo> GetNodeInfo(size_t node_id) const {
+    optional<NodeInfo> GetNodeInfo(string node_id) const {
       optional<NodeInfo> node_info;
       typename graph_t::const_iterator it = graph.find(node_id);
       if (it != graph.end()) {
@@ -198,7 +201,7 @@ class Graph {
      * The edge is described by the source node, the target node, and
      * a label.
      */
-    void AddEdge(size_t source, size_t target, L label) {
+    void AddEdge(string source, string target, L label) {
       if (source == target) {
         return;
       }
@@ -215,7 +218,7 @@ class Graph {
     }
 
     /** Remove an edge from the graph. */
-    void RemoveEdge(size_t source, size_t target, L label) {
+    void RemoveEdge(string source, string target, L label) {
       typename graph_t::iterator it = graph.find(source);
       if (it != graph.end()) {
         it->second.dependents.erase({ target, label });
@@ -240,9 +243,55 @@ class Graph {
      * Checks whether there is at least one path from source node to
      * target.
      */
-    bool HasPath(size_t source, size_t target) const {
-      set<size_t> visited = DFS(source);
+    bool HasPath(string source, string target) const {
+      set<string> visited = DFS(source);
       return visited.find(target) != visited.end();
+    }
+
+    /**
+     * Gets the set of nodes that are reachable from the given node.
+     */
+    set<string> DFS(string source) const {
+      set<string> visited;
+      stack<string> pool;
+      pool.push(source);
+
+      while (!pool.empty()) {
+        string node = pool.top();
+        pool.pop();
+        if (visited.find(node) != visited.end()) {
+          // We have already visited this node.
+          continue;
+        }
+
+        visited.insert(node);
+        optional<NodeInfo> node_info_opt = GetNodeInfo(node);
+        assert(node_info_opt.has_value());
+        NodeInfo node_info = node_info_opt.value();
+        for (auto &n : node_info.dependents) {
+          if (visited.find(n.first) == visited.end()) {
+            // We have not visited this node, so we add it
+            // to the pool.
+            pool.push(n.first);
+          }
+        }
+      }
+
+      return visited;
+    }
+
+    size_t Empty() const {
+      return graph.empty(); 
+    }
+
+    set<string> GetSinks() const {
+      set<string> sinks;
+      for (auto const &elem : graph) {
+        if (elem.second.dependents.empty()) {
+          sinks.insert(elem.first);
+        }
+      }
+      return sinks;
     }
 
   private:
@@ -314,35 +363,6 @@ class Graph {
       }
     }
 
-    /**
-     * Gets the set of nodes that are reachable from the given node.
-     */
-    set<size_t> DFS(size_t source) const {
-      set<size_t> visited;
-      stack<size_t> pool;
-      pool.push(source);
-      while (!pool.empty()) {
-        size_t node = pool.top();
-        pool.pop();
-        if (visited.find(node) != visited.end()) {
-          // We have already visited this node.
-          continue;
-        }
-
-        visited.insert(node);
-        optional<NodeInfo> node_info = GetNodeInfo(node);
-        assert(node_info.has_value());
-        for (auto &n : node_info.value().dependents) {
-          if (visited.find(n.first) == visited.end()) {
-            // We have not visited this node, so we add it
-            // to the pool.
-            pool.push(n.first);
-          }
-        }
-      }
-
-      return visited;
-    }
 };
 
 

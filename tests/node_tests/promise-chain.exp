@@ -3,7 +3,7 @@
 Operation async_14 do
 hpath AT_FDCWD foo consumed !access
 done
-Begin MAIN
+Begin MAIN 1
 @PROLOGUE_BLOCK@
 newEvent 4 S 0 !promise
 End
@@ -36,15 +36,15 @@ End
 Begin 14
 End
 @IGNORE@
-1,4,creates
+10,5,creates
+12,6,creates
 4,8,creates
 5,12,creates
 6,14,creates
 8,9,creates
 9,10,creates
-10,5,creates
-12,6,creates
+MAIN_1,4,creates
 @IGNORE@
 @CURRENT_DIR@/foo,14,consumed
-@CURRENT_DIR@/promise-chain.js,1,consumed
+@CURRENT_DIR@/promise-chain.js,MAIN_1,consumed
 @IGNORE@

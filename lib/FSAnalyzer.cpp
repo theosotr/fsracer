@@ -16,6 +16,20 @@ void FSAnalyzer::Analyze(const TraceNode *trace_node) {
   if (trace_node) {
     analysis_time.Start();
     trace_node->Accept(this);
+    for (const auto &elem : block_accesses) {
+      auto p = elem.first.first;
+      auto fs_access = elem.second;
+
+      optional<vector<FSAccess>> fs_accesses = effect_table.GetValue(p);
+      vector<FSAccess> v_fs_acc;
+      if (fs_accesses.has_value()) {
+        v_fs_acc = fs_accesses.value();
+        v_fs_acc.push_back(fs_access);
+      } else {
+        v_fs_acc.push_back(fs_access);
+      }
+      effect_table.AddEntry(p, v_fs_acc);
+    }
     analysis_time.Stop();
   }
 }
@@ -75,7 +89,7 @@ void FSAnalyzer::AnalyzeNewEvent(const NewEventExpr *new_ev_expr) {
   if (!new_ev_expr) {
     return;
   }
-  event_info.AddEntry(new_ev_expr->GetEventId(), new_ev_expr);
+  event_info.AddEntry(to_string(new_ev_expr->GetEventId()), new_ev_expr);
 }
 
 
@@ -91,10 +105,10 @@ void FSAnalyzer::AnalyzeSubmitOp(const SubmitOp *submit_op) {
   }
   switch (submit_op->GetType()) {
     case SubmitOp::SYNC:
-      block_id = current_block->GetBlockId();
+      block_id = current_block->GetPrettyBlockId();
       break;
     case SubmitOp::ASYNC:
-      block_id = stoi(utils::GetRightSubstr(op_id, "_"));
+      block_id = utils::GetRightSubstr(op_id, "_");
       break;
   }
   vector<const Operation*> ops = exec_op.value()->GetOperations();
@@ -259,7 +273,7 @@ void FSAnalyzer::ProcessPathEffect(fs::path p,
     enum Hpath::EffectType effect,
     string operation_name) {
   DebugInfo debug_info;
-  if (block_id == MAIN_BLOCK) {
+  if (utils::StartsWith(block_id, "MAIN_")) {
     debug_info.AddDebugInfo("main");
   } else {
     auto expr = event_info.GetValue(block_id);
@@ -390,13 +404,49 @@ void FSAnalyzer::DumpCSV(ostream &os) const {
 
 
 void FSAnalyzer::AddPathEffect(const fs::path &p, FSAccess fs_access) {
-  optional<vector<FSAccess>> fs_acc_opt = effect_table.GetValue(p);
-  vector<FSAccess> fs_acc;
-  if (fs_acc_opt.has_value()) {
-    fs_acc = fs_acc_opt.value();
+  string event_id = fs_access.event_id;
+  auto key_pair = make_pair(p, event_id);
+  optional<FSAccess> fs_acc_opt = block_accesses.GetValue(key_pair);
+  if (!fs_acc_opt.has_value()) {
+    // It's the first time the path `p` is accessed by the event
+    // whose id is `event_id`.
+    block_accesses.AddEntry(key_pair, fs_access);
+    return;
   }
-  fs_acc.push_back(fs_access);
-  effect_table.AddEntry(p, fs_acc);
+  FSAccess old_fs_acc = fs_acc_opt.value();
+  switch (fs_access.effect_type) {
+    case Hpath::CONSUMED:
+      switch (old_fs_acc.effect_type) {
+        case Hpath::CONSUMED:
+          // We consume a path that we have already consumed.
+          // So we keep only the fresh access.
+          block_accesses.AddEntry(key_pair, fs_access);
+          break;
+        default:
+          // We consume a path that we have either produced or
+          // expunged in the past. We keep the previous access. 
+          block_accesses.AddEntry(key_pair, old_fs_acc);
+      }
+      break;
+    case Hpath::PRODUCED:
+      block_accesses.AddEntry(key_pair, fs_access);
+      break;
+    case Hpath::EXPUNGED:
+      switch (old_fs_acc.effect_type) {
+        case Hpath::CONSUMED:
+        case Hpath::EXPUNGED:
+          // We expunge a path that we have either consumed or
+          // expunged in the past. We keep the fresh access only.
+          block_accesses.AddEntry(key_pair, fs_access);
+          break;
+        case Hpath::PRODUCED:
+          // We expunge a path that we have produced in the past.
+          // Therefore, there is not any access associated with
+          // this event and path.
+          block_accesses.RemoveEntry(key_pair);
+          break;
+      }
+  }
 }
 
 

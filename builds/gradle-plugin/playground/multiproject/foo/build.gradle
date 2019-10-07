@@ -1,0 +1,6 @@
+task A {
+  dependsOn ':bar:A'
+  doLast {
+    println 'This is task A from project foo'
+  }
+}

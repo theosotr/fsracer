@@ -2,6 +2,7 @@
 #define RACE_DETECTOR_H
 
 #include <map>
+#include <unordered_map>
 #include <string>
 
 #include "DependencyInferenceAnalyzer.h"
@@ -58,7 +59,7 @@ public:
   };
 
   // FIXME: Use hash map.
-  using faults_t = std::map<std::pair<size_t, size_t>, std::set<FaultDesc>>;
+  using faults_t = std::map<std::pair<string, string>, std::set<FaultDesc>>;
 
   /**
    * Constructor of the `RaceDetector` class.
@@ -94,7 +95,9 @@ private:
 
   /// Table that tracks debug information of each event.
   /// Useful for fault reporting.
-  mutable table::Table<size_t, trace::DebugInfo> event_info;
+  mutable table::Table<string, trace::DebugInfo> event_info;
+
+  mutable unordered_map<string, set<string>> cache_dfs;
 
   /**
    * Gets the list of faults by exploiting the dependency graph
@@ -104,6 +107,8 @@ private:
   
   /** Dumps reported faults to the standard output. */
   void DumpFaults(const faults_t &faults) const;
+
+  bool HappensBefore(string source, string target) const;
 
   /**
    * Checks whether there is a conflict between the first file access

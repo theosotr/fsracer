@@ -607,11 +607,14 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
     //
     // Therefore, we don't create a new block. Instead, we use
     // the most-recent allocated block.
-    size_t block_id = trace_gen->GetCurrentBlock()->GetBlockId();
-    if (block_id != MAIN_BLOCK) {
+    if (!trace_gen->GetCurrentBlock()->IsMain()) {
       trace_gen->GetCurrentBlock()->AddExpr(
           new Trigger(async_id));
       return;
+    } else if (trace_gen->GetCurrentBlock()->Size() == 0) {
+      // This main block is empty, so there is not any reason
+      // to keep it.
+      trace_gen->GetTrace()->PopBlock();
     } 
   }
 
@@ -621,7 +624,6 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
     // of the block.
     id = trigger_async_id;
   }
-
 
   if (trace_gen->GetCurrentBlock()) {
     // If this values does not point to nullptr, we can infer
@@ -643,7 +645,9 @@ wrap_pre_emit_before(void *wrapctx, OUT void **user_data)
 static void
 add_main_block(trace_generator::DynamoTraceGenerator *trace_gen)
 {
-  trace_gen->SetCurrentBlock(new Block(MAIN_BLOCK));
+  trace_gen->IncrMainBlockCount();
+  trace_gen->SetCurrentBlock(new Block(
+      trace_gen->GetMainBlockCount(), Block::MAIN));
   trace_gen->GetTrace()->AddBlock(trace_gen->GetCurrentBlock());
 }
 

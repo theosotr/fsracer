@@ -115,7 +115,8 @@ class Event {
       S,
       M,
       W,
-      EXT
+      EXT,
+      MAIN
     };
 
     /**
@@ -428,10 +429,20 @@ class Trigger : public Expr {
  */
 class Block : public TraceNode {
   public:
+    enum Type {
+      REG,
+      MAIN
+    };
 
     /** Construct an execution block with the specified Id. */
     Block(size_t block_id_):
-      block_id(block_id_) {  }
+      block_id(block_id_),
+      block_type(REG)
+  {  }
+
+    Block(size_t block_id_, enum Type block_type_):
+      block_id(block_id_),
+      block_type(block_type_) {  }
 
     /** Destruct the current execution block. */
     ~Block() {
@@ -453,6 +464,16 @@ class Block : public TraceNode {
     /** Get the id of the current execution block */
     size_t GetBlockId() const {
       return block_id;
+    }
+
+    enum Type GetBlockType() {
+      return block_type;
+    }
+
+    string GetPrettyBlockId() const;
+
+    bool IsMain() const {
+      return block_type == MAIN;
     }
 
     /** Gets the last expression of the block and remove it. */
@@ -484,6 +505,8 @@ class Block : public TraceNode {
 
     /// Id of the current execution block. */
     size_t block_id;
+
+    enum Type block_type;
 
     /// Clear the vector of expressions and deallocate memory properly.
     void ClearExprs();
@@ -525,6 +548,8 @@ class Trace : public TraceNode {
     void AddExecOp(ExecOp *exec_op) {
       exec_ops.push_back(exec_op);
     }
+
+    void PopBlock();
 
     /**
      * Get the id of the main thread of the program associated with

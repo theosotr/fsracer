@@ -1,5 +1,6 @@
 #include <experimental/filesystem>
 #include <map>
+#include <unordered_map>
 #include <string>
 
 #include "Debug.h"
@@ -39,6 +40,31 @@ bool RaceDetector::HasConflict(const fs_access_t &acc1,
 }
 
 
+bool RaceDetector::HappensBefore(string source, string target) const {
+  auto cache_it = cache_dfs.find(source);
+  optional<DependencyInferenceAnalyzer::EventInfo> source_info =
+    dep_graph.GetNodeInfo(source);
+  optional<DependencyInferenceAnalyzer::EventInfo> target_info =
+    dep_graph.GetNodeInfo(target);
+
+  if (!source_info.has_value() || !target_info.has_value()) {
+    return false;
+  }
+
+  if (source_info.value().node_obj.GetEventType() == Event::MAIN &&
+      target_info.value().node_obj.GetEventType() == Event::MAIN) {
+    return true;
+  }
+  if (cache_it == cache_dfs.end()) {
+    set<string> visited = dep_graph.DFS(source); 
+    cache_dfs[source] = visited;
+    return visited.find(target) != visited.end(); 
+  } else {
+    return cache_it->second.find(target) != cache_it->second.end(); 
+  }
+}
+
+
 RaceDetector::faults_t RaceDetector::GetFaults() const {
   faults_t faults;
   fs_accesses_table_t::table_t table = fs_accesses.GetTable();
@@ -62,12 +88,13 @@ RaceDetector::faults_t RaceDetector::GetFaults() const {
         // so we proceed to the next iteration.
         continue;
       }
+
       // Check whether there is a dependency between the two blocks
       // corresponding to those file accesses with regards to the
       // dependency graph.
-      bool has_dep = dep_graph.HasPath(
+      bool has_dep = HappensBefore(
           first_access.event_id, second_access.event_id) ||
-        dep_graph.HasPath(second_access.event_id, first_access.event_id);
+        HappensBefore(second_access.event_id, first_access.event_id);
 
       if (!has_dep) {
         // There is not any dependency, so we've just found a fault.

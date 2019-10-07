@@ -27,7 +27,7 @@ done
 Operation sync_15 do
 hpath AT_FDCWD bar expunged !unlink
 done
-Begin MAIN
+Begin MAIN 1
 @PROLOGUE_BLOCK@
 submitOp sync_12 SYNC !node_open
 submitOp sync_13 SYNC !node_close
@@ -85,16 +85,6 @@ End
 Begin 16
 End
 @IGNORE@
-1,4,creates
-1,5,creates
-1,6,creates
-4,7,creates
-6,4,before
-6,5,before
-7,8,creates
-7,9,creates
-9,8,before
-9,10,creates
 10,11,creates
 11,12,creates
 11,13,creates
@@ -103,16 +93,28 @@ End
 13,14,creates
 14,16,creates
 15,14,before
+4,7,creates
+6,4,before
+6,5,before
+7,8,creates
+7,9,creates
+9,10,creates
+9,8,before
+MAIN_1,4,creates
+MAIN_1,5,creates
+MAIN_1,6,creates
 @IGNORE@
-@CURRENT_DIR@/bar,5,produced
 @CURRENT_DIR@/bar,14,expunged
-@CURRENT_DIR@/foo,1,produced
-@CURRENT_DIR@/foo,4,consumed
+@CURRENT_DIR@/bar,5,produced
 @CURRENT_DIR@/foo,14,expunged
-@CURRENT_DIR@/stream.js,1,consumed
+@CURRENT_DIR@/foo,4,consumed
+@CURRENT_DIR@/foo,MAIN_1,produced
+@CURRENT_DIR@/stream.js,MAIN_1,consumed
 @IGNORE@
+Detected Data Races
+-------------------
 Number of data races: 1
-* Event: 5 (tags: !fs !node_open) and Event: 14 (tags: !fs !node_close):
-  - Path @CURRENT_DIR@/bar:
-    produced by the first event (operation: open)
-    expunged by the second event (operation: unlink)
+* Event: 14 (tags: !fs !node_close) and Event: 5 (tags: !fs !node_open):
+  - Path /home/thodoris/phd/projects/fsracer/build/tests/bar:
+    expunged by the first event (operation: unlink)
+    produced by the second event (operation: open)

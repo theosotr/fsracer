@@ -16,6 +16,10 @@ std::string PtrToString(const void *ptr);
 
 std::string GetRightSubstr(std::string &str, std::string delm);
 
+bool StartsWith(const std::string &str, std::string prefix);
+
+bool IsNumber(const std::string &str);
+
 template<template<typename> class C, typename T>
 std::vector<std::pair<T, T>> Get2Combinations(const C<T> &a) {
   std::vector<std::pair<T, T>> combs;

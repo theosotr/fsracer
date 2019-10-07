@@ -1,0 +1,5 @@
+task A {
+  doLast {
+    println 'This is task A from project bar'
+  }
+}

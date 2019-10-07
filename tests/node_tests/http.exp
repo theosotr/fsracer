@@ -10,7 +10,7 @@ done
 Operation sync_12 do
 hpath AT_FDCWD foo expunged !unlink
 done
-Begin MAIN
+Begin MAIN 1
 @PROLOGUE_BLOCK@
 newEvent 4 EXTERNAL
 link 1 4
@@ -121,21 +121,6 @@ Begin 31
 submitOp sync_12 SYNC !node_unlink
 End
 @IGNORE@
-1,4,creates
-1,6,creates
-1,7,creates
-4,6,before
-4,10,before
-4,11,creates
-4,12,creates
-4,13,creates
-4,14,creates
-4,15,creates
-4,18,creates
-4,19,creates
-6,10,creates
-7,9,creates
-9,4,before
 11,12,before
 11,22,before
 11,23,creates
@@ -167,8 +152,23 @@ End
 28,29,before
 29,23,before
 30,31,creates
+4,10,before
+4,11,creates
+4,12,creates
+4,13,creates
+4,14,creates
+4,15,creates
+4,18,creates
+4,19,creates
+4,6,before
+6,10,creates
+7,9,creates
+9,4,before
+MAIN_1,4,creates
+MAIN_1,6,creates
+MAIN_1,7,creates
 @IGNORE@
 @CURRENT_DIR@/foo,23,produced
 @CURRENT_DIR@/foo,31,expunged
-@CURRENT_DIR@/http.js,1,consumed
+@CURRENT_DIR@/http.js,MAIN_1,consumed
 @IGNORE@

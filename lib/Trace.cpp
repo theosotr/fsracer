@@ -20,6 +20,8 @@ string Event::ToString() const {
       return "M " + str;
     case W:
       return "W " + str;
+    case MAIN:
+      return "MAIN";
     default:
       return "EXTERNAL";
   }
@@ -131,6 +133,16 @@ void Trigger::Accept(analyzer::Analyzer *analyzer) const {
 }
 
 
+string Block::GetPrettyBlockId() const {
+  switch (block_type) {
+    case REG:
+      return to_string(block_id);
+    case MAIN:
+      return "MAIN_" + to_string(block_id);
+  }
+}
+
+
 void Block::PopExpr() {
   if (exprs.empty()) {
     return;
@@ -164,7 +176,8 @@ void Block::SetExprDebugInfo(size_t index, string debug_info) {
 
 string Block::ToString() const {
   string str = "Begin ";
-  str += block_id == MAIN_BLOCK ? "MAIN" : to_string(block_id);
+  str += block_type == MAIN ? "MAIN_" + to_string(block_id)
+    : to_string(block_id);
   str += "\n";
 
   for (auto const &expr : exprs) {
@@ -193,6 +206,16 @@ void Trace::ClearExecOps() {
     delete exec_ops[i];
   }
   exec_ops.clear();
+}
+
+
+void Trace::PopBlock() {
+  if (blocks.empty()) {
+    return;
+  }
+  vector<Block *>::iterator it = blocks.end() - 1;
+  delete *it;
+  blocks.erase(it);
 }
 
 

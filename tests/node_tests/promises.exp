@@ -20,7 +20,7 @@ done
 Operation async_17 do
 delFd @NUM@ !close
 done
-Begin MAIN
+Begin MAIN 1
 @PROLOGUE_BLOCK@
 newEvent 4 S 0 !promise
 newEvent 7 S 0 !promise
@@ -77,45 +77,45 @@ End
 Begin 17
 End
 @IGNORE@
-1,4,creates
-1,7,creates
-4,5,creates
-4,7,before
-4,9,creates
-5,9,before
-5,10,before
-5,11,creates
-7,5,before
-7,10,creates
-9,12,creates
 11,13,creates
 12,14,creates
 13,15,creates
 14,16,creates
 15,17,creates
+4,5,creates
+4,7,before
+4,9,creates
+5,10,before
+5,11,creates
+5,9,before
+7,10,creates
+7,5,before
+9,12,creates
+MAIN_1,4,creates
+MAIN_1,7,creates
 @IGNORE@
-@CURRENT_DIR@/foo,9,produced
 @CURRENT_DIR@/foo,10,consumed
 @CURRENT_DIR@/foo,11,consumed
 @CURRENT_DIR@/foo,16,expunged
-@CURRENT_DIR@/promises.js,1,consumed
+@CURRENT_DIR@/foo,9,produced
+@CURRENT_DIR@/promises.js,MAIN_1,consumed
 @IGNORE@
 Detected Data Races
 -------------------
 Number of data races: 4
-* Event: 9 (tags: !fs !node_open) and Event: 10 (tags: !fs !node_access):
-  - Path @CURRENT_DIR@/foo:
-    produced by the first event (operation: open)
-    consumed by the second event (operation: access)
-* Event: 9 (tags: !fs !node_open) and Event: 11 (tags: !fs !node_open):
-  - Path @CURRENT_DIR@/foo:
-    produced by the first event (operation: open)
-    consumed by the second event (operation: open)
 * Event: 10 (tags: !fs !node_access) and Event: 16 (tags: !fs !node_unlink):
-  - Path @CURRENT_DIR@/foo:
+  - Path /home/thodoris/phd/projects/fsracer/build/tests/foo:
     consumed by the first event (operation: access)
     expunged by the second event (operation: unlink)
+* Event: 10 (tags: !fs !node_access) and Event: 9 (tags: !fs !node_open):
+  - Path /home/thodoris/phd/projects/fsracer/build/tests/foo:
+    consumed by the first event (operation: access)
+    produced by the second event (operation: open)
 * Event: 11 (tags: !fs !node_open) and Event: 16 (tags: !fs !node_unlink):
-  - Path @CURRENT_DIR@/foo:
+  - Path /home/thodoris/phd/projects/fsracer/build/tests/foo:
     consumed by the first event (operation: open)
     expunged by the second event (operation: unlink)
+* Event: 11 (tags: !fs !node_open) and Event: 9 (tags: !fs !node_open):
+  - Path /home/thodoris/phd/projects/fsracer/build/tests/foo:
+    consumed by the first event (operation: open)
+    produced by the second event (operation: open)

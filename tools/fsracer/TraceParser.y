@@ -93,6 +93,10 @@ program : stats PID COLON NUMBER CWD COLON IDENTIFIER op_defs block_defs {
           driver.trace_f->SetThreadId(std::stoi($4));
           driver.trace_f->SetCwd($7);
         }
+        | stats PID COLON NUMBER CWD COLON IDENTIFIER {
+          driver.trace_f->SetThreadId(std::stoi($4));
+          driver.trace_f->SetCwd($7);
+        }
         ;
 
 
@@ -182,8 +186,9 @@ block_defs : block_def { }
            ;
 
 
-block_def : BEGIN_BLOCK MAIN exprs END_BLOCK {
-            trace::Block *block = new trace::Block(MAIN_BLOCK);
+block_def : BEGIN_BLOCK MAIN NUMBER exprs END_BLOCK {
+            trace::Block *block = new trace::Block(
+              std::stoi($3), trace::Block::MAIN);
             for (auto const &expr_entry : driver.exprs) {
               block->AddExpr(expr_entry);
             }

@@ -44,7 +44,8 @@ class DynamoTraceGenerator : public TraceGenerator {
     DynamoTraceGenerator():
       current_block(nullptr),
       event_count(0),
-      sync_op_count(0) {
+      sync_op_count(0),
+      main_block_count(0) {
       trace = new Trace();
     }
 
@@ -140,9 +141,17 @@ class DynamoTraceGenerator : public TraceGenerator {
       event_count++;
     }
 
+    void DecrEventCount() {
+      event_count--;
+    }
+
     /** Increment the number of synchronous operations. */
     void IncrSyncOpCount() {
       sync_op_count++;
+    }
+
+    void IncrMainBlockCount() {
+      main_block_count++;
     }
 
     /** Get the number of created events. */
@@ -156,6 +165,11 @@ class DynamoTraceGenerator : public TraceGenerator {
     }
 
 
+    size_t GetMainBlockCount() const {
+      return main_block_count;
+    }
+
+
   private:
     /// Generated trace derived from program's execution.
     Trace *trace;
@@ -165,6 +179,8 @@ class DynamoTraceGenerator : public TraceGenerator {
     size_t event_count;
     /// Number of synchronous operations.
     size_t sync_op_count;
+
+    size_t main_block_count;
     /// A key-value data structure used to store temporary
     /// values during trace collection.
     map<string, void*> store;
