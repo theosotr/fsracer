@@ -87,9 +87,9 @@ def split_line(line):
     return re.search("^([0-9]+)[ ]+(.*)", line).groups()
 
 
-def match_unfinished(trace):
-    """Match unfinished trace.
-    We use the following regex to match unfinished traces
+def parse_unfinished(trace):
+    """Parse unfinished trace.
+    We use the following regex to find unfinished traces
     ^([a-z0-9_]+)\((.*)[ ]+<unfinished ...>
     If it matches return system call name, and system call arguments.
     Otherwise, return None.
@@ -103,7 +103,7 @@ def match_unfinished(trace):
         returns: None
     2)
         input: "rt_sigprocmask(SIG_SETMASK, [],  <unfinished ...>"
-        returns: ('rt_sigprocmask', SIG_SETMASK, [],)
+        returns: ('rt_sigprocmask', 'SIG_SETMASK, [],')
     """
     syscall_re = r'^{}\({}[ ]+<unfinished ...>'.format(
         "([a-z0-9_]+)", "(.*)"
@@ -115,9 +115,9 @@ def match_unfinished(trace):
         return None
 
 
-def match_resumed(trace):
-    """Match resumed trace.
-    We use the following regex to match resumed traces
+def parse_resumed(trace):
+    """Parse resumed trace.
+    We use the following regex to oarse resumed traces
     ^<...[ ]+([a-z0-9_]+)[ ]+resumed>[ ]*(.*)\)[ ]*=[ ]*(-?[0-9\?]+)[ ]*.*?
     If it matches return system call name, rest of system call arguments, and
     system call return value. Otherwise, return None.
@@ -131,7 +131,7 @@ def match_resumed(trace):
         returns: None
     2)
         input: "<... rt_sigprocmask resumed> NULL, 8) = 0"
-        returns: ('rt_sigprocmask', 'NULL, 8', '0')
+        returns: ('rt_sigprocmask', ['NULL', '8'], '0')
     """
     syscall_re =\
         r'^<...[ ]+{}[ ]+resumed>[ ]*{}\)[ ]*=[ ]*{}[ ]*.*?'.format(
@@ -159,10 +159,10 @@ def parse_trace(trace):
     Example:
      1)
         input: "openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3"
-        returns: ['openat', 'AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY', '3']
+        returns: ['openat', ['AT_FDCWD', '"s1.c"', 'O_RDONLY|O_NOCTTY'], '3']
      2)
         input: "access("/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)"
-        returns: ['access', 'openat', '"/etc/ld.so.preload", R_OK', '-1']
+        returns: ['access', ['"/etc/ld.so.preload"', 'R_OK'], '-1']
     """
 
     syscall_re = r'^{}\({}\)[ ]*=[ ]*{}[ ]*.*?'.format(
@@ -190,17 +190,17 @@ def parse_line(line, unfinished):
     Example:
      1)
         input = {}
-        input: '12498 openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3', traces, input
+        input: '12498 openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3', unfinished
         result:
-            return [('12498', 'openat', 'AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY', '3')]
+            return [('12498', 'openat', ['AT_FDCWD', '"s1.c"', 'O_RDONLY|O_NOCTTY'], '3')]
             unfinished = {}
-        input: '12499 rt_sigprocmask(SIG_SETMASK, [],  <unfinished ...>', traces, input
+        input: '12499 rt_sigprocmask(SIG_SETMASK, [],  <unfinished ...>', unfinished
         result:
             return None
-            unfinished = {(12499, rt_sigprocmask): 'SIG_SETMASK, [], '}
-        input: '12499 <... rt_sigprocmask resumed> NULL, 8) = 0', traces, input
+            unfinished = {('12499', 'rt_sigprocmask'): 'SIG_SETMASK, [], '}
+        input: '12499 <... rt_sigprocmask resumed> NULL, 8) = 0', unfinished
         result:
-            return ('12499', 'rt_sigprocmask', 'SIG_SETMASK, [], NULL, 8', '0')
+            return ('12499', 'rt_sigprocmask', ['SIG_SETMASK', '[]', 'NULL', '8'], '0')
             unfinished = {}
     """
     line = line.rstrip()
@@ -208,16 +208,16 @@ def parse_line(line, unfinished):
     if any(trace.startswith(x) for x in ['---', '+++']):  # Skip Signals
         pass
     elif trace.endswith('>'):
-        syscall_name, syscall_args = match_unfinished(trace)
+        syscall_name, syscall_args = parse_unfinished(trace)
         # Warning: What happens if there are two unfinished system call
         # from the same pid with the same system call names?
         unfinished[(pid, syscall_name)] = syscall_args
     elif trace.startswith('<'):
         syscall_name, rest_syscall_args, syscall_ret_val =\
-                match_resumed(trace)
-        syscall_args = unfinished[(pid, syscall_name)] + rest_syscall_args
-        return Trace(pid, syscall_name, syscall_args, syscall_ret_val)
+                parse_resumed(trace)
+        syscall_args = [unfinished[(pid, syscall_name)]] + rest_syscall_args
         del unfinished[(pid, syscall_name)]
+        return Trace(pid, syscall_name, syscall_args, syscall_ret_val)
     else:
         temp_trace = parse_trace(trace)
         if temp_trace:
