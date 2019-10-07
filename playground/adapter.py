@@ -235,7 +235,7 @@ newproc     = 'newproc {} {}'         # 'newproc' ['fd'/'fs'/'fdfs'/'none'] ret
 delfd       = 'delfd {}'              # 'delfd' fd
 dupfd       = 'dupfd {} {}'           # 'dupfd' fd fd
 fchdir      = 'fchdir {}'             # 'fchdir' fd
-symlink     = 'symlink {} {} {} {}'   # 'symlink' dirfd PATH dirfd PATH
+symlink     = 'symlink {} {} {} {}'   # 'symlink' dirfd PATH PATH
 link        = 'link {} {} {} {}'      # 'link' dirfd PATH dirfd PATH
 rename      = 'rename {} {} {} {}'    # 'rename' dirfd PATH dirfd PATH
 
@@ -351,7 +351,9 @@ def translate_link(trace):
     return [
         link.format(
             'AT_FDCWD', trace.syscall_args[0],'AT_FDCWD', trace.syscall_args[1]
-        )
+        ),
+        hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed'),
+        hpath.format('AT_FDCWD', trace.syscall_args[1], 'produced')
     ]
 
 
@@ -360,7 +362,9 @@ def translate_linkat(trace):
         link.format(
             trace.syscall_args[0], trace.syscall_args[1],
             trace.syscall_args[2], trace.syscall_args[3]
-        )
+        ),
+        hpath.format(trace.syscall_args[0], trace.syscall_args[1], 'consumed'),
+        hpath.format(trace.syscall_args[2], trace.syscall_args[3], 'produced')
     ]
 
 
@@ -459,17 +463,21 @@ def translate_statfs(trace):
 def translate_symlink(trace):
     return [
         symlink.format(
-            'AT_FDCWD', trace.syscall_args[0], 'AT_FDCWD', trace.syscall_args[1]
-        )
+            'AT_FDCWD', trace.syscall_args[1], trace.syscall_args[0]
+        ),
+        hpath.format('AT_FDCWD', trace.syscall_args[1], 'produced')
+
     ]
 
 
 def translate_symlinkat(trace):
     return [
         symlink.format(
-            'AT_FDCWD', trace.syscall_args[0],
-            trace.syscall_args[1], trace.syscall_args[2]
-        )
+            trace.syscall_args[1],
+            trace.syscall_args[2],
+            trace.syscall_args[0]
+        ),
+        hpath.format(trace.syscall_args[1], trace.syscall_args[2], 'produced')
     ]
 
 
