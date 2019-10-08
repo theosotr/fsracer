@@ -63,7 +63,7 @@ echo $gradlew
 eval "timeout -s KILL 30m strace -s 300 -o $project_out/$project.strace -f $gradlew build --no-parallel --daemon &"
 pid=$!
 
-# We are polling in the `build-result.txt` that shows the result of the scirpt.
+# We are polling in the `build-result.txt` that shows the result of the build.
 # If this file is present, we terminate the process traced by strace,
 # and exit the script.
 while true; do
