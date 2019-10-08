@@ -114,7 +114,11 @@
     "lchown": [
         [
             "7024  lchown(0x55de5e07a2a0, 0, 0)      = 0",
-            ["hpathsym AT_FDCWD 0x55de5e07a2a0 consumed"]
+            null
+        ],
+        [
+            "7024  lchown(\"/foo\", 0, 0)      = 0",
+            ["hpathsym AT_FDCWD \"/foo\" consumed"]
         ]
     ],
     "lgetxattr": [
@@ -138,7 +142,11 @@
     "lstat": [
         [
             "7024  lstat(0x55de5e07a2a0, 0x7ffd5801a730) = 0",
-            ["hpathsym AT_FDCWD 0x55de5e07a2a0 consumed"]
+            null
+        ],
+        [
+            "7024  lstat(\"foo\", 0x7ffd5801a730) = 0",
+            ["hpathsym AT_FDCWD \"foo\" consumed"]
         ]
     ],
     "link": [
@@ -312,7 +320,11 @@
     "utimes": [
         [
             "7031  utimes(0x56152ceb9b90, 0x7fffc4af98f0) = 0",
-            ["hpathsym AT_FDCWD 0x56152ceb9b90 consumed"]
+            null
+        ],
+        [
+            "7031  utimes(\"foo\", 0x7fffc4af98f0) = 0",
+            ["hpathsym AT_FDCWD \"foo\" consumed"]
         ]
     ],
     "write": [

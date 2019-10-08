@@ -12,7 +12,8 @@
 # trace = [pid, syscall_name, syscall_args, syscall_ret_val]
 import re
 import sys
-import collections
+from collections import namedtuple
+from functools import wraps
 
 ##############################     TEST DATA     ##############################
 
@@ -31,7 +32,7 @@ MATCHES = {
 # A Trace is composed of process id, system call name, system call arguments,
 # and system call return value.
 # pid,name,ret are strings, args is a list of strings
-Trace = collections.namedtuple(
+Trace = namedtuple(
     'Trace', 'pid syscall_name syscall_args syscall_ret'
 )
 
@@ -241,18 +242,41 @@ rename      = 'rename {} {} {} {}'    # 'rename' dirfd PATH dirfd PATH
 newfd       = 'newfd {} {} {}'        # 'newfd' dirfd PATH ret
 
 
+def check_paths(paths):
+    """A very specific decorator to check if any path starts with '0x'.
+
+    If so, return None else translate the trace to the proper operation
+    expression.
+
+    To use the decorator pass as argument a list with the indexes to check from
+    trace.syscall_args.
+    """
+    def wrap(translate_fun):
+        @wraps(translate_fun)
+        def wrapped_translate_fun(trace):
+            if any(trace.syscall_args[x].startswith('0x') for x in paths):
+                return
+            return translate_fun(trace)
+        return wrapped_translate_fun
+    return wrap
+
+
+@check_paths([0])
 def translate_access(trace):
     return [hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
+@check_paths([0])
 def translate_chdir(trace):
     return [setcwd.format(trace.syscall_args[0])]
 
 
+@check_paths([0])
 def translate_chmod(trace):
     return [hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
+@check_paths([0])
 def translate_chown(trace):
     return [hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
@@ -286,6 +310,7 @@ def translate_dup3(trace):
     return [dupfd.format(trace.syscall_args[0], trace.syscall_args[1])]
 
 
+@check_paths([0])
 def translate_execve(trace):
     return [hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
@@ -294,6 +319,7 @@ def translate_fchdir(trace):
     return [fchdir.format(trace.syscall_args[0])]
 
 
+@check_paths([1])
 def translate_fchmodat(trace):
     return [
         hpath.format(
@@ -302,6 +328,7 @@ def translate_fchmodat(trace):
     ]
 
 
+@check_paths([1])
 def translate_fchownat(trace):
     return [
         hpath.format(
@@ -320,34 +347,42 @@ def translate_fork(trace):
     return [newproc.format('none', trace.syscall_ret)]
 
 
+@check_paths([0])
 def translate_getxattr(trace):
     return [hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
+@check_paths([0])
 def translate_getcwd(trace):
     return [setcwd.format(trace.syscall_args[0])]
 
 
+@check_paths([0])
 def translate_lchown(trace):
     return [hpathsym.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
+@check_paths([0])
 def translate_lgetxattr(trace):
     return [hpathsym.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
+@check_paths([0])
 def translate_lremovexattr(trace):
     return [hpathsym.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
+@check_paths([0])
 def translate_lsetxattr(trace):
     return [hpathsym.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
+@check_paths([0])
 def translate_lstat(trace):
     return [hpathsym.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
+@check_paths([0, 1])
 def translate_link(trace):
     return [
         link.format(
@@ -358,6 +393,7 @@ def translate_link(trace):
     ]
 
 
+@check_paths([1, 3])
 def translate_linkat(trace):
     return [
         link.format(
@@ -369,10 +405,12 @@ def translate_linkat(trace):
     ]
 
 
+@check_paths([0])
 def translate_mkdir(trace):
     return [hpath.format('AT_FDCWD', trace.syscall_args[0], 'produced')]
 
 
+@check_paths([1])
 def translate_mkdirat(trace):
     return [
         hpath.format(
@@ -381,10 +419,12 @@ def translate_mkdirat(trace):
     ]
 
 
+@check_paths([0])
 def translate_mknod(trace):
     return [hpath.format('AT_FDCWD', trace.syscall_args[0], 'produced')]
 
 
+@check_paths([0])
 def translate_open(trace):
     if any(x in trace.syscall_args[1] for x in ['O_CREAT', 'O_TRUNC']):
         access = 'produced'
@@ -396,6 +436,7 @@ def translate_open(trace):
     ]
 
 
+@check_paths([1])
 def translate_openat(trace):
     if any(x in trace.syscall_args[2] for x in ['O_CREAT', 'O_TRUNC']):
         access = 'produced'
@@ -411,10 +452,12 @@ def translate_openat(trace):
     ]
 
 
+@check_paths([0])
 def translate_readlink(trace):
     return [hpathsym.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
+@check_paths([1])
 def translate_readlinkat(trace):
     return [
         hpathsym.format(
@@ -423,10 +466,12 @@ def translate_readlinkat(trace):
     ]
 
 
+@check_paths([0])
 def translate_removexattr(trace):
     return [hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
+@check_paths([0, 1])
 def translate_rename(trace):
     return [
         rename.format(
@@ -438,6 +483,7 @@ def translate_rename(trace):
 
 
 
+@check_paths([1, 3])
 def translate_renameat(trace):
     return [
         rename.format(
@@ -449,18 +495,22 @@ def translate_renameat(trace):
     ]
 
 
+@check_paths([0])
 def translate_rmdir(trace):
     return [hpathsym.format('AT_FDCWD', trace.syscall_args[0], 'expunged')]
 
 
+@check_paths([0])
 def translate_stat(trace):
     return [hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
+@check_paths([0])
 def translate_statfs(trace):
     return [hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
+@check_paths([0, 1])
 def translate_symlink(trace):
     return [
         symlink.format(
@@ -471,6 +521,7 @@ def translate_symlink(trace):
     ]
 
 
+@check_paths([2])
 def translate_symlinkat(trace):
     return [
         symlink.format(
@@ -482,10 +533,12 @@ def translate_symlinkat(trace):
     ]
 
 
+@check_paths([0])
 def translate_unlink(trace):
     return [hpathsym.format('AT_FDCWD', trace.syscall_args[0], 'expunged')]
 
 
+@check_paths([1])
 def translate_unlinkat(trace):
     return [
         hpathsym.format(
@@ -494,10 +547,12 @@ def translate_unlinkat(trace):
     ]
 
 
+@check_paths([0])
 def translate_utime(trace):
     return [hpathsym.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
+@check_paths([1])
 def translate_utimensat(trace):
     return [
         hpathsym.format(
@@ -506,6 +561,7 @@ def translate_utimensat(trace):
     ]
 
 
+@check_paths([0])
 def translate_utimes(trace):
     return [hpathsym.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
