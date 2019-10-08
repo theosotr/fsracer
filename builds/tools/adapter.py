@@ -15,13 +15,6 @@ import sys
 from collections import namedtuple
 from functools import wraps
 
-##############################     TEST DATA     ##############################
-
-TRACES = [
-    '31565 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)',
-    '14333 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fc298fcfa10) = 14334',
-    '14352 close(3) = 0'
-]
 
 ################################# STRUCTURES ##################################
 
@@ -593,5 +586,4 @@ def main(inp):
 
 
 if __name__ == "__main__":
-    test = TRACES if len(sys.argv) > 1 and sys.argv[1] == "test" else sys.stdin
-    main(test)
+    main(sys.stdin)
