@@ -60,7 +60,11 @@ echo $gradlew
 # the gradle daemon to exit which is spanwed by the gradlew script.
 # So we run the build script in the background and we do some kind of polling
 # in order to know when the build actually finishes.
-eval "timeout -s KILL 30m strace -s 300 -o $project_out/$project.strace -f $gradlew build --no-parallel --daemon &"
+eval "timeout -s KILL 30m strace \
+  -s 300 \
+  -o $project_out/$project.strace \
+  -e \"$(tr -s '\r\n' ',' < /root/syscalls.txt | sed -e 's/,$/\n/')\" \
+  -f $gradlew build --no-parallel --daemon &"
 pid=$!
 
 # We are polling in the `build-result.txt` that shows the result of the build.
