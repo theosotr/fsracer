@@ -1,0 +1,330 @@
+{
+    "access": [
+        [
+            "6413 access(\"/etc/ld.so.nohwcap\", F_OK) = -1 ENOENT (No such file or directory)",
+            ["hpath AT_FDCWD \"/etc/ld.so.nohwcap\" consumed"]
+        ]
+    ],
+    "chdir": [
+        [
+            "6551  chdir(\"/\") = 0",
+            ["setcwd \"/\""]
+        ]
+    ],
+    "chown": [
+        [
+            "7024  chown(\"/var/lib/apt/lists/partial\", 100, 0) = 0",
+            ["hpath AT_FDCWD \"/var/lib/apt/lists/partial\" consumed"]
+        ]
+    ],
+    "clone": [
+        [
+            "6413  clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f6d0c6109d0) = 6415",
+            ["newproc none 6415"]
+        ],
+        [
+            "6513  clone(child_stack=0x7f6d0c617ff0, flags=CLONE_VM|CLONE_FS|CLONE_SIGHAND|CLONE_THREAD|CLONE_SYSVSEM|CLONE_SETTLS|CLONE_PARENT_SETTID|CLONE_CHILD_CLEARTID, parent_tidptr=0x7f6d0c6189d0, tls=0x7f6d0c618700, child_tidptr=0x7f6d0c6189d0) = 6515",
+            ["newproc fs 6515"]
+        ],
+        [
+            "6782  clone(child_stack=0x7f8220f2aff0, flags=CLONE_VM|CLONE_FILES|CLONE_SIGHAND|CLONE_THREAD|CLONE_SYSVSEM|CLONE_SETTLS|CLONE_PARENT_SETTID|CLONE_CHILD_CLEARTID, parent_tidptr=0x7f8220f2b9d0, tls=0x7f8220f2b700, child_tidptr=0x7f8220f2b9d0) = 7021",
+            ["newproc fd 7021"]
+        ],
+        [
+            "6413  clone(child_stack=0x7f6d02f46ff0, flags=CLONE_VM|CLONE_FS|CLONE_FILES|CLONE_SIGHAND|CLONE_THREAD|CLONE_SYSVSEM|CLONE_SETTLS|CLONE_PARENT_SETTID|CLONE_CHILD_CLEARTID, parent_tidptr=0x7f6d02f479d0, tls=0x7f6d02f47700, child_tidptr=0x7f6d02f479d0) = 6705",
+            ["newproc fdfs 6705"]
+        ]
+    ],
+    "close": [
+        [
+            "6413  close(3) = 0",
+            ["delfd 3"]
+        ]
+    ],
+    "dup": [
+        [
+            "6417  dup(0) = 3",
+            ["dupfd 0 3"]
+        ]
+    ],
+    "dup2": [
+        [
+            "6416  dup2(10, 2) = 2",
+            ["dupfd 10 2"]
+        ]
+    ],
+    "dup3": [
+        [
+            "6416  dup2(10, 2, flags=CLONE_VM|CLONE_FS) = 2",
+            ["dupfd 10 2"]
+        ]
+    ],
+    "execve": [
+        [
+            "6420  execve(\"/bin/hostname\", [\"/bin/hostname\", \"-f\"], [/* 11 vars */]) = 0",
+            ["hpath AT_FDCWD \"/bin/hostname\" consumed"]
+        ]
+    ],
+    "fchdir": [
+        [
+            "6551  fchdir(3) = 0",
+            ["fchdir 3"]
+        ]
+    ],
+    "fchmodat": [
+        [
+            "6731  fchmodat(AT_FDCWD, \"/tmp/apt-key-gpghome.Pfj7VDm8DF\", 0700) = 0",
+            ["hpath AT_FDCWD \"/tmp/apt-key-gpghome.Pfj7VDm8DF\" consumed"]
+        ]
+    ],
+    "fchownat": [
+        [
+            "7374  fchownat(AT_FDCWD, \".\", 0, 0, 0)  = 0",
+            ["hpath AT_FDCWD \".\" consumed"]
+        ]
+    ],
+    "fcntl": [
+        [
+            "7375  fcntl(3, F_DUPFD, 10) = 10",
+            ["dupfd 3 10"]
+        ],
+        [
+            "7375  fcntl(10, F_SETFD, FD_CLOEXEC)    = 0",
+            null
+        ]
+    ],
+    "fork": [
+        [
+            "",
+            ["newproc none ret"]
+        ]
+    ],
+    "getxattr": [
+        [
+            "7380 getxattr(\"/tmp/hadoop-2.7.1.tar.gz\", \"system.posix_acl_access\", NULL, 0) = -1 ENODATA (No data available)",
+            ["hpath AT_FDCWD \"/tmp/hadoop-2.7.1.tar.gz\" consumed"]
+        ]
+    ],
+    "getcwd": [
+        [
+            "8540  getcwd(\"/\", 4096) = 2",
+            ["setcwd \"/\""]
+        ]
+    ],
+    "lchown": [
+        [
+            "7024  lchown(0x55de5e07a2a0, 0, 0)      = 0",
+            ["hpathsym AT_FDCWD 0x55de5e07a2a0 consumed"]
+        ]
+    ],
+    "lgetxattr": [
+        [
+            "",
+            ["hpathsym AT_FDCWD args[0] consumed"]
+        ]
+    ],
+    "lremovexattr": [
+        [
+            "",
+            ["hpathsym AT_FDCWD args[0] consumed"]
+        ]
+    ],
+    "lsetxattr": [
+        [
+            "",
+            ["hpathsym AT_FDCWD args[0] consumed"]
+        ]
+    ],
+    "lstat": [
+        [
+            "7024  lstat(0x55de5e07a2a0, 0x7ffd5801a730) = 0",
+            ["hpathsym AT_FDCWD 0x55de5e07a2a0 consumed"]
+        ]
+    ],
+    "link": [
+        [
+            "7369  link(\"/var/lib/dpkg/status\", \"/var/lib/dpkg/status-old\") = 0",
+            [
+                "link AT_FDCWD \"/var/lib/dpkg/status\" AT_FDCWD \"/var/lib/dpkg/status-old\"",
+                "hpath AT_FDCWD \"/var/lib/dpkg/status\" consumed",
+                "hpath AT_FDCWD \"/var/lib/dpkg/status-old\" produced"
+            ]
+        ]
+    ],
+    "linkat": [
+        [
+            "",
+            [
+                "link args[0] args[1] args[2] args[3]",
+                "hpath args[0] args[1] consumed",
+                "hpath args[2] args[3] produced"
+            ]
+        ]
+    ],
+    "mkdir": [
+        [
+            "7369  mkdir(\"/usr/share/doc/libwayland-client0.dpkg-new\", 000) = 0",
+            ["hpath AT_FDCWD \"/usr/share/doc/libwayland-client0.dpkg-new\" produced"]
+        ]
+    ],
+    "mkdirat": [
+        [
+            "8247  mkdirat(AT_FDCWD, \".\", 0700)      = -1 EEXIST (File exists)",
+            ["hpath AT_FDCWD \".\" produced"]
+        ]
+    ],
+    "mknod": [
+        [
+            "",
+            ["hpath AT_FDCWD args[0] produced"]
+        ]
+    ],
+    "open": [
+        [
+            "8615  open(\"/var/lib/dpkg/updates/tmp.i\", O_WRONLY|O_CREAT|O_TRUNC, 0666) = 4",
+            [
+                "newfd AT_FDCWD \"/var/lib/dpkg/updates/tmp.i\" 4",
+                "hpath AT_FDCWD \"/var/lib/dpkg/updates/tmp.i\" produced"
+            ]
+        ],
+        [
+            "8615  open(\"/var/lib/dpkg\", O_RDONLY|O_NONBLOCK|O_DIRECTORY|O_CLOEXEC) = 4",
+            [
+                "newfd AT_FDCWD \"/var/lib/dpkg\" 4",
+                "hpath AT_FDCWD \"/var/lib/dpkg\" consumed"
+            ]
+        ]
+    ],
+    "openat": [
+        [
+            "7374  openat(AT_FDCWD, \"./conffiles\", O_WRONLY|O_CREAT|O_EXCL|O_NOCTTY|O_NONBLOCK|O_CLOEXEC, 0600) = 3",
+            [
+                "newfd AT_FDCWD \"./conffiles\" 3",
+                "hpath AT_FDCWD \"./conffiles\" produced"
+            ]
+        ],
+        [
+            "6551  openat(AT_FDCWD, \"/etc/apt/trusted.gpg.d\", O_RDONLY|O_NOCTTY|O_NONBLOCK|O_DIRECTORY|O_NOFOLLOW) = 4",
+            [
+                "newfd AT_FDCWD \"/etc/apt/trusted.gpg.d\" 4",
+                "hpath AT_FDCWD \"/etc/apt/trusted.gpg.d\" consumed"
+            ]
+        ]
+    ],
+    "readlink": [
+        [
+            "6417  readlink(\"/usr/bin/python3\", \"python3.5\", 4096) = 9 ",
+            ["hpathsym AT_FDCWD \"/usr/bin/python3\" consumed"]
+        ]
+    ],
+    "readlinkat": [
+        [
+            "",
+            ["hpathsym args[0] args[1] consumed"]
+        ]
+    ],
+    "removexattr": [
+        [
+            "",
+            ["hpath AT_FDCWD args[0] consumed"]
+        ]
+    ],
+    "rename": [
+        [
+            "6413  rename(\"/var/lib/puppet/state/last_run_report.yaml20190130-6413-1c70s81\", \"/var/lib/puppet/state/last_run_report.yaml\") = 0",
+            [
+                "rename AT_FDCWD \"/var/lib/puppet/state/last_run_report.yaml20190130-6413-1c70s81\" AT_FDCWD \"/var/lib/puppet/state/last_run_report.yaml\"",
+                "hpath AT_FDCWD \"/var/lib/puppet/state/last_run_report.yaml20190130-6413-1c70s81\" expunged",
+                "hpath AT_FDCWD \"/var/lib/puppet/state/last_run_report.yaml\" produced"
+            ]
+        ]
+    ],
+    "renameat": [
+        [
+            "",
+            [
+                "rename args[0] args[1] args[2] args[3]",
+                "hpath args[0] args[1] expunged",
+                "hpath args[2] args[3] produced"
+            ]
+        ]
+    ],
+    "rmdir": [
+        [
+            "6413  rmdir(\"/var/lib/puppet/state/state.yaml20190130-6413-8acygw.lock\") = 0",
+            ["hpathsym AT_FDCWD \"/var/lib/puppet/state/state.yaml20190130-6413-8acygw.lock\" expunged"]
+        ]
+    ],
+    "stat": [
+        [
+            "9054  stat(\"/usr/sbin/basename\", 0x7ffd9e54a850) = -1 ENOENT (No such file or directory)",
+            ["hpath AT_FDCWD \"/usr/sbin/basename\" consumed"]
+        ]
+    ],
+    "statfs": [
+        [
+            "9053  statfs(\"/selinux\", 0x7ffe1b9288d0) = -1 ENOENT (No such file or directory)",
+            ["hpath AT_FDCWD \"/selinux\" consumed"]
+        ]
+    ],
+    "symlink": [
+        [
+            "9040  symlink(\"/lib/systemd/system/uuidd.socket\", \"/etc/systemd/system/sockets.target.wants/uuidd.socket\") = 0",
+            [
+                "symlink AT_FDCWD \"/etc/systemd/system/sockets.target.wants/uuidd.socket\" \"/lib/systemd/system/uuidd.socket\"",
+                "hpath AT_FDCWD \"/etc/systemd/system/sockets.target.wants/uuidd.socket\" produced"
+            ]
+        ]
+    ],
+    "symlinkat": [
+        [
+            "",
+            [
+                "symlink args[1] args[2] args[0]",
+                "hpath args[1] args[2] produced"
+            ]
+        ]
+    ],
+    "unlink": [
+        [
+            "9019  unlink(\"/etc/gshadow.9019\")       = 0",
+            ["hpathsym AT_FDCWD \"/etc/gshadow.9019\" expunged"]
+        ]
+    ],
+    "unlinkat": [
+        [
+            "8688  unlinkat(AT_FDCWD, \"/tmp/ex4fO0dKQ\", 0) = 0",
+            ["hpathsym AT_FDCWD \"/tmp/ex4fO0dKQ\" expunged"]
+        ]
+    ],
+    "utime": [
+        [
+            "8667  utime(\"/etc/shadow-\", {actime=2019-01-30T13:43:57+0000, modtime=2019-01-29T13:25:20+0000}) = 0",
+            ["hpathsym AT_FDCWD \"/etc/shadow-\" consumed"]
+        ]
+    ],
+    "utimensat": [
+        [
+            "7057  utimensat(0, NULL, NULL, 0)       = 0",
+            ["hpathsym 0 NULL consumed"]
+        ]
+    ],
+    "utimes": [
+        [
+            "7031  utimes(0x56152ceb9b90, 0x7fffc4af98f0) = 0",
+            ["hpathsym AT_FDCWD 0x56152ceb9b90 consumed"]
+        ]
+    ],
+    "write": [
+        [
+            "",
+            [""]
+        ]
+    ],
+    "writev": [
+        [
+            "",
+            [""]
+        ]
+    ]
+}

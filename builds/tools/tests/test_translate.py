@@ -1,18 +1,22 @@
 from .. import adapter
+import json
 
 
-TRACES = {
-    'access': (
-        '6413 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)', ['hpath AT_FDCWD "/etc/ld.so.nohwcap" consumed']
-    )
-}
+with open('tests/traces.json', 'r') as f:
+    TRACES = json.load(f)
 
 temp = {}
 
 def test_translate_functions():
-    for syscall, values in TRACES.items():
+    for syscall, tests in TRACES.items():
+        if syscall in ('fork', 'lgetxattr', 'linkat', 'mknod', 'readlinkat',
+                       'lremovexattr', 'lsetxattr', 'removexattr', 'renameat',
+                       'symlinkat', 'write', 'writev'):
+            continue
         translate_method = getattr(adapter, 'translate_' + syscall)
-        trace_line = values[0]
-        opexprs = values[1]
-        trace = adapter.parse_line(trace_line, temp)
-    assert(translate_method(trace) == opexprs)
+        for test in tests:
+            trace_line = test[0]
+            opexprs = test[1]
+            print("\nDEBUG: " + syscall + ": " + ';' + trace_line + ';')
+            trace = adapter.parse_line(trace_line, temp)
+            assert(translate_method(trace) == opexprs)
