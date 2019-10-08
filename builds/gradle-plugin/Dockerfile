@@ -19,6 +19,7 @@ WORKDIR /root
 COPY ./build.gradle /root/plugin
 COPY ./src /root/plugin/src
 COPY ./scripts /root/plugin/scripts
+COPY ./syscalls.txt /root/syscalls.txt
 
 # Build gradle plugin
 WORKDIR /root/plugin
