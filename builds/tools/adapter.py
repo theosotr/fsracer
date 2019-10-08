@@ -235,7 +235,7 @@ newproc     = 'newproc {} {}'         # 'newproc' ['fd'/'fs'/'fdfs'/'none'] ret
 delfd       = 'delfd {}'              # 'delfd' fd
 dupfd       = 'dupfd {} {}'           # 'dupfd' fd fd
 fchdir      = 'fchdir {}'             # 'fchdir' fd
-symlink     = 'symlink {} {} {} {}'   # 'symlink' dirfd PATH PATH
+symlink     = 'symlink {} {} {}'      # 'symlink' dirfd PATH
 link        = 'link {} {} {} {}'      # 'link' dirfd PATH dirfd PATH
 rename      = 'rename {} {} {} {}'    # 'rename' dirfd PATH dirfd PATH
 newfd       = 'newfd {} {} {}'        # 'newfd' dirfd PATH ret
@@ -291,7 +291,7 @@ def translate_execve(trace):
 
 
 def translate_fchdir(trace):
-    return [fchdir.format(trace.args[0])]
+    return [fchdir.format(trace.syscall_args[0])]
 
 
 def translate_fchmodat(trace):
