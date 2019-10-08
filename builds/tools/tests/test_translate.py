@@ -1,13 +1,18 @@
-from ..adapter import parse_line, translate_access
+from .. import adapter
 
-TRACES = [
-    '6413 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)'
-]
+
+TRACES = {
+    'access': (
+        '6413 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)', ['hpath AT_FDCWD "/etc/ld.so.nohwcap" consumed']
+    )
+}
 
 temp = {}
 
-def test_translate_access():
-    trace = parse_line(TRACES[0], temp)
-    assert(translate_access(trace)[0] ==
-           'hpath AT_FDCWD "/etc/ld.so.nohwcap" consumed'
-          )
+def test_translate_functions():
+    for syscall, values in TRACES.items():
+        translate_method = getattr(adapter, 'translate_' + syscall)
+        trace_line = values[0]
+        opexprs = values[1]
+        trace = adapter.parse_line(trace_line, temp)
+    assert(translate_method(trace) == opexprs)
