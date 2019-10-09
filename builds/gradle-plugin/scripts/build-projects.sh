@@ -12,6 +12,10 @@ shift $(($OPTIND - 1));
 
 
 for project in $(cat $projects); do
+  if [ -d $output_dir/$project ]; then
+    echo "Skipping $project..."
+    continue
+  fi
   docker_cmd="/root/plugin/scripts/build-project.sh $project /root/out"
   sudo docker run --name $project \
     -v $output_dir:/root/out \
