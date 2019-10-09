@@ -67,5 +67,5 @@ unlink          -> hpathsym "AT_FDCWD" 0 "expunged";
 unlinkat        -> hpathsym 0 1 "expunged";
 utime           -> hpathsym "AT_FDCWD" 0 "consumed";
 utimensat       -> hpathsym 0 1 "consumed";
-utimes          -> "AT_FDCWD" 0 "consumed";
+utimes          -> hpathsym "AT_FDCWD" 0 "consumed";
 ```
