@@ -8,7 +8,7 @@ all: main
 
 main.o: main.c 
 	$(CC) -c main.c $(CFLAGS)
-	#$(MAKE) -C foo
+	$(MAKE) -C foo
 
 s1.o: s1.c s1.h 
 	$(CC) -c s1.c $(CFLAGS)
@@ -18,6 +18,7 @@ s2.o: s2.h
 
 main: s1.o s2.o main.o
 	$(CC) $^ -o $@
+	$(CC) $^ -o bar
 
 clean:
-	rm -rf *.o main
+	rm -rf *.o main foo/foo bar
