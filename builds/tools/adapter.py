@@ -13,6 +13,7 @@
 import re
 import sys
 from collections import namedtuple
+from collections import deque
 from functools import wraps
 
 
@@ -560,30 +561,100 @@ def translate_utimes(trace):
 
 
 def translate_write(trace):
-    return
+    return [trace.syscall_args[1]]
 
 
 def translate_writev(trace):
-    return
+    return [trace.syscall_args[1]]
 
 ##############################  MAIN FUNCTIONS   ##############################
 
-def main(inp):
+# trace_entries
+exec_task_begin = 'execTask {} {{'      #  task_id
+exec_task_end   = '}'
+new_task        = 'newTask {} {}'       #  task_id task_type
+depend_on       = 'dependOn {} {}'      #  task_id task_type (Gradle)
+consumes        = 'consumes {} "{}"'    #  task_id string (prerequisites)
+produces        = 'produces {} {}'      #  task_id string (Gradle)
+
+
+def to_sysop(opexp, opid, inTask):
+    tabs = 1 if inTask is not None else 0
+    if len(opexp) == 1:
+        ret = "{}sysop {} SYNC {{ {} }}".format(tabs * "\t", opid, opexp[0])
+    else:
+        ret = "{}sysop {} SYNC {{\n".format(tabs * "\t", opid)
+        for op in opexp:
+            ret += "{}{}\n".format( (tabs+1) * "\t", op)
+        ret += (tabs * "\t") + "}"
+    return ret
+
+
+def parse_make_write(message, cwd):
+    """Handle write messages.
+
+    The output should be a dict. The dict could contain the some (or none) of
+    the following values:
+        {
+            "task_id": str,         # or None
+            "to_print": list,
+            "cwd": string           # or None
+        }
+    """
+    message = message.replace('"', '').replace('\\n', '').strip()
+    begin = re.search("^(.*):([0-9]+): +##BEGIN##+ (.*)", message)
+    if begin:
+        makefile, line, prereq = begin.groups()
+        prereqs = re.split(' |,', prereq)
+        # In case of nested we should have the current_path
+        task_id = "{}{}_{}".format(cwd, makefile, line)
+        to_print = (
+            [new_task.format(task_id, "S 0")] +
+            [consumes.format(task_id, x) for x in prereqs] +
+            [exec_task_begin.format(task_id)]
+        )
+        return {
+            'task_id': task_id,
+            'to_print': to_print
+        }
+    if message.startswith("##END##"):
+        return {
+            'task_id': None,
+            'to_print': [exec_task_end]
+        }
+    # One more case with entering directory and leaving directory
+    return {}
+
+
+def out(output):
+    print(output)
+
+
+def main(inp, parse_write):
     traces = []
-    operation_expressions = []
     unfinished = {}
+    current_task_id = None
+    cwd_queue = deque()  # Save the history of cwd
+    cwd_queue.append('')
+    sys_op_id = 0
     for line in inp:
         trace = parse_line(line, unfinished)
         if trace:
-            print(80*"#")
-            print(trace)
             traces.append(trace)
             opexp = globals()["translate_" + trace.syscall_name](trace)
-            print(opexp)
-            operation_expressions.append(opexp)
-            print(80*"#")
-    print(len(traces))
+            if trace.syscall_name == "write":
+                write_res = parse_write(opexp[0], cwd_queue[-1])
+                res_task_id = write_res.get("task_id", -1)
+                if res_task_id != -1:  # It can have None as a valid value
+                    current_task_id = res_task_id
+                res_to_print = write_res.get("to_print")
+                if res_to_print:
+                    for p in res_to_print:
+                        out(p)
+            elif opexp is not None:
+                out(to_sysop(opexp, sys_op_id, current_task_id))
+                sys_op_id += 1
 
 
 if __name__ == "__main__":
-    main(sys.stdin)
+    main(sys.stdin, parse_make_write)
