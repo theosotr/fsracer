@@ -33,13 +33,14 @@ cd $project
 find . -name 'gradle.properties' |
 xargs -i sed -i 's/org\.gradle\.parallel=true/org\.gradle\.parallel=false/g' {}
 
-code="apply plugin: 'org.fsracer.gradle.fsracer-plugin'\nbuildscript { dependencies { classpath files('$plugin') } }\n"
+buildscript="buildscript { dependencies { classpath files('$plugin') } }\n"
+applyplug="apply plugin: 'org.fsracer.gradle.fsracer-plugin'"
 # Heuristic: Search for file whose name is bu
 find . -regex '.*build.gradle.*' -type f -printf "%d %p\n" |
 sort -n |
 head -1 |
 cut -d' ' -f2 |
-xargs -i sed -i "1s;^;${code};" {}
+xargs -i sed -i -e "1s;^;${code};" -e "\$a${apply}" {}
 
 if [ $? -ne 0 ]; then
   echo "Unable to find build.gradle file" > $project_out/err
