@@ -11,6 +11,8 @@ plugin=/root/plugin/build/libs/plugin.jar
 project=$1
 output_dir=$(realpath $2)
 
+dir=$(dirname $0)
+
 project_out=$output_dir/$project
 mkdir -p $project_out
 
@@ -68,15 +70,6 @@ eval "timeout -s KILL 30m strace \
   -f $gradlew build --no-parallel --daemon &"
 pid=$!
 
-# We are polling in the `build-result.txt` that shows the result of the build.
-# If this file is present, we terminate the process traced by strace,
-# and exit the script.
-while true; do
-  if [ -f build-result.txt ]; then
-    kill -s KILL $pid
-    break
-  fi
-  sleep 10
-done
+timeout 30m $dir/polling.sh
 
 exit 0
