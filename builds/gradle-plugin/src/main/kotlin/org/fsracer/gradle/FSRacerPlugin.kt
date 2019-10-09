@@ -36,10 +36,10 @@ class FSRacerPlugin : Plugin<Project> {
                 state.addNode(taskName)
                 println("newEvent ${taskName} W 1")
                 task.inputs.files.forEach { input ->
-                    println("input ${input.absolutePath}")
+                    println("input ${taskName} ${input.absolutePath}")
                 }
                 task.outputs.files.forEach { output ->
-                    println("output ${output.absolutePath}")
+                    println("output ${taskName} ${output.absolutePath}")
                 }
                 task.getTaskDependencies()
                   .getDependencies(task)
@@ -56,7 +56,7 @@ class FSRacerPlugin : Plugin<Project> {
                     println("End ${taskName}")
                 }
            }
-           println("End ${project.name}")
+           println("End ${project.name}:")
            state.toDot()
         }
     }
