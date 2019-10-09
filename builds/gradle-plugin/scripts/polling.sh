@@ -5,7 +5,6 @@
 # and exit the script.
 while true; do
   if [ -f build-result.txt ]; then
-    kill -s KILL $pid
     break
   fi
   sleep 10

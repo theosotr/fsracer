@@ -7,7 +7,28 @@
 # Add plugin
 # Execute
 
-plugin=/root/plugin/build/libs/plugin.jar
+modify_build_script()
+{
+  plugin=/root/plugin/build/libs/plugin.jar
+  if [ "$1" = "groovy" ]; then
+    buildscript="buildscript { dependencies { classpath files('$plugin') } }\n"
+    applyplug="apply plugin: 'org.fsracer.gradle.fsracer-plugin'"
+    build_file="build.gradle"
+  else
+    buildscript="buildscript { dependencies { classpath(files(\"$plugin\")) } }\n"
+    applyplug="apply(plugin=\"org.fsracer.gradle.fsracer-plugin\")"
+    build_file="build.gradle.kts"
+  fi
+  # Heuristic: Search for file whose name is bu
+  find . -regex ".*${build_file}" -type f -printf "%d %p\n" |
+  sort -n |
+  head -1 |
+  cut -d' ' -f2 |
+  xargs -i sed -i -e "1s;^;${buildscript};" -e "\$a${applyplug}" {}
+  return $?
+}
+
+
 project=$1
 output_dir=$(realpath $2)
 
@@ -35,16 +56,12 @@ cd $project
 find . -name 'gradle.properties' |
 xargs -i sed -i 's/org\.gradle\.parallel=true/org\.gradle\.parallel=false/g' {}
 
-buildscript="buildscript { dependencies { classpath files('$plugin') } }\n"
-applyplug="apply plugin: 'org.fsracer.gradle.fsracer-plugin'"
-# Heuristic: Search for file whose name is bu
-find . -regex '.*build.gradle.*' -type f -printf "%d %p\n" |
-sort -n |
-head -1 |
-cut -d' ' -f2 |
-xargs -i sed -i -e "1s;^;${buildscript};" -e "\$a${applyplug}" {}
+modify_build_script "groovy"
+ret_groovy=$?
+modify_build_script "kotlin"
+ret_kotlin=$?
 
-if [ $? -ne 0 ]; then
+if [[ $ret_groovy -ne 0 && $ret_kotlin -ne 0 ]]; then
   echo "Unable to find build.gradle file" > $project_out/err
 fi
 
