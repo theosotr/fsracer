@@ -40,7 +40,7 @@ find . -regex '.*build.gradle.*' -type f -printf "%d %p\n" |
 sort -n |
 head -1 |
 cut -d' ' -f2 |
-xargs -i sed -i -e "1s;^;${code};" -e "\$a${apply}" {}
+xargs -i sed -i -e "1s;^;${buildscript};" -e "\$a${applyplug}" {}
 
 if [ $? -ne 0 ]; then
   echo "Unable to find build.gradle file" > $project_out/err
