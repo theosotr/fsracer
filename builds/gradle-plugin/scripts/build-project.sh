@@ -11,6 +11,8 @@ plugin=/root/plugin/build/libs/plugin.jar
 project=$1
 output_dir=$(realpath $2)
 
+dir=$(dirname $0)
+
 project_out=$output_dir/$project
 mkdir -p $project_out
 
@@ -33,13 +35,14 @@ cd $project
 find . -name 'gradle.properties' |
 xargs -i sed -i 's/org\.gradle\.parallel=true/org\.gradle\.parallel=false/g' {}
 
-code="apply plugin: 'org.fsracer.gradle.fsracer-plugin'\nbuildscript { dependencies { classpath files('$plugin') } }\n"
+buildscript="buildscript { dependencies { classpath files('$plugin') } }\n"
+applyplug="apply plugin: 'org.fsracer.gradle.fsracer-plugin'"
 # Heuristic: Search for file whose name is bu
 find . -regex '.*build.gradle.*' -type f -printf "%d %p\n" |
 sort -n |
 head -1 |
 cut -d' ' -f2 |
-xargs -i sed -i "1s;^;${code};" {}
+xargs -i sed -i -e "1s;^;${buildscript};" -e "\$a${applyplug}" {}
 
 if [ $? -ne 0 ]; then
   echo "Unable to find build.gradle file" > $project_out/err
@@ -67,15 +70,6 @@ eval "timeout -s KILL 30m strace \
   -f $gradlew build --no-parallel --daemon &"
 pid=$!
 
-# We are polling in the `build-result.txt` that shows the result of the build.
-# If this file is present, we terminate the process traced by strace,
-# and exit the script.
-while true; do
-  if [ -f build-result.txt ]; then
-    kill -s KILL $pid
-    break
-  fi
-  sleep 10
-done
+timeout 30m $dir/polling.sh
 
 exit 0
