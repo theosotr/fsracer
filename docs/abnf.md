@@ -17,7 +17,7 @@ task_type   =   "S" *DIGIT / "M" *DIGIT / "W" *DIGIT / "EXTERNAL"
 sysop       =   "sysop" opId "SYNC" sysop_body
             /   "sysop" opId "ASYNC" task_id sysop_body
             ; We need it only in Node
-sysop_body  =   "{" CRLF *(opexp CRLF) "}"
+sysop_body  =   "{" CRLF *(pid opexp CRLF) "}"
 opexp       =   delfd / dupfd / fchdir / hpath / hpathsym / link / newfd
 opexp       =/  newproc / rename / setcwd / symlink
 delfd       =   "delfd" fd
@@ -33,6 +33,7 @@ setcwd      =   "setcwd" filepath
 symlink     =   "symlink" dirfd filepath filepath
 task_id     =   id
 opId        =   id
+pid         =   *DIGIT
 filepath    =   [ "/" ] ; TODO
 dirfd       =   AT_FDCWD / fd
 access      =   "consumed" / "produced" / "expunged"
