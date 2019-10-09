@@ -1,3 +1,9 @@
+Install
+=======
+
+```
+sudo install post-shell /usr/local/bin
+
 Makefile with missing dependency
 ================================
 
@@ -17,6 +23,6 @@ Examples
 
 * `strace -s 200 -f make 2> traces`
 
-* `make SHELL='$(info \#BEGIN)$(warning $*,$@,$^)./post-shell'`
+* `make SHELL='$(info \#BEGIN)$(warning $*,$@,$^)post-shell'`
 
-* `strace -s 200 -f -e "$(tr -s '\r\n' ',' < syscalls.txt | sed -e 's/,$/\n/')" -o make.traces make SHELL='$(warning ##BEGIN## $*,$@,$^)./post-shell'`
+* `strace -s 200 -f -e "$(tr -s '\r\n' ',' < syscalls.txt | sed -e 's/,$/\n/')" -o make.traces make SHELL='$(warning ##BEGIN## $*,$@,$^)post-shell'`
