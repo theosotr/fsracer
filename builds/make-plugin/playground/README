@@ -25,4 +25,4 @@ Examples
 
 * `make SHELL='$(info \#BEGIN)$(warning $*,$@,$^)post-shell'`
 
-* `strace -s 200 -f -e "$(tr -s '\r\n' ',' < syscalls.txt | sed -e 's/,$/\n/')" -o make.traces make SHELL='$(warning ##BEGIN## $*,$@,$^)post-shell'`
+* `strace -s 200 -f -e "$(tr -s '\r\n' ',' < ../syscalls.txt | sed -e 's/,$/\n/')" -o make.traces make SHELL='$(warning ##BEGIN## $@,$^)post-shell'`
