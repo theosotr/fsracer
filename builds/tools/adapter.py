@@ -580,13 +580,10 @@ produces        = 'produces {} {}'      #  task_id string (Gradle)
 
 def to_sysop(opexp, opid, inTask):
     tabs = 1 if inTask is not None else 0
-    if len(opexp) == 1:
-        ret = "{}sysop {} SYNC {{ {} }}".format(tabs * "\t", opid, opexp[0])
-    else:
-        ret = "{}sysop {} SYNC {{\n".format(tabs * "\t", opid)
-        for op in opexp:
-            ret += "{}{}\n".format( (tabs+1) * "\t", op)
-        ret += (tabs * "\t") + "}"
+    ret = "{}sysop {} SYNC {{\n".format(tabs * "\t", opid)
+    for op in opexp:
+        ret += "{}{}\n".format( (tabs+1) * "\t", op)
+    ret += (tabs * "\t") + "}"
     return ret
 
 
@@ -602,12 +599,15 @@ def parse_make_write(message, cwd):
         }
     """
     message = message.replace('"', '').replace('\\n', '').strip()
-    begin = re.search("^(.*):([0-9]+): +##BEGIN##+ (.*)", message)
+    begin = re.search("^(.*):([0-9]+): +##BEGIN##+ (.*),(.*)", message)
     if begin:
-        makefile, line, prereq = begin.groups()
+        # target: the name of whichever target caused the rule’s recipe
+        #         to be run
+        makefile, line, target, prereq = begin.groups()
         prereqs = re.split(' |,', prereq)
         # In case of nested we should have the current_path
-        task_id = "{}{}_{}".format(cwd, makefile, line)
+        cwd = cwd + "/" if cwd != '' else cwd
+        task_id = "{}{}_{}_{}".format(cwd, makefile, line, target)
         to_print = (
             [new_task.format(task_id, "S 0")] +
             [consumes.format(task_id, x) for x in prereqs] +
@@ -652,6 +652,8 @@ def main(inp, parse_write):
                     for p in res_to_print:
                         out(p)
             elif opexp is not None:
+                # Add pid
+                opexp = [trace.pid + ", " + x for x in opexp]
                 out(to_sysop(opexp, sys_op_id, current_task_id))
                 sys_op_id += 1
 
