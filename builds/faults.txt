@@ -1,0 +1,2 @@
+project,version,build,type,url,status
+gradle-scripts,1.1,gradle,ordering violation,https://github.com/tomasbjerre/gradle-scripts,fixed
