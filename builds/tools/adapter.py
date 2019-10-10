@@ -626,11 +626,11 @@ def parse_make_write(message, cwd):
     return {}
 
 
-def out(output):
-    print(output)
+def write_out(out, output):
+    out.write(output + '\n')
 
 
-def main(inp, parse_write):
+def main(inp, out, parse_write):
     traces = []
     unfinished = {}
     current_task_id = None
@@ -650,13 +650,13 @@ def main(inp, parse_write):
                 res_to_print = write_res.get("to_print")
                 if res_to_print:
                     for p in res_to_print:
-                        out(p)
+                        write_out(out, p)
             elif opexp is not None:
                 # Add pid
                 opexp = [trace.pid + ", " + x for x in opexp]
-                out(to_sysop(opexp, sys_op_id, current_task_id))
+                write_out(out, to_sysop(opexp, sys_op_id, current_task_id))
                 sys_op_id += 1
 
 
 if __name__ == "__main__":
-    main(sys.stdin, parse_make_write)
+    main(sys.stdin, sys.stdout, parse_make_write)

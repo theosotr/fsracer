@@ -2,7 +2,7 @@ from .. import adapter
 import json
 
 
-with open('tests/traces.json', 'r') as f:
+with open('tests/data/traces.json', 'r') as f:
     TRACES = json.load(f)
 
 temp = {}
