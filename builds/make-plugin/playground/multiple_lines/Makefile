@@ -1,6 +1,6 @@
 C=gcc
 CFLAGS=-I.
-#OBJECTS = main.o s1.o s2.o
+OBJECTS = s1.o s2.o
 
 .PHONY: obj clean all
 
@@ -8,17 +8,14 @@ all: main
 
 main.o: main.c 
 	$(CC) -c main.c $(CFLAGS)
-	$(MAKE) -C foo
 
-s1.o: s1.c s1.h 
+# Missing s2.c
+$(OBJECTS): s1.c s1.h s2.h
 	$(CC) -c s1.c $(CFLAGS)
-
-s2.o: s2.h
 	$(CC) -c s2.c $(CFLAGS)
 
-main: s1.o s2.o main.o
+main: $(OBJECTS) main.o
 	$(CC) $^ -o $@
-	$(CC) $^ -o bar
 
 clean:
 	rm -rf *.o main foo/foo bar
