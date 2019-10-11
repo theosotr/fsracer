@@ -8,7 +8,7 @@ def helper_fun(in_traces, fstraces):
     with open(fstraces, 'r') as f:
         expected = f.readlines()
     with NamedTemporaryFile('w') as f:
-        adapter.main(traces, f, adapter.parse_make_write)
+        adapter.main(traces, f, "Make")
         f.flush()
         with open(f.name, 'r') as inp:
             fstraces = inp.readlines()
