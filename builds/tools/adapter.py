@@ -586,7 +586,7 @@ def to_sysop(opexp, opid, tabs):
     return ret
 
 
-def parse_make_write(message, cwd, current_task_id, end_tasks):
+def parse_make_write(message, cwd_queue, current_task_id, end_tasks, nesting_counter):
     """Handle write messages.
 
     The output should be a dict. The dict could contain the some (or none) of
@@ -602,21 +602,22 @@ def parse_make_write(message, cwd, current_task_id, end_tasks):
     message = message.replace('"', '').replace('\\n', '').strip()
     begin = re.search("^(.*):([0-9]+): +##BEGIN##+ (.*),(.*)", message)
     if begin:
-        nesting_counter = 1
         # target: the name of whichever target caused the rule’s recipe
         #         to be run
         makefile, line, target, prereq = begin.groups()
         prereqs = re.split(' |,', prereq)
         # In case of nested we should have the current_path
+        cwd = cwd_queue[-1]
         cwd = cwd + "/" if cwd != '' else cwd
         task_id = "{}{}_{}_{}".format(cwd, makefile, line, target)
         if task_id == current_task_id:
-            end_tasks.pop()
+            end_tasks.pop()  # Because we'll add a new one in END state
             return {'nesting_counter': 1}
         to_print = (
-            [new_task.format(task_id, "S 0")] +
-            [consumes.format(task_id, x) for x in prereqs] +
-            [exec_task_begin.format(task_id)]
+            [(nesting_counter * '\t') + new_task.format(task_id, "S 0")] +
+            [(nesting_counter * '\t') + consumes.format(task_id, x)
+             for x in prereqs] +
+            [(nesting_counter * '\t') + exec_task_begin.format(task_id)]
         )
         return {
             'state': "BEGIN",
@@ -630,7 +631,12 @@ def parse_make_write(message, cwd, current_task_id, end_tasks):
             'state': "END",
             'nesting_counter': -1
         }
-    # One more case with entering directory and leaving directory
+    entering = re.search("^.*:[ ]+Entering directory[ ]+'(.*)'", message)
+    if entering:
+        cwd_queue.append(entering.groups()[0])
+    leaving = re.search("^.*:[ ]+Leaving directory[ ]+'(.*)'", message)
+    if leaving:
+        cwd_queue.pop()
     return {}
 
 
@@ -653,7 +659,8 @@ def main(inp, out, parse_write):
             opexp = globals()["translate_" + trace.syscall_name](trace)
             if trace.syscall_name == "write":
                 write_res = parse_write(
-                    opexp[0], cwd_queue[-1], current_task_id, end_tasks
+                    opexp[0], cwd_queue, current_task_id,
+                    end_tasks, nesting_counter
                 )
                 last_task_id = write_res.get("task_id")
                 if last_task_id:

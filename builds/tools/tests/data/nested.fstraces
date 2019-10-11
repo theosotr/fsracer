@@ -1,0 +1,70 @@
+newTask Makefile_8_main.o S 0
+consumes Makefile_8_main.o "main.c"
+execTask Makefile_8_main.o {
+	sysop 0 SYNC {
+		15257, newproc none 15258
+	}
+}
+sysop 1 SYNC {
+	15257, hpath AT_FDCWD "main.o" consumed
+}
+newTask Makefile_11_nested S 0
+consumes Makefile_11_nested ""
+execTask Makefile_11_nested {
+	sysop 2 SYNC {
+		15257, newproc none 15262
+	}
+	newTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_6_s1.o S 0
+	consumes /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_6_s1.o "s1.c"
+	consumes /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_6_s1.o "s1.h"
+	execTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_6_s1.o {
+		sysop 3 SYNC {
+			15263, newproc none 15264
+		}
+	}
+	sysop 4 SYNC {
+		15263, hpath AT_FDCWD "s1.o" consumed
+	}
+	sysop 5 SYNC {
+		15263, hpath AT_FDCWD "s2.o" consumed
+	}
+	sysop 6 SYNC {
+		15263, hpath AT_FDCWD "s2.h" consumed
+	}
+	newTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_10_s2.o S 0
+	consumes /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_10_s2.o "s2.h"
+	execTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_10_s2.o {
+		sysop 7 SYNC {
+			15263, newproc none 15268
+		}
+	}
+	sysop 8 SYNC {
+		15263, hpath AT_FDCWD "s2.o" consumed
+	}
+	sysop 9 SYNC {
+		15263, setcwd "/home/user/fsracer/builds/make-plugin/playground/nested_example"
+	}
+	sysop 10 SYNC {
+		15263, delfd 1
+	}
+}
+sysop 11 SYNC {
+	15257, hpath AT_FDCWD "main" consumed
+}
+newTask Makefile_14_main S 0
+consumes Makefile_14_main "main.o"
+consumes Makefile_14_main "nested"
+execTask Makefile_14_main {
+	sysop 12 SYNC {
+		15257, newproc none 15272
+	}
+}
+sysop 13 SYNC {
+	15257, hpath AT_FDCWD "main" consumed
+}
+sysop 14 SYNC {
+	15257, setcwd "/home/user/fsracer/builds/make-plugin/playground/nested_example"
+}
+sysop 15 SYNC {
+	15257, delfd 1
+}

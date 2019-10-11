@@ -23,3 +23,7 @@ def test_simple_make():
 
 def test_multiline_make():
     helper_fun('tests/data/multiline.traces', 'tests/data/multiline.fstraces')
+
+
+def test_nested_make():
+    helper_fun('tests/data/nested.traces', 'tests/data/nested.fstraces')
