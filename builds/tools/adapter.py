@@ -589,6 +589,10 @@ def to_sysop(opexp, opid, tabs):
     return ret
 
 
+def write_out(out, output):
+    out.write(output + '\n')
+
+
 class Handler(ABC):
 
     def __init__(self, inp, out):
@@ -598,12 +602,17 @@ class Handler(ABC):
         self.sys_op_id = 0
 
     @abstractmethod
-    def _handle_write(self, opexp):
+    def _handle_write(self):
         pass
 
-    @abstractmethod
     def _handle_opexp(self, opexp):
-        pass
+        # Add pid
+        opexp = [self.trace.pid + ", " + x for x in opexp]
+        write_out(
+            self.out,
+            to_sysop(opexp, self.sys_op_id, 0)
+        )
+        self.sys_op_id += 1
 
     def execute(self):
         for line in self.inp:
@@ -611,9 +620,35 @@ class Handler(ABC):
             if self.trace:
                 opexp = globals()["translate_" + self.trace.syscall_name](self.trace)
                 if self.trace.syscall_name == "write":
-                    self._handle_write(opexp[0])
+                    self._handle_write()
                 elif opexp is not None:
                     self._handle_opexp(opexp)
+
+
+class GradleHandler(Handler):
+    def __init__(self, inp, out):
+        super(GradleHandler, self).__init__(inp, out)
+
+    def _handle_write(self):
+        begin_reg = r'^"Begin ([A-Za-z0-9_:.-]+)'
+        end_reg = r'^"End ([A-Za-z0-9_:.-]+)'
+        if int(self.trace.syscall_args[0]) > 100:
+            exec_task = re.search(begin_reg, self.trace.syscall_args[1])
+            if exec_task:
+                write_out(
+                    self.out,
+                    exec_task_begin.format(
+                        exec_task.groups(1)[0]
+                    )
+                )
+                return
+            exec_task = re.search(end_reg, self.trace.syscall_args[1])
+            if exec_task:
+                write_out(
+                    self.out,
+                    exec_task_end
+                )
+                return
 
 
 class MakeHandler(Handler):
@@ -626,8 +661,8 @@ class MakeHandler(Handler):
         self.end_tasks = []
         self.current_task_id = None
 
-    def _handle_write(self, write_args):
-        message = write_args.replace('"', '').replace('\\n', '').strip()
+    def _handle_write(self):
+        message = self.trace.syscall_args[1].replace('"', '').replace('\\n', '').strip()
         begin = re.search("^(.*):([0-9]+): +##BEGIN##+ (.*),(.*)", message)
         if begin:
             # target: the name of whichever target caused the rule’s recipe
@@ -685,7 +720,6 @@ class MakeHandler(Handler):
         )
         self.sys_op_id += 1
 
-
     def execute(self):
         super(MakeHandler, self).execute()
         if len(self.end_tasks) > 0:
@@ -694,18 +728,16 @@ class MakeHandler(Handler):
             )
 
 
-def write_out(out, output):
-    out.write(output + '\n')
-
-
 def main(inp, out, program):
     if program == "Make":
         handler = MakeHandler(inp, out)
+    elif program == "Gradle":
+        handler = GradleHandler(inp, out)
     handler.execute()
 
 
 if __name__ == "__main__":
-    program = "Make"
+    program = "Gradle"
     if len(sys.argv) > 1:
         program = sys.argv[1]
     main(sys.stdin, sys.stdout, program)
