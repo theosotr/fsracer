@@ -578,8 +578,7 @@ consumes        = 'consumes {} "{}"'    #  task_id string (prerequisites)
 produces        = 'produces {} {}'      #  task_id string (Gradle)
 
 
-def to_sysop(opexp, opid, inTask):
-    tabs = 1 if inTask is not None else 0
+def to_sysop(opexp, opid, tabs):
     ret = "{}sysop {} SYNC {{\n".format(tabs * "\t", opid)
     for op in opexp:
         ret += "{}{}\n".format( (tabs+1) * "\t", op)
@@ -587,20 +586,23 @@ def to_sysop(opexp, opid, inTask):
     return ret
 
 
-def parse_make_write(message, cwd):
+def parse_make_write(message, cwd, current_task_id, end_tasks):
     """Handle write messages.
 
     The output should be a dict. The dict could contain the some (or none) of
     the following values:
         {
+            "state": str,           # BEGIN / END
             "task_id": str,         # or None
             "to_print": list,
-            "cwd": string           # or None
+            "cwd": string,          # or None
+            "nesting_counter": int  # 1 or -1
         }
     """
     message = message.replace('"', '').replace('\\n', '').strip()
     begin = re.search("^(.*):([0-9]+): +##BEGIN##+ (.*),(.*)", message)
     if begin:
+        nesting_counter = 1
         # target: the name of whichever target caused the rule’s recipe
         #         to be run
         makefile, line, target, prereq = begin.groups()
@@ -608,19 +610,25 @@ def parse_make_write(message, cwd):
         # In case of nested we should have the current_path
         cwd = cwd + "/" if cwd != '' else cwd
         task_id = "{}{}_{}_{}".format(cwd, makefile, line, target)
+        if task_id == current_task_id:
+            end_tasks.pop()
+            return {'nesting_counter': 1}
         to_print = (
             [new_task.format(task_id, "S 0")] +
             [consumes.format(task_id, x) for x in prereqs] +
             [exec_task_begin.format(task_id)]
         )
         return {
+            'state': "BEGIN",
             'task_id': task_id,
-            'to_print': to_print
+            'to_print': to_print,
+            'nesting_counter': 1
         }
     if message.startswith("##END##"):
+        end_tasks.append(exec_task_end)
         return {
-            'task_id': None,
-            'to_print': [exec_task_end]
+            'state': "END",
+            'nesting_counter': -1
         }
     # One more case with entering directory and leaving directory
     return {}
@@ -631,31 +639,41 @@ def write_out(out, output):
 
 
 def main(inp, out, parse_write):
-    traces = []
-    unfinished = {}
-    current_task_id = None
+    unfinished = {}      # Save unfinished traces
+    nesting_counter = 0  # Count how many tabs to put (new Tasks)
     cwd_queue = deque()  # Save the history of cwd
     cwd_queue.append('')
+    is_open_task = False
+    end_tasks = list()
+    current_task_id = None
     sys_op_id = 0
     for line in inp:
         trace = parse_line(line, unfinished)
         if trace:
-            traces.append(trace)
             opexp = globals()["translate_" + trace.syscall_name](trace)
             if trace.syscall_name == "write":
-                write_res = parse_write(opexp[0], cwd_queue[-1])
-                res_task_id = write_res.get("task_id", -1)
-                if res_task_id != -1:  # It can have None as a valid value
-                    current_task_id = res_task_id
+                write_res = parse_write(
+                    opexp[0], cwd_queue[-1], current_task_id, end_tasks
+                )
+                last_task_id = write_res.get("task_id")
+                if last_task_id:
+                    current_task_id = last_task_id
                 res_to_print = write_res.get("to_print")
                 if res_to_print:
                     for p in res_to_print:
                         write_out(out, p)
+                ncounter = write_res.get("nesting_counter")
+                if ncounter is not None:
+                    nesting_counter += ncounter
             elif opexp is not None:
                 # Add pid
+                if is_open_task == False and len(end_tasks) > 0:
+                    write_out(out, (nesting_counter * '\t') +end_tasks.pop())
                 opexp = [trace.pid + ", " + x for x in opexp]
-                write_out(out, to_sysop(opexp, sys_op_id, current_task_id))
+                write_out(out, to_sysop(opexp, sys_op_id, nesting_counter))
                 sys_op_id += 1
+    if len(end_tasks) > 0:
+        write_out(out, (nesting_counter * '\t') +end_tasks.pop())
 
 
 if __name__ == "__main__":
