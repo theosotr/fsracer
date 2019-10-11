@@ -1,2 +1,3 @@
 project,version,build,type,url,status
 gradle-scripts,1.1,gradle,ordering violation,https://github.com/tomasbjerre/gradle-scripts,fixed
+GradleRIO,09862150db2604d35242617a10cc9ef604afc3f6,gradle,ordering violation,https://github.com/wpilibsuite/GradleRIO,fixed
