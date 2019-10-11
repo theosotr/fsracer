@@ -120,23 +120,24 @@ def parse_resumed(trace):
     Args:
         trace: string
     Returns:
-        [syscall_name, syscall_args, syscall_ret_val] or None
+        (syscall_name, syscall_args, syscall_ret_val) or None
     Example:
      1)
         input: "openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3"
         returns: None
     2)
         input: "<... rt_sigprocmask resumed> NULL, 8) = 0"
-        returns: ('rt_sigprocmask', ['NULL', '8'], '0')
+        returns: ['rt_sigprocmask', 'NULL 8', '0']
+    3)
+        input: "<... dup2 resumed> ) = 0"
+        returns: ['dup2', '', '0']
     """
     syscall_re =\
         r'^<...[ ]+{}[ ]+resumed>[ ]*{}\)[ ]*=[ ]*{}[ ]*.*?'.format(
             "([a-z0-9_]+)", "(.*)", "(-?[0-9\?]+)"
         )
     try:
-        res = list(re.search(syscall_re, trace).groups())
-        res[1] = safe_split(res[1])
-        return res
+        return re.search(syscall_re, trace).groups()
     except AttributeError:
         print("AttributeError occured: " + trace, file=sys.stderr)
         return None
@@ -209,9 +210,10 @@ def parse_line(line, unfinished):
         # from the same pid with the same system call names?
         unfinished[(pid, syscall_name)] = syscall_args
     elif trace.startswith('<'):
-        syscall_name, rest_syscall_args, syscall_ret_val =\
-                parse_resumed(trace)
-        syscall_args = [unfinished[(pid, syscall_name)]] + rest_syscall_args
+        syscall_name, rest_syscall_args, syscall_ret_val = parse_resumed(trace)
+        syscall_args = safe_split(
+            unfinished[(pid, syscall_name)] + rest_syscall_args
+        )
         del unfinished[(pid, syscall_name)]
         return Trace(pid, syscall_name, syscall_args, syscall_ret_val)
     else:

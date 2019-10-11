@@ -20,14 +20,19 @@ STRINGS = [
 TRACE_LINES = [
     '12498 openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3',
     '12499 rt_sigprocmask(SIG_SETMASK, [],  <unfinished ...>',
-    '12499 <... rt_sigprocmask resumed> NULL, 8) = 0'
+    '12499 <... rt_sigprocmask resumed> NULL, 8) = 0',
+    '30889 dup2(4, 1 <unfinished ...>',
+    '30889 <... dup2 resumed> ) = 1'
 ]
 
 TRACES = [
     'openat(AT_FDCWD, "s1.c", O_RDONLY|O_NOCTTY) = 3',
     'rt_sigprocmask(SIG_SETMASK, [],  <unfinished ...>',
     '<... rt_sigprocmask resumed> NULL, 8) = 0',
-    'access("/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)'
+    'access("/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)',
+    '<... rt_sigprocmask resumed> ) = 0',
+    'dup2(4, 1 <unfinished ...>',
+    '<... dup2 resumed> ) = 1'
 ]
 
 def test_safe_split():
@@ -72,10 +77,13 @@ def test_parse_unfinished():
     assert(parse_unfinished(TRACES[1]) ==
            ('rt_sigprocmask', 'SIG_SETMASK, [], ')
           )
+    assert(parse_unfinished(TRACES[5]) == ('dup2', '4, 1'))
 
 def test_parse_resumed():
     assert(parse_resumed(TRACES[0]) is None)
-    assert(parse_resumed(TRACES[2]) == ['rt_sigprocmask', ['NULL', '8'], '0'])
+    assert(parse_resumed(TRACES[2]) == ('rt_sigprocmask', 'NULL, 8', '0'))
+    assert(parse_resumed(TRACES[4]) == ('rt_sigprocmask', '', '0'))
+    assert(parse_resumed(TRACES[6]) == ('dup2', '', '1'))
 
 def test_parse_test():
     assert(parse_trace(TRACES[0]) ==
@@ -102,6 +110,11 @@ def test_parse_line():
     # TODO: Inspect first element of arguments
     assert(trace3 ==
            Trace('12499', 'rt_sigprocmask',
-                 ['SIG_SETMASK, [], ', 'NULL', '8'], '0'
+                 ['SIG_SETMASK', '[]', 'NULL', '8'], '0'
                 )
           )
+    trace4 = parse_line(TRACE_LINES[3], unfinished)
+    assert(unfinished == {('30889', 'dup2'): '4, 1'})
+    assert(trace4 is None)
+    trace5 = parse_line(TRACE_LINES[4], unfinished)
+    assert(trace5 == Trace('30889', 'dup2', ['4', '1'], '1'))
