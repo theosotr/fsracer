@@ -105,6 +105,10 @@ if [ $? -ne 0 ]; then
 fi
 
 echo $gradlew
+
+if [[ ! -x $gradlew ]]; then
+  gradlew="sh $gradlew"
+fi
 # When we trace gradle builds, strace might hang because it's waiting for
 # the gradle daemon to exit which is spanwed by the gradlew script.
 # So we run the build script in the background and we do some kind of polling
