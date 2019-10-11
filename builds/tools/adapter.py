@@ -705,4 +705,7 @@ def main(inp, out, program):
 
 
 if __name__ == "__main__":
-    main(sys.stdin, sys.stdout, "Make")
+    program = "Make"
+    if len(sys.argv) > 1:
+        program = sys.argv[1]
+    main(sys.stdin, sys.stdout, program)
