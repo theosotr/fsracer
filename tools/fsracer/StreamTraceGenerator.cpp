@@ -9,6 +9,7 @@
 
 
 namespace fstrace {
+// TODO Handle parser errors
 
 
 Consumes *EmitConsumes(const std::string &line) {
@@ -22,12 +23,52 @@ Consumes *EmitConsumes(const std::string &line) {
 
 
 Produces *EmitProduces(const std::string &line) {
-  std::regex rgx("consumes ([a-zA-Z0-9_:.-]+) (.*)");
+  std::regex rgx("consumes ([a-zA-Z0-9_:.-]+) ([^\n]+)");
   std::smatch groups;
   if (std::regex_search(line, groups, rgx)) {
     return new Produces(groups[1].str(), groups[2].str());
   }
   return nullptr;
+}
+
+
+NewTask *EmitNewTask(const std::string &line) {
+  std::regex rgx("newTask ([a-zA-Z0-9_:.-]+) ([A-Z]+)([ ]([0-9]))?");
+  std::smatch groups;
+  if (!std::regex_search(line, groups, rgx)) {
+    return nullptr;
+  }
+  std::string task_name = groups[1].str();
+  std::string task_type = groups[2].str();
+  if (task_type == "EXTERNAL") {
+    return new NewTask(task_name, Task(Task::EXT, 0));
+  }
+  size_t group_size = 5;
+  size_t task_value_group = 4;
+  if (groups.size() != group_size) {
+    return nullptr;
+  }
+  if (task_type == "S") {
+    return new NewTask(
+      task_name, Task(Task::S, std::stoi(groups[task_value_group].str())));
+  } else if (task_type == "M") {
+    return new NewTask(
+      task_name, Task(Task::M, std::stoi(groups[task_value_group].str())));
+  } else if (task_type == "W") {
+    return new NewTask(
+      task_name, Task(Task::W, std::stoi(groups[task_value_group].str())));
+  }
+  return nullptr;
+}
+
+
+DependsOn *EmitDependsOn(const std::string &line) {
+  std::regex rgx("dependsOn ([a-zA-Z0-9_:.-]+) ([a-zA-Z0-9_:.-]+)");
+  std::smatch groups;
+  if (!std::regex_search(line, groups, rgx)) {
+    return nullptr;
+  }
+  return new DependsOn(groups[1], groups[2]);
 }
 
 
@@ -78,6 +119,10 @@ TraceNode *StreamTraceGenerator::ParseLine(const std::string &line) {
     return EmitConsumes(line);
   } else if (utils::StartsWith(line, "produces")) {
     return EmitProduces(line);
+  } else if (utils::StartsWith(line, "newTask")) {
+    return EmitNewTask(line);
+  } else if (utils::StartsWith(line, "dependsOn")) {
+    return EmitDependsOn(line);
   } else {
     return nullptr;
   }

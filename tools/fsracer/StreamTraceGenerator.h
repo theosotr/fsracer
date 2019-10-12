@@ -11,6 +11,8 @@ namespace fstrace {
 
 Consumes *EmitConsumes(const std::string &line);
 Produces *EmitProduces(const std::string &line);
+NewTask *EmitNewTask(const std::string &line);
+DependsOn *EmitDependsOn(const std::string &line);
 
 
 class StreamTraceGenerator {
