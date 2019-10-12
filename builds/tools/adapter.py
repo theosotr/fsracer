@@ -636,14 +636,14 @@ class GradleHandler(Handler):
     def _handle_begin(self, write_str):
         _, task_name = write_str.split(
             '"{} Begin '.format(self.GRADLE_PREFIX), 1)
-        write_out(self.out, exec_task_begin.format(task_name.strip()))
+        write_out(self.out, exec_task_begin.format(task_name[:-1].strip()))
 
     def _handle_end(self):
         write_out(self.out, exec_task_end)
 
     def _handle_gradle(self, write_str):
         _, construct = write_str.split('"{} '.format(self.GRADLE_PREFIX))
-        write_out(self.out, construct.strip())
+        write_out(self.out, construct[:-1].strip())
 
     def _handle_write(self):
         if int(self.trace.syscall_args[0]) <= self.LOGGING_FD:
