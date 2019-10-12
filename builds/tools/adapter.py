@@ -626,29 +626,38 @@ class Handler(ABC):
 
 
 class GradleHandler(Handler):
+    GRADLE_PREFIX = "##GRADLE##"
+
+    LOGGING_FD = 100
+
     def __init__(self, inp, out):
         super(GradleHandler, self).__init__(inp, out)
 
+    def _handle_begin(self, write_str):
+        _, task_name = write_str.split(
+            '"{} Begin '.format(self.GRADLE_PREFIX), 1)
+        write_out(self.out, exec_task_begin.format(task_name.strip()))
+
+    def _handle_end(self):
+        write_out(self.out, exec_task_end)
+
+    def _handle_gradle(self, write_str):
+        _, construct = write_str.split('"{} '.format(self.GRADLE_PREFIX))
+        write_out(self.out, construct.strip())
+
     def _handle_write(self):
-        begin_reg = r'^"Begin ([A-Za-z0-9_:.-]+)'
-        end_reg = r'^"End ([A-Za-z0-9_:.-]+)'
-        if int(self.trace.syscall_args[0]) > 100:
-            exec_task = re.search(begin_reg, self.trace.syscall_args[1])
-            if exec_task:
-                write_out(
-                    self.out,
-                    exec_task_begin.format(
-                        exec_task.groups(1)[0]
-                    )
-                )
-                return
-            exec_task = re.search(end_reg, self.trace.syscall_args[1])
-            if exec_task:
-                write_out(
-                    self.out,
-                    exec_task_end
-                )
-                return
+        if int(self.trace.syscall_args[0]) <= self.LOGGING_FD:
+            return
+
+        write_str = self.trace.syscall_args[1]
+        if write_str.startswith('"{} Begin '.format(self.GRADLE_PREFIX)):
+            self._handle_begin(write_str)
+        elif write_str.startswith('"{} End '.format(self.GRADLE_PREFIX)):
+            self._handle_end()
+        elif write_str.startswith('"{} '.format(self.GRADLE_PREFIX)):
+            self._handle_gradle(write_str)
+        else:
+            pass
 
 
 class MakeHandler(Handler):

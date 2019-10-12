@@ -11,6 +11,9 @@ fun constructTaskName(task : Task) : String =
     "${task.project.name}:${task.name}"
 
 
+const val GRADLE_PREFIX = "##GRADLE##"
+
+
 class FSRacerPlugin : Plugin<Project> {
     companion object {
         // This object is used to keep the state of instrumentation.
@@ -29,17 +32,17 @@ class FSRacerPlugin : Plugin<Project> {
             }
         }
         project.gradle.taskGraph.whenReady { taskGraph ->
-            println("Begin ${project.name}:")
+            println("${GRADLE_PREFIX} Begin ${project.name}:")
             state.addNode("${project.name}:")
             taskGraph.allTasks.forEach { task ->
                 val taskName = constructTaskName(task)
                 state.addNode(taskName)
-                println("newEvent ${taskName} W 1")
+                println("${GRADLE_PREFIX} newTask ${taskName} W 1")
                 task.inputs.files.forEach { input ->
-                    println("input ${taskName} ${input.absolutePath}")
+                    println("${GRADLE_PREFIX} consumes ${taskName} ${input.absolutePath}")
                 }
                 task.outputs.files.forEach { output ->
-                    println("output ${taskName} ${output.absolutePath}")
+                    println("${GRADLE_PREFIX} produces ${taskName} ${output.absolutePath}")
                 }
                 task.getTaskDependencies()
                   .getDependencies(task)
@@ -47,16 +50,16 @@ class FSRacerPlugin : Plugin<Project> {
                       val depTask = constructTaskName(d)
                       state.addNode(depTask)
                       state.addEdge(depTask, taskName)
-                      println("link ${depTask} ${taskName}")
+                      println("${GRADLE_PREFIX} dependsOn ${taskName} ${depTask}")
                 }
                 task.doFirst {
-                    println("Begin ${taskName}")
+                    println("${GRADLE_PREFIX} Begin ${taskName}")
                 }
                 task.doLast {
-                    println("End ${taskName}")
+                    println("${GRADLE_PREFIX} End ${taskName}")
                 }
            }
-           println("End ${project.name}:")
+           println("${GRADLE_PREFIX} End ${project.name}:")
            state.toDot()
         }
     }
