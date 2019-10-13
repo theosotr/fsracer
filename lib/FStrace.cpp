@@ -146,7 +146,7 @@ int NewFd::GetFd() const {
 
 
 std::string NewFd::GetOpName() const {
-  return "newFd";
+  return "newfd";
 }
 
 
