@@ -39,6 +39,28 @@ bool IsNumber(const std::string &str) {
 }
 
 
+size_t Split(const std::string &str, std::vector<std::string> &tokens) {
+  tokens.clear();
+  size_t count = 0;
+  std::string::const_iterator p1 = str.cbegin();
+  std::string::const_iterator p2 = p1;
+  while (true) {
+    p2 = std::find(p1, str.cend(), ' ');
+    tokens.push_back(std::string(p1, p2));
+    count++;
+
+    if (p2 != str.cend()) {
+      p1 = std::find_if(p2, str.cend(), [](char c) -> bool {
+          return c != ' ';
+      });
+    } else {
+      break;
+    }
+  }
+  return count;
+}
+
+
 void timer::Start() {
   start_time = std::chrono::high_resolution_clock::now();
 }

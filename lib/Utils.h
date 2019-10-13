@@ -20,6 +20,8 @@ bool StartsWith(const std::string &str, std::string prefix);
 
 bool IsNumber(const std::string &str);
 
+size_t Split(const std::string &str, std::vector<std::string> &tokens);
+
 template<template<typename> class C, typename T>
 std::vector<std::pair<T, T>> Get2Combinations(const C<T> &a) {
   std::vector<std::pair<T, T>> combs;
