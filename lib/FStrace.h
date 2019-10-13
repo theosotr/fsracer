@@ -382,10 +382,10 @@ public:
     SHARE_NONE
   };
 
-  NewProc(size_t pid_, enum CloneMode clone_mode_, size_t new_pid):
+  NewProc(size_t pid_, enum CloneMode clone_mode_, size_t new_pid_):
     Operation(pid_),
     clone_mode(clone_mode_),
-    pid(new_pid) {  }
+    new_pid(new_pid_) {  }
   ~NewProc() {  }
 
   enum CloneMode GetCloneMode() const;
@@ -395,7 +395,7 @@ public:
 
 private:
   enum CloneMode clone_mode;
-  size_t pid;
+  size_t new_pid;
 };
 
 

@@ -305,17 +305,17 @@ std::string NewProc::ToString() const {
   std::string pid_str = std::to_string(pid) + ", ";
   switch (clone_mode) {
     case SHARE_FD:
-      return pid_str + GetOpName() + " fd " + std::to_string(pid) +
+      return pid_str + GetOpName() + " fd " + std::to_string(new_pid) +
         ACTUAL_NAME + FAILED;
     case SHARE_FS:
-      return pid_str + GetOpName() + " fs " + std::to_string(pid) +
+      return pid_str + GetOpName() + " fs " + std::to_string(new_pid) +
         ACTUAL_NAME + FAILED;
     case SHARE_BOTH:
-      return pid_str + GetOpName() + " fdfs " + std::to_string(pid) +
+      return pid_str + GetOpName() + " fdfs " + std::to_string(new_pid) +
         ACTUAL_NAME + FAILED;
     default:
-      return pid_str + GetOpName() + " " + std::to_string(pid) + ACTUAL_NAME +
-        FAILED;
+      return pid_str + GetOpName() + " none " + std::to_string(new_pid) +
+        ACTUAL_NAME + FAILED;
   }
 }
 

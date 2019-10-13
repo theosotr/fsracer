@@ -22,9 +22,14 @@ void TraceProcessor::ProcessTrace(const TraceNode *trace_node) {
     }
     debug::msg() << trace_node->ToString();
   } else {
-    if (in_sysop || in_exectask) {
+    if (in_sysop) {
       debug::msg() << "}";
       in_sysop = false;
+      return;
+    }
+    if (in_exectask) {
+      debug::msg() << "}";
+      in_exectask = false;
     }
   }
 }
