@@ -31,8 +31,13 @@ std::string GetRightSubstr(std::string &str, std::string delm) {
 
 
 bool IsNumber(const std::string &str) {
+  auto begin = str.begin();
+  if (StartsWith(str, "-"))  {
+    // the number might be negative.
+    begin++;
+  }
   return !str.empty() && std::find_if(
-      str.begin(),
+      begin,
       str.end(),
       [](char c) { return !std::isdigit(c);  }
     ) == str.end();
