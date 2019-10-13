@@ -1,8 +1,14 @@
 #ifndef FSTRACE_H
 #define FSTRACE_H
 
+#include <optional>
 #include <string>
 #include <vector>
+
+
+#define AT_FDCWD 0
+#define FAILED (failed ? " !failed" : "")
+#define ACTUAL_NAME (actual_op_name != "" ? " !" + actual_op_name : "")
 
 
 namespace analyzer {
@@ -213,6 +219,293 @@ public:
 private:
   std::string target;
   std::string source;
+
+};
+
+
+inline std::string DirfdToString(size_t dirfd) {
+  return dirfd == AT_FDCWD ? "AT_FDCWD" : std::to_string(dirfd);
+}
+
+
+class Operation : public TraceNode {
+public:
+  Operation(size_t pid_):
+    pid(pid_),
+    failed(false) {  }
+
+  virtual ~Operation() {  };
+  virtual std::string ToString() const = 0;
+  virtual std::string GetOpName() const = 0;
+
+  size_t GetPid() const;
+  void MarkFailed();
+  bool IsFailed() const;
+  void SetActualOpName(std::string actual_op_name_);
+  std::string GetActualOpName() const;
+
+protected:
+  size_t pid;
+  bool failed;
+  std::string actual_op_name;
+};
+
+
+class NewFd : public Operation {
+public:
+  NewFd(size_t pid_, size_t dirfd_, std::string filename_, int fd_):
+    Operation(pid_),
+    dirfd(dirfd_),
+    filename(filename_),
+    fd(fd_) { }
+
+  std::string GetFilename() const;
+  size_t GetDirFd() const;
+  int GetFd() const;
+  std::string GetOpName() const;
+  std::string ToString() const;
+
+private:
+  size_t dirfd;
+  std::string filename;
+  int fd;
+};
+
+
+class DelFd : public Operation {
+public:
+  DelFd(size_t pid_, size_t fd_):
+    Operation(pid_),
+    fd(fd_) {  }
+
+  size_t GetFd() const;
+  std::string GetOpName() const;
+  std::string ToString() const;
+
+private:
+  size_t fd;
+};
+
+
+class DupFd : public Operation {
+public:
+  DupFd(size_t pid_, size_t old_fd_, size_t new_fd_):
+    Operation(pid_),
+    old_fd(old_fd_),
+    new_fd(new_fd_) {  }
+
+  size_t GetOldFd() const;
+  size_t GetNewFd() const;
+  std::string GetOpName() const;
+  std::string ToString() const;
+
+private:
+  size_t old_fd;
+  size_t new_fd;
+};
+
+
+class Hpath : public Operation {
+public:
+  enum AccessType {
+    PRODUCED,
+    CONSUMED,
+    EXPUNGED
+  };
+
+  Hpath(size_t pid_, size_t dirfd_, std::string filename_,
+        enum AccessType access_type_):
+    Operation(pid_),
+    dirfd(dirfd_),
+    filename(filename_),
+    access_type(access_type_) {  }
+  ~Hpath() {  }
+
+  size_t GetDirFd() const;
+  std::string GetFilename() const;
+  enum AccessType GetAccessType() const;
+  std::string GetOpName() const;
+  std::string ToString() const;
+  static std::string AccToString(enum AccessType effect);
+  static bool Consumes(enum AccessType effect);
+
+protected:
+  size_t dirfd;
+  std::string filename;
+  enum AccessType access_type;
+
+};
+
+
+class HpathSym : public Hpath {
+public:
+  HpathSym(size_t pid_, size_t dirfd_, std::string filename_,
+           enum AccessType access_type_):
+    Hpath(pid_, dirfd_, filename_, access_type_) {  }
+
+  std::string GetOpName() const;
+};
+
+
+class Link : public Operation {
+public:
+  Link(size_t pid_, size_t old_dirfd_, std::string old_path_, size_t new_dirfd_,
+       std::string new_path_):
+    Operation(pid_),
+    old_dirfd(old_dirfd_),
+    old_path(old_path_),
+    new_dirfd(new_dirfd_),
+    new_path(new_path_) {  }
+
+  size_t GetOldDirfd() const;
+  size_t GetNewDirfd() const;
+  std::string GetOldPath() const;
+  std::string GetNewPath() const;
+  std::string ToString() const;
+  std::string GetOpName() const;
+
+protected:
+  size_t old_dirfd;
+  std::string old_path;
+  size_t new_dirfd;
+  std::string new_path;
+
+};
+
+
+class NewProc : public Operation {
+public:
+  enum CloneMode {
+    SHARE_FS,
+    SHARE_FD,
+    SHARE_BOTH,
+    SHARE_NONE
+  };
+
+  NewProc(size_t pid_, enum CloneMode clone_mode_, size_t new_pid):
+    Operation(pid_),
+    clone_mode(clone_mode_),
+    pid(new_pid) {  }
+  ~NewProc() {  }
+
+  enum CloneMode GetCloneMode() const;
+  size_t GetNewProcId() const;
+  std::string GetOpName() const;
+  std::string ToString() const;
+
+private:
+  enum CloneMode clone_mode;
+  size_t pid;
+};
+
+
+class Rename : public Link {
+public:
+  Rename(size_t pid_, size_t old_dirfd_, std::string old_path_,
+         size_t new_dirfd_, std::string new_path_):
+    Link(pid_, old_dirfd_, old_path_, new_dirfd_, new_path_) {  }
+
+  std::string GetOpName() const;
+};
+
+
+class SetCwd : public Operation {
+public:
+  SetCwd(size_t pid_, std::string cwd_):
+    Operation(pid_),
+    cwd(cwd_) {  }
+
+  std::string GetCwd() const;
+  std::string GetOpName() const;
+  std::string ToString() const;
+
+private:
+  std::string cwd;
+};
+
+
+class SetCwdFd : public Operation {
+public:
+  SetCwdFd(size_t pid_, size_t fd_):
+    Operation(pid_),
+    fd(fd_) { }
+
+  size_t GetFd() const;
+  std::string GetOpName() const;
+  std::string ToString() const;
+
+private:
+  size_t fd;
+};
+
+
+class Symlink : public Operation {
+public:
+  Symlink(size_t pid_, size_t dirfd_, std::string filename_,
+          std::string target_):
+    Operation(pid_),
+    dirfd(dirfd_),
+    filename(filename_),
+    target(target_) {  }
+
+  size_t GetDirFd() const;
+  std::string GetFilename() const;
+  std::string GetTargetPath() const;
+  std::string GetOpName() const;
+  std::string ToString() const;
+
+private:
+  size_t dirfd;
+  std::string filename;
+  std::string target;
+
+};
+
+
+class SysOp : public Expr {
+public:
+  enum SysOpType {
+    ASYNC,
+    SYNC
+  };
+
+  SysOp(std::string op_id_):
+    op_id(op_id_),
+    op_type(SYNC) {  }
+  SysOp(std::string op_id_, std::string task_name_):
+    op_id(op_id_),
+    op_type(ASYNC),
+    task_name(task_name_) {  }
+
+  void AddOperation(Operation *operation);
+  std::vector<const Operation*> GetOperations() const;
+  std::string GetOpId() const;
+  std::optional<std::string> GetTaskName() const;
+  std::string ToString() const;
+  std::string GetHeader() const;
+
+private:
+  std::string op_id;
+  enum SysOpType op_type;
+  std::optional<std::string> task_name;
+  std::vector<Operation*> operations;
+};
+
+
+class ExecTask : public Expr {
+public:
+  ExecTask(std::string task_name_):
+    task_name(task_name_) {  }
+
+  void AddExpr(Expr *expr);
+  std::string GetTaskName() const;
+  std::vector<const Expr*> GetExpressions() const; 
+  std::string GetHeader() const;
+  std::string ToString() const;
+
+private:
+  std::string task_name;
+  std::vector<Expr*> exprs;
 
 };
 
