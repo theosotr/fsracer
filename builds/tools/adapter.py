@@ -232,7 +232,7 @@ setcwd      = 'setcwd {}'             # 'setcwd' PATH
 newproc     = 'newproc {} {}'         # 'newproc' ['fd'/'fs'/'fdfs'/'none'] ret
 delfd       = 'delfd {}'              # 'delfd' fd
 dupfd       = 'dupfd {} {}'           # 'dupfd' fd fd
-fchdir      = 'fchdir {}'             # 'fchdir' fd
+setcwdfd    = 'setcwdfd {}'             # 'setcwdfd' fd
 symlink     = 'symlink {} {} {}'      # 'symlink' dirfd PATH PATH
 link        = 'link {} {} {} {}'      # 'link' dirfd PATH dirfd PATH
 rename      = 'rename {} {} {} {}'    # 'rename' dirfd PATH dirfd PATH
@@ -312,8 +312,8 @@ def translate_execve(trace):
     return [hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
-def translate_fchdir(trace):
-    return [fchdir.format(trace.syscall_args[0])]
+def translate_setcwdfd(trace):
+    return [setcwdfd.format(trace.syscall_args[0])]
 
 
 @check_paths([1])
