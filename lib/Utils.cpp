@@ -50,7 +50,17 @@ size_t Split(const std::string &str, std::vector<std::string> &tokens) {
   std::string::const_iterator p1 = str.cbegin();
   std::string::const_iterator p2 = p1;
   while (true) {
-    p2 = std::find(p1, str.cend(), ' ');
+    // Handle the case when a whitespace is included inside quotes.
+    // In this case we do not split string, but we treat the quoted string
+    // a separate token.
+    if (*p1 == '"') {
+      p2 = std::find(p1 + 1, str.cend(), '"');
+      if (p2 != str.cend()) {
+        p2++;
+      }
+    } else {
+      p2 = std::find(p1, str.cend(), ' ');
+    }
     tokens.push_back(std::string(p1, p2));
     count++;
 
