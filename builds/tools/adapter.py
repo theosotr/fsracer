@@ -312,7 +312,7 @@ def translate_execve(trace):
     return [hpath.format('AT_FDCWD', trace.syscall_args[0], 'consumed')]
 
 
-def translate_setcwdfd(trace):
+def translate_fchdir(trace):
     return [setcwdfd.format(trace.syscall_args[0])]
 
 
