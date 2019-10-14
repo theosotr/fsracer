@@ -126,10 +126,10 @@ StreamTraceGenerator::EmitSysOp(const std::vector<std::string> &tokens) {
 }
 
 
-fstrace::ExecTask *
+fstrace::ExecTaskBeg *
 StreamTraceGenerator::EmitExecTask(const std::vector<std::string> &tokens) {
   CHECK_TOKENS(3, "execTask");
-  return new fstrace::ExecTask(tokens[1]);
+  return new fstrace::ExecTaskBeg(tokens[1]);
 }
 
 
@@ -334,7 +334,7 @@ fstrace::TraceNode *StreamTraceGenerator::ParseLine(const std::string &line) {
   location = l + ":" + std::to_string(loc_line);
   if (l == "}") {
     in_sysop = false;
-    return nullptr;
+    return new fstrace::End();
   }
   std::vector<std::string> tokens;
   utils::Split(l, tokens);

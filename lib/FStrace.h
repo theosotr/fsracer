@@ -27,6 +27,7 @@ public:
   virtual ~TraceNode() {  };
   /** This converts the current object to a string. */
   virtual std::string ToString() const = 0;
+  virtual void Accept(analyzer::Analyzer *analyzer) const = 0;
 };
 
 
@@ -47,26 +48,27 @@ private:
 
 /** A class that represents a trace expression. */ 
 class Expr : public TraceNode {
-  public:
-    Expr() {  }
-    /** Polymorphic destructor. */
-    virtual ~Expr() {  };
-    /** This converts the current object to a string. */
-    virtual std::string ToString() const = 0;
+public:
+  Expr() {  }
+  /** Polymorphic destructor. */
+  virtual ~Expr() {  };
+  /** This converts the current object to a string. */
+  virtual std::string ToString() const = 0;
 
-    /** Get the debug information corresponding to this expression. */
-    DebugInfo GetDebugInfo() const {
-      return debug_info;
-    }
+  /** Get the debug information corresponding to this expression. */
+  DebugInfo GetDebugInfo() const {
+    return debug_info;
+  }
 
-    /** Set the debug information for this expression. */
-    void AddDebugInfo(std::string debug_info_) {
-      debug_info.AddDebugInfo(debug_info_);
-    }
+  /** Set the debug information for this expression. */
+  void AddDebugInfo(std::string debug_info_) {
+    debug_info.AddDebugInfo(debug_info_);
+  }
+  virtual void Accept(analyzer::Analyzer *analyzer) const = 0;
 
-  private:
-    /// Debug information corresponding to this expression.
-    DebugInfo debug_info;
+private:
+  /// Debug information corresponding to this expression.
+  DebugInfo debug_info;
 };
 
 
@@ -152,15 +154,13 @@ public:
     task_name(task_name_),
     task(task_) {  }
 
-  /** Destructs the current object. */
-  ~NewTask() {  }
-
   /** Getter for the 'task_name' field. */
   std::string GetTaskName() const;
   Task GetTask() const;
 
   /** String representation of the current expression. */
   std::string ToString() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
 
 private:
   /// Name of task.
@@ -181,6 +181,7 @@ public:
   std::string ToString() const;
   std::string GetTaskName() const;
   std::string GetObject() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
 
 private:
   std::string task_name;
@@ -198,7 +199,7 @@ public:
   std::string ToString() const;
   std::string GetTaskName() const;
   std::string GetObject() const;
-
+  void Accept(analyzer::Analyzer *analyzer) const;
 
 private:
   std::string task_name;
@@ -215,6 +216,7 @@ public:
   std::string GetTarget() const;
   std::string GetSource() const;
   std::string ToString() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
 
 private:
   std::string target;
@@ -237,6 +239,7 @@ public:
   virtual ~Operation() {  };
   virtual std::string ToString() const = 0;
   virtual std::string GetOpName() const = 0;
+  virtual void Accept(analyzer::Analyzer *analyzer) const = 0;
 
   size_t GetPid() const;
   void MarkFailed();
@@ -264,6 +267,7 @@ public:
   int GetFd() const;
   std::string GetOpName() const;
   std::string ToString() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
 
 private:
   size_t dirfd;
@@ -281,6 +285,7 @@ public:
   size_t GetFd() const;
   std::string GetOpName() const;
   std::string ToString() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
 
 private:
   size_t fd;
@@ -298,6 +303,7 @@ public:
   size_t GetNewFd() const;
   std::string GetOpName() const;
   std::string ToString() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
 
 private:
   size_t old_fd;
@@ -326,6 +332,8 @@ public:
   enum AccessType GetAccessType() const;
   std::string GetOpName() const;
   std::string ToString() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
+
   static std::string AccToString(enum AccessType effect);
   static bool Consumes(enum AccessType effect);
 
@@ -344,6 +352,7 @@ public:
     Hpath(pid_, dirfd_, filename_, access_type_) {  }
 
   std::string GetOpName() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
 };
 
 
@@ -363,6 +372,7 @@ public:
   std::string GetNewPath() const;
   std::string ToString() const;
   std::string GetOpName() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
 
 protected:
   size_t old_dirfd;
@@ -386,12 +396,12 @@ public:
     Operation(pid_),
     clone_mode(clone_mode_),
     new_pid(new_pid_) {  }
-  ~NewProc() {  }
 
   enum CloneMode GetCloneMode() const;
   size_t GetNewProcId() const;
   std::string GetOpName() const;
   std::string ToString() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
 
 private:
   enum CloneMode clone_mode;
@@ -406,6 +416,7 @@ public:
     Link(pid_, old_dirfd_, old_path_, new_dirfd_, new_path_) {  }
 
   std::string GetOpName() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
 };
 
 
@@ -418,6 +429,7 @@ public:
   std::string GetCwd() const;
   std::string GetOpName() const;
   std::string ToString() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
 
 private:
   std::string cwd;
@@ -433,6 +445,7 @@ public:
   size_t GetFd() const;
   std::string GetOpName() const;
   std::string ToString() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
 
 private:
   size_t fd;
@@ -453,6 +466,7 @@ public:
   std::string GetTargetPath() const;
   std::string GetOpName() const;
   std::string ToString() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
 
 private:
   size_t dirfd;
@@ -483,6 +497,7 @@ public:
   std::optional<std::string> GetTaskName() const;
   std::string ToString() const;
   std::string GetHeader() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
 
 private:
   std::string op_id;
@@ -492,22 +507,43 @@ private:
 };
 
 
-class ExecTask : public Expr {
+class ExecTaskBeg : public Expr {
 public:
-  ExecTask(std::string task_name_):
+  ExecTaskBeg(std::string task_name_):
     task_name(task_name_) {  }
-
-  void AddExpr(Expr *expr);
   std::string GetTaskName() const;
   std::vector<const Expr*> GetExpressions() const; 
-  std::string GetHeader() const;
   std::string ToString() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
+
+protected:
+  std::string task_name;
+};
+
+
+class ExecTask : public ExecTaskBeg {
+public:
+  ExecTask(std::string task_name_):
+    ExecTaskBeg(task_name_) {  }
+
+  void AddExpr(Expr *expr);
+  std::vector<const Expr*> GetExpressions() const; 
+  std::string ToString() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
 
 private:
-  std::string task_name;
   std::vector<Expr*> exprs;
 
 };
+
+
+class End : public Expr {
+public:
+  std::string ToString() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
+};
+
+
 
 } // namespace fstrace
 

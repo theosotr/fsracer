@@ -15,22 +15,15 @@ void TraceProcessor::ProcessTrace(const TraceNode *trace_node) {
       ProcessSysOp(sysop);
       return;
     }
-    const ExecTask *exec_task = dynamic_cast<const ExecTask*>(trace_node);
-    if (exec_task) {
-      ProcessExecTask(exec_task);
+    const End *end = dynamic_cast<const End*>(trace_node);
+    if (end) {
+      debug::msg() << end->ToString();
+      if (in_sysop) {
+        in_sysop = false;
+      }
       return;
     }
     debug::msg() << trace_node->ToString();
-  } else {
-    if (in_sysop) {
-      debug::msg() << "}";
-      in_sysop = false;
-      return;
-    }
-    if (in_exectask) {
-      debug::msg() << "}";
-      in_exectask = false;
-    }
   }
 }
 
@@ -46,7 +39,7 @@ void TraceProcessor::ProcessExecTask(const ExecTask *exec_task) {
   if (exec_task) {
     assert(!in_sysop);
     in_exectask = true;
-    debug::msg() << exec_task->GetHeader() << " {";
+    debug::msg() << exec_task->ToString();
   }
 }
 

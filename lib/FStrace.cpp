@@ -1,5 +1,7 @@
 #include "FStrace.h"
 
+#include "AnalyzerExperimental.h"
+
 
 namespace fstrace {
 
@@ -60,6 +62,12 @@ Task NewTask::GetTask() const {
   return task;
 }
 
+
+void NewTask::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeNewTask(this);
+}
+
+
 std::string Consumes::GetTaskName() const {
   return task_name;
 }
@@ -72,6 +80,11 @@ std::string Consumes::GetObject() const {
 
 std::string Consumes::ToString() const {
   return "consumes " + task_name + " " + object;
+}
+
+
+void Consumes::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeConsumes(this);
 }
 
 
@@ -90,6 +103,11 @@ std::string Produces::ToString() const {
 }
 
 
+void Produces::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeProduces(this);
+}
+
+
 std::string DependsOn::GetTarget() const {
   return target;
 }
@@ -102,6 +120,11 @@ std::string DependsOn::GetSource() const {
 
 std::string DependsOn::ToString() const {
   return "dependsOn " + target + " " + source;
+}
+
+
+void DependsOn::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeDependsOn(this);
 }
 
 
@@ -162,6 +185,11 @@ std::string NewFd::ToString() const {
 };
 
 
+void NewFd::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeNewFd(this);
+}
+
+
 size_t DelFd::GetFd() const {
   return fd;
 }
@@ -176,6 +204,11 @@ std::string DelFd::ToString() const {
   std::string pid_str = std::to_string(pid) + ", ";
   return pid_str + GetOpName() + " " + std::to_string(fd) +
     ACTUAL_NAME + FAILED;
+}
+
+
+void DelFd::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeDelFd(this);
 }
 
 
@@ -201,21 +234,30 @@ std::string DupFd::ToString() const {
 };
 
 
+void DupFd::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeDupFd(this);
+}
+
+
 size_t Hpath::GetDirFd() const {
   return dirfd;
 }
+
 
 std::string Hpath::GetFilename() const {
   return filename;
 }
 
+
 enum Hpath::AccessType Hpath::GetAccessType() const {
   return access_type;
 }
 
+
 std::string Hpath::GetOpName() const {
   return "hpath";
 }
+
 
 std::string Hpath::ToString() const {
   std::string str = DirfdToString(dirfd);
@@ -223,6 +265,11 @@ std::string Hpath::ToString() const {
   return pid_str + GetOpName() + " " + str + " " + filename + " " +
     Hpath::AccToString(access_type) + ACTUAL_NAME + FAILED;
 };
+
+
+void Hpath::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeHpath(this);
+}
 
 
 std::string Hpath::AccToString(enum AccessType access) {
@@ -249,6 +296,11 @@ bool Hpath::Consumes(enum AccessType access) {
 
 std::string HpathSym::GetOpName() const {
   return "hpathsym";
+}
+
+
+void HpathSym::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeHpathSym(this);
 }
 
 
@@ -286,6 +338,11 @@ std::string Link::GetOpName() const {
 }
 
 
+void Link::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeLink(this);
+}
+
+
 enum NewProc::CloneMode NewProc::GetCloneMode() const {
   return clone_mode;
 }
@@ -320,8 +377,18 @@ std::string NewProc::ToString() const {
 }
 
 
+void NewProc::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeNewProc(this);
+}
+
+
 std::string Rename::GetOpName() const {
   return "rename";
+}
+
+
+void Rename::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeRename(this);
 }
 
 
@@ -341,6 +408,11 @@ std::string SetCwd::ToString() const {
 }
 
 
+void SetCwd::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeSetCwd(this);
+}
+
+
 size_t SetCwdFd::GetFd() const {
   return fd;
 }
@@ -355,6 +427,11 @@ std::string SetCwdFd::ToString() const {
   std::string pid_str = std::to_string(pid) + ", ";
   return pid_str + GetOpName() + " " + std::to_string(fd) +
     ACTUAL_NAME + FAILED;
+}
+
+
+void SetCwdFd::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeSetCwdFd(this);
 }
 
 
@@ -382,6 +459,11 @@ std::string Symlink::ToString() const {
   std::string pid_str = std::to_string(pid) + ", ";
   return pid_str + GetOpName() + " " + std::to_string(dirfd) + " " +
     filename + " " + target + ACTUAL_NAME + FAILED;
+}
+
+
+void Symlink::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeSymlink(this);
 }
 
 
@@ -431,30 +513,36 @@ std::string SysOp::ToString() const {
 }
 
 
+void SysOp::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeSysOp(this);
+}
+
+
 void ExecTask::AddExpr(Expr *expr) {
   if (expr) {
     exprs.push_back(expr);
   }
 }
 
+
 std::vector<const Expr*> ExecTask::GetExpressions() const {
   return std::vector<const Expr*>(exprs.begin(), exprs.end());
 }
 
 
-std::string ExecTask::GetTaskName() const {
+std::string ExecTaskBeg::GetTaskName() const {
   return task_name;
 }
 
 
-std::string ExecTask::GetHeader() const {
-  return "execTask " + task_name;
+std::string ExecTaskBeg::ToString() const {
+  return "execTask " + task_name + " {";
 }
 
 
 std::string ExecTask::ToString() const {
-  std::string str = GetHeader();
-  str += "{\n";
+  std::string str = ExecTaskBeg::ToString();
+  str += "\n";
   for (auto const &expr : exprs) {
     if (!expr) {
       continue;
@@ -464,6 +552,26 @@ std::string ExecTask::ToString() const {
   }
   str += "}";
   return str;
+}
+
+
+void ExecTask::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeExecTask(this);
+}
+
+
+void ExecTaskBeg::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeExecTaskBeg(this);
+}
+
+
+std::string End::ToString() const {
+  return "}";
+}
+
+
+void End::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeEnd(this);
 }
 
 

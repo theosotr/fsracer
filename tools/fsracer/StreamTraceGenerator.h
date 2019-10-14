@@ -59,7 +59,7 @@ private:
   fstrace::NewTask *EmitNewTask(const std::vector<std::string> &tokens);
   fstrace::DependsOn *EmitDependsOn(const std::vector<std::string> &tokens);
   fstrace::SysOp *EmitSysOp(const std::vector<std::string> &tokens);
-  fstrace::ExecTask *EmitExecTask(const std::vector<std::string> &tokens);
+  fstrace::ExecTaskBeg *EmitExecTask(const std::vector<std::string> &tokens);
 
   // Parse syscall operations
   fstrace::NewFd *EmitNewFd(const std::vector<std::string> &tokens, size_t pid);
