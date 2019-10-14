@@ -1,14 +1,14 @@
 #ifndef STREAM_TRACE_GENERATOR_H
 #define STREAM_TRACE_GENERATOR_H
 
-
+#include <unordered_map>
 #include <string>
 
 #include <FStrace.h>
 #include <TraceGenerator.h>
 
 
-namespace fstrace {
+namespace trace_generator {
 
 
 inline int ParseDirFd(const std::string token) {
@@ -35,7 +35,7 @@ public:
 
   std::string GetName() const;
   void Start();
-  TraceNode *GetNextTrace();
+  fstrace::TraceNode *GetNextTrace();
   bool HasNext() const;
   void Stop();
 
@@ -49,34 +49,39 @@ private:
   size_t loc_line;
   std::string location;
 
-  TraceNode *ParseLine(const std::string &line);
-  TraceNode *ParseOperation(const std::vector<std::string> &tokens);
-  TraceNode *ParseExpression(const std::vector<std::string> &tokens);
+  fstrace::TraceNode *ParseLine(const std::string &line);
+  fstrace::TraceNode *ParseOperation(const std::vector<std::string> &tokens);
+  fstrace::TraceNode *ParseExpression(const std::vector<std::string> &tokens);
 
   // Parser expressions
-  Consumes *EmitConsumes(const std::vector<std::string> &tokens);
-  Produces *EmitProduces(const std::vector<std::string> &tokens);
-  NewTask *EmitNewTask(const std::vector<std::string> &tokens);
-  DependsOn *EmitDependsOn(const std::vector<std::string> &tokens);
-  SysOp *EmitSysOp(const std::vector<std::string> &tokens);
-  ExecTask *EmitExecTask(const std::vector<std::string> &tokens);
+  fstrace::Consumes *EmitConsumes(const std::vector<std::string> &tokens);
+  fstrace::Produces *EmitProduces(const std::vector<std::string> &tokens);
+  fstrace::NewTask *EmitNewTask(const std::vector<std::string> &tokens);
+  fstrace::DependsOn *EmitDependsOn(const std::vector<std::string> &tokens);
+  fstrace::SysOp *EmitSysOp(const std::vector<std::string> &tokens);
+  fstrace::ExecTask *EmitExecTask(const std::vector<std::string> &tokens);
 
   // Parse syscall operations
-  NewFd *EmitNewFd(const std::vector<std::string> &tokens, size_t pid);
-  DelFd *EmitDelFd(const std::vector<std::string> &tokens, size_t pid);
-  DupFd *EmitDupFd(const std::vector<std::string> &tokens, size_t pid);
-  Hpath *EmitHpath(const std::vector<std::string> &tokens, size_t pid,
+  fstrace::NewFd *EmitNewFd(const std::vector<std::string> &tokens, size_t pid);
+  fstrace::DelFd *EmitDelFd(const std::vector<std::string> &tokens, size_t pid);
+  fstrace::DupFd *EmitDupFd(const std::vector<std::string> &tokens, size_t pid);
+  fstrace::Hpath *EmitHpath(const std::vector<std::string> &tokens, size_t pid,
                    bool hpathsym);
-  Link *EmitLinkOrRename(const std::vector<std::string> &tokens, size_t pid,
-                         bool is_link);
-  NewProc *EmitNewProc(const std::vector<std::string> &tokens, size_t pid);
-  Rename *EmitRename(const std::vector<std::string> &tokens, size_t pid);
-  SetCwd *EmitSetCwd(const std::vector<std::string> &tokens, size_t pid);
-  SetCwdFd *EmitSetCwdFd(const std::vector<std::string> &tokens, size_t pid);
-  Symlink *EmitSymlink(const std::vector<std::string> &tokens, size_t pid);
+  fstrace::Link *EmitLinkOrRename(const std::vector<std::string> &tokens,
+                                  size_t pid, bool is_link);
+  fstrace::NewProc *EmitNewProc(const std::vector<std::string> &tokens,
+                                size_t pid);
+  fstrace::Rename *EmitRename(const std::vector<std::string> &tokens,
+                              size_t pid);
+  fstrace::SetCwd *EmitSetCwd(const std::vector<std::string> &tokens,
+                              size_t pid);
+  fstrace::SetCwdFd *EmitSetCwdFd(const std::vector<std::string> &tokens,
+                                  size_t pid);
+  fstrace::Symlink *EmitSymlink(const std::vector<std::string> &tokens,
+                                size_t pid);
 };
 
 
-} // namespace fstrace
+} // namespace trace_generator
 
 #endif

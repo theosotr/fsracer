@@ -26,7 +26,7 @@ main(int argc, char **argv)
 {
   signal(SIGINT, sig_handler);
   fstrace::TraceProcessor trace_proc;
-  fstrace::StreamTraceGenerator trace_gen (argv[1]);
+  trace_generator::StreamTraceGenerator trace_gen (argv[1]);
   trace_gen.Start();
   while (trace_gen.HasNext()) {
     fstrace::TraceNode *trace_node = trace_gen.GetNextTrace();
