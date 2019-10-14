@@ -265,6 +265,8 @@ def translate_access(trace):
 
 @check_paths([0])
 def translate_chdir(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     return [setcwd.format(trace.syscall_args[0])]
 
 
@@ -279,6 +281,8 @@ def translate_chown(trace):
 
 
 def translate_clone(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     has_clone_fs = 'CLONE_FS' in trace.syscall_args[1]
     has_clone_files = 'CLONE_FILES' in trace.syscall_args[1]
     if (has_clone_fs and has_clone_files):
@@ -292,18 +296,26 @@ def translate_clone(trace):
 
 
 def translate_close(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     return [delfd.format(trace.syscall_args[0])]
 
 
 def translate_dup(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     return [dupfd.format(trace.syscall_args[0], trace.syscall_ret)]
 
 
 def translate_dup2(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     return [dupfd.format(trace.syscall_args[0], trace.syscall_args[1])]
 
 
 def translate_dup3(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     return [dupfd.format(trace.syscall_args[0], trace.syscall_args[1])]
 
 
@@ -313,6 +325,8 @@ def translate_execve(trace):
 
 
 def translate_fchdir(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     return [setcwdfd.format(trace.syscall_args[0])]
 
 
@@ -335,12 +349,16 @@ def translate_fchownat(trace):
 
 
 def translate_fcntl(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     if 'F_DUPFD' in trace.syscall_args[1]:
         return [dupfd.format(trace.syscall_args[0], trace.syscall_ret)]
     return
 
 
 def translate_fork(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     return [newproc.format('none', trace.syscall_ret)]
 
 
@@ -381,6 +399,8 @@ def translate_lstat(trace):
 
 @check_paths([0, 1])
 def translate_link(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     return [
         link.format(
             'AT_FDCWD', trace.syscall_args[0],'AT_FDCWD', trace.syscall_args[1]
@@ -392,6 +412,8 @@ def translate_link(trace):
 
 @check_paths([1, 3])
 def translate_linkat(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     return [
         link.format(
             trace.syscall_args[0], trace.syscall_args[1],
@@ -423,6 +445,8 @@ def translate_mknod(trace):
 
 @check_paths([0])
 def translate_open(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     if any(x in trace.syscall_args[1] for x in ['O_CREAT', 'O_TRUNC']):
         access = 'produced'
     else:
@@ -435,17 +459,16 @@ def translate_open(trace):
 
 @check_paths([1])
 def translate_openat(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     if any(x in trace.syscall_args[2] for x in ['O_CREAT', 'O_TRUNC']):
         access = 'produced'
     else:
         access = 'consumed'
     return [
-        newfd.format(
-            trace.syscall_args[0], trace.syscall_args[1], trace.syscall_ret
-        ),
-        hpath.format(
-            trace.syscall_args[0], trace.syscall_args[1], access
-        ),
+        newfd.format(trace.syscall_args[0], trace.syscall_args[1],
+                     trace.syscall_ret),
+        hpath.format(trace.syscall_args[0], trace.syscall_args[1], access)
     ]
 
 
@@ -470,6 +493,8 @@ def translate_removexattr(trace):
 
 @check_paths([0, 1])
 def translate_rename(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     return [
         rename.format(
             'AT_FDCWD', trace.syscall_args[0], 'AT_FDCWD', trace.syscall_args[1]
@@ -482,6 +507,8 @@ def translate_rename(trace):
 
 @check_paths([1, 3])
 def translate_renameat(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     return [
         rename.format(
             trace.syscall_args[0], trace.syscall_args[1],
@@ -509,6 +536,8 @@ def translate_statfs(trace):
 
 @check_paths([0, 1])
 def translate_symlink(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     return [
         symlink.format(
             'AT_FDCWD', trace.syscall_args[1], trace.syscall_args[0]
@@ -520,6 +549,8 @@ def translate_symlink(trace):
 
 @check_paths([2])
 def translate_symlinkat(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
     return [
         symlink.format(
             trace.syscall_args[1],
