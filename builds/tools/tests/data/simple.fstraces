@@ -1,47 +1,43 @@
 sysop 0 SYNC {
-    15289, hpath AT_FDCWD "/usr/bin/make" consumed
+	15289, hpath AT_FDCWD "/usr/bin/make" consumed
 }
 sysop 1 SYNC {
-    15289, hpath AT_FDCWD "/etc/ld.so.preload" consumed
+	15289, hpath AT_FDCWD "/etc/ld.so.preload" consumed
 }
 sysop 2 SYNC {
-    15289, newfd AT_FDCWD "/etc/ld.so.cache" 3
-    15289, hpath AT_FDCWD "/etc/ld.so.cache" consumed
+	15289, newfd AT_FDCWD "/etc/ld.so.cache" 3
+	15289, hpath AT_FDCWD "/etc/ld.so.cache" consumed
 }
 sysop 3 SYNC {
-    15289, delfd 3
+	15289, delfd 3
 }
 newTask Makefile_13_s1.o S 0
 consumes Makefile_13_s1.o "s1.c"
 consumes Makefile_13_s1.o "s1.h"
 execTask Makefile_13_s1.o {
-    sysop 4 SYNC {
-        15290, hpath AT_FDCWD "/usr/local/bin/post-shell" consumed
-    }
-    sysop 5 SYNC {
-        15292, hpath AT_FDCWD "/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/stdc-predef.h.gch" consumed
-    }
-    sysop 6 SYNC {
-        15292, newfd AT_FDCWD "/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/stdc-predef.h" -1
-        15292, hpath AT_FDCWD "/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/stdc-predef.h" consumed
-    }
+	sysop 4 SYNC {
+		15290, hpath AT_FDCWD "/usr/local/bin/post-shell" consumed
+	}
+	sysop 5 SYNC {
+		15292, hpath AT_FDCWD "/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/stdc-predef.h.gch" consumed
+	}
+}
+sysop 6 SYNC {
+	15289, hpath AT_FDCWD "s1.o" consumed
 }
 sysop 7 SYNC {
-    15289, hpath AT_FDCWD "s1.o" consumed
+	15289, hpath AT_FDCWD "s2.o" consumed
 }
 sysop 8 SYNC {
-    15289, hpath AT_FDCWD "s2.o" consumed
-}
-sysop 9 SYNC {
-    15289, hpath AT_FDCWD "s2.h" consumed
+	15289, hpath AT_FDCWD "s2.h" consumed
 }
 newTask Makefile_17_s2.o S 0
 consumes Makefile_17_s2.o "s2.h"
 execTask Makefile_17_s2.o {
-    sysop 10 SYNC {
-        15289, newproc none 15294
-    }
-    sysop 11 SYNC {
-        15294, hpath AT_FDCWD "/usr/local/bin/post-shell" consumed
-    }
+	sysop 9 SYNC {
+		15289, newproc none 15294
+	}
+	sysop 10 SYNC {
+		15294, hpath AT_FDCWD "/usr/local/bin/post-shell" consumed
+	}
 }

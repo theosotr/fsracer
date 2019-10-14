@@ -68,7 +68,7 @@
     "fchdir": [
         [
             "6551  fchdir(3) = 0",
-            ["fchdir 3"]
+            ["setcwdfd 3"]
         ]
     ],
     "fchmodat": [
