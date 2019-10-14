@@ -8,32 +8,50 @@
 #include "StreamTraceGenerator.h"
 #include "Utils.h"
 
+#define CHECK_TOKENS(n, con)                                               \
+  if (tokens.size() != n) {                                                \
+    AddError(utils::err::TRACE_ERROR, "#con expects #n tokens", location); \
+    has_next = false;                                                      \
+    return nullptr;                                                        \
+  }
+
+#define CHECK_DIRFD(n)                                                    \
+  if (n < 0) {                                                            \
+    AddError(utils::err::TRACE_ERROR,                                     \
+             "#n should be either an integer or \"AT_FDCWD\"", location); \
+    has_next = false;                                                     \
+    return nullptr;                                                       \
+  }
+
+
 
 namespace fstrace {
-// TODO Handle parser errors
 
-Consumes *EmitConsumes(const std::vector<std::string> &tokens) {
-  if (tokens.size() != 3) {
-    return nullptr;
-  }
+
+Consumes *
+StreamTraceGenerator::EmitConsumes(const std::vector<std::string> &tokens) {
+  CHECK_TOKENS(3, "consumes");
   return new Consumes(tokens[1], tokens[2]);
 }
 
 
-Produces *EmitProduces(const std::vector<std::string> &tokens) {
-  if (tokens.size() != 3) {
-    return nullptr;
-  }
+Produces *
+StreamTraceGenerator::EmitProduces(const std::vector<std::string> &tokens) {
+  CHECK_TOKENS(3, "produces");
   return new Produces(tokens[1], tokens[2]);
 }
 
 
-NewTask *EmitNewTask(const std::vector<std::string> &tokens) {
+NewTask *
+StreamTraceGenerator::EmitNewTask(const std::vector<std::string> &tokens) {
   switch (tokens.size()) {
     case 4: {
       const std::string &task_name = tokens[1];
       const std::string &task_type = tokens[2];
       if (!utils::IsNumber(tokens[3])) {
+        AddError(utils::err::TRACE_ERROR,
+                 "newTask expects 4th token to be a number", location);
+        has_next = false;
         return nullptr;
       }
       size_t task_value = std::stoi(tokens[3]);
@@ -44,6 +62,8 @@ NewTask *EmitNewTask(const std::vector<std::string> &tokens) {
       } else if (task_type == "W") {
         return new NewTask(task_name, Task(Task::W, task_value));
       } else {
+        AddError(utils::err::TRACE_ERROR, "Unknown event type", location);
+        has_next = false;
         return nullptr;
       }
       break;
@@ -51,60 +71,73 @@ NewTask *EmitNewTask(const std::vector<std::string> &tokens) {
       const std::string &task_name = tokens[1];
       const std::string &task_type = tokens[2];
       if (task_type != "EXTERNAL") {
+        AddError(utils::err::TRACE_ERROR, "Unknown event type", location);
+        has_next = false;
         return nullptr;
       }
       return new NewTask(task_name, Task(Task::EXT, 0));
     } default:
+      AddError(utils::err::TRACE_ERROR, "newTask expects 4 or 5 tokens",
+               location);
+      has_next = false;
       return nullptr;
   }
 }
 
 
-DependsOn *EmitDependsOn(const std::vector<std::string> &tokens) {
-  if (tokens.size() != 3) {
-    return nullptr;
-  }
+DependsOn *
+StreamTraceGenerator::EmitDependsOn(const std::vector<std::string> &tokens) {
+  CHECK_TOKENS(3, "dependsOn")
   return new DependsOn(tokens[1], tokens[2]);
 }
 
 
-SysOp *EmitSysOp(const std::vector<std::string> &tokens) {
+SysOp *
+StreamTraceGenerator::EmitSysOp(const std::vector<std::string> &tokens) {
   switch (tokens.size()) {
     case 4: {
       const std::string &op_type = tokens[2];
       if (op_type != "SYNC") {
+        AddError(utils::err::TRACE_ERROR, "sysop with 4 tokens should be SYNC",
+                 location);
+        has_next = false;
         return nullptr;
       }
       return new SysOp(tokens[1]);
     } case 5: {
       const std::string &op_type = tokens[3];
       if (op_type != "ASYNC") {
+        AddError(utils::err::TRACE_ERROR, "sysop with 5 tokens should be ASYNC",
+                 location);
+        has_next = false;
         return nullptr;
       }
       return new SysOp(tokens[1], tokens[2]);
     } default:
+      AddError(utils::err::TRACE_ERROR, "sysop expects 4 or 5 tokens",
+               location);
+      has_next = false;
       return nullptr;
   }
 }
 
 
-ExecTask *EmitExecTask(const std::vector<std::string> &tokens) {
-  if (tokens.size() != 3) {
-    return nullptr;
-  }
+ExecTask *
+StreamTraceGenerator::EmitExecTask(const std::vector<std::string> &tokens) {
+  CHECK_TOKENS(3, "execTask");
   return new ExecTask(tokens[1]);
 }
 
 
-NewFd *EmitNewFd(const std::vector<std::string> &tokens, size_t pid) {
-  if (tokens.size() != 5) {
-    return nullptr;
-  }
+NewFd *
+StreamTraceGenerator::EmitNewFd(const std::vector<std::string> &tokens,
+                                size_t pid) {
+  CHECK_TOKENS(5, "newfd");
   size_t dirfd = ParseDirFd(tokens[2]);
-  if (dirfd < 0) {
-    return nullptr;
-  }
+  CHECK_DIRFD(dirfd);
   if (!utils::IsNumber(tokens[4])) {
+    AddError(utils::err::TRACE_ERROR, "fd should be an integer", location);
+    has_next = false;
     return nullptr;
   }
   int fd = std::stoi(tokens[4]);
@@ -116,40 +149,42 @@ NewFd *EmitNewFd(const std::vector<std::string> &tokens, size_t pid) {
 }
 
 
-DelFd *EmitDelFd(const std::vector<std::string> &tokens, size_t pid) {
-  if (tokens.size() != 3) {
-    return nullptr;
-  }
+DelFd *
+StreamTraceGenerator::EmitDelFd(const std::vector<std::string> &tokens,
+                                size_t pid) {
+  CHECK_TOKENS(3, "delfd");
   if (!utils::IsNumber(tokens[2])) {
+    AddError(utils::err::TRACE_ERROR, "fd should be an integer", location);
+    has_next = false;
     return nullptr;
   }
   return new DelFd(pid, std::stoi(tokens[2]));
 }
 
 
-DupFd *EmitDupFd(const std::vector<std::string> &tokens, size_t pid) {
-  if (tokens.size() != 4) {
-    return nullptr;
-  }
+DupFd *
+StreamTraceGenerator::EmitDupFd(const std::vector<std::string> &tokens,
+                                size_t pid) {
+  CHECK_TOKENS(4, "dupfd");
   if (!utils::IsNumber(tokens[2])) {
+    AddError(utils::err::TRACE_ERROR, "old_fd should be an integer", location);
+    has_next = false;
     return nullptr;
   }
   if (!utils::IsNumber(tokens[3])) {
+    AddError(utils::err::TRACE_ERROR, "new_fd should be an integer", location);
+    has_next = false;
     return nullptr;
   }
   return new DupFd(pid, std::stoi(tokens[2]), std::stoi(tokens[3]));
 }
 
 
-Hpath *EmitHpath(const std::vector<std::string> &tokens, size_t pid,
-                 bool hpathsym) {
-  if (tokens.size() != 5) {
-    return nullptr;
-  }
+Hpath *StreamTraceGenerator::EmitHpath(const std::vector<std::string> &tokens,
+                                       size_t pid, bool hpathsym) {
+  CHECK_TOKENS(5, "hpath");
   size_t dirfd = ParseDirFd(tokens[2]);
-  if (dirfd < 0) {
-    return nullptr;
-  }
+  CHECK_DIRFD(dirfd);
   enum Hpath::AccessType access_type;
   if (tokens[4] == "consumed") {
     access_type = Hpath::CONSUMED;
@@ -158,6 +193,8 @@ Hpath *EmitHpath(const std::vector<std::string> &tokens, size_t pid,
   } else if (tokens[4] == "expunged") {
     access_type = Hpath::EXPUNGED;
   } else {
+    AddError(utils::err::TRACE_ERROR, "Unknown access type", location);
+    has_next = false;
     return nullptr;
   }
   if (hpathsym) {
@@ -168,19 +205,15 @@ Hpath *EmitHpath(const std::vector<std::string> &tokens, size_t pid,
 }
 
 
-Link *EmitLinkOrRename(const std::vector<std::string> &tokens, size_t pid,
-                       bool is_link) {
-  if (tokens.size() != 6) {
-    return nullptr;
-  }
+Link *
+StreamTraceGenerator::EmitLinkOrRename(const std::vector<std::string> &tokens,
+                                       size_t pid, bool is_link) {
+
+  CHECK_TOKENS(6, is_link ? "link" : "rename");
   size_t old_dirfd = ParseDirFd(tokens[2]);
-  if (old_dirfd < 0) {
-    return nullptr;
-  }
+  CHECK_DIRFD(old_dirfd);
   size_t new_dirfd = ParseDirFd(tokens[4]);
-  if (new_dirfd < 0) {
-    return nullptr;
-  }
+  CHECK_DIRFD(new_dirfd);
   if (is_link) {
     return new Link(pid, old_dirfd, tokens[3], new_dirfd, tokens[5]);
   }
@@ -188,11 +221,13 @@ Link *EmitLinkOrRename(const std::vector<std::string> &tokens, size_t pid,
 }
 
 
-NewProc *EmitNewProc(const std::vector<std::string> &tokens, size_t pid) {
-  if (tokens.size() != 4) {
-    return nullptr;
-  }
+NewProc *
+StreamTraceGenerator::EmitNewProc(const std::vector<std::string> &tokens,
+                                  size_t pid) {
+  CHECK_TOKENS(4, "newproc");
   if (!utils::IsNumber(tokens[3])) {
+    AddError(utils::err::TRACE_ERROR, "pid should be an integer", location);
+    has_next = false;
     return nullptr;
   }
   size_t new_pid = std::stoi(tokens[3]);
@@ -206,38 +241,40 @@ NewProc *EmitNewProc(const std::vector<std::string> &tokens, size_t pid) {
   } else if (clone_mode == "none") {
     return new NewProc(pid, NewProc::SHARE_NONE, new_pid);
   } else {
+    AddError(utils::err::TRACE_ERROR, "Unknown clone mode", location);
+    has_next = false;
     return nullptr;
   }
 }
 
 
-SetCwd *EmitSetCwd(const std::vector<std::string> &tokens, size_t pid) {
-  if (tokens.size() != 3) {
-    return nullptr;
-  }
+SetCwd *
+StreamTraceGenerator::EmitSetCwd(const std::vector<std::string> &tokens,
+                                 size_t pid) {
+  CHECK_TOKENS(3, "setcwd");
   return new SetCwd(pid, tokens[2]);
 }
 
 
-SetCwdFd *EmitSetCwdFd(const std::vector<std::string> &tokens, size_t pid) {
-  if (tokens.size() != 3) {
-    return nullptr;
-  }
+SetCwdFd *
+StreamTraceGenerator::EmitSetCwdFd(const std::vector<std::string> &tokens,
+                                   size_t pid) {
+  CHECK_TOKENS(3, "setcwdfd");
   if (!utils::IsNumber(tokens[2])) {
+    AddError(utils::err::TRACE_ERROR, "fd should be an integer", location);
+    has_next = false;
     return nullptr;
   }
   return new SetCwdFd(pid, std::stoi(tokens[2]));
 }
 
 
-Symlink *EmitSymlink(const std::vector<std::string> &tokens, size_t pid) {
-  if (tokens.size() != 5) {
-    return nullptr;
-  }
+Symlink *
+StreamTraceGenerator::EmitSymlink(const std::vector<std::string> &tokens,
+                                  size_t pid) {
+  CHECK_TOKENS(5, "symlink");
   size_t dirfd = ParseDirFd(tokens[2]);
-  if (dirfd < 0) {
-    return nullptr;
-  }
+  CHECK_DIRFD(dirfd);
   return new Symlink(pid, dirfd, tokens[3], tokens[4]);
 }
 
@@ -247,9 +284,9 @@ void StreamTraceGenerator::Start() {
   if (fp == nullptr) {
     std::stringstream ss;
     ss << strerror(errno);
-    debug::err("TraceError") << "Error while opening file "
-        + trace_file + ": " + ss.str();
-    exit(EXIT_FAILURE);
+    AddError(utils::err::TRACE_ERROR, "Error while opening file "
+        + trace_file + ": " + ss.str(), "");
+    return;
   }
   has_next = true;
 }
@@ -259,6 +296,7 @@ TraceNode *StreamTraceGenerator::GetNextTrace() {
   if (!has_next) {
     return nullptr;
   }
+  loc_line++;
   if (getline(&trace_line, &trace_line_len, fp) != -1) {
     return ParseLine(trace_line);
   } else {
@@ -288,6 +326,11 @@ TraceNode *StreamTraceGenerator::ParseLine(const std::string &line) {
   std::string l = line;
   l.pop_back();
   l.erase(0, l.find_first_not_of(" \t\n\r\f\v"));
+  location = l + ":" + std::to_string(loc_line);
+  if (l == "}") {
+    in_sysop = false;
+    return nullptr;
+  }
   std::vector<std::string> tokens;
   utils::Split(l, tokens);
   if (!in_sysop) {
@@ -299,23 +342,24 @@ TraceNode *StreamTraceGenerator::ParseLine(const std::string &line) {
 
 TraceNode *StreamTraceGenerator::ParseOperation(
     const std::vector<std::string> &tokens) {
-  if (tokens.size() < 1) {
+  if (tokens.size() < 2) {
+    AddError(utils::err::TRACE_ERROR,
+             "Tokens of a sysop operations should be at least 2", location);
+    has_next = false;
     return nullptr;
   }
   const std::string &first_tok = tokens[0];
-  if (first_tok == "}") {
-    in_sysop = false;
-    return nullptr;
-  }
   size_t pos = first_tok.find(',');
   if (pos == std::string::npos) {
+    AddError(utils::err::TRACE_ERROR, "Cannot extract pid of sysop operation",
+             location);
+    has_next = false;
     return nullptr;
   }
   std::string pid_str = first_tok.substr(0, pos);
   if (!utils::IsNumber(pid_str)) {
-    return nullptr;
-  }
-  if (tokens.size() < 2) {
+    AddError(utils::err::TRACE_ERROR, "pid should be an integer", location);
+    has_next = false;
     return nullptr;
   }
   const std::string op_expr = tokens[1];
@@ -343,6 +387,7 @@ TraceNode *StreamTraceGenerator::ParseOperation(
   } else if (op_expr == "symlink") {
     return EmitSymlink(tokens, pid);
   } else {
+    AddError(utils::err::TRACE_ERROR, "Uknown sysop operation", location);
     return nullptr;
   }
 }
@@ -351,10 +396,12 @@ TraceNode *StreamTraceGenerator::ParseOperation(
 TraceNode *StreamTraceGenerator::ParseExpression(
     const std::vector<std::string> &tokens) {
   if (tokens.size() < 1) {
+    AddError(utils::err::TRACE_ERROR,
+             "Tokens of an expression should be at least 1", location);
+    has_next = false;
     return nullptr;
   }
   const std::string &expr = tokens[0];
-
   if (expr == "consumes") {
     return EmitConsumes(tokens);
   } else if (expr == "produces") {
@@ -371,8 +418,16 @@ TraceNode *StreamTraceGenerator::ParseExpression(
     return sysop;
   } else if (expr == "execTask") {
     return EmitExecTask(tokens);
+  } else {
+    has_next = false;
+    AddError(utils::err::TRACE_ERROR, "Unknown expression", location);
+    return nullptr;
   }
 }
 
+
+std::string StreamTraceGenerator::GetName() const {
+  return "StreamTraceGenerator";
+}
 
 } // namespace fstrace
