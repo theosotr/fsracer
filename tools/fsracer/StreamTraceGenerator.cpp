@@ -28,17 +28,25 @@
 namespace trace_generator {
 
 
+static std::string RemoveQuotes(const std::string &str) {
+  if (utils::StartsWith(str, "\"")) {
+    return std::string(str.begin() + 1, str.end() - 1);
+  }
+  return str;
+}
+
+
 fstrace::Consumes *
 StreamTraceGenerator::EmitConsumes(const std::vector<std::string> &tokens) {
   CHECK_TOKENS(3, "consumes");
-  return new fstrace::Consumes(tokens[1], tokens[2]);
+  return new fstrace::Consumes(tokens[1], RemoveQuotes(tokens[2]));
 }
 
 
 fstrace::Produces *
 StreamTraceGenerator::EmitProduces(const std::vector<std::string> &tokens) {
   CHECK_TOKENS(3, "produces");
-  return new fstrace::Produces(tokens[1], tokens[2]);
+  return new fstrace::Produces(tokens[1], RemoveQuotes(tokens[2]));
 }
 
 
@@ -145,7 +153,8 @@ StreamTraceGenerator::EmitNewFd(const std::vector<std::string> &tokens,
     return nullptr;
   }
   int fd = std::stoi(tokens[4]);
-  fstrace::NewFd *newfd = new fstrace::NewFd(pid, dirfd, tokens[3], fd);
+  fstrace::NewFd *newfd = new fstrace::NewFd(
+      pid, dirfd, RemoveQuotes(tokens[3]), fd);
   if (fd < 0) {
     newfd->MarkFailed();
   }
@@ -203,9 +212,10 @@ StreamTraceGenerator::EmitHpath(const std::vector<std::string> &tokens,
     return nullptr;
   }
   if (hpathsym) {
-    return new fstrace::HpathSym(pid, dirfd, tokens[3], access_type);
+    return new fstrace::HpathSym(pid, dirfd, RemoveQuotes(tokens[3]),
+                                 access_type);
   }
-  return new fstrace::Hpath(pid, dirfd, tokens[3], access_type);
+  return new fstrace::Hpath(pid, dirfd, RemoveQuotes(tokens[3]), access_type);
 
 }
 
@@ -220,9 +230,11 @@ StreamTraceGenerator::EmitLinkOrRename(const std::vector<std::string> &tokens,
   size_t new_dirfd = ParseDirFd(tokens[4]);
   CHECK_DIRFD(new_dirfd);
   if (is_link) {
-    return new fstrace::Link(pid, old_dirfd, tokens[3], new_dirfd, tokens[5]);
+    return new fstrace::Link(pid, old_dirfd, RemoveQuotes(tokens[3]),
+                             new_dirfd, RemoveQuotes(tokens[5]));
   }
-  return new fstrace::Rename(pid, old_dirfd, tokens[3], new_dirfd, tokens[5]);
+  return new fstrace::Rename(pid, old_dirfd, RemoveQuotes(tokens[3]),
+                             new_dirfd, RemoveQuotes(tokens[5]));
 }
 
 
@@ -257,7 +269,7 @@ fstrace::SetCwd *
 StreamTraceGenerator::EmitSetCwd(const std::vector<std::string> &tokens,
                                  size_t pid) {
   CHECK_TOKENS(3, "setcwd");
-  return new fstrace::SetCwd(pid, tokens[2]);
+  return new fstrace::SetCwd(pid, RemoveQuotes(tokens[2]));
 }
 
 
@@ -280,7 +292,8 @@ StreamTraceGenerator::EmitSymlink(const std::vector<std::string> &tokens,
   CHECK_TOKENS(5, "symlink");
   size_t dirfd = ParseDirFd(tokens[2]);
   CHECK_DIRFD(dirfd);
-  return new fstrace::Symlink(pid, dirfd, tokens[3], tokens[4]);
+  return new fstrace::Symlink(pid, dirfd, RemoveQuotes(tokens[3]),
+                              RemoveQuotes(tokens[4]));
 }
 
 
