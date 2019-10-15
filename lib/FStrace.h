@@ -13,7 +13,7 @@
 
 namespace analyzer {
 
-class Analyzer;
+class AnalyzerExp;
 
 } // namespace analyzer
 
@@ -27,7 +27,7 @@ public:
   virtual ~TraceNode() {  };
   /** This converts the current object to a string. */
   virtual std::string ToString() const = 0;
-  virtual void Accept(analyzer::Analyzer *analyzer) const = 0;
+  virtual void Accept(analyzer::AnalyzerExp *a) const = 0;
 };
 
 
@@ -64,7 +64,7 @@ public:
   void AddDebugInfo(std::string debug_info_) {
     debug_info.AddDebugInfo(debug_info_);
   }
-  virtual void Accept(analyzer::Analyzer *analyzer) const = 0;
+  virtual void Accept(analyzer::AnalyzerExp *a) const = 0;
 
 private:
   /// Debug information corresponding to this expression.
@@ -160,7 +160,7 @@ public:
 
   /** String representation of the current expression. */
   std::string ToString() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 private:
   /// Name of task.
@@ -181,7 +181,7 @@ public:
   std::string ToString() const;
   std::string GetTaskName() const;
   std::string GetObject() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 private:
   std::string task_name;
@@ -199,7 +199,7 @@ public:
   std::string ToString() const;
   std::string GetTaskName() const;
   std::string GetObject() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 private:
   std::string task_name;
@@ -216,7 +216,7 @@ public:
   std::string GetTarget() const;
   std::string GetSource() const;
   std::string ToString() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 private:
   std::string target;
@@ -239,7 +239,7 @@ public:
   virtual ~Operation() {  };
   virtual std::string ToString() const = 0;
   virtual std::string GetOpName() const = 0;
-  virtual void Accept(analyzer::Analyzer *analyzer) const = 0;
+  virtual void Accept(analyzer::AnalyzerExp *a) const = 0;
 
   size_t GetPid() const;
   void MarkFailed();
@@ -267,7 +267,7 @@ public:
   int GetFd() const;
   std::string GetOpName() const;
   std::string ToString() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 private:
   size_t dirfd;
@@ -285,7 +285,7 @@ public:
   size_t GetFd() const;
   std::string GetOpName() const;
   std::string ToString() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 private:
   size_t fd;
@@ -303,7 +303,7 @@ public:
   size_t GetNewFd() const;
   std::string GetOpName() const;
   std::string ToString() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 private:
   size_t old_fd;
@@ -332,7 +332,7 @@ public:
   enum AccessType GetAccessType() const;
   std::string GetOpName() const;
   std::string ToString() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
   static std::string AccToString(enum AccessType effect);
   static bool Consumes(enum AccessType effect);
@@ -352,7 +352,7 @@ public:
     Hpath(pid_, dirfd_, filename_, access_type_) {  }
 
   std::string GetOpName() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 };
 
 
@@ -372,7 +372,7 @@ public:
   std::string GetNewPath() const;
   std::string ToString() const;
   std::string GetOpName() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 protected:
   size_t old_dirfd;
@@ -401,7 +401,7 @@ public:
   size_t GetNewProcId() const;
   std::string GetOpName() const;
   std::string ToString() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 private:
   enum CloneMode clone_mode;
@@ -416,7 +416,7 @@ public:
     Link(pid_, old_dirfd_, old_path_, new_dirfd_, new_path_) {  }
 
   std::string GetOpName() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 };
 
 
@@ -429,7 +429,7 @@ public:
   std::string GetCwd() const;
   std::string GetOpName() const;
   std::string ToString() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 private:
   std::string cwd;
@@ -445,7 +445,7 @@ public:
   size_t GetFd() const;
   std::string GetOpName() const;
   std::string ToString() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 private:
   size_t fd;
@@ -466,7 +466,7 @@ public:
   std::string GetTargetPath() const;
   std::string GetOpName() const;
   std::string ToString() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 private:
   size_t dirfd;
@@ -494,7 +494,7 @@ public:
   std::string GetOpId() const;
   std::optional<std::string> GetTaskName() const;
   std::string ToString() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 protected:
   std::string op_id;
@@ -513,7 +513,7 @@ public:
   void AddOperation(Operation *operation);
   std::vector<const Operation*> GetOperations() const;
   std::string ToString() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 private:
   std::vector<Operation*> operations;
@@ -527,7 +527,7 @@ public:
   std::string GetTaskName() const;
   std::vector<const Expr*> GetExpressions() const; 
   std::string ToString() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 protected:
   std::string task_name;
@@ -542,7 +542,7 @@ public:
   void AddExpr(Expr *expr);
   std::vector<const Expr*> GetExpressions() const; 
   std::string ToString() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 
 private:
   std::vector<Expr*> exprs;
@@ -550,10 +550,11 @@ private:
 };
 
 
-class End : public Expr {
+class End : public TraceNode {
 public:
+  End() {  }
   std::string ToString() const;
-  void Accept(analyzer::Analyzer *analyzer) const;
+  void Accept(analyzer::AnalyzerExp *a) const;
 };
 
 

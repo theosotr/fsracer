@@ -63,8 +63,8 @@ Task NewTask::GetTask() const {
 }
 
 
-void NewTask::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeNewTask(this);
+void NewTask::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeNewTask(this);
 }
 
 
@@ -83,8 +83,8 @@ std::string Consumes::ToString() const {
 }
 
 
-void Consumes::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeConsumes(this);
+void Consumes::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeConsumes(this);
 }
 
 
@@ -103,8 +103,8 @@ std::string Produces::ToString() const {
 }
 
 
-void Produces::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeProduces(this);
+void Produces::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeProduces(this);
 }
 
 
@@ -123,8 +123,8 @@ std::string DependsOn::ToString() const {
 }
 
 
-void DependsOn::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeDependsOn(this);
+void DependsOn::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeDependsOn(this);
 }
 
 
@@ -185,8 +185,8 @@ std::string NewFd::ToString() const {
 };
 
 
-void NewFd::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeNewFd(this);
+void NewFd::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeNewFd(this);
 }
 
 
@@ -207,8 +207,8 @@ std::string DelFd::ToString() const {
 }
 
 
-void DelFd::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeDelFd(this);
+void DelFd::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeDelFd(this);
 }
 
 
@@ -234,8 +234,8 @@ std::string DupFd::ToString() const {
 };
 
 
-void DupFd::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeDupFd(this);
+void DupFd::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeDupFd(this);
 }
 
 
@@ -267,8 +267,8 @@ std::string Hpath::ToString() const {
 };
 
 
-void Hpath::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeHpath(this);
+void Hpath::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeHpath(this);
 }
 
 
@@ -299,8 +299,8 @@ std::string HpathSym::GetOpName() const {
 }
 
 
-void HpathSym::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeHpathSym(this);
+void HpathSym::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeHpathSym(this);
 }
 
 
@@ -338,8 +338,8 @@ std::string Link::GetOpName() const {
 }
 
 
-void Link::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeLink(this);
+void Link::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeLink(this);
 }
 
 
@@ -377,8 +377,8 @@ std::string NewProc::ToString() const {
 }
 
 
-void NewProc::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeNewProc(this);
+void NewProc::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeNewProc(this);
 }
 
 
@@ -387,8 +387,8 @@ std::string Rename::GetOpName() const {
 }
 
 
-void Rename::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeRename(this);
+void Rename::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeRename(this);
 }
 
 
@@ -408,8 +408,8 @@ std::string SetCwd::ToString() const {
 }
 
 
-void SetCwd::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeSetCwd(this);
+void SetCwd::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeSetCwd(this);
 }
 
 
@@ -430,8 +430,8 @@ std::string SetCwdFd::ToString() const {
 }
 
 
-void SetCwdFd::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeSetCwdFd(this);
+void SetCwdFd::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeSetCwdFd(this);
 }
 
 
@@ -462,8 +462,8 @@ std::string Symlink::ToString() const {
 }
 
 
-void Symlink::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeSymlink(this);
+void Symlink::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeSymlink(this);
 }
 
 
@@ -494,8 +494,8 @@ std::string SysOp::ToString() const {
 }
 
 
-void SysOp::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeSysOp(this);
+void SysOp::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeSysOp(this);
 }
 
 
@@ -519,8 +519,8 @@ std::string SysOpBeg::ToString() const {
 }
 
 
-void SysOpBeg::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeSysOpBeg(this);
+void SysOpBeg::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeSysOpBeg(this);
 }
 
 
@@ -561,13 +561,13 @@ std::string ExecTask::ToString() const {
 }
 
 
-void ExecTask::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeExecTask(this);
+void ExecTask::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeExecTask(this);
 }
 
 
-void ExecTaskBeg::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeExecTaskBeg(this);
+void ExecTaskBeg::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeExecTaskBeg(this);
 }
 
 
@@ -576,8 +576,8 @@ std::string End::ToString() const {
 }
 
 
-void End::Accept(analyzer::Analyzer *analyzer) const {
-  analyzer->AnalyzeEnd(this);
+void End::Accept(analyzer::AnalyzerExp *a) const {
+  a->AnalyzeEnd(this);
 }
 
 
