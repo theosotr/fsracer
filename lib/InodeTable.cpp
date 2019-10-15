@@ -1,4 +1,5 @@
-#include<set>
+#include <assert.h>
+#include <set>
 
 #include "InodeTable.h"
 
@@ -40,7 +41,9 @@ void InodeTable::RemoveEntry(inode_t inode_p, const string &basename) {
   if (!val.has_value()) {
     // The inode is not open, so we just remove it from the corresponding
     // inode table.
-    inode_t inode = Table<inode_key_t, inode_t>::PopEntry(key);
+    optional<inode_t> inode_opt = Table<inode_key_t, inode_t>::PopEntry(key);
+    assert(inode_opt.has_value());
+    inode_t inode = inode_opt.value();
     map<inode_t, set<fs::path>>::iterator it = rev_table.find(inode);
     if (it != rev_table.end()) {
       // Now remove the entry from the reversed inode table.

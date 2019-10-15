@@ -23,13 +23,15 @@ class Table {
       table[key] = value;
     }
 
-    T2 PopEntry(const T1 &key) {
+    optional<T2> PopEntry(const T1 &key) {
+      optional<T2> val;
       typename table_t::iterator it = table.find(key);
       if (it != table.end()) {
-        T2 val = it->second;
+        val = it->second;
         table.erase(it);
         return val;
       }
+      return val;
     }
 
     void RemoveEntry(const T1 &key) {
