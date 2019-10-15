@@ -19,15 +19,15 @@ namespace analyzer {
  *
  * This is achieved through the visitor design pattern.
  */
-class Analyzer {
+class AnalyzerExp {
   public:
-    virtual ~Analyzer() {  }
+    virtual ~AnalyzerExp() {  }
     /** Name of analyzer. */
     virtual std::string GetName() const = 0;
 
     /** Analyze a node in the AST of traces. */
     virtual void Analyze(const fstrace::TraceNode *trace_node);
-    virtual void AnalyzeExpr(const fstrace::Expr *expr) = 0;
+    virtual void AnalyzeExpr(const fstrace::Expr *expr);
     virtual void AnalyzeConsumes(const fstrace::Consumes *consumes) = 0;
     virtual void AnalyzeProduces(const fstrace::Produces *produces) = 0;
     virtual void AnalyzeNewTask(const fstrace::NewTask *new_task) = 0;
@@ -41,7 +41,7 @@ class Analyzer {
     // ----- Methods for analyzing FS-related operations -----
   
     /** Analyze an FS operation. */
-    virtual void AnalyzeOperation(const fstrace::Operation *operation) = 0;
+    virtual void AnalyzeOperation(const fstrace::Operation *operation);
     /** Analzyze the 'newFd' construct. */
     virtual void AnalyzeNewFd(const fstrace::NewFd *new_fd) = 0;
     /** Analyze the 'delFd' construct. */
