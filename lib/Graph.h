@@ -80,7 +80,7 @@ struct GraphPrinterDefault {
     /** Prints the given node in DOT format. */
     template<typename T>
     static string PrintNodeDot(string node_id, const T &node_obj) {
-      return node_id;
+      return "\"" + node_id + "\"";
     }
 
     /** Prints the given node in CSV format. */
@@ -104,7 +104,7 @@ struct GraphPrinterDefault {
     /** Prints the given edge in DOT format. */
     template<typename T>
     static string PrintEdgeDot(const T &source, const T &target) {
-      return source.node_id + "->" + target.node_id;
+      return "\"" + source.node_id + "\"->\"" + target.node_id + "\"";
     }
 };
 
