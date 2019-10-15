@@ -58,7 +58,7 @@ private:
   fstrace::Produces *EmitProduces(const std::vector<std::string> &tokens);
   fstrace::NewTask *EmitNewTask(const std::vector<std::string> &tokens);
   fstrace::DependsOn *EmitDependsOn(const std::vector<std::string> &tokens);
-  fstrace::SysOp *EmitSysOp(const std::vector<std::string> &tokens);
+  fstrace::SysOpBeg *EmitSysOp(const std::vector<std::string> &tokens);
   fstrace::ExecTaskBeg *EmitExecTask(const std::vector<std::string> &tokens);
 
   // Parse syscall operations

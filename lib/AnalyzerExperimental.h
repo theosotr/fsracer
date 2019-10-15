@@ -35,6 +35,7 @@ class Analyzer {
     virtual void AnalyzeExecTask(const fstrace::ExecTask *exec_task) = 0;
     virtual void AnalyzeExecTaskBeg(const fstrace::ExecTaskBeg *exec_task) = 0;
     virtual void AnalyzeSysOp(const fstrace::SysOp *sys_op) = 0;
+    virtual void AnalyzeSysOpBeg(const fstrace::SysOpBeg *sys_op) = 0;
     virtual void AnalyzeEnd(const fstrace::End *end) = 0;
 
     // ----- Methods for analyzing FS-related operations -----

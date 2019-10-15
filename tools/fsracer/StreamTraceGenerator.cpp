@@ -96,7 +96,7 @@ StreamTraceGenerator::EmitDependsOn(const std::vector<std::string> &tokens) {
 }
 
 
-fstrace::SysOp *
+fstrace::SysOpBeg *
 StreamTraceGenerator::EmitSysOp(const std::vector<std::string> &tokens) {
   switch (tokens.size()) {
     case 4: {
@@ -107,7 +107,7 @@ StreamTraceGenerator::EmitSysOp(const std::vector<std::string> &tokens) {
         has_next = false;
         return nullptr;
       }
-      return new fstrace::SysOp(tokens[1]);
+      return new fstrace::SysOpBeg(tokens[1]);
     } case 5: {
       const std::string &op_type = tokens[3];
       if (op_type != "ASYNC") {
@@ -116,7 +116,7 @@ StreamTraceGenerator::EmitSysOp(const std::vector<std::string> &tokens) {
         has_next = false;
         return nullptr;
       }
-      return new fstrace::SysOp(tokens[1], tokens[2]);
+      return new fstrace::SysOpBeg(tokens[1], tokens[2]);
     } default:
       AddError(utils::err::TRACE_ERROR, "sysop expects 4 or 5 tokens",
                location);
@@ -417,7 +417,7 @@ fstrace::TraceNode *StreamTraceGenerator::ParseExpression(
   } else if (expr == "dependsOn") {
     return EmitDependsOn(tokens);
   } else if (expr == "sysop") {
-    fstrace::SysOp *sysop = EmitSysOp(tokens);
+    fstrace::SysOpBeg *sysop = EmitSysOp(tokens);
     if (sysop) {
       in_sysop = true;
     }

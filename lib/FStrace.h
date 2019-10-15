@@ -476,33 +476,46 @@ private:
 };
 
 
-class SysOp : public Expr {
+class SysOpBeg : public Expr {
 public:
   enum SysOpType {
     ASYNC,
     SYNC
   };
 
-  SysOp(std::string op_id_):
+  SysOpBeg(std::string op_id_):
     op_id(op_id_),
     op_type(SYNC) {  }
-  SysOp(std::string op_id_, std::string task_name_):
+  SysOpBeg(std::string op_id_, std::string task_name_):
     op_id(op_id_),
     op_type(ASYNC),
     task_name(task_name_) {  }
 
-  void AddOperation(Operation *operation);
-  std::vector<const Operation*> GetOperations() const;
   std::string GetOpId() const;
   std::optional<std::string> GetTaskName() const;
   std::string ToString() const;
-  std::string GetHeader() const;
   void Accept(analyzer::Analyzer *analyzer) const;
 
-private:
+protected:
   std::string op_id;
   enum SysOpType op_type;
   std::optional<std::string> task_name;
+};
+
+
+class SysOp : public SysOpBeg {
+public:
+  enum SysOpType {
+    ASYNC,
+    SYNC
+  };
+
+  void AddOperation(Operation *operation);
+  std::vector<const Operation*> GetOperations() const;
+  std::string ToString() const;
+  void Accept(analyzer::Analyzer *analyzer) const;
+
+private:
   std::vector<Operation*> operations;
 };
 

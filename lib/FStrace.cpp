@@ -479,28 +479,9 @@ std::vector<const Operation*> SysOp::GetOperations() const {
 }
 
 
-std::string SysOp::GetOpId() const {
-  return op_id;
-}
-
-
-std::optional<std::string> SysOp::GetTaskName() const {
-  return task_name;
-}
-
-
-std::string SysOp::GetHeader() const {
-  switch (op_type) {
-    case SYNC:
-      return "sysop " + op_id + " SYNC";
-    case ASYNC:
-      return "sysop " + op_id + " " + task_name.value() + " ASYNC";
-  }
-}
-
 std::string SysOp::ToString() const {
-  std::string str = GetHeader();
-  str += "{\n";
+  std::string str = SysOpBeg::ToString();
+  str += "\n";
   for (auto const &operation : operations) {
     if (!operation) {
       continue;
@@ -515,6 +496,31 @@ std::string SysOp::ToString() const {
 
 void SysOp::Accept(analyzer::Analyzer *analyzer) const {
   analyzer->AnalyzeSysOp(this);
+}
+
+
+std::string SysOpBeg::GetOpId() const {
+  return op_id;
+}
+
+
+std::optional<std::string> SysOpBeg::GetTaskName() const {
+  return task_name;
+}
+
+
+std::string SysOpBeg::ToString() const {
+  switch (op_type) {
+    case SYNC:
+      return "sysop " + op_id + " SYNC {";
+    case ASYNC:
+      return "sysop " + op_id + " " + task_name.value() + " ASYNC {";
+  }
+}
+
+
+void SysOpBeg::Accept(analyzer::Analyzer *analyzer) const {
+  analyzer->AnalyzeSysOpBeg(this);
 }
 
 
