@@ -633,6 +633,11 @@ class Handler(ABC):
         self.working_dir = working_dir
         self.unfinished = {}
         self.sys_op_id = ''  # syscall-name_line-number
+        self._set_currend_directory()
+
+    def _set_currend_directory(self):
+        opexp = ["-1, " + setcwd.format('"' + self.working_dir + '"')]
+        write_out(self.out, to_sysop(opexp, 'none_-1', 0))
 
     @abstractmethod
     def _handle_write(self):
