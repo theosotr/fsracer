@@ -3,11 +3,6 @@ cmake_minimum_required(VERSION 3.5)
 find_package(FLEX REQUIRED)
 find_package(BISON REQUIRED)
 
-flex_target(scanner TraceLexer.l ${CMAKE_SOURCE_DIR}/tools/fsracer/TraceLexer.cpp)
-bison_target(parser TraceParser.y ${CMAKE_SOURCE_DIR}/tools/fsracer/TraceParser.cpp)
-add_flex_bison_dependency(scanner parser)
-
-
 find_program(GENGETOPT_BIN gengetopt)
 if (NOT GENGETOPT_BIN)
     message (FATAL_ERROR "The program 'gengetopt' was not found")
@@ -34,8 +29,6 @@ file(GLOB src_files *.cpp *.cc)
 
 add_executable(fsracer
   ${src_files}
-  ${BISON_parser_OUTPUTS}
-  ${FLEX_scanner_OUTPUTS}
   ${CLI_GEN_DIR}/fsracer_cli.h
   ${CLI_GEN_DIR}/fsracer_cli.c)
 

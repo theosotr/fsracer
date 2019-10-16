@@ -3,9 +3,10 @@
 
 #include <optional>
 #include <string>
+#include <vector>
 
+#include "FStrace.h"
 #include "Utils.h"
-#include "Trace.h"
 
 
 
@@ -47,17 +48,17 @@ public:
                 std::string location);
 
   /** Getter for the `trace_f` field. */
-  trace::Trace *GetTrace() const {
+  std::vector<const fstrace::Expr*> GetTrace() const {
     return trace_f;
   }
 
 protected:
   /// Trace to generate.
-  trace::Trace *trace_f;
+  std::vector<const fstrace::Expr *> trace_f;
 
   /// A field that indicates whether there was an error associated with
   /// this trace collection.
-  optional<utils::err::Error> error;
+  std::optional<utils::err::Error> error;
 
 };
 

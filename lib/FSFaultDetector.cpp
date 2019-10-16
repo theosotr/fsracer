@@ -4,59 +4,62 @@
 #include <string>
 
 #include "Debug.h"
-#include "Operation.h"
-#include "RaceDetector.h"
+#include "FSFaultDetector.h"
 #include "Utils.h"
+#include "FStrace.h"
 
 
 namespace fs = experimental::filesystem;
-namespace op = operation;
+using DepGNodeInfo = analyzer::DependencyInferenceAnalyzerExp::DepGNodeInfo;
 
 
 namespace detector {
 
 
-void RaceDetector::Detect() {
+void FSFaultDetector::Detect() {
   // First, get the detected faults.
   auto faults = GetFaults();
   // Second, report the detected faults to the standard output.
   DumpFaults(faults);
 }
 
-void RaceDetector::Detect(std::map<std::string, void*> gen_store) {
+
+void FSFaultDetector::Detect(std::map<std::string, void*> gen_store) {
   // Online analysis is not supported at the moment.
 };
 
 
-bool RaceDetector::HasConflict(const fs_access_t &acc1,
-                               const fs_access_t &acc2) {
-  switch (acc1.effect_type) {
-    case op::Hpath::CONSUMED:
-      return !op::Hpath::Consumes(acc2.effect_type);
-    case op::Hpath::PRODUCED:
-    case op::Hpath::EXPUNGED:
+bool FSFaultDetector::HasConflict(const fs_access_t &acc1,
+                                  const fs_access_t &acc2) {
+  switch (acc1.access_type) {
+    case fstrace::Hpath::CONSUMED:
+      return !fstrace::Hpath::Consumes(acc2.access_type);
+    case fstrace::Hpath::PRODUCED:
+    case fstrace::Hpath::EXPUNGED:
       return true;
   }
 }
 
 
-bool RaceDetector::HappensBefore(string source, string target) const {
+bool FSFaultDetector::HappensBefore(std::string source,
+                                    std::string target) const {
   auto cache_it = cache_dfs.find(source);
-  optional<DependencyInferenceAnalyzer::EventInfo> source_info =
+  std::optional<DepGNodeInfo> source_info =
     dep_graph.GetNodeInfo(source);
-  optional<DependencyInferenceAnalyzer::EventInfo> target_info =
+  std::optional<DepGNodeInfo> target_info =
     dep_graph.GetNodeInfo(target);
 
   if (!source_info.has_value() || !target_info.has_value()) {
     return false;
   }
 
-  if (source_info.value().node_obj.GetEventType() == Event::MAIN &&
-      target_info.value().node_obj.GetEventType() == Event::MAIN) {
+  if (!source_info.value().node_obj.IsTask() ||
+      !target_info.value().node_obj.IsTask()) {
     return true;
   }
+
   if (cache_it == cache_dfs.end()) {
-    set<string> visited = dep_graph.DFS(source); 
+    std::set<std::string> visited = dep_graph.DFS(source); 
     cache_dfs[source] = visited;
     return visited.find(target) != visited.end(); 
   } else {
@@ -65,7 +68,7 @@ bool RaceDetector::HappensBefore(string source, string target) const {
 }
 
 
-RaceDetector::faults_t RaceDetector::GetFaults() const {
+FSFaultDetector::faults_t FSFaultDetector::GetFaults() const {
   faults_t faults;
   fs_accesses_table_t::table_t table = fs_accesses.GetTable();
   for (auto it = table.begin(); it != table.end(); it++) {
@@ -76,9 +79,9 @@ RaceDetector::faults_t RaceDetector::GetFaults() const {
     for (auto const &access : acc_combs) {
       auto first_access = access.first;
       auto second_access = access.second;
-      event_info.AddEntry(first_access.event_id, first_access.debug_info);
-      event_info.AddEntry(second_access.event_id, second_access.debug_info);
-      if (first_access.event_id == second_access.event_id) {
+      event_info.AddEntry(first_access.task_name, first_access.debug_info);
+      event_info.AddEntry(second_access.task_name, second_access.debug_info);
+      if (first_access.task_name == second_access.task_name) {
         // The fist and the second access refer to the same block,
         // so we omit them.
         continue;
@@ -93,13 +96,13 @@ RaceDetector::faults_t RaceDetector::GetFaults() const {
       // corresponding to those file accesses with regards to the
       // dependency graph.
       bool has_dep = HappensBefore(
-          first_access.event_id, second_access.event_id) ||
-        HappensBefore(second_access.event_id, first_access.event_id);
+          first_access.task_name, second_access.task_name) ||
+        HappensBefore(second_access.task_name, first_access.task_name);
 
       if (!has_dep) {
         // There is not any dependency, so we've just found a fault.
         auto pair_element = std::make_pair(
-            first_access.event_id, second_access.event_id);
+            first_access.task_name, second_access.task_name);
         faults_t::iterator it = faults.find(pair_element);
         FaultDesc fault_desc = FaultDesc(
             p.native(), first_access, second_access);
@@ -117,7 +120,7 @@ RaceDetector::faults_t RaceDetector::GetFaults() const {
 }
 
 
-void RaceDetector::DumpFaults(const faults_t &faults) const {
+void FSFaultDetector::DumpFaults(const faults_t &faults) const {
   if (faults.empty()) {
     return;
   }
@@ -126,8 +129,10 @@ void RaceDetector::DumpFaults(const faults_t &faults) const {
   debug::msg() << "Number of data races: " << faults.size();
   for (auto const &fault_entry : faults) {
     auto block_pair = fault_entry.first;
-    optional<DebugInfo> debug_info1 = event_info.GetValue(block_pair.first);
-    optional<DebugInfo> debug_info2 = event_info.GetValue(block_pair.second);
+    std::optional<fstrace::DebugInfo> debug_info1 = event_info.GetValue(
+        block_pair.first);
+    std::optional<fstrace::DebugInfo> debug_info2 = event_info.GetValue(
+        block_pair.second);
     string debug1 = "";
     string debug2 = "";
     if (debug_info1.has_value()) {
@@ -152,12 +157,12 @@ void RaceDetector::DumpFaults(const faults_t &faults) const {
 }
 
 
-std::string RaceDetector::FaultDesc::ToString() const {
+std::string FSFaultDetector::FaultDesc::ToString() const {
   return  "Path " + p + ":\n"
-    + "    " + op::Hpath::EffToString(fs_access1.effect_type)
+    + "    " + fstrace::Hpath::AccToString(fs_access1.access_type)
     + " by the first event "
     + "(operation: " + fs_access1.operation_name + ")\n"
-    + "    "+ op::Hpath::EffToString(fs_access2.effect_type)
+    + "    "+ fstrace::Hpath::AccToString(fs_access2.access_type)
     + " by the second event (operation: " + fs_access2.operation_name + ")";
 }
 

@@ -33,11 +33,12 @@ main(int argc, char **argv)
     if (trace_gen.HasFailed()) {
       break;
     }
-    trace_proc.ProcessTrace(trace_node);
     if (trace_node) {
+      trace_proc.ProcessTrace(trace_node);
       delete trace_node;
     }
   }
+  trace_proc.DumpOut();
   trace_gen.Stop();
   if (trace_gen.HasFailed()) {
     debug::err(trace_gen.GetName()) << trace_gen.GetErr();

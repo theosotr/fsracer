@@ -1,17 +1,14 @@
-#ifndef RACE_DETECTOR_H
-#define RACE_DETECTOR_H
+#ifndef FS_FAULT_DETECTOR_H
+#define FS_FAULT_DETECTOR_H
 
 #include <map>
 #include <unordered_map>
 #include <string>
 
-#include "DependencyInferenceAnalyzer.h"
+#include "DependencyInferenceExpAnalyzer.h"
 #include "FaultDetector.h"
-#include "FSAnalyzer.h"
-#include "Operation.h"
+#include "FSAnalyzerExp.h"
 
-
-namespace op = operation;
 
 
 namespace detector {
@@ -20,12 +17,12 @@ namespace detector {
 /**
  * A class that detects data races in file system resources.
  */
-class RaceDetector : public FaultDetector {
+class FSFaultDetector : public FaultDetector {
 public:
   // Some type aliases.
-  using dep_graph_t = analyzer::DependencyInferenceAnalyzer::dep_graph_t;
-  using fs_accesses_table_t = analyzer::FSAnalyzer::fs_accesses_table_t;
-  using fs_access_t = analyzer::FSAnalyzer::FSAccess;
+  using dep_graph_t = analyzer::DependencyInferenceAnalyzerExp::dep_graph_t;
+  using fs_accesses_table_t = analyzer::FSAnalyzerExp::fs_accesses_table_t;
+  using fs_access_t = analyzer::FSAnalyzerExp::FSAccess;
 
   /**
    * This struct describes a fault associated with two
@@ -67,14 +64,14 @@ public:
    * The arguments are const references of the outputs of
    * the analyzers utilized by this fault detector.
    */
-  RaceDetector(const fs_accesses_table_t &fs_accesses_,
-               const dep_graph_t &dep_graph_):
+  FSFaultDetector(fs_accesses_table_t fs_accesses_,
+               dep_graph_t dep_graph_):
     fs_accesses(fs_accesses_),
     dep_graph(dep_graph_) {  }
 
   /** Gets the pretty name of this fault detector. */
   std::string GetName() const {
-    return "RaceDetector";
+    return "FSFaultDetector";
   }
 
   /** Checks whether this fault detector supports online analysis. */
@@ -89,13 +86,13 @@ public:
 
 private:
   /// File accesses per block.
-  const fs_accesses_table_t &fs_accesses;
+  fs_accesses_table_t fs_accesses;
   /// The dependency graph of events.
-  const dep_graph_t &dep_graph;
+  dep_graph_t dep_graph;
 
   /// Table that tracks debug information of each event.
   /// Useful for fault reporting.
-  mutable table::Table<string, trace::DebugInfo> event_info;
+  mutable table::Table<std::string, fstrace::DebugInfo> event_info;
 
   mutable unordered_map<string, set<string>> cache_dfs;
 
