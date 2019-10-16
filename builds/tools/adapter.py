@@ -10,6 +10,7 @@
 #          done
 #
 # trace = [pid, syscall_name, syscall_args, syscall_ret_val]
+import argparse
 import re
 import sys
 from collections import namedtuple
@@ -626,9 +627,10 @@ def write_out(out, output):
 
 class Handler(ABC):
 
-    def __init__(self, inp, out):
+    def __init__(self, inp, out, working_dir):
         self.inp = inp
         self.out = out
+        self.working_dir = working_dir
         self.unfinished = {}
         self.sys_op_id = ''  # syscall-name_line-number
 
@@ -663,8 +665,8 @@ class GradleHandler(Handler):
 
     LOGGING_FD = 100
 
-    def __init__(self, inp, out):
-        super(GradleHandler, self).__init__(inp, out)
+    def __init__(self, inp, out, working_dir):
+        super(GradleHandler, self).__init__(inp, out, working_dir)
 
     def _handle_begin(self, write_str):
         _, task_name = write_str.split(
@@ -694,8 +696,8 @@ class GradleHandler(Handler):
 
 
 class MakeHandler(Handler):
-    def __init__(self, inp, out):
-        super(MakeHandler, self).__init__(inp, out)
+    def __init__(self, inp, out, working_dir):
+        super(MakeHandler, self).__init__(inp, out, working_dir)
         self.nesting_counter = 0  # Count how many tabs to put
         self.cwd_queue = deque()  # Save the history of cwd
         self.cwd_queue.append('')
@@ -769,16 +771,21 @@ class MakeHandler(Handler):
             )
 
 
-def main(inp, out, program):
-    if program == "Make":
-        handler = MakeHandler(inp, out)
-    elif program == "Gradle":
-        handler = GradleHandler(inp, out)
+def main(inp, out, program, working_dir):
+    if program == "make":
+        handler = MakeHandler(inp, out, working_dir)
+    elif program == "gradle":
+        handler = GradleHandler(inp, out, working_dir)
     handler.execute()
 
 
 if __name__ == "__main__":
-    program = "Gradle"
-    if len(sys.argv) > 1:
-        program = sys.argv[1]
-    main(sys.stdin, sys.stdout, program)
+    parser = argparse.ArgumentParser(
+        description="Convert strace's traces to fstraces."
+    )
+    parser.add_argument('working_dir')
+    parser.add_argument('-c', '--context', choices=['make', 'gradle'],
+                        default='make'
+                       )
+    args = parser.parse_args()
+    main(sys.stdin, sys.stdout, args.context, args.working_dir)
