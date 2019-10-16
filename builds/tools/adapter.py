@@ -607,8 +607,8 @@ def translate_writev(trace):
 exec_task_begin = 'execTask {} {{'      #  task_id
 exec_task_end   = '}'
 new_task        = 'newTask {} {}'       #  task_id task_type
-depend_on       = 'dependOn {} {}'      #  task_id task_type (Gradle)
-consumes        = 'consumes {} "{}"'    #  task_id string (prerequisites)
+depends_on      = 'dependsOn {} {}'     #  task_id task_id (child, parent)
+consumes        = 'consumes {} "{}"'    #  task_id string (prerequisite)
 produces        = 'produces {} {}'      #  task_id string (Gradle)
 
 
@@ -630,7 +630,7 @@ class Handler(ABC):
         self.inp = inp
         self.out = out
         self.unfinished = {}
-        self.sys_op_id = 0
+        self.sys_op_id = ''  # syscall-name_line-number
 
     @abstractmethod
     def _handle_write(self):
@@ -643,12 +643,14 @@ class Handler(ABC):
             self.out,
             to_sysop(opexp, self.sys_op_id, 0)
         )
-        self.sys_op_id += 1
 
     def execute(self):
-        for line in self.inp:
+        for counter, line in enumerate(self.inp):
             self.trace = parse_line(line, self.unfinished)
             if self.trace:
+                self.sys_op_id = "{}_{}".format(
+                    self.trace.syscall_name, counter
+                )
                 opexp = globals()["translate_" + self.trace.syscall_name](self.trace)
                 if self.trace.syscall_name == "write":
                     self._handle_write()
@@ -758,7 +760,6 @@ class MakeHandler(Handler):
             self.out,
             to_sysop(opexp, self.sys_op_id, self.nesting_counter)
         )
-        self.sys_op_id += 1
 
     def execute(self):
         super(MakeHandler, self).execute()
