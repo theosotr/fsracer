@@ -709,13 +709,15 @@ class MakeHandler(Handler):
         self.is_open_task = False
         self.end_tasks = []
         self.current_task_id = None
+        # {'path': {'file/rule': ('task_id', [prereqs])}}
+        self.depends_on = {}  # Save info to find depends on relations
 
     def _handle_write(self):
         message = self.trace.syscall_args[1].replace('"', '').replace('\\n', '').strip()
         begin = re.search("^(.*):([0-9]+): +##BEGIN##+ (.*),(.*)", message)
         if begin:
             # target: the name of whichever target caused the rule’s recipe
-            #         to be run
+            #         to be run or rule name
             makefile, line, target, prereq = begin.groups()
             prereqs = re.split(' |,', prereq)
             # In case of nested we should have the current_path
@@ -740,6 +742,11 @@ class MakeHandler(Handler):
                     self.out,
                     tabs + exec_task_begin.format(task_id)
                 )
+                # Add values to depends_on dict
+                if cwd not in self.depends_on:
+                    self.depends_on[cwd] = {target: (task_id, prereqs)}
+                elif target not in self.depends_on[cwd]:
+                    self.depends_on[cwd][target] = (task_id, prereqs)
             self.nesting_counter += 1
             return
         if message.startswith("##END##"):
@@ -768,12 +775,26 @@ class MakeHandler(Handler):
             to_sysop(opexp, self.sys_op_id, self.nesting_counter)
         )
 
+    def _find_depends_on_relations(self):
+        for path, rules in self.depends_on.items():
+            for task_id, values in rules.items():
+                prereqs = values[1]
+                for prereq in prereqs:
+                    # We only care for rules inside current Makefile
+                    if prereq in self.depends_on[path]:
+                        depends_on_entry = depends_on.format(
+                            task_id, self.depends_on[path][prereq][0]
+                        )
+                        write_out(self.out, depends_on_entry)
+
+
     def execute(self):
         super(MakeHandler, self).execute()
         if len(self.end_tasks) > 0:
             write_out(
                 self.out, (self.nesting_counter * '\t') + self.end_tasks.pop()
             )
+        self._find_depends_on_relations()
 
 
 def main(inp, out, program, working_dir):
