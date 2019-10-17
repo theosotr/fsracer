@@ -4,6 +4,8 @@
 #include <string>
 #include <map>
 
+#include "Utils.h"
+
 
 namespace detector {
 
@@ -30,6 +32,13 @@ public:
   
   /** Detecting faults online, i.e., while the application is running. */
   virtual void Detect(std::map<std::string, void*> gen_store) = 0;
+
+  /** Gets the time needed for detecting faults. */
+  double GetAnalysisTime() const;
+
+protected:
+  /// Used to track the time needed for detecting faults.
+  utils::timer analysis_time;
 };
 
 

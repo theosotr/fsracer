@@ -17,8 +17,10 @@ namespace detector {
 
 
 void FSFaultDetector::Detect() {
-  // First, get the detected faults.
+  analysis_time.Start();
+  // First, get the detected faults. 
   auto faults = GetFaults();
+  analysis_time.Stop();
   // Second, report the detected faults to the standard output.
   DumpFaults(faults);
 }

@@ -141,4 +141,3 @@ main(int argc, char **argv)
   trace_gen.Stop();
   exit(EXIT_SUCCESS);
 }
-

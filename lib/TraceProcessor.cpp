@@ -183,6 +183,8 @@ void TraceProcessor::DetectFaults() {
   debug::info(fault_detector->GetName())
     << "Detecting faults...";
   fault_detector->Detect();
+  debug::info(fault_detector->GetName()) << "Faults detected in "
+    << fault_detector->GetAnalysisTime() << "ms";
 }
 
 
