@@ -351,7 +351,7 @@ enum NewProc::CloneMode NewProc::GetCloneMode() const {
 
 
 size_t NewProc::GetNewProcId() const {
-  return pid;
+  return new_pid;
 }
 
 
