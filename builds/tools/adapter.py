@@ -730,7 +730,8 @@ class MakeHandler(Handler):
 
     def _handle_write(self):
         message = self.trace.syscall_args[1].replace('"', '').replace('\\n', '').strip()
-        begin = re.search("^(.*):([0-9]+): +##BEGIN##+ (.*),(.*)", message)
+        # TODO: Add tests
+        begin = re.search("^(.*):([0-9]*):? +##BEGIN##+ (.*),(.*)", message)
         if begin:
             # target: the name of whichever target caused the rule’s recipe
             #         to be run or rule name
