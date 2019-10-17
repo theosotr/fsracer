@@ -93,4 +93,10 @@ void DependencyInferenceAnalyzerExp::DumpOutput(writer::OutWriter *out) const {
 }
 
 
+DependencyInferenceAnalyzerExp::dep_graph_t
+DependencyInferenceAnalyzerExp::GetDependencyGraph() const {
+  return dep_graph;
+}
+
+
 } // namespace analyzer

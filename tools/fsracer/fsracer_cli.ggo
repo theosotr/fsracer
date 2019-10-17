@@ -12,7 +12,7 @@ option "dump-trace" - "Dump generated traces to standard output" flag off
 modeoption "analyzer" - "The analyzer used to operate on traces"
   values="dep-infer","fs" optional multiple mode="analysis"
 modeoption "fault-detector" - "The component used to locate faults"
-  values="race" optional mode="fault"
+  values="fs" optional mode="fault"
 
 option "dump-dep-graph" - "Dump dependency graph to standard output"
   flag off

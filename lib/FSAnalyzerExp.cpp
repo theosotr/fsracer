@@ -380,10 +380,7 @@ void FSAnalyzerExp::AddPathEffect(const fs::path &p, FSAccess fs_access) {
 }
 
 
-void FSAnalyzerExp::DumpOutput(writer::OutWriter *out) const {
-  if (!out) {
-    return;
-  }
+void FSAnalyzerExp::UpdateAccessTable() const {
   for (const auto &elem : task_accesses) {
     auto p = elem.first.first;
     auto fs_access = elem.second;
@@ -398,6 +395,14 @@ void FSAnalyzerExp::DumpOutput(writer::OutWriter *out) const {
     }
     effect_table.AddEntry(p, v_fs_acc);
   }
+}
+
+
+void FSAnalyzerExp::DumpOutput(writer::OutWriter *out) const {
+  if (!out) {
+    return;
+  }
+  UpdateAccessTable();
   switch (out_format) {
     case JSON:
       DumpJSON(out->OutStream());
@@ -446,5 +451,12 @@ void FSAnalyzerExp::DumpCSV(ostream &os) const {
     }
   }
 }
+
+
+FSAnalyzerExp::fs_accesses_table_t FSAnalyzerExp::GetFSAccesses() const {
+  UpdateAccessTable();
+  return effect_table;
+}
+
 
 } // namespace analyzer

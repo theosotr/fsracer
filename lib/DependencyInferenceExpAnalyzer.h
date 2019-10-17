@@ -166,10 +166,7 @@ public:
   void AnalyzeSetCwdFd(const fstrace::SetCwdFd *set_cwdfd) {  }
 
   void DumpOutput(writer::OutWriter *out) const;
-
-  dep_graph_t GetOutput() const {
-    return dep_graph;
-  }
+  dep_graph_t GetDependencyGraph() const;
 
 private:
   /// The dependency graph of events.

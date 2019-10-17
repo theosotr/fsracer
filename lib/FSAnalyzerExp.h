@@ -80,10 +80,7 @@ public:
   void AnalyzeSetCwdFd(const fstrace::SetCwdFd *set_cwdfd);
 
   void DumpOutput(writer::OutWriter *out) const;
-
-  fs_accesses_table_t GetOutput() const {
-    return effect_table;
-  }
+  fs_accesses_table_t GetFSAccesses() const;
 
 private:
   table::Table<proc_t, inode_t> cwd_table;
@@ -108,6 +105,7 @@ private:
   void DumpJSON(ostream &os) const;
   void DumpCSV(ostream &os) const;
   void AddPathEffect(const fs::path &p, FSAccess fs_access);
+  void UpdateAccessTable() const;
 };
 
 
