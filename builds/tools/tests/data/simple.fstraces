@@ -1,43 +1,46 @@
-sysop 0 SYNC {
+sysop init SYNC {
+	15289, setcwd "/home/user/fsracer/builds/make-plugin/playground/simple"
+}
+sysop execve_0 SYNC {
 	15289, hpath AT_FDCWD "/usr/bin/make" consumed
 }
-sysop 1 SYNC {
-	15289, hpath AT_FDCWD "/etc/ld.so.preload" consumed
+sysop access_1 SYNC {
+	15289, hpath AT_FDCWD "/etc/ld.so.preload" touched
 }
-sysop 2 SYNC {
+sysop openat_2 SYNC {
 	15289, newfd AT_FDCWD "/etc/ld.so.cache" 3
 	15289, hpath AT_FDCWD "/etc/ld.so.cache" consumed
 }
-sysop 3 SYNC {
+sysop close_3 SYNC {
 	15289, delfd 3
 }
-newTask Makefile_13_s1.o S 0
-consumes Makefile_13_s1.o "s1.c"
-consumes Makefile_13_s1.o "s1.h"
-execTask Makefile_13_s1.o {
-	sysop 4 SYNC {
+newTask Makefile:13__s1.o W 1
+consumes Makefile:13__s1.o "/home/user/fsracer/builds/make-plugin/playground/simple/s1.c"
+consumes Makefile:13__s1.o "/home/user/fsracer/builds/make-plugin/playground/simple/s1.h"
+execTask Makefile:13__s1.o {
+	sysop execve_6 SYNC {
 		15290, hpath AT_FDCWD "/usr/local/bin/post-shell" consumed
 	}
-	sysop 5 SYNC {
-		15292, hpath AT_FDCWD "/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/stdc-predef.h.gch" consumed
+	sysop stat_7 SYNC {
+		15292, hpath AT_FDCWD "/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/stdc-predef.h.gch" touched
 	}
 }
-sysop 6 SYNC {
-	15289, hpath AT_FDCWD "s1.o" consumed
+sysop stat_12 SYNC {
+	15289, hpath AT_FDCWD "s1.o" touched
 }
-sysop 7 SYNC {
-	15289, hpath AT_FDCWD "s2.o" consumed
+sysop stat_13 SYNC {
+	15289, hpath AT_FDCWD "s2.o" touched
 }
-sysop 8 SYNC {
-	15289, hpath AT_FDCWD "s2.h" consumed
+sysop stat_14 SYNC {
+	15289, hpath AT_FDCWD "s2.h" touched
 }
-newTask Makefile_17_s2.o S 0
-consumes Makefile_17_s2.o "s2.h"
-execTask Makefile_17_s2.o {
-	sysop 9 SYNC {
+newTask Makefile:17__s2.o W 1
+consumes Makefile:17__s2.o "/home/user/fsracer/builds/make-plugin/playground/simple/s2.h"
+execTask Makefile:17__s2.o {
+	sysop clone_17 SYNC {
 		15289, newproc none 15294
 	}
-	sysop 10 SYNC {
+	sysop execve_18 SYNC {
 		15294, hpath AT_FDCWD "/usr/local/bin/post-shell" consumed
 	}
 }

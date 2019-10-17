@@ -1,70 +1,75 @@
-newTask Makefile_8_main.o S 0
-consumes Makefile_8_main.o "main.c"
-execTask Makefile_8_main.o {
-	sysop 0 SYNC {
+sysop init SYNC {
+	15257, setcwd "/home/user/fsracer/builds/make-plugin/playground/nested_example"
+}
+newTask Makefile:8__main.o W 1
+consumes Makefile:8__main.o "/home/user/fsracer/builds/make-plugin/playground/nested_example/main.c"
+execTask Makefile:8__main.o {
+	sysop clone_1 SYNC {
 		15257, newproc none 15258
 	}
 }
-sysop 1 SYNC {
-	15257, hpath AT_FDCWD "main.o" consumed
+sysop stat_5 SYNC {
+	15257, hpath AT_FDCWD "main.o" touched
 }
-newTask Makefile_11_nested S 0
-consumes Makefile_11_nested ""
-execTask Makefile_11_nested {
-	sysop 2 SYNC {
+newTask Makefile:11__nested W 1
+consumes Makefile:11__nested "/home/user/fsracer/builds/make-plugin/playground/nested_example/"
+execTask Makefile:11__nested {
+	sysop clone_8 SYNC {
 		15257, newproc none 15262
 	}
-	newTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_6_s1.o S 0
-	consumes /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_6_s1.o "s1.c"
-	consumes /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_6_s1.o "s1.h"
-	execTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_6_s1.o {
-		sysop 3 SYNC {
+	newTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile:6__s1.o W 1
+	consumes /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile:6__s1.o "/home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/s1.c"
+	consumes /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile:6__s1.o "/home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/s1.h"
+	execTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile:6__s1.o {
+		sysop clone_11 SYNC {
 			15263, newproc none 15264
 		}
 	}
-	sysop 4 SYNC {
-		15263, hpath AT_FDCWD "s1.o" consumed
+	sysop stat_15 SYNC {
+		15263, hpath AT_FDCWD "s1.o" touched
 	}
-	sysop 5 SYNC {
-		15263, hpath AT_FDCWD "s2.o" consumed
+	sysop stat_16 SYNC {
+		15263, hpath AT_FDCWD "s2.o" touched
 	}
-	sysop 6 SYNC {
-		15263, hpath AT_FDCWD "s2.h" consumed
+	sysop stat_17 SYNC {
+		15263, hpath AT_FDCWD "s2.h" touched
 	}
-	newTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_10_s2.o S 0
-	consumes /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_10_s2.o "s2.h"
-	execTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_10_s2.o {
-		sysop 7 SYNC {
+	newTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile:10__s2.o W 1
+	consumes /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile:10__s2.o "/home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/s2.h"
+	execTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile:10__s2.o {
+		sysop clone_20 SYNC {
 			15263, newproc none 15268
 		}
 	}
-	sysop 8 SYNC {
-		15263, hpath AT_FDCWD "s2.o" consumed
+	sysop stat_24 SYNC {
+		15263, hpath AT_FDCWD "s2.o" touched
 	}
-	sysop 9 SYNC {
+	sysop chdir_26 SYNC {
 		15263, setcwd "/home/user/fsracer/builds/make-plugin/playground/nested_example"
 	}
-	sysop 10 SYNC {
+	sysop close_27 SYNC {
 		15263, delfd 1
 	}
 }
-sysop 11 SYNC {
-	15257, hpath AT_FDCWD "main" consumed
+sysop stat_31 SYNC {
+	15257, hpath AT_FDCWD "main" touched
 }
-newTask Makefile_14_main S 0
-consumes Makefile_14_main "main.o"
-consumes Makefile_14_main "nested"
-execTask Makefile_14_main {
-	sysop 12 SYNC {
+newTask Makefile:14__main W 1
+consumes Makefile:14__main "/home/user/fsracer/builds/make-plugin/playground/nested_example/main.o"
+consumes Makefile:14__main "/home/user/fsracer/builds/make-plugin/playground/nested_example/nested"
+execTask Makefile:14__main {
+	sysop clone_33 SYNC {
 		15257, newproc none 15272
 	}
 }
-sysop 13 SYNC {
-	15257, hpath AT_FDCWD "main" consumed
+sysop stat_37 SYNC {
+	15257, hpath AT_FDCWD "main" touched
 }
-sysop 14 SYNC {
+sysop chdir_38 SYNC {
 	15257, setcwd "/home/user/fsracer/builds/make-plugin/playground/nested_example"
 }
-sysop 15 SYNC {
+sysop close_39 SYNC {
 	15257, delfd 1
 }
+dependsOn Makefile:14__main Makefile:8__main.o
+dependsOn Makefile:14__main Makefile:11__nested
