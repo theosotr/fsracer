@@ -2,7 +2,7 @@
     "access": [
         [
             "6413 access(\"/etc/ld.so.nohwcap\", F_OK) = -1 ENOENT (No such file or directory)",
-            ["hpath AT_FDCWD \"/etc/ld.so.nohwcap\" consumed"]
+            ["hpath AT_FDCWD \"/etc/ld.so.nohwcap\" touched"]
         ]
     ],
     "chdir": [
@@ -14,7 +14,7 @@
     "chown": [
         [
             "7024  chown(\"/var/lib/apt/lists/partial\", 100, 0) = 0",
-            ["hpath AT_FDCWD \"/var/lib/apt/lists/partial\" consumed"]
+            ["hpath AT_FDCWD \"/var/lib/apt/lists/partial\" touched"]
         ]
     ],
     "clone": [
@@ -74,13 +74,13 @@
     "fchmodat": [
         [
             "6731  fchmodat(AT_FDCWD, \"/tmp/apt-key-gpghome.Pfj7VDm8DF\", 0700) = 0",
-            ["hpath AT_FDCWD \"/tmp/apt-key-gpghome.Pfj7VDm8DF\" consumed"]
+            ["hpath AT_FDCWD \"/tmp/apt-key-gpghome.Pfj7VDm8DF\" touched"]
         ]
     ],
     "fchownat": [
         [
             "7374  fchownat(AT_FDCWD, \".\", 0, 0, 0)  = 0",
-            ["hpath AT_FDCWD \".\" consumed"]
+            ["hpath AT_FDCWD \".\" touched"]
         ]
     ],
     "fcntl": [
@@ -102,7 +102,7 @@
     "getxattr": [
         [
             "7380 getxattr(\"/tmp/hadoop-2.7.1.tar.gz\", \"system.posix_acl_access\", NULL, 0) = -1 ENODATA (No data available)",
-            ["hpath AT_FDCWD \"/tmp/hadoop-2.7.1.tar.gz\" consumed"]
+            ["hpath AT_FDCWD \"/tmp/hadoop-2.7.1.tar.gz\" touched"]
         ]
     ],
     "getcwd": [
@@ -118,7 +118,7 @@
         ],
         [
             "7024  lchown(\"/foo\", 0, 0)      = 0",
-            ["hpathsym AT_FDCWD \"/foo\" consumed"]
+            ["hpathsym AT_FDCWD \"/foo\" touched"]
         ]
     ],
     "lgetxattr": [
@@ -146,7 +146,7 @@
         ],
         [
             "7024  lstat(\"foo\", 0x7ffd5801a730) = 0",
-            ["hpathsym AT_FDCWD \"foo\" consumed"]
+            ["hpathsym AT_FDCWD \"foo\" touched"]
         ]
     ],
     "link": [
@@ -266,13 +266,13 @@
     "stat": [
         [
             "9054  stat(\"/usr/sbin/basename\", 0x7ffd9e54a850) = -1 ENOENT (No such file or directory)",
-            ["hpath AT_FDCWD \"/usr/sbin/basename\" consumed"]
+            ["hpath AT_FDCWD \"/usr/sbin/basename\" touched"]
         ]
     ],
     "statfs": [
         [
             "9053  statfs(\"/selinux\", 0x7ffe1b9288d0) = -1 ENOENT (No such file or directory)",
-            ["hpath AT_FDCWD \"/selinux\" consumed"]
+            ["hpath AT_FDCWD \"/selinux\" touched"]
         ]
     ],
     "symlink": [
@@ -308,13 +308,13 @@
     "utime": [
         [
             "8667  utime(\"/etc/shadow-\", {actime=2019-01-30T13:43:57+0000, modtime=2019-01-29T13:25:20+0000}) = 0",
-            ["hpathsym AT_FDCWD \"/etc/shadow-\" consumed"]
+            ["hpathsym AT_FDCWD \"/etc/shadow-\" touched"]
         ]
     ],
     "utimensat": [
         [
             "7057  utimensat(0, NULL, NULL, 0)       = 0",
-            ["hpathsym 0 NULL consumed"]
+            ["hpathsym 0 NULL touched"]
         ]
     ],
     "utimes": [
@@ -324,7 +324,7 @@
         ],
         [
             "7031  utimes(\"foo\", 0x7fffc4af98f0) = 0",
-            ["hpathsym AT_FDCWD \"foo\" consumed"]
+            ["hpathsym AT_FDCWD \"foo\" touched"]
         ]
     ],
     "write": [
