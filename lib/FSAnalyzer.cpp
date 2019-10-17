@@ -348,6 +348,7 @@ void FSAnalyzer::AddPathEffect(const fs::path &p, FSAccess fs_access) {
     case fstrace::Hpath::CONSUMED:
       switch (old_fs_acc.access_type) {
         case fstrace::Hpath::CONSUMED:
+        case fstrace::Hpath::TOUCHED:
           // We consume a path that we have already consumed.
           // So we keep only the fresh access.
           task_accesses.AddEntry(key_pair, fs_access);
@@ -361,10 +362,20 @@ void FSAnalyzer::AddPathEffect(const fs::path &p, FSAccess fs_access) {
     case fstrace::Hpath::PRODUCED:
       task_accesses.AddEntry(key_pair, fs_access);
       break;
+    case fstrace::Hpath::TOUCHED:
+      switch (old_fs_acc.access_type) {
+        case fstrace::Hpath::TOUCHED:
+          task_accesses.AddEntry(key_pair, fs_access);
+          break;
+        default:
+          task_accesses.AddEntry(key_pair, old_fs_acc);
+          break;
+      }
     case fstrace::Hpath::EXPUNGED:
       switch (old_fs_acc.access_type) {
         case fstrace::Hpath::CONSUMED:
         case fstrace::Hpath::EXPUNGED:
+        case fstrace::Hpath::TOUCHED:
           // We expunge a path that we have either consumed or
           // expunged in the past. We keep the fresh access only.
           task_accesses.AddEntry(key_pair, fs_access);
