@@ -11,6 +11,7 @@
 #
 # trace = [pid, syscall_name, syscall_args, syscall_ret_val]
 import argparse
+import os
 import re
 import sys
 from collections import namedtuple
@@ -748,12 +749,15 @@ class MakeHandler(Handler):
                 self.current_task_id = task_id
                 write_out(
                     self.out,
-                    tabs + new_task.format(self.current_task_id, "S 0")
+                    tabs + new_task.format(self.current_task_id, "W 1")
                 )
                 for x in prereqs:
                     write_out(
                         self.out,
-                        tabs + consumes.format(self.current_task_id, x)
+                        # TODO: revisit
+                        tabs + consumes.format(
+                            self.current_task_id,
+                            os.path.join(self.working_dir, x))
                     )
                 write_out(
                     self.out,
