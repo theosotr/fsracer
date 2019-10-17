@@ -280,6 +280,8 @@ std::string Hpath::AccToString(enum AccessType access) {
       return "produced";
     case EXPUNGED:
       return "expunged";
+    case TOUCHED:
+      return "touched";
   }
 }
 

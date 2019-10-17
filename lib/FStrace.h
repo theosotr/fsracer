@@ -316,7 +316,8 @@ public:
   enum AccessType {
     PRODUCED,
     CONSUMED,
-    EXPUNGED
+    EXPUNGED,
+    TOUCHED
   };
 
   Hpath(size_t pid_, size_t dirfd_, std::string filename_,

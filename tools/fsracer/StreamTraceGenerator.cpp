@@ -206,6 +206,8 @@ StreamTraceGenerator::EmitHpath(const std::vector<std::string> &tokens,
     access_type = fstrace::Hpath::PRODUCED;
   } else if (tokens[4] == "expunged") {
     access_type = fstrace::Hpath::EXPUNGED;
+  } else if (tokens[4] == "touched") {
+    access_type = fstrace::Hpath::TOUCHED;
   } else {
     AddError(utils::err::TRACE_ERROR, "Unknown access type", location);
     has_next = false;
