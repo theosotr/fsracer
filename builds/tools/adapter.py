@@ -798,8 +798,7 @@ class MakeHandler(Handler):
 
     def _find_depends_on_relations(self):
         for path, rules in self.depends_on.items():
-            for task_id, values in rules.items():
-                prereqs = values[1]
+            for _, (task_id, prereqs) in rules.items():
                 for prereq in prereqs:
                     # We only care for rules inside current Makefile
                     if prereq in self.depends_on[path]:
