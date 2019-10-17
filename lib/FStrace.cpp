@@ -1,6 +1,6 @@
 #include "FStrace.h"
 
-#include "AnalyzerExperimental.h"
+#include "Analyzer.h"
 
 
 namespace fstrace {
@@ -63,7 +63,7 @@ Task NewTask::GetTask() const {
 }
 
 
-void NewTask::Accept(analyzer::AnalyzerExp *a) const {
+void NewTask::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeNewTask(this);
 }
 
@@ -83,7 +83,7 @@ std::string Consumes::ToString() const {
 }
 
 
-void Consumes::Accept(analyzer::AnalyzerExp *a) const {
+void Consumes::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeConsumes(this);
 }
 
@@ -103,7 +103,7 @@ std::string Produces::ToString() const {
 }
 
 
-void Produces::Accept(analyzer::AnalyzerExp *a) const {
+void Produces::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeProduces(this);
 }
 
@@ -123,7 +123,7 @@ std::string DependsOn::ToString() const {
 }
 
 
-void DependsOn::Accept(analyzer::AnalyzerExp *a) const {
+void DependsOn::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeDependsOn(this);
 }
 
@@ -185,7 +185,7 @@ std::string NewFd::ToString() const {
 };
 
 
-void NewFd::Accept(analyzer::AnalyzerExp *a) const {
+void NewFd::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeNewFd(this);
 }
 
@@ -207,7 +207,7 @@ std::string DelFd::ToString() const {
 }
 
 
-void DelFd::Accept(analyzer::AnalyzerExp *a) const {
+void DelFd::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeDelFd(this);
 }
 
@@ -234,7 +234,7 @@ std::string DupFd::ToString() const {
 };
 
 
-void DupFd::Accept(analyzer::AnalyzerExp *a) const {
+void DupFd::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeDupFd(this);
 }
 
@@ -267,7 +267,7 @@ std::string Hpath::ToString() const {
 };
 
 
-void Hpath::Accept(analyzer::AnalyzerExp *a) const {
+void Hpath::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeHpath(this);
 }
 
@@ -299,7 +299,7 @@ std::string HpathSym::GetOpName() const {
 }
 
 
-void HpathSym::Accept(analyzer::AnalyzerExp *a) const {
+void HpathSym::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeHpathSym(this);
 }
 
@@ -338,7 +338,7 @@ std::string Link::GetOpName() const {
 }
 
 
-void Link::Accept(analyzer::AnalyzerExp *a) const {
+void Link::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeLink(this);
 }
 
@@ -377,7 +377,7 @@ std::string NewProc::ToString() const {
 }
 
 
-void NewProc::Accept(analyzer::AnalyzerExp *a) const {
+void NewProc::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeNewProc(this);
 }
 
@@ -387,7 +387,7 @@ std::string Rename::GetOpName() const {
 }
 
 
-void Rename::Accept(analyzer::AnalyzerExp *a) const {
+void Rename::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeRename(this);
 }
 
@@ -408,7 +408,7 @@ std::string SetCwd::ToString() const {
 }
 
 
-void SetCwd::Accept(analyzer::AnalyzerExp *a) const {
+void SetCwd::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeSetCwd(this);
 }
 
@@ -430,7 +430,7 @@ std::string SetCwdFd::ToString() const {
 }
 
 
-void SetCwdFd::Accept(analyzer::AnalyzerExp *a) const {
+void SetCwdFd::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeSetCwdFd(this);
 }
 
@@ -462,7 +462,7 @@ std::string Symlink::ToString() const {
 }
 
 
-void Symlink::Accept(analyzer::AnalyzerExp *a) const {
+void Symlink::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeSymlink(this);
 }
 
@@ -494,7 +494,7 @@ std::string SysOp::ToString() const {
 }
 
 
-void SysOp::Accept(analyzer::AnalyzerExp *a) const {
+void SysOp::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeSysOp(this);
 }
 
@@ -519,7 +519,7 @@ std::string SysOpBeg::ToString() const {
 }
 
 
-void SysOpBeg::Accept(analyzer::AnalyzerExp *a) const {
+void SysOpBeg::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeSysOpBeg(this);
 }
 
@@ -561,12 +561,12 @@ std::string ExecTask::ToString() const {
 }
 
 
-void ExecTask::Accept(analyzer::AnalyzerExp *a) const {
+void ExecTask::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeExecTask(this);
 }
 
 
-void ExecTaskBeg::Accept(analyzer::AnalyzerExp *a) const {
+void ExecTaskBeg::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeExecTaskBeg(this);
 }
 
@@ -576,7 +576,7 @@ std::string End::ToString() const {
 }
 
 
-void End::Accept(analyzer::AnalyzerExp *a) const {
+void End::Accept(analyzer::Analyzer *a) const {
   a->AnalyzeEnd(this);
 }
 

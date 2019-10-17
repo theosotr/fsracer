@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <ostream>
 
-#include "DependencyInferenceExpAnalyzer.h"
+#include "DependencyInferenceAnalyzer.h"
 
 
 namespace graph {
@@ -22,12 +22,12 @@ fstrace::Task TaskDir::GetTask() const {
 namespace analyzer {
 
 
-std::string DependencyInferenceAnalyzerExp::GetName() const {
+std::string DependencyInferenceAnalyzer::GetName() const {
   return "DependencyInferenceAnalyzer";
 }
 
 
-void DependencyInferenceAnalyzerExp::AnalyzeConsumes(
+void DependencyInferenceAnalyzer::AnalyzeConsumes(
     const fstrace::Consumes *consumes) {
   if (!consumes) {
     return;
@@ -39,7 +39,7 @@ void DependencyInferenceAnalyzerExp::AnalyzeConsumes(
 }
 
 
-void DependencyInferenceAnalyzerExp::AnalyzeProduces(
+void DependencyInferenceAnalyzer::AnalyzeProduces(
     const fstrace::Produces *produces) {
   if (!produces) {
     return;
@@ -51,7 +51,7 @@ void DependencyInferenceAnalyzerExp::AnalyzeProduces(
 }
 
 
-void DependencyInferenceAnalyzerExp::AnalyzeDependsOn(
+void DependencyInferenceAnalyzer::AnalyzeDependsOn(
     const fstrace::DependsOn *depends_on) {
   if (!depends_on) {
     return;
@@ -62,7 +62,7 @@ void DependencyInferenceAnalyzerExp::AnalyzeDependsOn(
 }
 
 
-void DependencyInferenceAnalyzerExp::AnalyzeNewTask(
+void DependencyInferenceAnalyzer::AnalyzeNewTask(
     const fstrace::NewTask *new_task) {
   if (!new_task) {
     return;
@@ -73,7 +73,7 @@ void DependencyInferenceAnalyzerExp::AnalyzeNewTask(
 }
 
 
-void DependencyInferenceAnalyzerExp::AnalyzeExecTaskBeg(
+void DependencyInferenceAnalyzer::AnalyzeExecTaskBeg(
     const fstrace::ExecTaskBeg *exec_task) {
   if (!exec_task) {
     return;
@@ -83,7 +83,7 @@ void DependencyInferenceAnalyzerExp::AnalyzeExecTaskBeg(
 }
 
 
-void DependencyInferenceAnalyzerExp::DumpOutput(writer::OutWriter *out) const {
+void DependencyInferenceAnalyzer::DumpOutput(writer::OutWriter *out) const {
   if (!out) {
     return;
   }
@@ -93,8 +93,8 @@ void DependencyInferenceAnalyzerExp::DumpOutput(writer::OutWriter *out) const {
 }
 
 
-DependencyInferenceAnalyzerExp::dep_graph_t
-DependencyInferenceAnalyzerExp::GetDependencyGraph() const {
+DependencyInferenceAnalyzer::dep_graph_t
+DependencyInferenceAnalyzer::GetDependencyGraph() const {
   return dep_graph;
 }
 

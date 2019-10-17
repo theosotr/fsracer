@@ -19,9 +19,9 @@ namespace analyzer {
  *
  * This is achieved through the visitor design pattern.
  */
-class AnalyzerExp {
+class Analyzer {
 public:
-  virtual ~AnalyzerExp() {  }
+  virtual ~Analyzer() {  }
   /** Name of analyzer. */
   virtual std::string GetName() const = 0;
 
@@ -84,7 +84,7 @@ protected:
 };
 
 
-class DumpAnalyzer : public AnalyzerExp {
+class DumpAnalyzer : public Analyzer {
 
 public:
   std::string GetName() const;

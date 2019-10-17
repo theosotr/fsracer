@@ -7,7 +7,7 @@
 #include <utility>
 #include <vector>
 
-#include "AnalyzerExperimental.h"
+#include "Analyzer.h"
 #include "InodeTable.h"
 #include "Table.h"
 
@@ -19,7 +19,7 @@ namespace fs = experimental::filesystem;
 namespace analyzer {
 
 
-class FSAnalyzerExp : public analyzer::AnalyzerExp {
+class FSAnalyzer : public analyzer::Analyzer {
 
 using proc_t = size_t;
 using addr_t = size_t;
@@ -52,7 +52,7 @@ public:
 
   using fs_accesses_table_t = table::Table<fs::path, std::vector<FSAccess>>;
 
-  FSAnalyzerExp(enum OutFormat out_format_):
+  FSAnalyzer(enum OutFormat out_format_):
     in_sysop(false),
     out_format(out_format_) {  }
 

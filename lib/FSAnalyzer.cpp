@@ -1,15 +1,15 @@
-#include "FSAnalyzerExp.h"
+#include "FSAnalyzer.h"
 
 
 namespace analyzer {
 
 
-std::string FSAnalyzerExp::GetName() const {
+std::string FSAnalyzer::GetName() const {
   return "FSAnalyzer";
 }
 
 
-void FSAnalyzerExp::AnalyzeExecTaskBeg(const fstrace::ExecTaskBeg *exec_task) {
+void FSAnalyzer::AnalyzeExecTaskBeg(const fstrace::ExecTaskBeg *exec_task) {
   if (!exec_task) {
     return;
   }
@@ -17,7 +17,7 @@ void FSAnalyzerExp::AnalyzeExecTaskBeg(const fstrace::ExecTaskBeg *exec_task) {
 }
 
 
-void FSAnalyzerExp::AnalyzeSysOpBeg(const fstrace::SysOpBeg *sysop) {
+void FSAnalyzer::AnalyzeSysOpBeg(const fstrace::SysOpBeg *sysop) {
   if (!sysop) {
     return;
   }
@@ -25,7 +25,7 @@ void FSAnalyzerExp::AnalyzeSysOpBeg(const fstrace::SysOpBeg *sysop) {
 }
 
 
-void FSAnalyzerExp::AnalyzeEnd(const fstrace::End *end) {
+void FSAnalyzer::AnalyzeEnd(const fstrace::End *end) {
   if (!end) {
     return;
   }
@@ -37,7 +37,7 @@ void FSAnalyzerExp::AnalyzeEnd(const fstrace::End *end) {
 }
 
 
-void FSAnalyzerExp::AnalyzeNewFd(const fstrace::NewFd *new_fd) {
+void FSAnalyzer::AnalyzeNewFd(const fstrace::NewFd *new_fd) {
   if (!new_fd) {
     return;
   }
@@ -66,7 +66,7 @@ void FSAnalyzerExp::AnalyzeNewFd(const fstrace::NewFd *new_fd) {
 }
 
 
-void FSAnalyzerExp::AnalyzeDelFd(const fstrace::DelFd *del_fd) {
+void FSAnalyzer::AnalyzeDelFd(const fstrace::DelFd *del_fd) {
   if (!del_fd) {
     return;
   }
@@ -79,7 +79,7 @@ void FSAnalyzerExp::AnalyzeDelFd(const fstrace::DelFd *del_fd) {
 }
 
 
-void FSAnalyzerExp::AnalyzeDupFd(const fstrace::DupFd *dup_fd) {
+void FSAnalyzer::AnalyzeDupFd(const fstrace::DupFd *dup_fd) {
   if (!dup_fd) {
     return;
   }
@@ -102,7 +102,7 @@ void FSAnalyzerExp::AnalyzeDupFd(const fstrace::DupFd *dup_fd) {
 }
 
 
-void FSAnalyzerExp::AnalyzeHpath(const fstrace::Hpath *hpath) {
+void FSAnalyzer::AnalyzeHpath(const fstrace::Hpath *hpath) {
   if (!hpath) {
     return;
   }
@@ -125,7 +125,7 @@ void FSAnalyzerExp::AnalyzeHpath(const fstrace::Hpath *hpath) {
 }
 
 
-void FSAnalyzerExp::AnalyzeHpathSym(const fstrace::HpathSym *hpathsym) {
+void FSAnalyzer::AnalyzeHpathSym(const fstrace::HpathSym *hpathsym) {
   if (!hpathsym) {
     return;
   }
@@ -141,7 +141,7 @@ void FSAnalyzerExp::AnalyzeHpathSym(const fstrace::HpathSym *hpathsym) {
 }
 
 
-void FSAnalyzerExp::AnalyzeLink(const fstrace::Link *link) {
+void FSAnalyzer::AnalyzeLink(const fstrace::Link *link) {
   if (!link) {
     return;
   }
@@ -161,7 +161,7 @@ void FSAnalyzerExp::AnalyzeLink(const fstrace::Link *link) {
 }
 
 
-void FSAnalyzerExp::AnalyzeNewProc(const fstrace::NewProc *new_proc) {
+void FSAnalyzer::AnalyzeNewProc(const fstrace::NewProc *new_proc) {
   if (!new_proc) {
     return;
   }
@@ -180,7 +180,7 @@ void FSAnalyzerExp::AnalyzeNewProc(const fstrace::NewProc *new_proc) {
 
 
 
-void FSAnalyzerExp::AnalyzeRename(const fstrace::Rename *rename) {
+void FSAnalyzer::AnalyzeRename(const fstrace::Rename *rename) {
   if (!rename) {
     return;
   }
@@ -208,7 +208,7 @@ void FSAnalyzerExp::AnalyzeRename(const fstrace::Rename *rename) {
 }
 
 
-void FSAnalyzerExp::AnalyzeSetCwd(const fstrace::SetCwd *setcwd) {
+void FSAnalyzer::AnalyzeSetCwd(const fstrace::SetCwd *setcwd) {
   if (!setcwd) {
     return;
   }
@@ -222,7 +222,7 @@ void FSAnalyzerExp::AnalyzeSetCwd(const fstrace::SetCwd *setcwd) {
 }
 
 
-void FSAnalyzerExp::AnalyzeSetCwdFd(const fstrace::SetCwdFd *setcwd) {
+void FSAnalyzer::AnalyzeSetCwdFd(const fstrace::SetCwdFd *setcwd) {
   if (!setcwd) {
     return;
   }
@@ -239,7 +239,7 @@ void FSAnalyzerExp::AnalyzeSetCwdFd(const fstrace::SetCwdFd *setcwd) {
 }
 
 
-void FSAnalyzerExp::AnalyzeSymlink(const fstrace::Symlink *symlink) {
+void FSAnalyzer::AnalyzeSymlink(const fstrace::Symlink *symlink) {
   if (!symlink) {
     return;
   }
@@ -253,7 +253,7 @@ void FSAnalyzerExp::AnalyzeSymlink(const fstrace::Symlink *symlink) {
 }
 
 
-void FSAnalyzerExp::ProcessPathEffect(fs::path p,
+void FSAnalyzer::ProcessPathEffect(fs::path p,
     enum fstrace::Hpath::AccessType access,
     std::string operation_name) {
   fstrace::DebugInfo debug_info;
@@ -276,7 +276,7 @@ void FSAnalyzerExp::ProcessPathEffect(fs::path p,
 }
 
 
-std::optional<fs::path> FSAnalyzerExp::GetParentDir(size_t dirfd,
+std::optional<fs::path> FSAnalyzer::GetParentDir(size_t dirfd,
                                                     size_t pid) const {
   std::optional<fs::path> cwd;
   std::optional<inode_t> inode;
@@ -313,7 +313,7 @@ std::optional<fs::path> FSAnalyzerExp::GetParentDir(size_t dirfd,
 }
 
 
-std::optional<fs::path> FSAnalyzerExp::GetAbsolutePath(size_t dirfd,
+std::optional<fs::path> FSAnalyzer::GetAbsolutePath(size_t dirfd,
                                                        fs::path p,
                                                        size_t pid) const {
   if (p.is_absolute()) {
@@ -328,12 +328,12 @@ std::optional<fs::path> FSAnalyzerExp::GetAbsolutePath(size_t dirfd,
 }
 
 
-void FSAnalyzerExp::UnlinkResource(inode_t inode_p, std::string basename) {
+void FSAnalyzer::UnlinkResource(inode_t inode_p, std::string basename) {
   inode_table.RemoveEntry(inode_p, basename);
 }
 
 
-void FSAnalyzerExp::AddPathEffect(const fs::path &p, FSAccess fs_access) {
+void FSAnalyzer::AddPathEffect(const fs::path &p, FSAccess fs_access) {
   std::string event_id = fs_access.task_name;
   auto key_pair = make_pair(p, event_id);
   std::optional<FSAccess> fs_acc_opt = task_accesses.GetValue(key_pair);
@@ -380,7 +380,7 @@ void FSAnalyzerExp::AddPathEffect(const fs::path &p, FSAccess fs_access) {
 }
 
 
-void FSAnalyzerExp::UpdateAccessTable() const {
+void FSAnalyzer::UpdateAccessTable() const {
   for (const auto &elem : task_accesses) {
     auto p = elem.first.first;
     auto fs_access = elem.second;
@@ -398,7 +398,7 @@ void FSAnalyzerExp::UpdateAccessTable() const {
 }
 
 
-void FSAnalyzerExp::DumpOutput(writer::OutWriter *out) const {
+void FSAnalyzer::DumpOutput(writer::OutWriter *out) const {
   if (!out) {
     return;
   }
@@ -415,7 +415,7 @@ void FSAnalyzerExp::DumpOutput(writer::OutWriter *out) const {
 }
 
 
-void FSAnalyzerExp::DumpJSON(ostream &os) const {
+void FSAnalyzer::DumpJSON(ostream &os) const {
   os << "{" << endl;
   for (auto map_it = effect_table.begin(); map_it != effect_table.end(); map_it++) {
     auto entry = *map_it;
@@ -442,7 +442,7 @@ void FSAnalyzerExp::DumpJSON(ostream &os) const {
 }
 
 
-void FSAnalyzerExp::DumpCSV(ostream &os) const {
+void FSAnalyzer::DumpCSV(ostream &os) const {
   for (auto const &entry : effect_table) {
     for (auto const &fs_access : entry.second) {
       os << entry.first.native() << ","
@@ -453,7 +453,7 @@ void FSAnalyzerExp::DumpCSV(ostream &os) const {
 }
 
 
-FSAnalyzerExp::fs_accesses_table_t FSAnalyzerExp::GetFSAccesses() const {
+FSAnalyzer::fs_accesses_table_t FSAnalyzer::GetFSAccesses() const {
   UpdateAccessTable();
   return effect_table;
 }

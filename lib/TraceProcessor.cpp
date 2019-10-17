@@ -2,8 +2,8 @@
 
 #include "Debug.h"
 #include "Graph.h"
-#include "DependencyInferenceExpAnalyzer.h"
-#include "FSAnalyzerExp.h"
+#include "DependencyInferenceAnalyzer.h"
+#include "FSAnalyzer.h"
 #include "FSFaultDetector.h"
 #include "TraceProcessor.h"
 
@@ -46,18 +46,18 @@ get_graph_format(const CLIArgs &cli_args)
 }
 
 
-static analyzer::FSAnalyzerExp::OutFormat
+static analyzer::FSAnalyzer::OutFormat
 get_fs_out_format(const CLIArgs &cli_args)
 {
   std::optional<std::string> val = cli_args.cli_options.GetValue(
       "fs_accesses_format");
   if (!val.has_value()) {
-    return analyzer::FSAnalyzerExp::JSON;
+    return analyzer::FSAnalyzer::JSON;
   }
   if (val.value() == "json") {
-    return analyzer::FSAnalyzerExp::JSON;
+    return analyzer::FSAnalyzer::JSON;
   }
-  return analyzer::FSAnalyzerExp::CSV;
+  return analyzer::FSAnalyzer::CSV;
 }
 
 
@@ -71,7 +71,7 @@ TraceProcessor::TraceProcessor(CLIArgs args):
 
 TraceProcessor::~TraceProcessor() {
   for (auto &entry : analyzers) {
-    analyzer::AnalyzerExp *analyzer = entry.first;
+    analyzer::Analyzer *analyzer = entry.first;
     if (analyzer) {
       delete analyzer;
     }      
@@ -91,7 +91,7 @@ void TraceProcessor::Setup(std::optional<size_t> pid) {
 
 void TraceProcessor::InitAnalyzers(std::optional<size_t> pid) {
 
-  analyzer::AnalyzerExp *analyzer_ptr = nullptr;
+  analyzer::Analyzer *analyzer_ptr = nullptr;
   writer::OutWriter *out = nullptr;
   if (cli_args.dump_trace || cli_args.output_trace.has_value()) {
     analyzer_ptr = new analyzer::DumpAnalyzer();
@@ -112,12 +112,12 @@ void TraceProcessor::InitAnalyzers(std::optional<size_t> pid) {
   }
   for (auto const &analyzer_str : cli_args.analyzers) {
     if (analyzer_str == "dep-infer") {
-      analyzer_ptr = new analyzer::DependencyInferenceAnalyzerExp(
+      analyzer_ptr = new analyzer::DependencyInferenceAnalyzer(
           get_graph_format(cli_args));
       INIT_OUT(dep_graph);
     }
     if (analyzer_str == "fs") {
-      analyzer_ptr = new analyzer::FSAnalyzerExp(
+      analyzer_ptr = new analyzer::FSAnalyzer(
           get_fs_out_format(cli_args));
       INIT_OUT(fs_accesses);
     }
@@ -137,11 +137,11 @@ void TraceProcessor::InitFaultDetector() {
     if (fault_detector_str == "fs") {
       // We know the first analyzer corresponds to the `dep-infer` analyzer,
       // while the second one is the `fs` analyzer.
-      analyzer::DependencyInferenceAnalyzerExp *dep_analyzer =
-        static_cast<analyzer::DependencyInferenceAnalyzerExp*>(
+      analyzer::DependencyInferenceAnalyzer *dep_analyzer =
+        static_cast<analyzer::DependencyInferenceAnalyzer*>(
             analyzers[offset + 0].first);
-      analyzer::FSAnalyzerExp *fs_analyzer =
-        static_cast<analyzer::FSAnalyzerExp*>(analyzers[offset + 1].first);
+      analyzer::FSAnalyzer *fs_analyzer =
+        static_cast<analyzer::FSAnalyzer*>(analyzers[offset + 1].first);
       fault_detector = new detector::FSFaultDetector(
           fs_analyzer->GetFSAccesses(),
           dep_analyzer->GetDependencyGraph());
@@ -152,7 +152,7 @@ void TraceProcessor::InitFaultDetector() {
 
 void TraceProcessor::AnalyzeTrace(const fstrace::TraceNode *trace) {
   for (auto const &pair_analyzer : analyzers) {
-    analyzer::AnalyzerExp *analyzer_ptr = pair_analyzer.first;
+    analyzer::Analyzer *analyzer_ptr = pair_analyzer.first;
     analyzer_ptr->Analyze(trace);
   }
 }
@@ -160,7 +160,7 @@ void TraceProcessor::AnalyzeTrace(const fstrace::TraceNode *trace) {
 
 void TraceProcessor::DumpAnalysisOutput() {
   for (auto const &pair_analyzer : analyzers) {
-    analyzer::AnalyzerExp *analyzer_ptr = pair_analyzer.first;
+    analyzer::Analyzer *analyzer_ptr = pair_analyzer.first;
     writer::OutWriter *out = pair_analyzer.second;
     if (!analyzer_ptr) {
       continue;

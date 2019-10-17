@@ -5,9 +5,9 @@
 #include <unordered_map>
 #include <string>
 
-#include "DependencyInferenceExpAnalyzer.h"
+#include "DependencyInferenceAnalyzer.h"
 #include "FaultDetector.h"
-#include "FSAnalyzerExp.h"
+#include "FSAnalyzer.h"
 
 
 
@@ -20,9 +20,9 @@ namespace detector {
 class FSFaultDetector : public FaultDetector {
 public:
   // Some type aliases.
-  using dep_graph_t = analyzer::DependencyInferenceAnalyzerExp::dep_graph_t;
-  using fs_accesses_table_t = analyzer::FSAnalyzerExp::fs_accesses_table_t;
-  using fs_access_t = analyzer::FSAnalyzerExp::FSAccess;
+  using dep_graph_t = analyzer::DependencyInferenceAnalyzer::dep_graph_t;
+  using fs_accesses_table_t = analyzer::FSAnalyzer::fs_accesses_table_t;
+  using fs_access_t = analyzer::FSAnalyzer::FSAccess;
 
   /**
    * This struct describes a fault associated with two

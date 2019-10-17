@@ -10,7 +10,7 @@
 
 
 namespace fs = experimental::filesystem;
-using DepGNodeInfo = analyzer::DependencyInferenceAnalyzerExp::DepGNodeInfo;
+using DepGNodeInfo = analyzer::DependencyInferenceAnalyzer::DepGNodeInfo;
 
 
 namespace detector {

@@ -3,7 +3,7 @@
 #include <vector>
 #include <utility>
 
-#include "AnalyzerExperimental.h"
+#include "Analyzer.h"
 #include "FaultDetector.h"
 #include "Table.h"
 #include "TraceGenerator.h"
@@ -43,7 +43,7 @@ public:
 private:
   CLIArgs cli_args;
   /// A list of analyzers that operate on traces.
-  std::vector<std::pair<analyzer::AnalyzerExp*, writer::OutWriter*>> analyzers;
+  std::vector<std::pair<analyzer::Analyzer*, writer::OutWriter*>> analyzers;
   /// Component used to detect faults.
   detector::FaultDetector *fault_detector;
 

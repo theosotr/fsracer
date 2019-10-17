@@ -8,7 +8,7 @@
 #include <utility>
 #include <set>
 
-#include "AnalyzerExperimental.h"
+#include "Analyzer.h"
 #include "Graph.h"
 #include "FStrace.h"
 #include "Table.h"
@@ -132,13 +132,13 @@ namespace analyzer {
  * An analyzer of traces that infers the dependencies among
  * events.
  */
-class DependencyInferenceAnalyzerExp : public AnalyzerExp {
+class DependencyInferenceAnalyzer : public Analyzer {
 public:
   using dep_graph_t = graph::Graph<graph::TaskDir, enum graph::EdgeLabel>;
   using DepGNodeInfo = dep_graph_t::NodeInfo;
 
   /** Default Constructor of the analyzer. */
-  DependencyInferenceAnalyzerExp(enum graph::GraphFormat graph_format_):
+  DependencyInferenceAnalyzer(enum graph::GraphFormat graph_format_):
     graph_format(graph_format_) {  }
 
   /** Display the pretty name of the analyzer. */
