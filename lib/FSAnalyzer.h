@@ -53,6 +53,7 @@ public:
   using fs_accesses_table_t = table::Table<fs::path, std::vector<FSAccess>>;
 
   FSAnalyzer(enum OutFormat out_format_):
+    working_dir(""),
     in_sysop(false),
     out_format(out_format_) {  }
 
@@ -81,6 +82,7 @@ public:
 
   void DumpOutput(writer::OutWriter *out) const;
   fs_accesses_table_t GetFSAccesses() const;
+  std::string GetWorkingDir() const;
 
 private:
   table::Table<proc_t, inode_t> cwd_table;
@@ -92,6 +94,7 @@ private:
   table::Table<std::pair<fs::path, std::string>, FSAccess> task_accesses;
 
   std::optional<std::string> current_task;
+  std::string working_dir;
   bool in_sysop;
   enum OutFormat out_format;
 

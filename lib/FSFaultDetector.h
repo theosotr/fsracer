@@ -76,9 +76,11 @@ public:
    * the analyzers utilized by this fault detector.
    */
   FSFaultDetector(fs_accesses_table_t fs_accesses_,
-               dep_graph_t dep_graph_):
+                 dep_graph_t dep_graph_,
+                 std::string working_dir_):
     fs_accesses(fs_accesses_),
-    dep_graph(dep_graph_) {  }
+    dep_graph(dep_graph_),
+    working_dir(working_dir_) {  }
 
   /** Gets the pretty name of this fault detector. */
   std::string GetName() const {
@@ -100,6 +102,8 @@ private:
   fs_accesses_table_t fs_accesses;
   /// The dependency graph of events.
   dep_graph_t dep_graph;
+  /// This the directory where we collected traces from.
+  std::string working_dir;
 
   /// Table that tracks debug information of each event.
   /// Useful for fault reporting.

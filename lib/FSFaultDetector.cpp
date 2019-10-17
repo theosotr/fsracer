@@ -50,16 +50,16 @@ bool FSFaultDetector::HappensBefore(std::string source,
   std::optional<DepGNodeInfo> target_info =
     dep_graph.GetNodeInfo(target);
 
+  if (source == "main" || target == "main") {
+    return true;
+  }
+
   if (!source_info.has_value() || !target_info.has_value()) {
     return false;
   }
 
   if (!source_info.value().node_obj.IsTask() ||
       !target_info.value().node_obj.IsTask()) {
-    return true;
-  }
-
-  if (source == "main" || target == "main") {
     return true;
   }
 
@@ -94,7 +94,8 @@ void FSFaultDetector::DetectMissingInput(
         }
       }
     }
-    if (!found && acc.task_name != "main") {
+    if (!found && acc.task_name != "main" &&
+        utils::StartsWith(p.native(), working_dir)) {
       auto it = faults.find(acc.task_name);
       if (it == faults.end()) {
         auto fault = FSFault();

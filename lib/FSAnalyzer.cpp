@@ -217,6 +217,9 @@ void FSAnalyzer::AnalyzeSetCwd(const fstrace::SetCwd *setcwd) {
   if (!abs_path.has_value()) {
     return;
   }
+  if (working_dir == "") {
+    working_dir = abs_path.value();
+  }
   inode_t inode = inode_table.ToInode(abs_path.value());
   cwd_table.AddEntry(setcwd->GetPid(), inode);
 }
@@ -470,5 +473,9 @@ FSAnalyzer::fs_accesses_table_t FSAnalyzer::GetFSAccesses() const {
   return effect_table;
 }
 
+
+std::string FSAnalyzer::GetWorkingDir() const {
+  return working_dir;
+}
 
 } // namespace analyzer
