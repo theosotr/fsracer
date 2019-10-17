@@ -601,6 +601,12 @@ def translate_utimes(trace):
     return [hpathsym.format('AT_FDCWD', trace.syscall_args[0], TOUCHED)]
 
 
+def translate_vfork(trace):
+    if int(trace.syscall_ret) < 0:
+        return None
+    return [newproc.format('none', trace.syscall_ret)]
+
+
 def translate_write(trace):
     return [trace.syscall_args[1]]
 

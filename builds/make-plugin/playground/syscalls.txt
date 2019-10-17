@@ -42,5 +42,6 @@ unlinkat
 utime
 utimensat
 utimes
+vfork
 write
 writev
