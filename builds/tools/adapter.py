@@ -752,12 +752,12 @@ class MakeHandler(Handler):
                     tabs + new_task.format(self.current_task_id, "W 1")
                 )
                 for x in prereqs:
+                    working_dir = self.working_dir if cwd == '' else cwd
                     write_out(
                         self.out,
-                        # TODO: revisit
                         tabs + consumes.format(
                             self.current_task_id,
-                            os.path.join(self.working_dir, x))
+                            os.path.join(working_dir, x))
                     )
                 write_out(
                     self.out,
