@@ -4,6 +4,7 @@
 #include <map>
 #include <unordered_map>
 #include <string>
+#include <vector>
 
 #include "DependencyInferenceAnalyzer.h"
 #include "FaultDetector.h"
@@ -23,12 +24,9 @@ public:
   using dep_graph_t = analyzer::DependencyInferenceAnalyzer::dep_graph_t;
   using fs_accesses_table_t = analyzer::FSAnalyzer::fs_accesses_table_t;
   using fs_access_t = analyzer::FSAnalyzer::FSAccess;
+  using DepGNodeInfo = analyzer::DependencyInferenceAnalyzer::DepGNodeInfo;
 
-  /**
-   * This struct describes a fault associated with two
-   * conflicting blocks.
-   */
-  struct FaultDesc {
+  struct OrderingViolation {
     /// The file path that the two blocks are conflicting.
     std::string p;
     /// The effect that the first block has on the path.
@@ -37,7 +35,7 @@ public:
     fs_access_t fs_access2;
 
     /** Constructor. */
-    FaultDesc(std::string p_, fs_access_t fs_access1_,
+    OrderingViolation(std::string p_, fs_access_t fs_access1_,
               fs_access_t fs_access2_):
       p(p_),
       fs_access1(fs_access1_),
@@ -47,7 +45,8 @@ public:
      * Overriding the operator '<' so that we can insert instances of
      * this struct into a set.
      */
-    friend bool operator<(const FaultDesc &lhs, const FaultDesc &rhs) {
+    friend bool operator<(const OrderingViolation &lhs,
+                          const OrderingViolation &rhs) {
       return lhs.p < rhs.p;
     }
 
@@ -55,8 +54,20 @@ public:
     std::string ToString() const;
   };
 
-  // FIXME: Use hash map.
-  using faults_t = std::map<std::pair<string, string>, std::set<FaultDesc>>;
+  struct FSFault {
+    std::vector<std::pair<fs::path, fs_access_t>> missing_inputs;
+    std::vector<std::pair<fs::path, fs_access_t>> missing_outputs;
+    std::map<std::string, std::set<OrderingViolation>> ordering_violations;
+
+    void AddMissingInput(fs::path p, fs_access_t fs_access);
+    void AddMissingOutput(fs::path p, fs_access_t fs_access);
+    void AddOrderingViolation(fs::path, fs_access_t fs_acc1,
+                              fs_access_t fs_acc2);
+    std::string ToString() const;
+  };
+
+
+  using faults_t = std::unordered_map<std::string, FSFault>;
 
   /**
    * Constructor of the `RaceDetector` class.
@@ -101,6 +112,15 @@ private:
    * and the table of file accesses per block.
    */
   faults_t GetFaults() const;
+
+  void DetectOrderingViolation(
+      faults_t &faults,
+      fs::path p,
+      const std::vector<analyzer::FSAnalyzer::FSAccess>&) const;
+  void DetectMissingInput(
+      faults_t &faults,
+      fs::path p,
+      const std::vector<analyzer::FSAnalyzer::FSAccess>&) const;
   
   /** Dumps reported faults to the standard output. */
   void DumpFaults(const faults_t &faults) const;

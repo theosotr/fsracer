@@ -10,7 +10,6 @@
 
 
 namespace fs = experimental::filesystem;
-using DepGNodeInfo = analyzer::DependencyInferenceAnalyzer::DepGNodeInfo;
 
 
 namespace detector {
@@ -60,6 +59,10 @@ bool FSFaultDetector::HappensBefore(std::string source,
     return true;
   }
 
+  if (source == "main" || target == "main") {
+    return true;
+  }
+
   if (cache_it == cache_dfs.end()) {
     std::set<std::string> visited = dep_graph.DFS(source); 
     cache_dfs[source] = visited;
@@ -70,12 +73,56 @@ bool FSFaultDetector::HappensBefore(std::string source,
 }
 
 
+void FSFaultDetector::DetectMissingInput(
+    faults_t &faults,
+    fs::path p,
+    const std::vector<analyzer::FSAnalyzer::FSAccess>& accesses) const {
+  bool found = false;
+  for (auto const &acc : accesses) {
+    if (!fstrace::Hpath::Consumes(acc.access_type)) {
+      continue;
+    }
+    std::optional<DepGNodeInfo> node_info = dep_graph.GetNodeInfo(acc.task_name); 
+    if (!node_info.has_value()) {
+      continue;
+    }
+    for (auto const &dep : node_info.value().dependents) {
+      if (dep.second == graph::CONSUMES) {
+        if (utils::StartsWith(p.string(), dep.first)) {
+          found = true;
+          break;
+        }
+      }
+    }
+    if (!found && acc.task_name != "main") {
+      auto it = faults.find(acc.task_name);
+      if (it == faults.end()) {
+        auto fault = FSFault();
+        fault.AddMissingInput(p, acc);
+        faults[acc.task_name] = fault;
+      } else {
+        it->second.AddMissingInput(p, acc);
+      } 
+    }
+    found = false;
+  }
+}
+
+
+void FSFaultDetector::DetectOrderingViolation(
+    faults_t &faults,
+    fs::path p,
+    const std::vector<analyzer::FSAnalyzer::FSAccess>& accesses) const {
+}
+
+
 FSFaultDetector::faults_t FSFaultDetector::GetFaults() const {
   faults_t faults;
   fs_accesses_table_t::table_t table = fs_accesses.GetTable();
   for (auto it = table.begin(); it != table.end(); it++) {
     auto fs_access = *it;
     fs::path p = fs_access.first;
+    DetectMissingInput(faults, p, fs_access.second);
     // Get all combinations of file accesses.
     auto acc_combs = utils::Get2Combinations(fs_access.second); 
     for (auto const &access : acc_combs) {
@@ -105,15 +152,15 @@ FSFaultDetector::faults_t FSFaultDetector::GetFaults() const {
         // There is not any dependency, so we've just found a fault.
         auto pair_element = std::make_pair(
             first_access.task_name, second_access.task_name);
-        faults_t::iterator it = faults.find(pair_element);
-        FaultDesc fault_desc = FaultDesc(
-            p.native(), first_access, second_access);
+        faults_t::iterator it = faults.find(first_access.task_name);
         if (it == faults.end()) {
-          std::set<FaultDesc> fault_descs;
-          fault_descs.insert(fault_desc);
-          faults[pair_element] = fault_descs;
+          auto fault_desc = FSFault();
+          fault_desc.AddOrderingViolation(p.native(), first_access,
+                                          second_access);
+          faults[first_access.task_name] = fault_desc;
         } else {
-          it->second.insert(fault_desc);
+          it->second.AddOrderingViolation(p.native(), first_access,
+                                          second_access);
         }
       }
     }
@@ -126,46 +173,89 @@ void FSFaultDetector::DumpFaults(const faults_t &faults) const {
   if (faults.empty()) {
     return;
   }
-  debug::msg() << "Detected Data Races";
-  debug::msg() << "-------------------";
-  debug::msg() << "Number of data races: " << faults.size();
+  size_t ov_count = 0;
+  size_t mis_count = 0;
+  size_t mos_count = 0;
+  std::string msg = "";
   for (auto const &fault_entry : faults) {
-    auto block_pair = fault_entry.first;
-    std::optional<fstrace::DebugInfo> debug_info1 = event_info.GetValue(
-        block_pair.first);
-    std::optional<fstrace::DebugInfo> debug_info2 = event_info.GetValue(
-        block_pair.second);
-    string debug1 = "";
-    string debug2 = "";
-    if (debug_info1.has_value()) {
-      string debug_str = debug_info1.value().ToString();
-      debug1 = debug_str != "" ? debug_str : "empty";
-    } else {
-      debug1 = " !main";
-    }
-    if (debug_info2.has_value()) {
-      string debug_str = debug_info2.value().ToString();
-      debug2 = debug_str != "" ? debug_str : "empty";
-    } else {
-      debug2 = " !main";
-    }
-    debug::msg() << "* Event: "
-      << block_pair.first << " (tags:" << debug1 << ") and Event: "
-      << block_pair.second << " (tags:" << debug2 << "):";
-    for (auto const &fault_desc : fault_entry.second) {
-      debug::msg() << "  - " << fault_desc.ToString();
-    }
+
+    auto task_name = fault_entry.first;
+    auto task_faults = fault_entry.second;
+    ov_count += task_faults.ordering_violations.size();
+    mis_count += task_faults.missing_inputs.size();
+    mos_count += task_faults.missing_outputs.size();
+    msg += "* [Task: " + task_name + "]:\n";
+    msg += fault_entry.second.ToString() + "\n";
+  }
+  debug::msg() << "Ordering Violations: " <<  ov_count;
+  debug::msg() << "Missing Inputs: " << mis_count;
+  debug::msg() << "Missing Outputs: " << mos_count << "\n";
+  debug::msg() << "Faults per Task:\n" << msg;
+}
+
+
+void FSFaultDetector::FSFault::AddMissingInput(
+    fs::path p, FSFaultDetector::fs_access_t fs_access) {
+  missing_inputs.push_back({ p, fs_access });
+}
+
+
+void FSFaultDetector::FSFault::AddMissingOutput(
+    fs::path p, FSFaultDetector::fs_access_t fs_access) {
+  missing_outputs.push_back({ p, fs_access });
+}
+
+
+void FSFaultDetector::FSFault::AddOrderingViolation(
+    fs::path p, FSFaultDetector::fs_access_t fs_acc1,
+    FSFaultDetector::fs_access_t fs_acc2) {
+  std::string task = fs_acc2.task_name;
+  auto it = ordering_violations.find(task);
+  if (it == ordering_violations.end()) {
+    std::set<OrderingViolation> ov_set;
+    ov_set.insert(OrderingViolation(p, fs_acc1, fs_acc2));
+    ordering_violations[task] = ov_set;
+  } else {
+    it->second.insert(OrderingViolation(p, fs_acc1, fs_acc2));
   }
 }
 
 
-std::string FSFaultDetector::FaultDesc::ToString() const {
-  return  "Path " + p + ":\n"
-    + "    " + fstrace::Hpath::AccToString(fs_access1.access_type)
-    + " by the first event "
-    + "(operation: " + fs_access1.operation_name + ")\n"
-    + "    "+ fstrace::Hpath::AccToString(fs_access2.access_type)
-    + " by the second event (operation: " + fs_access2.operation_name + ")";
+std::string FSFaultDetector::FSFault::ToString() const {
+  std::string str = "";
+  if (!missing_inputs.empty()) {
+    str += "  Missing Inputs:\n";
+    str += "  ---------------\n";
+  }
+  for (auto const &acc : missing_inputs) {
+    str += "    ==> " + acc.first.string();
+    str += " (" + fstrace::Hpath::AccToString(acc.second.access_type);
+    str += " by operation " + acc.second.operation_name + ")\n";
+  }
+  if (!missing_outputs.empty()) {
+    str += "  Missing Inputs:\n";
+    str += "  ---------------\n";
+  }
+  for (auto const &acc : missing_outputs) {
+    str += "    ==> " + acc.first.string();
+    str += " (" + fstrace::Hpath::AccToString(acc.second.access_type);
+    str += " by operation " + acc.second.operation_name + ")\n";
+  }
+  if (!ordering_violations.empty()) {
+    str += "  Ordering Violations:\n";
+    str += "  --------------------\n";
+  }
+  for (auto const &elem : ordering_violations) {
+    str += "    ==> Task: " + elem.first + "\n";
+    for (auto const &acc : elem.second) {
+      str += "      - " + acc.p + " (" +
+        fstrace::Hpath::AccToString(acc.fs_access1.access_type) +
+        " at operation " + acc.fs_access1.operation_name + " and " +
+        fstrace::Hpath::AccToString(acc.fs_access2.access_type) +
+        " at operation " + acc.fs_access2.operation_name + ")\n";
+    }
+  }
+  return str;
 }
 
 

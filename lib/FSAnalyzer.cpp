@@ -262,6 +262,7 @@ void FSAnalyzer::ProcessPathEffect(fs::path p,
   switch (access) {
     case fstrace::Hpath::CONSUMED:
     case fstrace::Hpath::PRODUCED:
+    case fstrace::Hpath::TOUCHED:
       AddPathEffect(
           p, FSAccess(task_name, access, debug_info, operation_name));
       break;
@@ -277,7 +278,7 @@ void FSAnalyzer::ProcessPathEffect(fs::path p,
 
 
 std::optional<fs::path> FSAnalyzer::GetParentDir(size_t dirfd,
-                                                    size_t pid) const {
+                                                 size_t pid) const {
   std::optional<fs::path> cwd;
   std::optional<inode_t> inode;
   switch (dirfd) {
@@ -314,8 +315,8 @@ std::optional<fs::path> FSAnalyzer::GetParentDir(size_t dirfd,
 
 
 std::optional<fs::path> FSAnalyzer::GetAbsolutePath(size_t dirfd,
-                                                       fs::path p,
-                                                       size_t pid) const {
+                                                    fs::path p,
+                                                    size_t pid) const {
   if (p.is_absolute()) {
     return p;
   }
