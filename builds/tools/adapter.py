@@ -834,5 +834,12 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--context', choices=['make', 'gradle'],
                         default='make'
                        )
+    parser.add_argument('-i', '--input')
+    parser.add_argument('-o', '--output')
     args = parser.parse_args()
-    main(sys.stdin, sys.stdout, args.context, args.working_dir)
+    inp = sys.stdin
+    out = sys.stdout
+    if args.input:
+        with open(args.input, 'r') as f:
+            inp = f.readlines()
+    main(inp, sys.stdout, args.context, args.working_dir)
