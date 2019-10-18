@@ -1,6 +1,7 @@
 #ifndef STREAM_TRACE_GENERATOR_H
 #define STREAM_TRACE_GENERATOR_H
 
+#include <optional>
 #include <unordered_map>
 #include <string>
 
@@ -30,8 +31,7 @@ public:
     fp(nullptr),
     trace_line(nullptr),
     trace_line_len(0),
-    has_next(false),
-    in_sysop(false) {  }
+    has_next(false) {  }
 
   std::string GetName() const;
   void Start();
@@ -45,7 +45,7 @@ private:
   char *trace_line;
   size_t trace_line_len;
   bool has_next;
-  bool in_sysop;
+  std::optional<std::string> sysop_name;
   size_t loc_line;
   std::string location;
 

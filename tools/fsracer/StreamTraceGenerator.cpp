@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <algorithm>
 #include <cstring>
 #include <regex>
@@ -155,6 +156,8 @@ StreamTraceGenerator::EmitNewFd(const std::vector<std::string> &tokens,
   int fd = std::stoi(tokens[4]);
   fstrace::NewFd *newfd = new fstrace::NewFd(
       pid, dirfd, RemoveQuotes(tokens[3]), fd);
+  assert(sysop_name.has_value());
+  newfd->SetActualOpName(sysop_name.value());
   if (fd < 0) {
     newfd->MarkFailed();
   }
@@ -171,7 +174,10 @@ StreamTraceGenerator::EmitDelFd(const std::vector<std::string> &tokens,
     has_next = false;
     return nullptr;
   }
-  return new fstrace::DelFd(pid, std::stoi(tokens[2]));
+  fstrace::DelFd *delfd = new fstrace::DelFd(pid, std::stoi(tokens[2]));
+  assert(sysop_name.has_value());
+  delfd->SetActualOpName(sysop_name.value());
+  return delfd;
 }
 
 
@@ -189,7 +195,11 @@ StreamTraceGenerator::EmitDupFd(const std::vector<std::string> &tokens,
     has_next = false;
     return nullptr;
   }
-  return new fstrace::DupFd(pid, std::stoi(tokens[2]), std::stoi(tokens[3]));
+  fstrace::DupFd *dupfd = new fstrace::DupFd(pid, std::stoi(tokens[2]),
+                                             std::stoi(tokens[3]));
+  assert(sysop_name.has_value());
+  dupfd->SetActualOpName(sysop_name.value());
+  return dupfd;
 }
 
 
@@ -213,12 +223,15 @@ StreamTraceGenerator::EmitHpath(const std::vector<std::string> &tokens,
     has_next = false;
     return nullptr;
   }
+  fstrace::Hpath *hpath = nullptr;
   if (hpathsym) {
-    return new fstrace::HpathSym(pid, dirfd, RemoveQuotes(tokens[3]),
+    hpath = new fstrace::HpathSym(pid, dirfd, RemoveQuotes(tokens[3]),
                                  access_type);
   }
-  return new fstrace::Hpath(pid, dirfd, RemoveQuotes(tokens[3]), access_type);
-
+  hpath = new fstrace::Hpath(pid, dirfd, RemoveQuotes(tokens[3]), access_type);
+  assert(sysop_name.has_value());
+  hpath->SetActualOpName(sysop_name.value());
+  return hpath;
 }
 
 
@@ -231,12 +244,16 @@ StreamTraceGenerator::EmitLinkOrRename(const std::vector<std::string> &tokens,
   CHECK_DIRFD(old_dirfd);
   size_t new_dirfd = ParseDirFd(tokens[4]);
   CHECK_DIRFD(new_dirfd);
+  fstrace::Link *link = nullptr;
   if (is_link) {
-    return new fstrace::Link(pid, old_dirfd, RemoveQuotes(tokens[3]),
+    link = new fstrace::Link(pid, old_dirfd, RemoveQuotes(tokens[3]),
                              new_dirfd, RemoveQuotes(tokens[5]));
   }
-  return new fstrace::Rename(pid, old_dirfd, RemoveQuotes(tokens[3]),
+  link = new fstrace::Rename(pid, old_dirfd, RemoveQuotes(tokens[3]),
                              new_dirfd, RemoveQuotes(tokens[5]));
+  assert(sysop_name.has_value());
+  link->SetActualOpName(sysop_name.value());
+  return link;
 }
 
 
@@ -251,19 +268,24 @@ StreamTraceGenerator::EmitNewProc(const std::vector<std::string> &tokens,
   }
   size_t new_pid = std::stoi(tokens[3]);
   const std::string &clone_mode = tokens[2];
+  enum fstrace::NewProc::CloneMode ecmode;
   if (clone_mode == "fs") {
-    return new fstrace::NewProc(pid, fstrace::NewProc::SHARE_FS, new_pid);
+    ecmode = fstrace::NewProc::SHARE_FS;
   } else if (clone_mode == "fd") {
-    return new fstrace::NewProc(pid, fstrace::NewProc::SHARE_FD, new_pid);
+    ecmode = fstrace::NewProc::SHARE_FD;
   } else if (clone_mode == "fdfs") {
-    return new fstrace::NewProc(pid, fstrace::NewProc::SHARE_BOTH, new_pid);
+    ecmode = fstrace::NewProc::SHARE_BOTH;
   } else if (clone_mode == "none") {
-    return new fstrace::NewProc(pid, fstrace::NewProc::SHARE_NONE, new_pid);
+    ecmode = fstrace::NewProc::SHARE_NONE;
   } else {
     AddError(utils::err::TRACE_ERROR, "Unknown clone mode", location);
     has_next = false;
     return nullptr;
   }
+  fstrace::NewProc *newproc = new fstrace::NewProc(pid, ecmode, new_pid);
+  assert(sysop_name.has_value());
+  newproc->SetActualOpName(sysop_name.value());
+  return newproc;
 }
 
 
@@ -271,7 +293,10 @@ fstrace::SetCwd *
 StreamTraceGenerator::EmitSetCwd(const std::vector<std::string> &tokens,
                                  size_t pid) {
   CHECK_TOKENS(3, "setcwd");
-  return new fstrace::SetCwd(pid, RemoveQuotes(tokens[2]));
+  fstrace::SetCwd *setcwd = new fstrace::SetCwd(pid, RemoveQuotes(tokens[2]));
+  assert(sysop_name.has_value());
+  setcwd->SetActualOpName(sysop_name.value());
+  return setcwd;
 }
 
 
@@ -284,7 +309,11 @@ StreamTraceGenerator::EmitSetCwdFd(const std::vector<std::string> &tokens,
     has_next = false;
     return nullptr;
   }
-  return new fstrace::SetCwdFd(pid, std::stoi(tokens[2]));
+  fstrace::SetCwdFd *setcwd = new fstrace::SetCwdFd(
+      pid, std::stoi(tokens[2]));
+  assert(sysop_name.has_value());
+  setcwd->SetActualOpName(sysop_name.value());
+  return setcwd;
 }
 
 
@@ -294,8 +323,11 @@ StreamTraceGenerator::EmitSymlink(const std::vector<std::string> &tokens,
   CHECK_TOKENS(5, "symlink");
   size_t dirfd = ParseDirFd(tokens[2]);
   CHECK_DIRFD(dirfd);
-  return new fstrace::Symlink(pid, dirfd, RemoveQuotes(tokens[3]),
-                              RemoveQuotes(tokens[4]));
+  fstrace::Symlink *symlink = new fstrace::Symlink(
+      pid, dirfd, RemoveQuotes(tokens[3]), RemoveQuotes(tokens[4]));
+  assert(sysop_name.has_value());
+  symlink->SetActualOpName(sysop_name.value());
+  return symlink;
 }
 
 
@@ -348,12 +380,12 @@ fstrace::TraceNode *StreamTraceGenerator::ParseLine(const std::string &line) {
   l.erase(0, l.find_first_not_of(" \t\n\r\f\v"));
   location = l + ":" + std::to_string(loc_line);
   if (l == "}") {
-    in_sysop = false;
+    sysop_name.reset();
     return new fstrace::End();
   }
   std::vector<std::string> tokens;
   utils::Split(l, tokens);
-  if (!in_sysop) {
+  if (!sysop_name.has_value()) {
     return ParseExpression(tokens);
   }
   return ParseOperation(tokens);
@@ -434,7 +466,7 @@ fstrace::TraceNode *StreamTraceGenerator::ParseExpression(
   } else if (expr == "sysop") {
     fstrace::SysOpBeg *sysop = EmitSysOp(tokens);
     if (sysop) {
-      in_sysop = true;
+      sysop_name = sysop->GetOpId();
     }
     return sysop;
   } else if (expr == "execTask") {

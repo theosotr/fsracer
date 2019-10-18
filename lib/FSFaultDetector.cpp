@@ -246,7 +246,7 @@ std::string FSFaultDetector::FSFault::MISToString() const {
   for (auto const &acc : missing_inputs) {
     str += "    ==> " + acc.first.string();
     str += " (" + fstrace::Hpath::AccToString(acc.second.access_type);
-    str += " by operation " + acc.second.operation_name + ")\n";
+    str += " by operation \"" + acc.second.operation_name + "\")\n";
   }
   return str;
 }
@@ -257,7 +257,7 @@ std::string FSFaultDetector::FSFault::MOSToString() const {
   for (auto const &acc : missing_outputs) {
     str += "    ==> " + acc.first.string();
     str += " (" + fstrace::Hpath::AccToString(acc.second.access_type);
-    str += " by operation " + acc.second.operation_name + ")\n";
+    str += " by operation \"" + acc.second.operation_name + "\")\n";
   }
   return str;
 }
@@ -270,9 +270,9 @@ std::string FSFaultDetector::FSFault::OVToString() const {
     for (auto const &acc : elem.second) {
       str += "      - " + acc.p + " (" +
         fstrace::Hpath::AccToString(acc.fs_access1.access_type) +
-        " at operation " + acc.fs_access1.operation_name + " and " +
+        " at operation \"" + acc.fs_access1.operation_name + "\" and " +
         fstrace::Hpath::AccToString(acc.fs_access2.access_type) +
-        " at operation " + acc.fs_access2.operation_name + ")\n";
+        " at operation \"" + acc.fs_access2.operation_name + "\")\n";
     }
   }
   return str;
