@@ -1,15 +1,4 @@
-# Step 1: Create a regex to extract:
-#                                   - pid                   12498
-#                                   - syscall name          openat
-#                                   - syscall args          "AT_FCWD,...,TTY"
-#                                   - syscall return value  3
-# Step 2: For every syscall have a function that translates it to fstrace op
-# Example: Operation ID do        ------ interpreter.ml 31, substring matching
-#               newfd AT_FCWD s1.c 3
-#               hpath AT_FCWD s1.c consumed
-#          done
-#
-# trace = [pid, syscall_name, syscall_args, syscall_ret_val]
+#!/usr/bin/env python3
 import argparse
 import os
 import re
