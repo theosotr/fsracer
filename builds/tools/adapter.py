@@ -676,7 +676,8 @@ class Handler(ABC):
                     self.trace.syscall_name, counter
                 )
                 opexp = globals()["translate_" + self.trace.syscall_name](self.trace)
-                if self.trace.syscall_name == "write":
+                if any(self.trace.syscall_name == x
+                       for x in ('write', 'writev')):
                     self._handle_write()
                 elif opexp is not None:
                     self._handle_opexp(opexp)
