@@ -34,10 +34,13 @@ bool FSFaultDetector::HasConflict(const fs_access_t &acc1,
                                   const fs_access_t &acc2) {
   switch (acc1.access_type) {
     case fstrace::Hpath::CONSUMED:
-      return !fstrace::Hpath::Consumes(acc2.access_type);
+      return !fstrace::Hpath::Consumes(acc2.access_type) &&
+        !fstrace::Hpath::Touched(acc2.access_type);
     case fstrace::Hpath::PRODUCED:
     case fstrace::Hpath::EXPUNGED:
-      return true;
+      return !fstrace::Hpath::Touched(acc2.access_type);
+    case fstrace::Hpath::TOUCHED:
+      return false;
   }
 }
 

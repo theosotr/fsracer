@@ -296,6 +296,16 @@ bool Hpath::Consumes(enum AccessType access) {
 }
 
 
+bool Hpath::Touched(enum AccessType access) {
+  switch (access) {
+    case TOUCHED:
+      return true;
+    default:
+      return false;
+  }
+}
+
+
 std::string HpathSym::GetOpName() const {
   return "hpathsym";
 }

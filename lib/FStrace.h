@@ -337,6 +337,7 @@ public:
 
   static std::string AccToString(enum AccessType effect);
   static bool Consumes(enum AccessType effect);
+  static bool Touched(enum AccessType effect);
 
 protected:
   size_t dirfd;

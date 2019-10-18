@@ -42,6 +42,9 @@ void InodeTable::RemoveEntry(inode_t inode_p, const string &basename) {
     // The inode is not open, so we just remove it from the corresponding
     // inode table.
     optional<inode_t> inode_opt = Table<inode_key_t, inode_t>::PopEntry(key);
+    if (!inode_opt.has_value()) {
+      return;
+    }
     assert(inode_opt.has_value());
     inode_t inode = inode_opt.value();
     map<inode_t, set<fs::path>>::iterator it = rev_table.find(inode);
