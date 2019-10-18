@@ -1,0 +1,18 @@
+# example for ~/.sbuildrc.  (Also see /etc/sbuild/sbuild.conf.)  -*- Perl -*-
+$core_depends = [
+                  'build-essential:native',
+                  'fakeroot:native'
+];
+
+$external_commands = {
+                        'post-build-commands' => [],
+                        'chroot-setup-commands' => [],
+                        'starting-build-commands' => [
+                            # 'analyzer %d %p',
+                            '%SBUILD_SHELL'
+                        ],
+};
+
+# don't remove this, Perl needs it:
+1;
+
