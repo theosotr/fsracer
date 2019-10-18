@@ -182,19 +182,35 @@ void FSFaultDetector::DumpFaults(const faults_t &faults) const {
   size_t mos_count = 0;
   std::string msg = "";
   for (auto const &fault_entry : faults) {
-
-    auto task_name = fault_entry.first;
     auto task_faults = fault_entry.second;
     ov_count += task_faults.ordering_violations.size();
     mis_count += task_faults.missing_inputs.size();
     mos_count += task_faults.missing_outputs.size();
-    msg += "* [Task: " + task_name + "]:\n";
-    msg += fault_entry.second.ToString() + "\n";
   }
   debug::msg() << "Ordering Violations: " <<  ov_count;
   debug::msg() << "Missing Inputs: " << mis_count;
   debug::msg() << "Missing Outputs: " << mos_count << "\n";
-  debug::msg() << "Faults per Task:\n" << msg;
+  debug::msg() << "Faults per Task:";
+  for (auto const &fault_entry : faults) {
+    auto task_name = fault_entry.first;
+    debug::msg(debug::colors::YELLOW) << "* [Task: " + task_name + "]:";
+    if (!fault_entry.second.missing_inputs.empty()) {
+      debug::msg(debug::colors::RED) << "  Missing Inputs:";
+      debug::msg(debug::colors::RED) << "  ---------------";
+      debug::msg() << fault_entry.second.MISToString();
+    }
+    if (!fault_entry.second.missing_outputs.empty()) {
+      debug::msg(debug::colors::RED) << "  Missing Inputs:";
+      debug::msg(debug::colors::RED) << "  ---------------";
+      debug::msg() << fault_entry.second.MOSToString();
+    }
+    if (!fault_entry.second.ordering_violations.empty()) {
+      debug::msg(debug::colors::RED) << "  Ordering Violations:";
+      debug::msg(debug::colors::RED) << "  --------------------";
+      debug::msg() << fault_entry.second.OVToString();
+    }
+    debug::msg();
+  }
 }
 
 
@@ -225,30 +241,30 @@ void FSFaultDetector::FSFault::AddOrderingViolation(
 }
 
 
-std::string FSFaultDetector::FSFault::ToString() const {
+std::string FSFaultDetector::FSFault::MISToString() const {
   std::string str = "";
-  if (!missing_inputs.empty()) {
-    str += "  Missing Inputs:\n";
-    str += "  ---------------\n";
-  }
   for (auto const &acc : missing_inputs) {
     str += "    ==> " + acc.first.string();
     str += " (" + fstrace::Hpath::AccToString(acc.second.access_type);
     str += " by operation " + acc.second.operation_name + ")\n";
   }
-  if (!missing_outputs.empty()) {
-    str += "  Missing Inputs:\n";
-    str += "  ---------------\n";
-  }
+  return str;
+}
+
+
+std::string FSFaultDetector::FSFault::MOSToString() const {
+  std::string str = "";
   for (auto const &acc : missing_outputs) {
     str += "    ==> " + acc.first.string();
     str += " (" + fstrace::Hpath::AccToString(acc.second.access_type);
     str += " by operation " + acc.second.operation_name + ")\n";
   }
-  if (!ordering_violations.empty()) {
-    str += "  Ordering Violations:\n";
-    str += "  --------------------\n";
-  }
+  return str;
+}
+
+
+std::string FSFaultDetector::FSFault::OVToString() const {
+  std::string str = "";
   for (auto const &elem : ordering_violations) {
     str += "    ==> Task: " + elem.first + "\n";
     for (auto const &acc : elem.second) {

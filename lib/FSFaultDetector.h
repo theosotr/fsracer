@@ -63,7 +63,9 @@ public:
     void AddMissingOutput(fs::path p, fs_access_t fs_access);
     void AddOrderingViolation(fs::path, fs_access_t fs_acc1,
                               fs_access_t fs_acc2);
-    std::string ToString() const;
+    std::string MISToString() const;
+    std::string MOSToString() const;
+    std::string OVToString() const;
   };
 
 
