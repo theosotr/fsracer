@@ -82,7 +82,8 @@ void FSFaultDetector::DetectMissingInput(
     const std::vector<analyzer::FSAnalyzer::FSAccess>& accesses) const {
   bool found = false;
   for (auto const &acc : accesses) {
-    if (!fstrace::Hpath::Consumes(acc.access_type)) {
+    if (!fstrace::Hpath::Consumes(acc.access_type) ||
+         !utils::StartsWith(p.native(), working_dir)) {
       continue;
     }
     std::optional<DepGNodeInfo> node_info = dep_graph.GetNodeInfo(acc.task_name); 
@@ -97,8 +98,7 @@ void FSFaultDetector::DetectMissingInput(
         }
       }
     }
-    if (!found && acc.task_name != "main" &&
-        utils::StartsWith(p.native(), working_dir)) {
+    if (!found && acc.task_name != "main") {
       auto it = faults.find(acc.task_name);
       if (it == faults.end()) {
         auto fault = FSFault();
