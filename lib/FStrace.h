@@ -335,9 +335,10 @@ public:
   std::string ToString() const;
   void Accept(analyzer::Analyzer *a) const;
 
-  static std::string AccToString(enum AccessType effect);
-  static bool Consumes(enum AccessType effect);
-  static bool Touched(enum AccessType effect);
+  static std::string AccToString(enum AccessType access);
+  static bool Consumes(enum AccessType access);
+  static bool Touched(enum AccessType access);
+  static bool Produces(enum AccessType access);
 
 protected:
   size_t dirfd;
