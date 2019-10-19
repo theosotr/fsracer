@@ -133,6 +133,10 @@ private:
 
   bool HappensBefore(string source, string target) const;
 
+  bool HasFileDeclaredAccess(fs::path p,
+                             const std::vector<fs_access_t> &accesses,
+                             bool is_produced) const;
+
   /**
    * Checks whether there is a conflict between the first file access
    * and the second one.

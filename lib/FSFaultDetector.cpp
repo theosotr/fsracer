@@ -76,16 +76,56 @@ bool FSFaultDetector::HappensBefore(std::string source,
 }
 
 
+bool FSFaultDetector::HasFileDeclaredAccess(
+    fs::path p, const std::vector<fs_access_t> &accesses,
+    bool is_produced) const {
+  for (auto const &acc : accesses) {
+    if (acc.task_name == "main") {
+      continue;
+    }
+    if (is_produced && !fstrace::Hpath::Produces(acc.access_type)) {
+      continue;
+    }
+
+    if (!is_produced && !fstrace::Hpath::Consumes(acc.access_type)) {
+      continue;
+    }
+    std::optional<DepGNodeInfo> node_info = dep_graph.GetNodeInfo(
+        acc.task_name); 
+    if (!node_info.has_value()) {
+      continue;
+    }
+    for (auto const &dep : node_info.value().dependents) {
+      if (!utils::StartsWith(p.native(), dep.first)) {
+        continue;
+      }
+      if (is_produced && dep.second == graph::PRODUCES) {
+        return true;
+      }
+      if (!is_produced && dep.second == graph::CONSUMES) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+
 void FSFaultDetector::DetectMissingInput(
     faults_t &faults,
     fs::path p,
-    const std::vector<analyzer::FSAnalyzer::FSAccess>& accesses) const {
-  bool found = false;
+    const std::vector<fs_access_t>& accesses) const {
+  if (!utils::StartsWith(p.native(), working_dir)) {
+    return;
+  }
+  if (HasFileDeclaredAccess(p, accesses, true)) {
+    return;
+  }
   for (auto const &acc : accesses) {
-    if (!fstrace::Hpath::Consumes(acc.access_type) ||
-         !utils::StartsWith(p.native(), working_dir)) {
+    if (!fstrace::Hpath::Consumes(acc.access_type)) {
       continue;
     }
+    bool found = false;
     std::optional<DepGNodeInfo> node_info = dep_graph.GetNodeInfo(acc.task_name); 
     if (!node_info.has_value()) {
       continue;
@@ -98,7 +138,7 @@ void FSFaultDetector::DetectMissingInput(
         }
       }
     }
-    if (!found && acc.task_name != "main") {
+    if (!found) {
       auto it = faults.find(acc.task_name);
       if (it == faults.end()) {
         auto fault = FSFault();
