@@ -1,12 +1,18 @@
 # example for ~/.sbuildrc.  (Also see /etc/sbuild/sbuild.conf.)  -*- Perl -*-
 $core_depends = [
                   'build-essential:native',
-                  'fakeroot:native'
+                  'fakeroot:native',
+                  'strace'
 ];
 
 $external_commands = {
                         'post-build-commands' => [],
                         'chroot-setup-commands' => [],
+                        'pre-build-commands' => [
+                            'cat /root/post-shell | %SBUILD_CHROOT_EXEC sh -c "cat > /bin/post-shell" && %SBUILD_CHROOT_EXEC sh -c "chmod +x /bin/post-shell"',
+                            'cat /root/fsmake | %SBUILD_CHROOT_EXEC sh -c "cat > /bin/fsmake" && %SBUILD_CHROOT_EXEC sh -c "chmod +x /bin/fsmake"',
+                            'cat /root/syscalls.txt | %SBUILD_CHROOT_EXEC sh -c "cat > /root/syscalls.txt"'
+                        ],
                         'starting-build-commands' => [
                             # 'analyzer %d %p',
                             '%SBUILD_SHELL'
