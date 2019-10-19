@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-strace -s 1000 -f -e "$(tr -s '\r\n' ',' < ../syscalls.txt | sed -e 's/,$/\n/')" -o make.traces make SHELL='$(warning ##BEGIN## $@,$^)post-shell'
