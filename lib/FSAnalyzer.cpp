@@ -360,7 +360,7 @@ void FSAnalyzer::AddPathEffect(const fs::path &p, FSAccess fs_access) {
         default:
           // We consume a path that we have either produced or
           // expunged in the past. We keep the previous access. 
-          task_accesses.AddEntry(key_pair, old_fs_acc);
+          break;
       }
       break;
     case fstrace::Hpath::PRODUCED:
@@ -372,9 +372,9 @@ void FSAnalyzer::AddPathEffect(const fs::path &p, FSAccess fs_access) {
           task_accesses.AddEntry(key_pair, fs_access);
           break;
         default:
-          task_accesses.AddEntry(key_pair, old_fs_acc);
           break;
       }
+      break;
     case fstrace::Hpath::EXPUNGED:
       switch (old_fs_acc.access_type) {
         case fstrace::Hpath::CONSUMED:
