@@ -714,7 +714,6 @@ class MakeHandler(Handler):
         self.cwd_queue = deque()  # Save the history of cwd
         self.cwd_queue.append('')
         self.is_open_task = False
-        self.end_tasks = []
         self.current_task_id = None
         # {'path': {'file/rule': ('task_id', [prereqs])}}
         self.depends_on = {}  # Save info to find depends on relations
@@ -732,37 +731,37 @@ class MakeHandler(Handler):
             cwd = self.cwd_queue[-1]
             cwd = cwd + "/" if cwd != '' else cwd
             task_id = "{}{}_{}_{}".format(cwd, makefile, line, target)
-            if task_id == self.current_task_id:
-                self.end_tasks.pop()  # Because we'll add a new one in END state
-            else:
-                tabs = self.nesting_counter * '\t'
-                self.current_task_id = task_id
+            tabs = self.nesting_counter * '\t'
+            self.current_task_id = task_id
+            write_out(
+                self.out,
+                tabs + new_task.format(self.current_task_id, "W 1")
+            )
+            for x in prereqs:
+                working_dir = self.working_dir if cwd == '' else cwd
                 write_out(
                     self.out,
-                    tabs + new_task.format(self.current_task_id, "W 1")
+                    tabs + consumes.format(
+                        self.current_task_id,
+                        os.path.join(working_dir, x))
                 )
-                for x in prereqs:
-                    working_dir = self.working_dir if cwd == '' else cwd
-                    write_out(
-                        self.out,
-                        tabs + consumes.format(
-                            self.current_task_id,
-                            os.path.join(working_dir, x))
-                    )
-                write_out(
-                    self.out,
-                    tabs + exec_task_begin.format(task_id)
-                )
-                # Add values to depends_on dict
-                if cwd not in self.depends_on:
-                    self.depends_on[cwd] = {target: (task_id, prereqs)}
-                elif target not in self.depends_on[cwd]:
-                    self.depends_on[cwd][target] = (task_id, prereqs)
+            write_out(
+                self.out,
+                tabs + exec_task_begin.format(task_id)
+            )
+            # Add values to depends_on dict
+            if cwd not in self.depends_on:
+                self.depends_on[cwd] = {target: (task_id, prereqs)}
+            elif target not in self.depends_on[cwd]:
+                self.depends_on[cwd][target] = (task_id, prereqs)
             self.nesting_counter += 1
             return
         if message.startswith("##END##"):
-            self.end_tasks.append(exec_task_end)
             self.nesting_counter -= 1
+            write_out(
+                self.out,
+                (self.nesting_counter * '\t') + exec_task_end
+            )
             return
         entering = re.search("^.*:[ ]+Entering directory[ ]+'(.*)'", message)
         if entering:
@@ -775,11 +774,6 @@ class MakeHandler(Handler):
 
     def _handle_opexp(self, opexp):
         # Add pid
-        if self.is_open_task == False and len(self.end_tasks) > 0:
-            write_out(
-                self.out,
-                (self.nesting_counter * '\t') + self.end_tasks.pop()
-            )
         opexp = [self.trace.pid + ", " + x for x in opexp]
         write_out(
             self.out,
@@ -800,10 +794,6 @@ class MakeHandler(Handler):
 
     def execute(self):
         super(MakeHandler, self).execute()
-        if len(self.end_tasks) > 0:
-            write_out(
-                self.out, (self.nesting_counter * '\t') + self.end_tasks.pop()
-            )
         self._find_depends_on_relations()
 
 

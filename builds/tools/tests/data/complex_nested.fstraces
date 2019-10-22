@@ -1,0 +1,230 @@
+sysop init SYNC {
+	23611, setcwd "/home/user/fsracer/builds/make-plugin/playground/complex_nested"
+}
+sysop execve_0 SYNC {
+	23611, hpath AT_FDCWD "/usr/bin/make" consumed
+}
+sysop access_1 SYNC {
+	23611, hpath AT_FDCWD "/etc/ld.so.nohwcap" touched
+}
+newTask Makefile:47__ W 1
+consumes Makefile:47__ "/home/user/fsracer/builds/make-plugin/playground/complex_nested/"
+execTask Makefile:47__ {
+	sysop clone_3 SYNC {
+		23611, newproc none 23612
+	}
+}
+sysop close_5 SYNC {
+	23611, delfd 4
+}
+newTask Makefile:53__ W 1
+consumes Makefile:53__ "/home/user/fsracer/builds/make-plugin/playground/complex_nested/"
+execTask Makefile:53__ {
+	sysop clone_7 SYNC {
+		23611, newproc none 23614
+	}
+	sysop close_8 SYNC {
+		23611, delfd 5
+	}
+}
+sysop stat_10 SYNC {
+	23611, hpath AT_FDCWD "swill" touched
+}
+newTask Makefile:34__swill/libswill.a W 1
+consumes Makefile:34__swill/libswill.a "/home/user/fsracer/builds/make-plugin/playground/complex_nested/swill"
+execTask Makefile:34__swill/libswill.a {
+	sysop close_12 SYNC {
+		23611, delfd 4
+	}
+	newTask Makefile:26__swill/libswill.a W 1
+	consumes Makefile:26__swill/libswill.a "/home/user/fsracer/builds/make-plugin/playground/complex_nested/swill"
+	execTask Makefile:26__swill/libswill.a {
+		sysop clone_14 SYNC {
+			23611, newproc none 23616
+		}
+	}
+	sysop close_16 SYNC {
+		23611, delfd 4
+	}
+	newTask Makefile:22__swill/libswill.a W 1
+	consumes Makefile:22__swill/libswill.a "/home/user/fsracer/builds/make-plugin/playground/complex_nested/swill"
+	execTask Makefile:22__swill/libswill.a {
+		sysop clone_18 SYNC {
+			23611, newproc none 23618
+		}
+	}
+	sysop close_20 SYNC {
+		23611, delfd 4
+	}
+	sysop clone_21 SYNC {
+		23611, newproc none 23620
+	}
+	newTask /home/user/cscout/swill/Makefile:26__static W 1
+	consumes /home/user/cscout/swill/Makefile:26__static "/home/user/cscout/swill/"
+	execTask /home/user/cscout/swill/Makefile:26__static {
+		sysop close_24 SYNC {
+			23621, delfd 4
+		}
+		sysop clone_25 SYNC {
+			23621, newproc none 23622
+		}
+	}
+	newTask /home/user/cscout/swill/Makefile:26__static W 1
+	consumes /home/user/cscout/swill/Makefile:26__static "/home/user/cscout/swill/"
+	execTask /home/user/cscout/swill/Makefile:26__static {
+		sysop clone_30 SYNC {
+			23621, newproc none 23625
+		}
+		sysop close_33 SYNC {
+			23627, delfd 1
+		}
+	}
+	sysop stat_35 SYNC {
+		23621, hpath AT_FDCWD "static" touched
+	}
+	sysop close_37 SYNC {
+		23621, delfd 1
+	}
+}
+sysop stat_39 SYNC {
+	23611, hpath AT_FDCWD "btyacc" touched
+}
+newTask Makefile:41__btyacc/btyacc W 1
+consumes Makefile:41__btyacc/btyacc "/home/user/fsracer/builds/make-plugin/playground/complex_nested/btyacc"
+execTask Makefile:41__btyacc/btyacc {
+	newTask Makefile:26__btyacc/btyacc W 1
+	consumes Makefile:26__btyacc/btyacc "/home/user/fsracer/builds/make-plugin/playground/complex_nested/btyacc"
+	execTask Makefile:26__btyacc/btyacc {
+		sysop clone_42 SYNC {
+			23611, newproc none 23628
+		}
+	}
+	sysop close_44 SYNC {
+		23611, delfd 4
+	}
+	newTask Makefile:22__btyacc/btyacc W 1
+	consumes Makefile:22__btyacc/btyacc "/home/user/fsracer/builds/make-plugin/playground/complex_nested/btyacc"
+	execTask Makefile:22__btyacc/btyacc {
+		sysop clone_46 SYNC {
+			23611, newproc none 23630
+		}
+	}
+	sysop close_48 SYNC {
+		23611, delfd 4
+	}
+	sysop clone_49 SYNC {
+		23611, newproc none 23632
+	}
+	sysop chdir_52 SYNC {
+		23633, setcwd "/home/user/cscout/btyacc"
+	}
+	sysop close_53 SYNC {
+		23633, delfd 1
+	}
+}
+newTask Makefile:31__src/build/cscout W 1
+consumes Makefile:31__src/build/cscout "/home/user/fsracer/builds/make-plugin/playground/complex_nested/swill/libswill.a"
+consumes Makefile:31__src/build/cscout "/home/user/fsracer/builds/make-plugin/playground/complex_nested/btyacc/btyacc"
+execTask Makefile:31__src/build/cscout {
+	newTask Makefile:26__src/build/cscout W 1
+	consumes Makefile:26__src/build/cscout "/home/user/fsracer/builds/make-plugin/playground/complex_nested/swill/libswill.a"
+	consumes Makefile:26__src/build/cscout "/home/user/fsracer/builds/make-plugin/playground/complex_nested/btyacc/btyacc"
+	execTask Makefile:26__src/build/cscout {
+		sysop clone_57 SYNC {
+			23611, newproc none 23634
+		}
+		sysop close_58 SYNC {
+			23611, delfd 5
+		}
+	}
+	sysop close_60 SYNC {
+		23611, delfd 4
+	}
+	newTask Makefile:22__src/build/cscout W 1
+	consumes Makefile:22__src/build/cscout "/home/user/fsracer/builds/make-plugin/playground/complex_nested/swill/libswill.a"
+	consumes Makefile:22__src/build/cscout "/home/user/fsracer/builds/make-plugin/playground/complex_nested/btyacc/btyacc"
+	execTask Makefile:22__src/build/cscout {
+		sysop clone_62 SYNC {
+			23611, newproc none 23636
+		}
+	}
+	sysop close_64 SYNC {
+		23611, delfd 4
+	}
+	sysop clone_65 SYNC {
+		23611, newproc none 23638
+	}
+	newTask /home/user/cscout/src/Makefile:119__ W 1
+	consumes /home/user/cscout/src/Makefile:119__ "/home/user/cscout/src/"
+	execTask /home/user/cscout/src/Makefile:119__ {
+		sysop clone_68 SYNC {
+			23639, newproc none 23640
+		}
+		sysop close_69 SYNC {
+			23639, delfd 5
+		}
+	}
+	sysop close_71 SYNC {
+		23639, delfd 4
+	}
+	newTask /home/user/cscout/src/Makefile:124__ W 1
+	consumes /home/user/cscout/src/Makefile:124__ "/home/user/cscout/src/"
+	execTask /home/user/cscout/src/Makefile:124__ {
+		sysop clone_73 SYNC {
+			23639, newproc none 23642
+		}
+		sysop close_74 SYNC {
+			23639, delfd 5
+		}
+	}
+	sysop close_76 SYNC {
+		23639, delfd 4
+	}
+	newTask /home/user/cscout/src/Makefile:210__ W 1
+	consumes /home/user/cscout/src/Makefile:210__ "/home/user/cscout/src/"
+	execTask /home/user/cscout/src/Makefile:210__ {
+		sysop clone_78 SYNC {
+			23639, newproc none 23644
+		}
+		sysop close_79 SYNC {
+			23639, delfd 5
+		}
+	}
+	sysop close_81 SYNC {
+		23639, delfd 4
+	}
+	newTask /home/user/cscout/src/Makefile:210__ W 1
+	consumes /home/user/cscout/src/Makefile:210__ "/home/user/cscout/src/"
+	execTask /home/user/cscout/src/Makefile:210__ {
+		sysop clone_83 SYNC {
+			23639, newproc none 23644
+		}
+	}
+	sysop close_85 SYNC {
+		23639, delfd 4
+	}
+	newTask /home/user/cscout/src/Makefile:157__dep/version.d W 1
+	consumes /home/user/cscout/src/Makefile:157__dep/version.d "/home/user/cscout/src/version.cpp"
+	execTask /home/user/cscout/src/Makefile:157__dep/version.d {
+		sysop close_88 SYNC {
+			23639, delfd 4
+		}
+	}
+	sysop stat_90 SYNC {
+		23639, hpath AT_FDCWD "parse.y" touched
+	}
+	newTask /home/user/cscout/src/Makefile:191__parse.tab.h W 1
+	consumes /home/user/cscout/src/Makefile:191__parse.tab.h "/home/user/cscout/src/parse.y"
+	execTask /home/user/cscout/src/Makefile:191__parse.tab.h {
+		sysop clone_92 SYNC {
+			23639, newproc none 23657
+		}
+	}
+	sysop clone_94 SYNC {
+		23639, newproc none 23657
+	}
+}
+dependsOn Makefile:47__ Makefile:47__
+dependsOn Makefile:31__src/build/cscout Makefile:34__swill/libswill.a
+dependsOn Makefile:31__src/build/cscout Makefile:41__btyacc/btyacc
+dependsOn /home/user/cscout/src/Makefile:119__ /home/user/cscout/src/Makefile:119__

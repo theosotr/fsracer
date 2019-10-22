@@ -1,0 +1,96 @@
+23611 execve("/usr/bin/make", ["make", "SHELL=$(warning ##BEGIN## $@,$^)post-shell"], 0x7fffd091e6e0 /* 28 vars */) = 0
+23611 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)
+23611 write(2, "Makefile:47: ##BEGIN## ,\n", 25) = 25
+23611 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fba756c1a10) = 23612
+23612 write(1, "##END##\n", 8)          = 8
+23611 close(4)                          = 0
+23611 write(2, "Makefile:53: ##BEGIN## ,\n", 25) = 25
+23611 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fba756c1a10) = 23614
+23611 close(5)                          = 0
+23614 write(1, "##END##\n", 8)          = 8
+23611 stat("swill", {st_mode=S_IFDIR|0775, st_size=4096, ...}) = 0
+23611 write(2, "Makefile:34: ##BEGIN## swill/libswill.a,swill\n", 46) = 46
+23611 close(4)                          = 0
+23611 write(2, "Makefile:26: ##BEGIN## swill/libswill.a,swill\n", 46) = 46
+23611 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fba756c1a10) = 23616
+23616 write(1, "##END##\n", 8)          = 8
+23611 close(4)                          = 0
+23611 write(2, "Makefile:22: ##BEGIN## swill/libswill.a,swill\n", 46) = 46
+23611 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fba756c1a10) = 23618
+23618 write(1, "##END##\n", 8)          = 8
+23611 close(4)                          = 0
+23611 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fba756c1a10) = 23620
+23621 write(1, "make[1]: Entering directory '/home/user/cscout/swill'\n", 54) = 54
+23621 write(2, "Makefile:26: ##BEGIN## static,\n", 31) = 31
+23621 close(4)                          = 0
+23621 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f4468225a10) = 23622
+23624 write(1, "make[2]: Entering directory '/home/user/cscout/swill/Source/Objects'\n", 69) = 69
+23624 write(1, "make[2]: Leaving directory '/home/user/cscout/swill/Source/Objects'\n", 68) = 68
+23622 write(1, "##END##\n", 8)          = 8
+23621 write(2, "Makefile:26: ##BEGIN## static,\n", 31) = 31
+23621 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f4468225a10) = 23625
+23627 write(1, "make[2]: Entering directory '/home/user/cscout/swill/Source/SWILL'\n", 67) = 67
+23627 write(1, "make[2]: Leaving directory '/home/user/cscout/swill/Source/SWILL'\n", 66) = 66
+23627 close(1)                          = 0
+23625 write(1, "##END##\n", 8)          = 8
+23621 stat("static", 0x7ffdc02f15b0)    = -1 ENOENT (No such file or directory)
+23621 write(1, "make[1]: Leaving directory '/home/user/cscout/swill'\n", 53) = 53
+23621 close(1)                          = 0
+23620 write(1, "##END##\n", 8)          = 8
+23611 stat("btyacc", {st_mode=S_IFDIR|0775, st_size=4096, ...}) = 0
+23611 write(2, "Makefile:41: ##BEGIN## btyacc/btyacc,btyacc\n", 44) = 44
+23611 write(2, "Makefile:26: ##BEGIN## btyacc/btyacc,btyacc\n", 44) = 44
+23611 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fba756c1a10) = 23628
+23628 write(1, "##END##\n", 8)          = 8
+23611 close(4)                          = 0
+23611 write(2, "Makefile:22: ##BEGIN## btyacc/btyacc,btyacc\n", 44) = 44
+23611 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fba756c1a10) = 23630
+23630 write(1, "##END##\n", 8)          = 8
+23611 close(4)                          = 0
+23611 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fba756c1a10) = 23632
+23633 write(1, "make[1]: Entering directory '/home/user/cscout/btyacc'\n", 55) = 55
+23633 write(1, "make[1]: Leaving directory '/home/user/cscout/btyacc'\n", 54) = 54
+23633 chdir("/home/user/cscout/btyacc") = 0
+23633 close(1)                          = 0
+23632 write(1, "##END##\n", 8)          = 8
+23611 write(2, "Makefile:31: ##BEGIN## src/build/cscout,swill/libswill.a btyacc/btyacc\n", 71) = 71
+23611 write(2, "Makefile:26: ##BEGIN## src/build/cscout,swill/libswill.a btyacc/btyacc\n", 71) = 71
+23611 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fba756c1a10) = 23634
+23611 close(5)                          = 0
+23634 write(1, "##END##\n", 8)          = 8
+23611 close(4)                          = 0
+23611 write(2, "Makefile:22: ##BEGIN## src/build/cscout,swill/libswill.a btyacc/btyacc\n", 71) = 71
+23611 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fba756c1a10) = 23636
+23636 write(1, "##END##\n", 8)          = 8
+23611 close(4)                          = 0
+23611 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fba756c1a10) = 23638
+23639 write(1, "make[1]: Entering directory '/home/user/cscout/src'\n", 52) = 52
+23639 write(2, "Makefile:119: ##BEGIN## ,\n", 26) = 26
+23639 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fbd5ec87a10) = 23640
+23639 close(5)                          = 0
+23640 write(1, "##END##\n", 8)          = 8
+23639 close(4)                          = 0
+23639 write(2, "Makefile:124: ##BEGIN## ,\n", 26) = 26
+23639 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fbd5ec87a10) = 23642
+23639 close(5)                          = 0
+23642 write(1, "##END##\n", 8)          = 8
+23639 close(4)                          = 0
+23639 write(2, "Makefile:210: ##BEGIN## ,\n", 26) = 26
+23639 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fbd5ec87a10) = 23644
+23639 close(5)                          = 0
+23644 write(1, "##END##\n", 8)          = 8
+23639 close(4)                          = 0
+23639 write(2, "Makefile:210: ##BEGIN## ,\n", 26) = 26
+23639 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fbd5ec87a10) = 23644
+23646 write(1, "##END##\n", 8)          = 8
+23639 close(4)                          = 0
+23639 openat(AT_FDCWD, "dep/md5.d", O_RDONLY) = -1 ENOENT (No such file or directory)
+23639 write(2, "Makefile:157: ##BEGIN## dep/version.d,version.cpp\n", 50) = 50
+23639 close(4)                          = 0
+23649 write(1, "##END##\n", 8)          = 8
+23639 stat("parse.y", {st_mode=S_IFREG|0664, st_size=77315, ...}) = 0
+23639 write(2, "Makefile:191: ##BEGIN## parse.tab.h,parse.y\n", 44) = 44
+23639 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fbd5ec87a10) = 23657
+23657 write(1, "##END##\n", 8)          = 8
+23639 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fbd5ec87a10) = 23657
+23657 write(1, "##END##\n", 8)          = 8

@@ -40,3 +40,11 @@ def test_nested_make():
         'tests/data/nested.fstraces',
         'nested_example'
     )
+
+
+def test_complex_nested():
+    helper_fun(
+        'tests/data/complex_nested.traces',
+        'tests/data/complex_nested.fstraces',
+        'complex_nested'
+    )

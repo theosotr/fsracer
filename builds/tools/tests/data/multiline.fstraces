@@ -34,6 +34,12 @@ execTask Makefile:14__s1.o {
 	sysop clone_11 SYNC {
 		15323, newproc none 15324
 	}
+}
+newTask Makefile:14__s1.o W 1
+consumes Makefile:14__s1.o "/home/user/fsracer/builds/make-plugin/playground/multiple_lines/s1.c"
+consumes Makefile:14__s1.o "/home/user/fsracer/builds/make-plugin/playground/multiple_lines/s1.h"
+consumes Makefile:14__s1.o "/home/user/fsracer/builds/make-plugin/playground/multiple_lines/s2.h"
+execTask Makefile:14__s1.o {
 	sysop openat_17 SYNC {
 		15330, newfd AT_FDCWD "./s2.h" 4
 		15330, hpath AT_FDCWD "./s2.h" consumed
