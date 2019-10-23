@@ -69,8 +69,6 @@ execTask Makefile:34__swill/libswill.a {
 			23621, newproc none 23622
 		}
 	}
-	newTask /home/user/cscout/swill/Makefile:26__static W 1
-	consumes /home/user/cscout/swill/Makefile:26__static "/home/user/cscout/swill/"
 	execTask /home/user/cscout/swill/Makefile:26__static {
 		sysop clone_30 SYNC {
 			23621, newproc none 23625
@@ -193,8 +191,6 @@ execTask Makefile:31__src/build/cscout {
 	sysop close_81 SYNC {
 		23639, delfd 4
 	}
-	newTask /home/user/cscout/src/Makefile:210__ W 1
-	consumes /home/user/cscout/src/Makefile:210__ "/home/user/cscout/src/"
 	execTask /home/user/cscout/src/Makefile:210__ {
 		sysop clone_83 SYNC {
 			23639, newproc none 23644

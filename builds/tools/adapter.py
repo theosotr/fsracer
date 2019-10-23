@@ -717,6 +717,7 @@ class MakeHandler(Handler):
         self.current_task_id = None
         # {'path': {'file/rule': ('task_id', [prereqs])}}
         self.depends_on = {}  # Save info to find depends on relations
+        self.task_ids = set()
 
     def _handle_write(self):
         message = self.trace.syscall_args[1].replace('"', '').replace('\\n', '').strip()
@@ -733,18 +734,20 @@ class MakeHandler(Handler):
             task_id = "{}{}_{}_{}".format(cwd, makefile, line, target)
             tabs = self.nesting_counter * '\t'
             self.current_task_id = task_id
-            write_out(
-                self.out,
-                tabs + new_task.format(self.current_task_id, "W 1")
-            )
-            for x in prereqs:
-                working_dir = self.working_dir if cwd == '' else cwd
+            if task_id not in self.task_ids:
+                self.task_ids.add(task_id)
                 write_out(
                     self.out,
-                    tabs + consumes.format(
-                        self.current_task_id,
-                        os.path.join(working_dir, x))
+                    tabs + new_task.format(self.current_task_id, "W 1")
                 )
+                for x in prereqs:
+                    working_dir = self.working_dir if cwd == '' else cwd
+                    write_out(
+                        self.out,
+                        tabs + consumes.format(
+                            self.current_task_id,
+                            os.path.join(working_dir, x))
+                    )
             write_out(
                 self.out,
                 tabs + exec_task_begin.format(task_id)
