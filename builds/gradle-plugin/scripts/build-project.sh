@@ -61,18 +61,21 @@ modify_build_script()
 project=$1
 output_dir=$(realpath $2)
 
-dir=$(realpath $(dirname $0))
+if echo $project | grep -q -oP '^https://'; then
+  project_repo=$project
+  project=$(echo $project | sed -r 's/^https:\/\/github.com\/.*\/(.*)\.git/\1/g')
+else
+  project_repo=$(python3 /root/plugin/scripts/collect-gradle-repos.py "$project")
+  if [ $? -ne 0 ]; then
+    echo "Repo not found" > $project_out/err
+    exit 1
+  fi
+  echo "Project repo $project_repo"
+fi
 
+dir=$(realpath $(dirname $0))
 project_out=$output_dir/$project
 mkdir -p $project_out
-
-project_repo=$(python3 /root/plugin/scripts/collect-gradle-repos.py "$project")
-
-if [ $? -ne 0 ]; then
-  echo "Repo not found" > $project_out/err
-  exit 1
-fi
-echo "Project repo $project_repo"
 
 git clone "$project_repo" /root/$project
 if [ $? -ne 0 ]; then
