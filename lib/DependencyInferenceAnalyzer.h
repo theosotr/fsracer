@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <utility>
 #include <set>
+#include <stack>
 
 #include "Analyzer.h"
 #include "Graph.h"
@@ -138,8 +139,7 @@ public:
   using DepGNodeInfo = dep_graph_t::NodeInfo;
 
   /** Default Constructor of the analyzer. */
-  DependencyInferenceAnalyzer(enum graph::GraphFormat graph_format_):
-    graph_format(graph_format_) {  }
+  DependencyInferenceAnalyzer(enum graph::GraphFormat graph_format_);
 
   /** Display the pretty name of the analyzer. */
   std::string GetName() const;
@@ -150,8 +150,8 @@ public:
   void AnalyzeExecTask(const fstrace::ExecTask *exec_task) {  }
   void AnalyzeExecTaskBeg(const fstrace::ExecTaskBeg *exec_task);
   void AnalyzeSysOp(const fstrace::SysOp *sys_op) {  }
-  void AnalyzeSysOpBeg(const fstrace::SysOpBeg *sys_op) {  }
-  void AnalyzeEnd(const fstrace::End *end) {  }
+  void AnalyzeSysOpBeg(const fstrace::SysOpBeg *sys_op);
+  void AnalyzeEnd(const fstrace::End *end);
 
   void AnalyzeNewFd(const fstrace::NewFd *new_fd) {  }
   void AnalyzeDelFd(const fstrace::DelFd *del_fd) {  }
@@ -172,7 +172,8 @@ private:
   /// The dependency graph of events.
   dep_graph_t dep_graph;
 
-  std::optional<std::string> current_task;
+  std::stack<std::string> task_stack;
+  bool in_sysop;
   table::Table<std::string, fstrace::Task> task_info;
 
   enum graph::GraphFormat graph_format;

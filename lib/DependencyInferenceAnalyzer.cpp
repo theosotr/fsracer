@@ -2,6 +2,7 @@
 #include <ostream>
 
 #include "DependencyInferenceAnalyzer.h"
+#include "Graph.h"
 
 
 namespace graph {
@@ -20,6 +21,14 @@ fstrace::Task TaskDir::GetTask() const {
 
 
 namespace analyzer {
+
+
+DependencyInferenceAnalyzer::DependencyInferenceAnalyzer(
+    enum graph::GraphFormat graph_format_):
+  in_sysop(false),
+  graph_format(graph_format_) {
+    task_stack.push("main");
+}
 
 
 std::string DependencyInferenceAnalyzer::GetName() const {
@@ -70,6 +79,8 @@ void DependencyInferenceAnalyzer::AnalyzeNewTask(
   std::string task_name = new_task->GetTaskName();
   fstrace::Task task = new_task->GetTask();
   dep_graph.AddNode(task_name, graph::TaskDir(task_name, task));
+  assert(!task_stack.empty());
+  dep_graph.AddEdge(task_stack.top(), task_name, graph::HAPPENS_BEFORE);
 }
 
 
@@ -80,6 +91,24 @@ void DependencyInferenceAnalyzer::AnalyzeExecTaskBeg(
   }
   std::string task_name = exec_task->GetTaskName();
   dep_graph.AddNodeAttr(task_name, EXECUTED_ATTR);
+  task_stack.push(task_name);
+}
+
+
+void DependencyInferenceAnalyzer::AnalyzeSysOpBeg(
+    const fstrace::SysOpBeg *sys_op) {
+  if (sys_op) {
+    in_sysop = true;
+  }
+}
+
+
+void DependencyInferenceAnalyzer::AnalyzeEnd(const fstrace::End *end) {
+  if (!in_sysop) {
+    task_stack.pop();
+  } else {
+    in_sysop = false;
+  }
 }
 
 
