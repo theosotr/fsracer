@@ -145,7 +145,8 @@ void TraceProcessor::InitFaultDetector() {
       fault_detector = new detector::FSFaultDetector(
           fs_analyzer->GetFSAccesses(),
           dep_analyzer->GetDependencyGraph(),
-          fs_analyzer->GetWorkingDir());
+          fs_analyzer->GetWorkingDir(),
+          fs_analyzer->GetDirectories());
     }
   }
 }

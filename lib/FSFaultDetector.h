@@ -1,8 +1,10 @@
 #ifndef FS_FAULT_DETECTOR_H
 #define FS_FAULT_DETECTOR_H
 
+#include <experimental/filesystem>
 #include <map>
 #include <unordered_map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -10,6 +12,8 @@
 #include "FaultDetector.h"
 #include "FSAnalyzer.h"
 
+
+namespace fs = experimental::filesystem;
 
 
 namespace detector {
@@ -79,10 +83,12 @@ public:
    */
   FSFaultDetector(fs_accesses_table_t fs_accesses_,
                  dep_graph_t dep_graph_,
-                 std::string working_dir_):
+                 std::string working_dir_,
+                 std::set<fs::path> dirs_):
     fs_accesses(fs_accesses_),
     dep_graph(dep_graph_),
-    working_dir(working_dir_) {  }
+    working_dir(working_dir_),
+    dirs(dirs_) {  }
 
   /** Gets the pretty name of this fault detector. */
   std::string GetName() const {
@@ -106,6 +112,8 @@ private:
   dep_graph_t dep_graph;
   /// This the directory where we collected traces from.
   std::string working_dir;
+  /// This set keeps all paths that are directories.
+  std::set<fs::path> dirs;
 
   /// Table that tracks debug information of each event.
   /// Useful for fault reporting.

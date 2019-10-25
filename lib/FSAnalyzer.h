@@ -5,6 +5,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <utility>
+#include <set>
 #include <vector>
 
 #include "Analyzer.h"
@@ -13,7 +14,6 @@
 
 
 namespace fs = experimental::filesystem;
-
 
 
 namespace analyzer {
@@ -83,6 +83,7 @@ public:
   void DumpOutput(writer::OutWriter *out) const;
   fs_accesses_table_t GetFSAccesses() const;
   std::string GetWorkingDir() const;
+  std::set<fs::path> GetDirectories() const;
 
 private:
   table::Table<proc_t, inode_t> cwd_table;
@@ -92,6 +93,7 @@ private:
   table::InodeTable inode_table;
   mutable fs_accesses_table_t effect_table;
   table::Table<std::pair<fs::path, std::string>, FSAccess> task_accesses;
+  std::set<fs::path> dirs;
 
   std::optional<std::string> current_task;
   std::string working_dir;

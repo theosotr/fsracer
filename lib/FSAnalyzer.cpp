@@ -263,13 +263,27 @@ void FSAnalyzer::ProcessPathEffect(fs::path p,
   std::string task_name = current_task.has_value() ?
     current_task.value() : "main";
   switch (access) {
-    case fstrace::Hpath::CONSUMED:
     case fstrace::Hpath::PRODUCED:
+      // FIXME: That's a hack.
+      //
+      // We presume that a path is a directory, if the associated operation
+      // begins with a mkdir.
+      // Apparently, this does not always work. So we have to think of a better
+      // solution.
+      if (utils::StartsWith(operation_name, "mkdir")) {
+        dirs.insert(p);
+      }
+    case fstrace::Hpath::CONSUMED:
     case fstrace::Hpath::TOUCHED:
+      dirs.insert(p.parent_path());
       AddPathEffect(
           p, FSAccess(task_name, access, debug_info, operation_name));
       break;
     case fstrace::Hpath::EXPUNGED:
+      auto it = dirs.find(p);
+      if (it != dirs.end()) {
+        dirs.erase(it);
+      }
       inode_t inode_p = inode_table.ToInode(p.parent_path());
       std::string basename = p.filename().native();
       AddPathEffect(
@@ -477,5 +491,11 @@ FSAnalyzer::fs_accesses_table_t FSAnalyzer::GetFSAccesses() const {
 std::string FSAnalyzer::GetWorkingDir() const {
   return working_dir;
 }
+
+
+std::set<fs::path> FSAnalyzer::GetDirectories() const {
+  return dirs;
+}
+
 
 } // namespace analyzer

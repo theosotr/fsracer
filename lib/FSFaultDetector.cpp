@@ -118,6 +118,9 @@ void FSFaultDetector::DetectMissingInput(
   if (!utils::StartsWith(p.native(), working_dir)) {
     return;
   }
+  if (dirs.find(p) != dirs.end()) {
+    return;
+  }
   if (HasFileDeclaredAccess(p, accesses, true)) {
     return;
   }
