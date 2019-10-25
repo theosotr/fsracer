@@ -32,6 +32,7 @@ class FSRacerPlugin : Plugin<Project> {
             }
         }
         project.gradle.taskGraph.whenReady { taskGraph ->
+            println("${GRADLE_PREFIX} newTask ${project.name}: W 1")
             println("${GRADLE_PREFIX} Begin ${project.name}:")
             state.addNode("${project.name}:")
             taskGraph.allTasks.forEach { task ->
