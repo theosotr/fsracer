@@ -278,6 +278,8 @@ def translate_chown(trace):
 
 
 def translate_clone(trace):
+    if trace.syscall_ret == '?':
+        return None
     if int(trace.syscall_ret) < 0:
         return None
     has_clone_fs = 'CLONE_FS' in trace.syscall_args[1]
@@ -693,7 +695,7 @@ class GradleHandler(Handler):
         write_out(self.out, construct[:-1].strip())
 
     def _handle_write(self):
-        if int(self.trace.syscall_args[0]) <= self.LOGGING_FD:
+        if int(self.trace.syscall_args[0]) <= self.LOGGING_FD or int(self.trace.syscall_args[0]) >= 300:
             return
 
         write_str = self.trace.syscall_args[1]
