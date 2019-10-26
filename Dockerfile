@@ -18,7 +18,7 @@ RUN cd node && ./configure && make -j4 && make install
 RUN useradd -ms /bin/bash fsracer && \
     echo fsracer:fsracer | chpasswd && \
     cp /etc/sudoers /etc/sudoers.bak && \
-    echo 'fsracer ALL=(root) ALL' >> /etc/sudoers
+    echo 'fsracer ALL=(root) NOPASSWD:ALL' >> /etc/sudoers
 USER fsracer
 ENV HOME /home/fsracer
 
