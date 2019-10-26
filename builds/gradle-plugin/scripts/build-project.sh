@@ -7,34 +7,6 @@
 # Add plugin
 # Execute
 
-change_jvm_settings()
-{
-  basedir=$1
-  settings="org.gradle.jvmargs=-Xmx4096m"
-  propfile=$basedir/gradle.properties
-  if [ -f $propfile ]; then
-    if grep -q -oP 'org.gradle.jvmargs' $propfile; then
-      sed -i "s/org.gradle.jvmargs=[^\n]+/${settings}/g" $propfile
-    else
-      echo "${settings}" >> $propfile
-    fi
-    return
-  fi
-  echo "${settings}" >> $propfile
-}
-
-
-add_jvm_settings()
-{
-  grep -oP "include ['\"].*['\"]" settings.gradle |
-  sed -r "s/include[ ]+//g; s/['\"]//g" |
-  while read subproject;
-  do
-    change_jvm_settings "$subproject"
-  done
-  change_jvm_settings "."
-}
-
 
 modify_build_script()
 {
@@ -88,7 +60,6 @@ cd $project
 find . -name 'gradle.properties' |
 xargs -i sed -i 's/org\.gradle\.parallel=true/org\.gradle\.parallel=false/g' {}
 
-add_jvm_settings
 modify_build_script "groovy"
 ret_groovy=$?
 modify_build_script "kotlin"
@@ -112,6 +83,13 @@ echo $gradlew
 if [[ ! -x $gradlew ]]; then
   gradlew="sh $gradlew"
 fi
+
+# Run gradle for the first time to configure project and install all
+# necessary dependencies and plugins.
+eval "$gradlew tasks"
+eval "$gradlew --stop"
+rm build-result.txt
+
 # When we trace gradle builds, strace might hang because it's waiting for
 # the gradle daemon to exit which is spanwed by the gradlew script.
 # So we run the build script in the background and we do some kind of polling
@@ -124,5 +102,8 @@ eval "timeout -s KILL 30m strace \
 pid=$!
 
 timeout 30m $dir/polling.sh
+
+adapter.py -c gradle /root/$project < $project_out/$project.strace \
+  > $project_out/$project.fstrace 2> $project_out/$project.aderr
 
 exit 0
