@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <experimental/filesystem>
 #include <map>
 #include <unordered_map>
@@ -76,18 +77,39 @@ bool FSFaultDetector::HappensBefore(std::string source,
 }
 
 
-bool FSFaultDetector::HasFileDeclaredAccess(
-    fs::path p, const std::vector<fs_access_t> &accesses,
-    bool is_produced) const {
-  for (auto const &acc : accesses) {
-    if (acc.task_name == "main") {
-      continue;
+static void RegisterFault(FSFaultDetector::faults_t &faults, fs::path p,
+                          const FSFaultDetector::fs_access_t &acc,
+                          bool reg_mio) {
+  auto it = faults.find(acc.task_name);
+  if (it == faults.end()) {
+    auto fault = FSFaultDetector::FSFault();
+    if (reg_mio) {
+      fault.AddMissingOutput(p, acc);
+    } else {
+      fault.AddMissingInput(p, acc);
     }
-    if (is_produced && !fstrace::Hpath::Produces(acc.access_type)) {
-      continue;
+    faults[acc.task_name] = fault;
+  } else {
+    if (reg_mio) {
+      it->second.AddMissingOutput(p, acc);
+    } else {
+      it->second.AddMissingInput(p, acc);
     }
+  } 
+}
 
-    if (!is_produced && !fstrace::Hpath::Consumes(acc.access_type)) {
+
+void FSFaultDetector::DetectMissingInOrOut(
+    faults_t &faults,
+    fs::path p,
+    const std::vector<fs_access_t> &accesses,
+    bool is_output) const {
+  enum graph::EdgeLabel l = is_output ? graph::PRODUCES : graph::CONSUMES;
+  for (auto const &acc : accesses) {
+    if (is_output && !fstrace::Hpath::Produces(acc.access_type)) {
+      continue;
+    }
+    if (!is_output && !fstrace::Hpath::Consumes(acc.access_type)) {
       continue;
     }
     std::optional<DepGNodeInfo> node_info = dep_graph.GetNodeInfo(
@@ -95,19 +117,18 @@ bool FSFaultDetector::HasFileDeclaredAccess(
     if (!node_info.has_value()) {
       continue;
     }
-    for (auto const &dep : node_info.value().dependents) {
-      if (!utils::StartsWith(p.native(), dep.first)) {
-        continue;
-      }
-      if (is_produced && dep.second == graph::PRODUCES) {
-        return true;
-      }
-      if (!is_produced && dep.second == graph::CONSUMES) {
-        return true;
-      }
+    bool file_is_declared = std::any_of(
+        node_info.value().dependents.cbegin(),
+        node_info.value().dependents.cend(),
+        [p, l](auto elem) {
+          return elem.second == l &&
+            utils::StartsWith(p.native(), elem.first);
+        }
+    );
+    if (!file_is_declared) {
+      RegisterFault(faults, p, acc, is_output);
     }
   }
-  return false;
 }
 
 
@@ -115,43 +136,57 @@ void FSFaultDetector::DetectMissingInput(
     faults_t &faults,
     fs::path p,
     const std::vector<fs_access_t>& accesses) const {
-  if (!utils::StartsWith(p.native(), working_dir)) {
-    return;
-  }
-  if (dirs.find(p) != dirs.end()) {
-    return;
-  }
-  if (HasFileDeclaredAccess(p, accesses, true)) {
-    return;
-  }
-  for (auto const &acc : accesses) {
-    if (!fstrace::Hpath::Consumes(acc.access_type)) {
-      continue;
-    }
-    bool found = false;
-    std::optional<DepGNodeInfo> node_info = dep_graph.GetNodeInfo(acc.task_name); 
-    if (!node_info.has_value()) {
-      continue;
-    }
-    for (auto const &dep : node_info.value().dependents) {
-      if (dep.second == graph::CONSUMES) {
-        if (utils::StartsWith(p.string(), dep.first)) {
-          found = true;
-          break;
+  auto &dgraph = dep_graph;
+  // Here, we check whether this file is declared as output by another task.
+  // If this is the case, we should not report a missing input here, because
+  // the task that produce the file is the one that should be rexecuted
+  // whenever there is a change in that file (NOT the task that consume it).
+  bool declared_output = std::any_of(
+      accesses.cbegin(),
+      accesses.cend(),
+      [&dgraph, p](auto acc) {
+        if (!fstrace::Hpath::Produces(acc.access_type)) {
+          return false;
         }
+        std::optional<DepGNodeInfo> node_info = dgraph.GetNodeInfo(
+            acc.task_name); 
+        if (!node_info.has_value()) {
+          return false;
+        }
+        return std::any_of(
+            node_info.value().dependents.cbegin(),
+            node_info.value().dependents.cend(),
+            [p](auto elem) {
+              return elem.second == graph::PRODUCES &&
+                utils::StartsWith(p.native(), elem.first);
+            }
+        );
       }
-    }
-    if (!found) {
-      auto it = faults.find(acc.task_name);
-      if (it == faults.end()) {
-        auto fault = FSFault();
-        fault.AddMissingInput(p, acc);
-        faults[acc.task_name] = fault;
-      } else {
-        it->second.AddMissingInput(p, acc);
-      } 
-    }
-    found = false;
+  );
+  if (!declared_output) {
+    // Checks whether the file is declared as input by the tasks that consume
+    // it.
+    DetectMissingInOrOut(faults, p, accesses, false);
+  }
+}
+
+
+void FSFaultDetector::DetectMissingOutput(
+    faults_t &faults,
+    fs::path p,
+    const std::vector<fs_access_t> &accesses) const {
+  // First we check whether this file is consumed by another task.
+  // If this is the case, any task that produces it should reproduce the file
+  // whenever the file is updated.
+  bool is_consumed = std::any_of(
+      accesses.cbegin(),
+      accesses.cend(),
+      [](auto acc) { return fstrace::Hpath::Consumes(acc.access_type); }
+  );
+  if (is_consumed) {
+    // Checks whether the file is declared as output by the tasks that produce
+    // it.
+    DetectMissingInOrOut(faults, p, accesses, true);
   }
 }
 
@@ -159,7 +194,46 @@ void FSFaultDetector::DetectMissingInput(
 void FSFaultDetector::DetectOrderingViolation(
     faults_t &faults,
     fs::path p,
-    const std::vector<analyzer::FSAnalyzer::FSAccess>& accesses) const {
+    const std::vector<fs_access_t> &accesses) const {
+  // Get all combinations of file accesses.
+  auto acc_combs = utils::Get2Combinations(accesses); 
+  for (auto const &access : acc_combs) {
+    auto first_access = access.first;
+    auto second_access = access.second;
+    if (first_access.task_name == second_access.task_name) {
+      // The fist and the second access refer to the same block,
+      // so we omit them.
+      continue;
+    }
+    if (!HasConflict(first_access, second_access)) {
+      // There is not any conflict between those file accesses,
+      // so we proceed to the next iteration.
+      continue;
+    }
+
+    // Check whether there is a dependency between the two blocks
+    // corresponding to those file accesses with regards to the
+    // dependency graph.
+    bool has_dep = HappensBefore(
+        first_access.task_name, second_access.task_name) ||
+      HappensBefore(second_access.task_name, first_access.task_name);
+
+    if (!has_dep) {
+      // There is not any dependency, so we've just found a fault.
+      auto pair_element = std::make_pair(
+          first_access.task_name, second_access.task_name);
+      faults_t::iterator it = faults.find(first_access.task_name);
+      if (it == faults.end()) {
+        auto fault_desc = FSFault();
+        fault_desc.AddOrderingViolation(p.native(), first_access,
+                                        second_access);
+        faults[first_access.task_name] = fault_desc;
+      } else {
+        it->second.AddOrderingViolation(p.native(), first_access,
+                                        second_access);
+      }
+    }
+  }
 }
 
 
@@ -169,48 +243,13 @@ FSFaultDetector::faults_t FSFaultDetector::GetFaults() const {
   for (auto it = table.begin(); it != table.end(); it++) {
     auto fs_access = *it;
     fs::path p = fs_access.first;
-    DetectMissingInput(faults, p, fs_access.second);
-    // Get all combinations of file accesses.
-    auto acc_combs = utils::Get2Combinations(fs_access.second); 
-    for (auto const &access : acc_combs) {
-      auto first_access = access.first;
-      auto second_access = access.second;
-      event_info.AddEntry(first_access.task_name, first_access.debug_info);
-      event_info.AddEntry(second_access.task_name, second_access.debug_info);
-      if (first_access.task_name == second_access.task_name) {
-        // The fist and the second access refer to the same block,
-        // so we omit them.
-        continue;
-      }
-      if (!HasConflict(first_access, second_access)) {
-        // There is not any conflict between those file accesses,
-        // so we proceed to the next iteration.
-        continue;
-      }
-
-      // Check whether there is a dependency between the two blocks
-      // corresponding to those file accesses with regards to the
-      // dependency graph.
-      bool has_dep = HappensBefore(
-          first_access.task_name, second_access.task_name) ||
-        HappensBefore(second_access.task_name, first_access.task_name);
-
-      if (!has_dep) {
-        // There is not any dependency, so we've just found a fault.
-        auto pair_element = std::make_pair(
-            first_access.task_name, second_access.task_name);
-        faults_t::iterator it = faults.find(first_access.task_name);
-        if (it == faults.end()) {
-          auto fault_desc = FSFault();
-          fault_desc.AddOrderingViolation(p.native(), first_access,
-                                          second_access);
-          faults[first_access.task_name] = fault_desc;
-        } else {
-          it->second.AddOrderingViolation(p.native(), first_access,
-                                          second_access);
-        }
-      }
+    bool min_mon = utils::StartsWith(p.native(), working_dir) &&
+      dirs.find(p) == dirs.end();
+    if (min_mon) {
+      DetectMissingInput(faults, p, fs_access.second);
+      DetectMissingOutput(faults, p, fs_access.second);
     }
+    DetectOrderingViolation(faults, p, fs_access.second);
   } 
   return faults;
 }
@@ -243,7 +282,7 @@ void FSFaultDetector::DumpFaults(const faults_t &faults) const {
       debug::msg() << fault_entry.second.MISToString();
     }
     if (!fault_entry.second.missing_outputs.empty()) {
-      debug::msg(debug::colors::RED) << "  Missing Inputs:";
+      debug::msg(debug::colors::RED) << "  Missing Outputs:";
       debug::msg(debug::colors::RED) << "  ---------------";
       debug::msg() << fault_entry.second.MOSToString();
     }

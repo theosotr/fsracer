@@ -127,23 +127,28 @@ private:
    */
   faults_t GetFaults() const;
 
+  void DetectMissingInOrOut(
+      faults_t &faults,
+      fs::path p,
+      const std::vector<fs_access_t> &accesses,
+      bool is_output) const;
   void DetectOrderingViolation(
       faults_t &faults,
       fs::path p,
-      const std::vector<analyzer::FSAnalyzer::FSAccess>&) const;
+      const std::vector<fs_access_t> &accesses) const;
   void DetectMissingInput(
       faults_t &faults,
       fs::path p,
-      const std::vector<analyzer::FSAnalyzer::FSAccess>&) const;
+      const std::vector<fs_access_t> &accesses) const;
+  void DetectMissingOutput(
+      faults_t &faults,
+      fs::path p,
+      const std::vector<fs_access_t> &accesses) const;
   
   /** Dumps reported faults to the standard output. */
   void DumpFaults(const faults_t &faults) const;
 
   bool HappensBefore(string source, string target) const;
-
-  bool HasFileDeclaredAccess(fs::path p,
-                             const std::vector<fs_access_t> &accesses,
-                             bool is_produced) const;
 
   /**
    * Checks whether there is a conflict between the first file access
