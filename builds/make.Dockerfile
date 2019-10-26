@@ -11,7 +11,7 @@ RUN apt update -y
 # INSTALL PACKAGES
 RUN apt -yqq update && apt -yqq upgrade && apt install -yqq $deps
 
-COPY post-shell /usr/local/bin/post-shell
+COPY ./make-plugin/post-shell /usr/local/bin/post-shell
 COPY syscalls.txt /root/syscalls.txt
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY ./tools/adapter.py /usr/local/bin/adapter.py
