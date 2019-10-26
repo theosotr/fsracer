@@ -7,10 +7,11 @@
 # Add plugin
 # Execute
 
+sudo chown -R fsracer:fsracer $HOME
 
 modify_build_script()
 {
-  plugin=/root/plugin/build/libs/plugin.jar
+  plugin="$HOME/plugin/build/libs/plugin.jar"
   if [ "$1" = "groovy" ]; then
     buildscript="buildscript { dependencies { classpath files('$plugin') } }\n"
     applyplug="apply plugin: 'org.fsracer.gradle.fsracer-plugin'"
@@ -37,7 +38,7 @@ if echo $project | grep -q -oP '^https://'; then
   project_repo=$project
   project=$(echo $project | sed -r 's/^https:\/\/github.com\/.*\/(.*)\.git/\1/g')
 else
-  project_repo=$(python3 /root/plugin/scripts/collect-gradle-repos.py "$project")
+  project_repo=$(python3 $HOME/plugin/scripts/collect-gradle-repos.py "$project")
   if [ $? -ne 0 ]; then
     echo "Repo not found" > $project_out/err
     exit 1
@@ -49,7 +50,7 @@ dir=$(realpath $(dirname $0))
 project_out=$output_dir/$project
 mkdir -p $project_out
 
-git clone "$project_repo" /root/$project
+git clone "$project_repo" $HOME/$project
 if [ $? -ne 0 ]; then
   echo "Unable to clone" > $project_out/err
   exit 1
@@ -87,6 +88,9 @@ fi
 # Run gradle for the first time to configure project and install all
 # necessary dependencies and plugins.
 eval "$gradlew tasks"
+if [ $? -ne 0 ]; then
+  exit 1
+fi
 eval "$gradlew --stop"
 rm build-result.txt
 
@@ -97,13 +101,21 @@ rm build-result.txt
 eval "timeout -s KILL 30m strace \
   -s 300 \
   -o $project_out/$project.strace \
-  -e \"$(tr -s '\r\n' ',' < /root/syscalls.txt | sed -e 's/,$/\n/')\" \
+  -e \"$(tr -s '\r\n' ',' < $HOME/syscalls.txt | sed -e 's/,$/\n/')\" \
   -f $gradlew build --no-build-cache --no-parallel&"
 pid=$!
 
 timeout 30m $dir/polling.sh
+sudo -S kill -s KILL $pid
 
-adapter.py -c gradle /root/$project < $project_out/$project.strace \
+adapter.py -c gradle $HOME/$project < $project_out/$project.strace \
   > $project_out/$project.fstrace 2> $project_out/$project.aderr
 
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+$HOME/fsracer/build/tools/fsracer/fsracer \
+  -i $project_out/$project.fstrace \
+  --fault-detector fs > $project_out/$project.faults 2> $project_out/$project.fserr
 exit 0
