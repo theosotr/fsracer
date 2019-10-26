@@ -27,7 +27,7 @@ for project in $(cat $projects); do
   sudo docker run --name $pname \
     -v $output_dir:$HOME/out \
     --cap-add=SYS_PTRACE \
-    --security-opt seccomp:unconfined gradle-image2 /bin/bash -c "$docker_cmd"
+    --security-opt seccomp:unconfined gradle-image /bin/bash -c "$docker_cmd"
   if [ $? -ne 0 ]; then
     sudo rm $output_dir/$pname
     continue
