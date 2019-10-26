@@ -29,7 +29,7 @@ for project in $(cat $projects); do
     --cap-add=SYS_PTRACE \
     --security-opt seccomp:unconfined gradle-image /bin/bash -c "$docker_cmd"
   if [ $? -ne 0 ]; then
-    sudo rm $output_dir/$pname
+    sudo rm $output_dir/$pname -rf
     continue
   fi
   sudo docker cp $pname:$HOME/$pname/graph.json $output_dir/$pname
