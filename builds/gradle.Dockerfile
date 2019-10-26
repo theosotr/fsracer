@@ -17,6 +17,8 @@ ENV ANDROID_TOOLS=https://dl.google.com/android/repository/sdk-tools-linux-43337
 RUN apt update && apt install -y android-sdk
 ENV ANDROID_SDK_ROOT=/usr/lib/android-sdk
 ENV ANDROID_HOME=/usr/lib/android-sdk
+
+WORKDIR /root
 RUN update-java-alternatives --set java-1.8.0-openjdk-amd64
 RUN wget $ANDROID_TOOLS -O tools.zip && unzip tools.zip
 RUN yes | /root/tools/bin/sdkmanager --licenses && \
@@ -29,12 +31,13 @@ WORKDIR /root
 COPY ./syscalls.txt /root/syscalls.txt
 COPY ./gradle-plugin/build.gradle /root/plugin
 COPY ./gradle-plugin/src /root/plugin/src
-COPY ./gradle-plugin/scripts /root/plugin/scripts
-COPY ./tools/adapter.py /usr/local/bin/adapter.py
 
 # Build gradle plugin
 WORKDIR /root/plugin
 RUN gradle build
 
 ENV PLUGIN_JAR_DIR=/root/plugin/build/libs/
+
 WORKDIR /root
+COPY ./gradle-plugin/scripts /root/plugin/scripts
+COPY ./tools/adapter.py /usr/local/bin/adapter.py
