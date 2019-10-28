@@ -11,6 +11,16 @@ from abc import ABC,abstractmethod
 
 ################################# STRUCTURES ##################################
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 MATCHES = {
     '[': ']', '(': ')', '{': '}', '"': '"'
 }
@@ -23,6 +33,10 @@ Trace = namedtuple(
 )
 
 ############################## HELPER FUNCTIONS  ##############################
+
+def print_warning(string):
+    """Print a colored warning message"""
+    print(bcolors.WARNING + string + bcolors.ENDC, file=sys.stderr)
 
 def safe_split(string):
     """Split a string using commas as delimiter safely.
@@ -796,10 +810,13 @@ class MakeHandler(Handler):
                         )
                         write_out(self.out, depends_on_entry)
 
-
     def execute(self):
         super(MakeHandler, self).execute()
         self._find_depends_on_relations()
+        if self.nesting_counter != 0:
+            print_warning(
+                "Warning: ENDs not matching BEGINs, " + str(self.nesting_counter)
+            )
 
 
 def main(inp, out, program, working_dir):
