@@ -738,11 +738,14 @@ class MakeHandler(Handler):
     def _handle_write(self):
         message = self.trace.syscall_args[1].replace('"', '').replace('\\n', '').strip()
         # TODO: Add tests
-        begin = re.search("^##BEGIN##: +(.*) ### (.*) ### (.*)", message)
+        begin = re.search("^##BEGIN##: +(.*)###(.*)###(.*)", message)
         if begin:
             # target: the name of whichever target caused the rule’s recipe
             #         to be run or rule name
             makefile, target, prereq = begin.groups()
+            makefile = makefile.strip()
+            target = target.strip()
+            prereq = prereq.strip()
             prereqs = re.split(' |,', prereq)
             # In case of nested we should have the current_path
             cwd = self.cwd_queue[-1]
