@@ -738,16 +738,16 @@ class MakeHandler(Handler):
     def _handle_write(self):
         message = self.trace.syscall_args[1].replace('"', '').replace('\\n', '').strip()
         # TODO: Add tests
-        begin = re.search("^(.*):([0-9]*):? +##BEGIN##+ (.*),(.*)", message)
+        begin = re.search("^##BEGIN##: +(.*) ### (.*) ### (.*)", message)
         if begin:
             # target: the name of whichever target caused the rule’s recipe
             #         to be run or rule name
-            makefile, line, target, prereq = begin.groups()
+            makefile, target, prereq = begin.groups()
             prereqs = re.split(' |,', prereq)
             # In case of nested we should have the current_path
             cwd = self.cwd_queue[-1]
             cwd = cwd + "/" if cwd != '' else cwd
-            task_id = "{}{}_{}_{}".format(cwd, makefile, line, target)
+            task_id = "{}{}_{}".format(cwd, makefile, target)
             tabs = self.nesting_counter * '\t'
             self.current_task_id = task_id
             if task_id not in self.task_ids:
@@ -800,6 +800,9 @@ class MakeHandler(Handler):
         )
 
     def _find_depends_on_relations(self):
+        # Set a dependsOn relation if one of the prerequisites is a target in
+        # another rule.
+        # WARNING: what happens if a rule has multiple targets ($@ is the first)
         for path, rules in self.depends_on.items():
             for _, (task_id, prereqs) in rules.items():
                 for prereq in prereqs:
@@ -836,7 +839,8 @@ if __name__ == "__main__":
                         default='make'
                        )
     parser.add_argument('-i', '--input')
-    parser.add_argument('-o', '--output')
+    # TODO
+    #  parser.add_argument('-o', '--output')
     args = parser.parse_args()
     inp = sys.stdin
     out = sys.stdout
