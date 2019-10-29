@@ -22,7 +22,7 @@ def helper_fun(in_traces, fstraces, example):
 
 def test_simple_make():
     helper_fun(
-        'tests/data/simple.traces', 'tests/data/simple.fstraces', 'simple'
+        'tests/data/simple.traces', 'tests/data/simple.fstraces', 'simple_example'
     )
 
 
@@ -47,4 +47,11 @@ def test_complex_nested():
         'tests/data/complex_nested.traces',
         'tests/data/complex_nested.fstraces',
         'complex_nested'
+    )
+
+def test_anna():
+    helper_fun(
+        'tests/data/anna.traces',
+        'tests/data/anna.fstraces',
+        'anna'
     )

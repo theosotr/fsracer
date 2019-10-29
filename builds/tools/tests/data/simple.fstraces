@@ -1,46 +1,43 @@
 sysop init SYNC {
-	15289, setcwd "/home/user/fsracer/builds/make-plugin/playground/simple"
+	17793, setcwd "/home/user/fsracer/builds/make-plugin/playground/simple_example"
 }
 sysop execve_0 SYNC {
-	15289, hpath AT_FDCWD "/usr/bin/make" consumed
+	17793, hpath AT_FDCWD "/usr/bin/make" consumed
 }
 sysop access_1 SYNC {
-	15289, hpath AT_FDCWD "/etc/ld.so.preload" touched
+	17793, hpath AT_FDCWD "/etc/ld.so.nohwcap" touched
 }
 sysop openat_2 SYNC {
-	15289, newfd AT_FDCWD "/etc/ld.so.cache" 3
-	15289, hpath AT_FDCWD "/etc/ld.so.cache" consumed
+	17793, newfd AT_FDCWD "/etc/ld.so.cache" 3
+	17793, hpath AT_FDCWD "/etc/ld.so.cache" consumed
 }
 sysop close_3 SYNC {
-	15289, delfd 3
+	17793, delfd 3
 }
-newTask Makefile:13__s1.o W 1
-consumes Makefile:13__s1.o "/home/user/fsracer/builds/make-plugin/playground/simple/s1.c"
-consumes Makefile:13__s1.o "/home/user/fsracer/builds/make-plugin/playground/simple/s1.h"
-execTask Makefile:13__s1.o {
+newTask Makefile_s1.o W 1
+consumes Makefile_s1.o "/home/user/fsracer/builds/make-plugin/playground/simple_example/s1.c"
+consumes Makefile_s1.o "/home/user/fsracer/builds/make-plugin/playground/simple_example/s1.h"
+execTask Makefile_s1.o {
 	sysop execve_6 SYNC {
-		15290, hpath AT_FDCWD "/usr/local/bin/post-shell" consumed
+		17795, hpath AT_FDCWD "/bin/bash" consumed
 	}
-	sysop stat_7 SYNC {
-		15292, hpath AT_FDCWD "/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/stdc-predef.h.gch" touched
-	}
+}
+sysop stat_11 SYNC {
+	17793, hpath AT_FDCWD "s1.o" touched
 }
 sysop stat_12 SYNC {
-	15289, hpath AT_FDCWD "s1.o" touched
+	17793, hpath AT_FDCWD "s2.o" touched
 }
 sysop stat_13 SYNC {
-	15289, hpath AT_FDCWD "s2.o" touched
+	17793, hpath AT_FDCWD "s2.h" touched
 }
-sysop stat_14 SYNC {
-	15289, hpath AT_FDCWD "s2.h" touched
-}
-newTask Makefile:17__s2.o W 1
-consumes Makefile:17__s2.o "/home/user/fsracer/builds/make-plugin/playground/simple/s2.h"
-execTask Makefile:17__s2.o {
-	sysop clone_17 SYNC {
-		15289, newproc none 15294
+newTask Makefile_s2.o W 1
+consumes Makefile_s2.o "/home/user/fsracer/builds/make-plugin/playground/simple_example/s2.h"
+execTask Makefile_s2.o {
+	sysop clone_15 SYNC {
+		17798, newproc none 17799
 	}
-	sysop execve_18 SYNC {
-		15294, hpath AT_FDCWD "/usr/local/bin/post-shell" consumed
+	sysop execve_16 SYNC {
+		17799, hpath AT_FDCWD "/bin/bash" consumed
 	}
 }

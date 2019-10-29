@@ -1,21 +1,19 @@
-15289 execve("/usr/bin/make", ["make", "SHELL=$(warning ##BEGIN## $@,$^)post-shell"], 0x7ffec987f050 /* 24 vars */) = 0
-15289 access("/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
-15289 openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
-15289 close(3)                          = 0
-15289 write(2, "Makefile:13: ##BEGIN## s1.o,s1.c s1.h\n", 38) = 38
-15289 write(1, "cc -c s1.c -I.\n", 15)  = 15
-15290 execve("/usr/local/bin/post-shell", ["post-shell", "-c", "cc -c s1.c -I."], 0x5644a2b27040 /* 30 vars */) = 0
-15292 stat("/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/stdc-predef.h.gch", 0x7ffd655141b0) = -1 ENOENT (No such file or directory)
-15292 openat(AT_FDCWD, "/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/stdc-predef.h", O_RDONLY|O_NOCTTY) = -1 ENOENT (No such file or directory)
-15290 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=15291, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
-15290 write(1, "##END##\n", 8)          = 8
-15290 +++ exited with 0 +++
-15289 stat("s1.o", {st_mode=S_IFREG|0664, st_size=1536, ...}) = 0
-15289 stat("s2.o", 0x7ffc03911570)      = -1 ENOENT (No such file or directory)
-15289 stat("s2.h", {st_mode=S_IFREG|0664, st_size=19, ...}) = 0
-15289 write(2, "Makefile:17: ##BEGIN## s2.o,s2.h\n", 33) = 33
-15289 write(1, "cc -c s2.c -I.\n", 15)  = 15
-15289 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f45157c6a10) = 15294
-15294 execve("/usr/local/bin/post-shell", ["post-shell", "-c", "cc -c s2.c -I."], 0x5644a2b27040 /* 30 vars */) = 0
-15294 write(1, "##END##\n", 8)          = 8
-15294 +++ exited with 0 +++
+17793 execve("/usr/bin/make", ["make", "SHELL=fsmake-shell '$(MAKEFILE_LIST)' '$@' '$^'"], 0x7ffdf7123d90 /* 28 vars */) = 0
+17793 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)
+17793 openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+17793 close(3)                          = 0
+17794 write(1, "##BEGIN##:  Makefile ### s1.o ### s1.c s1.h\n", 44) = 44
+17794 write(1, "exec: -c cc -c s1.c -I.\n", 24) = 24
+17795 execve("/bin/bash", ["/bin/bash", "-c", "cc -c s1.c -I."], 0x56183dba8c48 /* 34 vars */) = 0
+17796 openat(AT_FDCWD, "/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/stdc-predef.h", O_RDONLY|O_NOCTTY) = -1 ENOENT (No such file or directory)
+17795 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=17796, si_uid=1000, si_status=0, si_utime=0, si_stime=1} ---
+17794 write(1, "##END##\n", 8)          = 8
+17794 +++ exited with 0 +++
+17793 stat("s1.o", {st_mode=S_IFREG|0664, st_size=1536, ...}) = 0
+17793 stat("s2.o", 0x7ffddd848d00)      = -1 ENOENT (No such file or directory)
+17793 stat("s2.h", {st_mode=S_IFREG|0664, st_size=19, ...}) = 0
+17798 write(1, "##BEGIN##:  Makefile ### s2.o ### s2.h\n", 39) = 39
+17798 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f70d2bae810) = 17799
+17799 execve("/bin/bash", ["/bin/bash", "-c", "cc -c s2.c -I."], 0x559530726c48 /* 34 vars */) = 0
+17798 write(1, "##END##\n", 8)          = 8
+17798 +++ exited with 0 +++

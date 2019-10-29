@@ -1,65 +1,65 @@
 sysop init SYNC {
-	15323, setcwd "/home/user/fsracer/builds/make-plugin/playground/multiple_lines"
+	26172, setcwd "/home/user/fsracer/builds/make-plugin/playground/multiple_lines"
 }
 sysop execve_0 SYNC {
-	15323, hpath AT_FDCWD "/usr/bin/make" consumed
+	26172, hpath AT_FDCWD "/usr/bin/make" consumed
 }
 sysop access_1 SYNC {
-	15323, hpath AT_FDCWD "/etc/ld.so.nohwcap" touched
+	26172, hpath AT_FDCWD "/etc/ld.so.nohwcap" touched
 }
 sysop access_2 SYNC {
-	15323, hpath AT_FDCWD "/etc/ld.so.preload" touched
+	26172, hpath AT_FDCWD "/etc/ld.so.preload" touched
 }
 sysop openat_3 SYNC {
-	15323, newfd AT_FDCWD "/etc/ld.so.cache" 3
-	15323, hpath AT_FDCWD "/etc/ld.so.cache" consumed
+	26172, newfd AT_FDCWD "/etc/ld.so.cache" 3
+	26172, hpath AT_FDCWD "/etc/ld.so.cache" consumed
 }
 sysop close_4 SYNC {
-	15323, delfd 3
+	26172, delfd 3
 }
 sysop getcwd_5 SYNC {
-	15323, setcwd "/home/user/fsracer/builds/make-plugin/playground/multiple_lines"
+	26172, setcwd "/home/user/fsracer/builds/make-plugin/playground/multiple_lines"
 }
 sysop readlink_6 SYNC {
-	15323, hpathsym AT_FDCWD "/proc/self/fd/1" consumed
+	26172, hpathsym AT_FDCWD "/proc/self/fd/1" consumed
 }
-newTask Makefile:14__s1.o W 1
-consumes Makefile:14__s1.o "/home/user/fsracer/builds/make-plugin/playground/multiple_lines/s1.c"
-consumes Makefile:14__s1.o "/home/user/fsracer/builds/make-plugin/playground/multiple_lines/s1.h"
-consumes Makefile:14__s1.o "/home/user/fsracer/builds/make-plugin/playground/multiple_lines/s2.h"
-execTask Makefile:14__s1.o {
-	sysop close_9 SYNC {
-		15323, delfd 4
+newTask Makefile_s1.o W 1
+consumes Makefile_s1.o "/home/user/fsracer/builds/make-plugin/playground/multiple_lines/s1.c"
+consumes Makefile_s1.o "/home/user/fsracer/builds/make-plugin/playground/multiple_lines/s1.h"
+consumes Makefile_s1.o "/home/user/fsracer/builds/make-plugin/playground/multiple_lines/s2.h"
+execTask Makefile_s1.o {
+	sysop dup2_9 SYNC {
+		26173, dupfd 11 1
 	}
-	sysop clone_11 SYNC {
-		15323, newproc none 15324
+	sysop fcntl_10 SYNC {
+		26173, dupfd 1 11
 	}
 }
-execTask Makefile:14__s1.o {
-	sysop openat_17 SYNC {
-		15330, newfd AT_FDCWD "./s2.h" 4
-		15330, hpath AT_FDCWD "./s2.h" consumed
+execTask Makefile_s1.o {
+	sysop openat_16 SYNC {
+		26178, newfd AT_FDCWD "/etc/ld.so.cache" 3
+		26178, hpath AT_FDCWD "/etc/ld.so.cache" consumed
 	}
-	sysop close_18 SYNC {
-		15330, delfd 4
+	sysop close_17 SYNC {
+		26178, delfd 3
 	}
+}
+sysop stat_23 SYNC {
+	26172, hpath AT_FDCWD "s1.o" touched
 }
 sysop stat_24 SYNC {
-	15323, hpath AT_FDCWD "s1.o" touched
+	26172, hpath AT_FDCWD "s2.o" touched
 }
 sysop stat_25 SYNC {
-	15323, hpath AT_FDCWD "s2.o" touched
+	26172, hpath AT_FDCWD "main.o" touched
 }
 sysop stat_26 SYNC {
-	15323, hpath AT_FDCWD "main.o" touched
+	26172, hpath AT_FDCWD "main.c" touched
 }
-sysop stat_27 SYNC {
-	15323, hpath AT_FDCWD "main.c" touched
-}
-newTask Makefile:10__main.o W 1
-consumes Makefile:10__main.o "/home/user/fsracer/builds/make-plugin/playground/multiple_lines/main.c"
-execTask Makefile:10__main.o {
-	sysop clone_30 SYNC {
-		15323, newproc none 15332
+newTask Makefile_main.o W 1
+consumes Makefile_main.o "/home/user/fsracer/builds/make-plugin/playground/multiple_lines/main.c"
+execTask Makefile_main.o {
+	sysop clone_29 SYNC {
+		26181, newproc none 26182
 	}
 }
