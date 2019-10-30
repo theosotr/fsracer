@@ -2,3 +2,4 @@ project,version,build,type,url,status
 gradle-scripts,1.1,gradle,ordering violation,https://github.com/tomasbjerre/gradle-scripts,fixed
 GradleRIO,09862150db2604d35242617a10cc9ef604afc3f6,gradle,ordering violation,https://github.com/wpilibsuite/GradleRIO,fixed
 cqmetrics,5e5495499863921ba3133a66957f98b192004507,make,missing inputs,https://github.com/dspinellis/cqmetrics,fixed
+p2rank,26dce0ac06aaf806e8470b3c66eb66666d2ab930,gradle,missing inputs,https://github.com/rdk/p2rank,fixed
