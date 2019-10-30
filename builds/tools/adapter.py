@@ -38,6 +38,15 @@ def print_warning(string):
     """Print a colored warning message"""
     print(bcolors.WARNING + string + bcolors.ENDC, file=sys.stderr)
 
+
+def remove_ext(string):
+    """Remove the extension from a file path.
+    """
+    index = string.rfind('.')
+    if index != -1:
+        string = string[:index]
+    return string
+
 def safe_split(string):
     """Split a string using commas as delimiter safely.
 
@@ -734,6 +743,11 @@ class MakeHandler(Handler):
         # {'path': {'file/rule': ('task_id', [prereqs])}}
         self.depends_on = {}  # Save info to find depends on relations
         self.task_ids = set()
+        # {'target_without_ext': ('target', 'task_id')}
+        self.targets = {}  # We need it for lookups in find_included heuristic.
+        # A structure to save info about current included file
+        # {'basename': '', 'target': '', 'task_id': '', 'FD': '', 'contents': ''}
+        self.current_incl = {}
 
     def _handle_write(self):
         message = self.trace.syscall_args[1].replace('"', '').replace('\\n', '').strip()
@@ -755,27 +769,21 @@ class MakeHandler(Handler):
             self.current_task_id = task_id
             if task_id not in self.task_ids:
                 self.task_ids.add(task_id)
+                self.targets[remove_ext(target)] = (target, task_id)
                 write_out(
                     self.out,
                     tabs + new_task.format(self.current_task_id, "W 1")
                 )
-                for x in prereqs:
-                    working_dir = self.working_dir if cwd == '' else cwd
-                    write_out(
-                        self.out,
-                        tabs + consumes.format(
-                            self.current_task_id,
-                            os.path.join(working_dir, x))
-                    )
+                self._write_consumes(prereqs)
             write_out(
                 self.out,
                 tabs + exec_task_begin.format(task_id)
             )
             # Add values to depends_on dict
             if cwd not in self.depends_on:
-                self.depends_on[cwd] = {target: (task_id, prereqs)}
+                self.depends_on[cwd] = {target: [task_id, prereqs]}
             elif target not in self.depends_on[cwd]:
-                self.depends_on[cwd][target] = (task_id, prereqs)
+                self.depends_on[cwd][target] = [task_id, prereqs]
             self.nesting_counter += 1
             return
         if message.startswith("##END##"):
@@ -792,6 +800,10 @@ class MakeHandler(Handler):
         leaving = re.search("^.*:[ ]+Leaving directory[ ]+'(.*)'", message)
         if leaving:
             self.cwd_queue.pop()
+            return
+        if (self.current_incl and
+            self.trace.syscall_args[0] == self.current_incl['FD']):
+            self.current_incl['contents'] += self.trace.syscall_args[1]
         return
 
     def _handle_opexp(self, opexp):
@@ -801,6 +813,42 @@ class MakeHandler(Handler):
             self.out,
             to_sysop(opexp, self.sys_op_id, self.nesting_counter)
         )
+        # Handle openat, open and close for include case
+        if self.trace.syscall_name == 'close' and self.current_incl:
+            if int(self.trace.syscall_args[0]) == int(self.current_incl['FD']):
+                temp = self.current_incl['contents']
+                temp = temp.replace('\\\\', '').replace('\\n', '').replace('"', '')
+                contents = ""
+                for path in temp.split():
+                    if path[0] != '/' or path.startswith(self.working_dir):
+                        contents += path + ' '
+                prereqs = contents[contents.find(':')+1:].split()
+                self._write_consumes(prereqs)
+                # Add values to depends_on dict
+                cwd = self.cwd_queue[-1]
+                cwd = cwd + "/" if cwd != '' else cwd
+                task_id = self.current_incl['task_id']
+                target = self.current_incl['target']
+                if cwd not in self.depends_on:
+                    self.depends_on[cwd] = {target: [task_id, prereqs]}
+                elif target not in self.depends_on[cwd]:
+                    self.depends_on[cwd][target] = [task_id, prereqs]
+                elif target in self.depends_on[cwd]:
+                    temp_prereqs = set(self.depends_on[cwd][target][1])
+                    temp_prereqs.update(prereqs)
+                    self.depends_on[cwd][target][1] = list(temp_prereqs)
+                self.current_incl = {}
+        elif (self.trace.syscall_name in ('open', 'openat')
+              and not self.current_incl):
+            basename = remove_ext(self.trace.syscall_args[1])
+            basename = basename.replace('"', '')
+            if basename in self.targets and int(self.trace.syscall_ret) > 0:
+                self.current_incl['basename'] = basename
+                self.current_incl['FD'] = self.trace.syscall_ret
+                self.current_incl['task_id'] = self.targets[basename][1]
+                self.current_incl['target'] = self.targets[basename][0]
+                self.current_incl['contents'] = ""
+
 
     def _find_depends_on_relations(self):
         # Set a dependsOn relation if one of the prerequisites is a target in
@@ -815,6 +863,21 @@ class MakeHandler(Handler):
                             task_id, self.depends_on[path][prereq][0]
                         )
                         write_out(self.out, depends_on_entry)
+
+    def _write_consumes(self, prereqs):
+        # We use the current_task_id whereas in inside case it may not be
+        # the case. TODO ask dds
+        cwd = self.cwd_queue[-1]
+        cwd = cwd + "/" if cwd != '' else cwd
+        tabs = self.nesting_counter * '\t'
+        for x in prereqs:
+            working_dir = self.working_dir if cwd == '' else cwd
+            write_out(
+                self.out,
+                tabs + consumes.format(
+                    self.current_task_id,
+                    os.path.join(working_dir, x))
+            )
 
     def execute(self):
         super(MakeHandler, self).execute()
