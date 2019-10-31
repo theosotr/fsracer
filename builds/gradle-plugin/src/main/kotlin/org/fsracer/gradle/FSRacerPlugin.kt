@@ -20,6 +20,32 @@ class FSRacerPlugin : Plugin<Project> {
         var state = State()
     } 
 
+    fun processTaskBegin(task: Task) {
+        val taskName = constructTaskName(task)
+        state.addNode(taskName)
+        println("${GRADLE_PREFIX} newTask ${taskName} W 1")
+        task.inputs.files.forEach { input ->
+            println("${GRADLE_PREFIX} consumes ${taskName} ${input.absolutePath}")
+        }
+        task.outputs.files.forEach { output ->
+            println("${GRADLE_PREFIX} produces ${taskName} ${output.absolutePath}")
+        }
+        task.getTaskDependencies()
+          .getDependencies(task)
+          .forEach { d ->
+              val depTask = constructTaskName(d)
+              state.addNode(depTask)
+              state.addEdge(depTask, taskName)
+              println("${GRADLE_PREFIX} dependsOn ${taskName} ${depTask}")
+        }
+        println("${GRADLE_PREFIX} Begin ${taskName}")
+    }
+
+    fun processTaskEnd(task: Task) {
+        val taskName = constructTaskName(task)
+        println("${GRADLE_PREFIX} End ${taskName}")
+    }
+
     override fun apply(project: Project) {
         project.gradle.buildFinished {buildResult ->
             // When the build finishes, store the result of the build
@@ -32,35 +58,15 @@ class FSRacerPlugin : Plugin<Project> {
             }
         }
         project.gradle.taskGraph.whenReady { taskGraph ->
-            println("${GRADLE_PREFIX} newTask ${project.name}: W 1")
-            println("${GRADLE_PREFIX} Begin ${project.name}:")
             state.addNode("${project.name}:")
             taskGraph.allTasks.forEach { task ->
-                val taskName = constructTaskName(task)
-                state.addNode(taskName)
-                println("${GRADLE_PREFIX} newTask ${taskName} W 1")
-                task.inputs.files.forEach { input ->
-                    println("${GRADLE_PREFIX} consumes ${taskName} ${input.absolutePath}")
-                }
-                task.outputs.files.forEach { output ->
-                    println("${GRADLE_PREFIX} produces ${taskName} ${output.absolutePath}")
-                }
-                task.getTaskDependencies()
-                  .getDependencies(task)
-                  .forEach { d ->
-                      val depTask = constructTaskName(d)
-                      state.addNode(depTask)
-                      state.addEdge(depTask, taskName)
-                      println("${GRADLE_PREFIX} dependsOn ${taskName} ${depTask}")
-                }
                 task.doFirst {
-                    println("${GRADLE_PREFIX} Begin ${taskName}")
+                    processTaskBegin(task)
                 }
                 task.doLast {
-                    println("${GRADLE_PREFIX} End ${taskName}")
+                    processTaskEnd(task)
                 }
            }
-           println("${GRADLE_PREFIX} End ${project.name}:")
            state.toDot()
         }
     }
