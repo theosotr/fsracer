@@ -42,16 +42,23 @@ def test_nested_make():
     )
 
 
-def test_complex_nested():
-    helper_fun(
-        'tests/data/complex_nested.traces',
-        'tests/data/complex_nested.fstraces',
-        'complex_nested'
-    )
+#  def test_complex_nested():
+    #  helper_fun(
+        #  'tests/data/complex_nested.traces',
+        #  'tests/data/complex_nested.fstraces',
+        #  'complex_nested'
+    #  )
 
 def test_anna():
     helper_fun(
         'tests/data/anna.traces',
         'tests/data/anna.fstraces',
         'anna'
+    )
+
+def test_include():
+    helper_fun(
+        'tests/data/include.traces',
+        'tests/data/include.fstraces',
+        'include'
     )
