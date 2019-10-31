@@ -842,13 +842,16 @@ class MakeHandler(Handler):
               and not self.current_incl):
             basename = remove_ext(self.trace.syscall_args[1])
             basename = basename.replace('"', '')
-            if basename in self.targets and int(self.trace.syscall_ret) > 0:
+            if (basename in self.targets
+                and int(self.trace.syscall_ret) > 0
+                and self.trace.syscall_args[1].replace('"', '') !=
+                    self.targets[basename][0]
+               ):
                 self.current_incl['basename'] = basename
                 self.current_incl['FD'] = self.trace.syscall_ret
                 self.current_incl['task_id'] = self.targets[basename][1]
                 self.current_incl['target'] = self.targets[basename][0]
                 self.current_incl['contents'] = ""
-
 
     def _find_depends_on_relations(self):
         # Set a dependsOn relation if one of the prerequisites is a target in
