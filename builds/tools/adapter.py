@@ -715,7 +715,7 @@ class GradleHandler(Handler):
 
     def _handle_gradle(self, write_str):
         _, construct = write_str.split('"{} '.format(self.GRADLE_PREFIX))
-        write_out(self.out, construct[:-1].strip())
+        write_out(self.out, construct[:-1].strip().replace('\\"', '"'))
 
     def _handle_write(self):
         if int(self.trace.syscall_args[0]) <= self.LOGGING_FD or int(self.trace.syscall_args[0]) >= 300:
