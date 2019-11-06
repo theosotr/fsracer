@@ -13,7 +13,7 @@ RUN apt -yqq update && apt -yqq upgrade && apt install -yqq $deps
 
 COPY ./tools/fsmake-shell /usr/local/bin/fsmake-shell
 COPY syscalls.txt /root/syscalls.txt
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY ./tools/make-entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY ./tools/adapter.py /usr/local/bin/adapter.py
 RUN mkdir -p /root/traces
 
