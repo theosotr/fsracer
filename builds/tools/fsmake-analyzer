@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cd $1
+
+debian/rules clean 2> /straces/temp/conferr && \
+    dh_testdir 2> /straces/temp/conferr && \
+    dh_auto_configure 2> /straces/temp/conferr && \
+    strace -s 4096 -f -e "$(tr -s '\r\n' ',' < /root/syscalls.txt | \
+    sed -e 's/,$/\n/')" -o /straces/temp/straces make -- \
+    SHELL='fsmake-shell '\''$(MAKEFILE_LIST)'\'' '\''$@'\'' '\''$^'\''' 2> /straces/temp/strerr

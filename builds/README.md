@@ -15,3 +15,21 @@ Run
 ```
 docker run -it -v $(pwd)/traces:/root/traces --cap-add SYS_ADMIN fsmake PACKAGE
 ```
+
+Debian Docker Make
+------------------
+
+* Build
+
+```bash
+docker build -f debian_make.Dockerfile -t sbuild_fsmake .
+```
+
+* Run
+
+```bash
+docker run -it -v $(pwd)/straces:/var/log/sbuild/straces --cap-add SYS_ADMIN fs PACKAGE
+```
+
+* Possible Results
+    - `straces/PACKAGE/PACKAGE.[anerr,conferr,strerr,straces]`

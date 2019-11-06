@@ -18,4 +18,4 @@ COPY ./tools/adapter.py /usr/local/bin/adapter.py
 RUN mkdir -p /root/traces
 
 WORKDIR /root
-ENTRYPOINT ["entrypoint.sh"]
+# ENTRYPOINT ["entrypoint.sh"]

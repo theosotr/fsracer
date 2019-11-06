@@ -12,7 +12,7 @@ deps=$(dpkg-checkbuilddeps 2>&1 | sed 's/.*: //' | sed -e 's/([^()]*)//g') && \
     apt install -y $deps && \
     debian/rules clean && dh_testdir && dh_auto_configure && \
     strace -s 1000 -f -e "$(tr -s '\r\n' ',' < /root/syscalls.txt | \
-        sed -e 's/,$/\n/')" -o make.traces dh_auto_build -- \
+        sed -e 's/,$/\n/')" -o make.traces make -- \
         SHELL='fsmake-shell '\''$(MAKEFILE_LIST)'\'' '\''$@'\'' '\''$^'\''' && \
         cp make.traces /root/traces/$package.traces &&
         path=$(pwd)
