@@ -28,7 +28,7 @@ docker build -f debian_make.Dockerfile -t sbuild_fsmake .
 * Run
 
 ```bash
-docker run -it -v $(pwd)/straces:/var/log/sbuild/straces --cap-add SYS_ADMIN fs PACKAGE
+docker run -it -v $(pwd)/straces:/var/log/sbuild/straces --cap-add SYS_ADMIN sbuild_fsmake PACKAGE
 ```
 
 * Possible Results
