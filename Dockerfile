@@ -1,11 +1,12 @@
 FROM ubuntu:18.04
 
-ENV deps="sudo git vim wget gcc g++ clang python2.7 make cmake flex bison gengetopt curl jq"
+ENV deps="sudo git vim wget gcc-8 g++-8 python2.7 make cmake flex bison gengetopt curl jq"
 ENV NODE_REPO="https://github.com/theosotr/node"
 
 # INSTALL PACKAGES
 RUN apt -yqq update && apt -yqq upgrade
 RUN apt install -yqq $deps
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8
 
 USER root
 WORKDIR /root
