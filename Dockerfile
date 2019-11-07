@@ -54,3 +54,5 @@ RUN make fsracer
 ENV DYNAMORIO_BIN=$HOME/dynamo/bin64
 
 WORKDIR $HOME
+
+COPY ./run_fsracer.sh /usr/local/bin/
