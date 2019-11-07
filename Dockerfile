@@ -49,7 +49,7 @@ WORKDIR $HOME/fsracer
 RUN mkdir build && cd build && \
     cmake -DTEST_BINARY_PATH=/usr/local/bin/node -DDynamoRIO_BUILD_DIR=/home/fsracer/dynamo ..
 WORKDIR $HOME/fsracer/build
-RUN make
+RUN make fsracer
 
 ENV DYNAMORIO_BIN=$HOME/dynamo/bin64
 
