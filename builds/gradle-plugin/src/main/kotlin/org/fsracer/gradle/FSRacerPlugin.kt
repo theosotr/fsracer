@@ -5,6 +5,7 @@ import java.io.File
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskDependency
 
 
 fun constructTaskName(task : Task) : String =
@@ -18,19 +19,11 @@ class FSRacerPlugin : Plugin<Project> {
     companion object {
         // This object is used to keep the state of instrumentation.
         var state = State()
-    } 
+    }
 
-    fun processTaskBegin(task: Task) {
-        val taskName = constructTaskName(task)
-        state.addNode(taskName)
-        println("${GRADLE_PREFIX} newTask ${taskName} W 1")
-        task.inputs.files.forEach { input ->
-            println("${GRADLE_PREFIX} consumes ${taskName} ${input.absolutePath}")
-        }
-        task.outputs.files.forEach { output ->
-            println("${GRADLE_PREFIX} produces ${taskName} ${output.absolutePath}")
-        }
-        task.getTaskDependencies()
+    fun processTaskDependencies(taskName: String, task: Task,
+                                taskDependencies: TaskDependency) =
+        taskDependencies
           .getDependencies(task)
           .forEach { d ->
               val depTask = constructTaskName(d)
@@ -38,6 +31,19 @@ class FSRacerPlugin : Plugin<Project> {
               state.addEdge(depTask, taskName)
               println("${GRADLE_PREFIX} dependsOn ${taskName} ${depTask}")
         }
+
+    fun processTaskBegin(task: Task) {
+        val taskName = constructTaskName(task)
+        state.addNode(taskName)
+        println("${GRADLE_PREFIX} newTask ${taskName} W 1")
+        task.inputs.files.forEach { input ->
+            println("${GRADLE_PREFIX} consumes ${taskName} \"${input.absolutePath}\"")
+        }
+        task.outputs.files.forEach { output ->
+            println("${GRADLE_PREFIX} produces ${taskName} \"${output.absolutePath}\"")
+        }
+        processTaskDependencies(taskName, task, task.getTaskDependencies())
+        processTaskDependencies(taskName, task, task.getMustRunAfter())
         println("${GRADLE_PREFIX} Begin ${taskName}")
     }
 
