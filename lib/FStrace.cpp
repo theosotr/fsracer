@@ -280,7 +280,7 @@ std::string Hpath::AccToString(enum AccessType access) {
       return "produced";
     case EXPUNGED:
       return "expunged";
-    case TOUCHED:
+    default:
       return "touched";
   }
 }
@@ -535,7 +535,7 @@ std::string SysOpBeg::ToString() const {
   switch (op_type) {
     case SYNC:
       return "sysop " + op_id + " SYNC {";
-    case ASYNC:
+    default:
       return "sysop " + op_id + " " + task_name.value() + " ASYNC {";
   }
 }

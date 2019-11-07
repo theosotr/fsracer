@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <experimental/filesystem>
+#include <filesystem>
 #include <map>
 #include <unordered_map>
 #include <string>
@@ -10,7 +10,7 @@
 #include "FStrace.h"
 
 
-namespace fs = experimental::filesystem;
+namespace fs = std::filesystem;
 
 
 namespace detector {
@@ -40,7 +40,7 @@ bool FSFaultDetector::HasConflict(const fs_access_t &acc1,
     case fstrace::Hpath::PRODUCED:
     case fstrace::Hpath::EXPUNGED:
       return !fstrace::Hpath::Touched(acc2.access_type);
-    case fstrace::Hpath::TOUCHED:
+    default:
       return false;
   }
 }

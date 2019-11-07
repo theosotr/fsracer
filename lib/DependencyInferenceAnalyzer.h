@@ -92,7 +92,7 @@ public:
         return "before";
       case CONSUMES:
         return "consumes";
-      case PRODUCES:
+      default:
         return "produces";
     }
   }

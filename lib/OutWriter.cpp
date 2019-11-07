@@ -38,7 +38,7 @@ string OutWriter::ToString() {
   switch (write_option) {
     case WRITE_STDOUT:
       return "STDOUT";
-    case WRITE_FILE:
+    default:
       return "FILE '" + filename + "'";
   }
 }

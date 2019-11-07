@@ -1,7 +1,7 @@
 #ifndef INODE_TABLE_H
 #define INODE_TABLE_H
 
-#include <experimental/filesystem>
+#include <filesystem>
 #include <iostream>
 #include <map>
 #include <optional>
@@ -14,8 +14,8 @@
 #define ROOT_INODE 0
 
 
+namespace fs = std::filesystem;
 using namespace std;
-namespace fs = experimental::filesystem;
 
 
 namespace table {

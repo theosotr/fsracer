@@ -112,7 +112,7 @@ std::string ErrToString(enum ErrType err_type) {
       return "Runtime Error";
     case TRACE_ERROR:
       return "Trace Error";
-    case ANALYZER_ERROR:
+    default:
       return "Analyzer Error";
   }
 }

@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <assert.h>
 #include <algorithm>
 #include <cstring>
@@ -8,6 +9,9 @@
 #include "Debug.h"
 #include "StreamTraceGenerator.h"
 #include "Utils.h"
+
+
+namespace fs = std::filesystem;
 
 
 #define CHECK_TOKENS(n, con)                                               \
@@ -29,9 +33,11 @@
 namespace trace_generator {
 
 
-static std::string RemoveQuotes(const std::string &str) {
+static std::string CanonicalizePath(const std::string &str) {
   if (utils::StartsWith(str, "\"")) {
-    return std::string(str.begin() + 1, str.end() - 1);
+    fs::path p = std::string(str.begin() + 1, str.end() - 1);
+    p = fs::weakly_canonical(p);
+    return p.native();
   }
   return str;
 }
@@ -40,14 +46,14 @@ static std::string RemoveQuotes(const std::string &str) {
 fstrace::Consumes *
 StreamTraceGenerator::EmitConsumes(const std::vector<std::string> &tokens) {
   CHECK_TOKENS(3, "consumes");
-  return new fstrace::Consumes(tokens[1], RemoveQuotes(tokens[2]));
+  return new fstrace::Consumes(tokens[1], CanonicalizePath(tokens[2]));
 }
 
 
 fstrace::Produces *
 StreamTraceGenerator::EmitProduces(const std::vector<std::string> &tokens) {
   CHECK_TOKENS(3, "produces");
-  return new fstrace::Produces(tokens[1], RemoveQuotes(tokens[2]));
+  return new fstrace::Produces(tokens[1], CanonicalizePath(tokens[2]));
 }
 
 
@@ -155,7 +161,7 @@ StreamTraceGenerator::EmitNewFd(const std::vector<std::string> &tokens,
   }
   int fd = std::stoi(tokens[4]);
   fstrace::NewFd *newfd = new fstrace::NewFd(
-      pid, dirfd, RemoveQuotes(tokens[3]), fd);
+      pid, dirfd, CanonicalizePath(tokens[3]), fd);
   assert(sysop_name.has_value());
   newfd->SetActualOpName(sysop_name.value());
   if (fd < 0) {
@@ -225,10 +231,11 @@ StreamTraceGenerator::EmitHpath(const std::vector<std::string> &tokens,
   }
   fstrace::Hpath *hpath = nullptr;
   if (hpathsym) {
-    hpath = new fstrace::HpathSym(pid, dirfd, RemoveQuotes(tokens[3]),
+    hpath = new fstrace::HpathSym(pid, dirfd, CanonicalizePath(tokens[3]),
                                  access_type);
   }
-  hpath = new fstrace::Hpath(pid, dirfd, RemoveQuotes(tokens[3]), access_type);
+  hpath = new fstrace::Hpath(pid, dirfd, CanonicalizePath(tokens[3]),
+                             access_type);
   assert(sysop_name.has_value());
   hpath->SetActualOpName(sysop_name.value());
   return hpath;
@@ -246,11 +253,11 @@ StreamTraceGenerator::EmitLinkOrRename(const std::vector<std::string> &tokens,
   CHECK_DIRFD(new_dirfd);
   fstrace::Link *link = nullptr;
   if (is_link) {
-    link = new fstrace::Link(pid, old_dirfd, RemoveQuotes(tokens[3]),
-                             new_dirfd, RemoveQuotes(tokens[5]));
+    link = new fstrace::Link(pid, old_dirfd, CanonicalizePath(tokens[3]),
+                             new_dirfd, CanonicalizePath(tokens[5]));
   }
-  link = new fstrace::Rename(pid, old_dirfd, RemoveQuotes(tokens[3]),
-                             new_dirfd, RemoveQuotes(tokens[5]));
+  link = new fstrace::Rename(pid, old_dirfd, CanonicalizePath(tokens[3]),
+                             new_dirfd, CanonicalizePath(tokens[5]));
   assert(sysop_name.has_value());
   link->SetActualOpName(sysop_name.value());
   return link;
@@ -293,7 +300,8 @@ fstrace::SetCwd *
 StreamTraceGenerator::EmitSetCwd(const std::vector<std::string> &tokens,
                                  size_t pid) {
   CHECK_TOKENS(3, "setcwd");
-  fstrace::SetCwd *setcwd = new fstrace::SetCwd(pid, RemoveQuotes(tokens[2]));
+  fstrace::SetCwd *setcwd = new fstrace::SetCwd(
+      pid, CanonicalizePath(tokens[2]));
   assert(sysop_name.has_value());
   setcwd->SetActualOpName(sysop_name.value());
   return setcwd;
@@ -324,7 +332,7 @@ StreamTraceGenerator::EmitSymlink(const std::vector<std::string> &tokens,
   size_t dirfd = ParseDirFd(tokens[2]);
   CHECK_DIRFD(dirfd);
   fstrace::Symlink *symlink = new fstrace::Symlink(
-      pid, dirfd, RemoveQuotes(tokens[3]), RemoveQuotes(tokens[4]));
+      pid, dirfd, CanonicalizePath(tokens[3]), CanonicalizePath(tokens[4]));
   assert(sysop_name.has_value());
   symlink->SetActualOpName(sysop_name.value());
   return symlink;

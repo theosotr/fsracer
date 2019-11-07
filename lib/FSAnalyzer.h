@@ -1,7 +1,7 @@
 #ifndef FS_ANALYZER_H
 #define FS_ANALYZER_H
 
-#include <experimental/filesystem>
+#include <filesystem>
 #include <iostream>
 #include <unordered_map>
 #include <utility>
@@ -13,7 +13,7 @@
 #include "Table.h"
 
 
-namespace fs = experimental::filesystem;
+namespace fs = std::filesystem;
 
 
 namespace analyzer {
