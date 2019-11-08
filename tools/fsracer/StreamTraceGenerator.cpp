@@ -362,7 +362,7 @@ fstrace::TraceNode *StreamTraceGenerator::GetNextTrace() {
   } else {
     has_next = false;
     return nullptr;
-  } 
+  }
 }
 
 
@@ -425,32 +425,43 @@ fstrace::TraceNode *StreamTraceGenerator::ParseOperation(
   }
   const std::string op_expr = tokens[1];
   size_t pid = std::stoi(pid_str);
+  std::vector<std::string> new_tokens;
+  if (tokens.back() == "!failed")
+      new_tokens = std::vector<std::string>(tokens.begin(),
+                                                 tokens.end() -1);
+  else
+      new_tokens = tokens;
+  fstrace::Operation *op;
   if (op_expr == "newfd") {
-    return EmitNewFd(tokens, pid);
+    op = EmitNewFd(new_tokens, pid);
   } else if (op_expr == "delfd") {
-    return EmitDelFd(tokens, pid);
+    op = EmitDelFd(new_tokens, pid);
   } else if (op_expr == "dupfd") {
-    return EmitDupFd(tokens, pid);
+    op = EmitDupFd(new_tokens, pid);
   } else if (op_expr == "hpath") {
-    return EmitHpath(tokens, pid, false);
+    op = EmitHpath(new_tokens, pid, false);
   } else if (op_expr == "hpathsym") {
-    return EmitHpath(tokens, pid, true);
+    op = EmitHpath(new_tokens, pid, true);
   } else if (op_expr == "link") {
-    return EmitLinkOrRename(tokens, pid, true);
+    op = EmitLinkOrRename(new_tokens, pid, true);
   } else if (op_expr == "newproc") {
-    return EmitNewProc(tokens, pid);
+    op = EmitNewProc(new_tokens, pid);
   } else if (op_expr == "rename") {
-    return EmitLinkOrRename(tokens, pid, false);
+    op = EmitLinkOrRename(new_tokens, pid, false);
   } else if (op_expr == "setcwd") {
-    return EmitSetCwd(tokens, pid);    
+    op = EmitSetCwd(new_tokens, pid);
   } else if (op_expr == "setcwdfd") {
-    return EmitSetCwdFd(tokens, pid);
+    op = EmitSetCwdFd(new_tokens, pid);
   } else if (op_expr == "symlink") {
-    return EmitSymlink(tokens, pid);
+    op = EmitSymlink(new_tokens, pid);
   } else {
     AddError(utils::err::TRACE_ERROR, "Uknown sysop operation", location);
     return nullptr;
   }
+  // TODO if failed change pointer
+  if (tokens.back() == "!failed")
+      op->MarkFailed();
+  return op;
 }
 
 
