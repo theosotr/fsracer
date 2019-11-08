@@ -8,24 +8,51 @@ sysop openat_0 SYNC {
 sysop dup2_9 SYNC {
 	44, dupfd 2 1
 }
+sysop stat_10 SYNC {
+	43, hpath AT_FDCWD "RCS" touched
+}
+sysop stat_11 SYNC {
+	43, hpath AT_FDCWD "SCCS" touched
+}
+sysop stat_12 SYNC {
+	43, hpath AT_FDCWD "QualityMetrics.d" touched
+}
+sysop stat_13 SYNC {
+	43, hpath AT_FDCWD "CMetricsCalculator.d" touched
+}
+sysop stat_14 SYNC {
+	43, hpath AT_FDCWD "Makefile" touched
+}
+sysop stat_15 SYNC {
+	43, hpath AT_FDCWD "all" touched
+}
+sysop stat_16 SYNC {
+	43, hpath AT_FDCWD "qmcalc" touched
+}
+sysop stat_17 SYNC {
+	43, hpath AT_FDCWD "CMetricsCalculator.o" touched
+}
+sysop stat_18 SYNC {
+	43, hpath AT_FDCWD "CMetricsCalculator.cpp" touched
+}
 newTask Makefile_CMetricsCalculator.o W 1
 consumes Makefile_CMetricsCalculator.o "/home/user/fsracer/builds/make-plugin/playground/include/CMetricsCalculator.cpp"
 execTask Makefile_CMetricsCalculator.o {
-	sysop access_12 SYNC {
+	sysop access_21 SYNC {
 		46, hpath AT_FDCWD "/etc/ld.so.preload" touched
 	}
-	sysop openat_13 SYNC {
+	sysop openat_22 SYNC {
 		46, newfd AT_FDCWD "/etc/ld.so.cache" 3
 		46, hpath AT_FDCWD "/etc/ld.so.cache" consumed
 	}
-	sysop close_15 SYNC {
+	sysop close_24 SYNC {
 		46, delfd 3
 	}
-	sysop openat_16 SYNC {
+	sysop openat_25 SYNC {
 		46, newfd AT_FDCWD "CMetricsCalculator.d" 3
 		46, hpath AT_FDCWD "CMetricsCalculator.d" produced
 	}
-	sysop close_20 SYNC {
+	sysop close_29 SYNC {
 		46, delfd 3
 	}
 	consumes Makefile_CMetricsCalculator.o "/home/user/fsracer/builds/make-plugin/playground/include/CMetricsCalculator.cpp"
@@ -39,75 +66,65 @@ execTask Makefile_CMetricsCalculator.o {
 	consumes Makefile_CMetricsCalculator.o "/home/user/fsracer/builds/make-plugin/playground/include/Halstead.h"
 	consumes Makefile_CMetricsCalculator.o "/home/user/fsracer/builds/make-plugin/playground/include/CMetricsCalculator.h"
 	consumes Makefile_CMetricsCalculator.o "/home/user/fsracer/builds/make-plugin/playground/include/NestingLevel.h"
-	sysop stat_21 SYNC {
+	sysop stat_30 SYNC {
 		47, hpath AT_FDCWD "CMetricsCalculator.o" touched
 	}
-	sysop stat_22 SYNC {
+	sysop stat_31 SYNC {
 		47, hpath AT_FDCWD "CMetricsCalculator.o" touched
 	}
-	sysop openat_23 SYNC {
+	sysop openat_32 SYNC {
 		47, newfd AT_FDCWD "CMetricsCalculator.o" 3
 		47, hpath AT_FDCWD "CMetricsCalculator.o" produced
 	}
-	sysop openat_26 SYNC {
+	sysop openat_35 SYNC {
 		47, newfd AT_FDCWD "/tmp/ccBiTp6L.s" 4
 		47, hpath AT_FDCWD "/tmp/ccBiTp6L.s" consumed
 	}
-	sysop close_27 SYNC {
+	sysop close_36 SYNC {
 		47, delfd 4
 	}
-	sysop dup2_28 SYNC {
+	sysop dup2_37 SYNC {
 		44, dupfd 2 1
 	}
 }
-sysop dup2_30 SYNC {
+sysop dup2_39 SYNC {
 	48, dupfd 2 1
 }
 newTask Makefile_QualityMetricNames.h W 1
 consumes Makefile_QualityMetricNames.h "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.h"
 consumes Makefile_QualityMetricNames.h "/home/user/fsracer/builds/make-plugin/playground/include/metric-names.sed"
 execTask Makefile_QualityMetricNames.h {
-	sysop clone_32 SYNC {
+	sysop clone_41 SYNC {
 		48, newproc none 49
 	}
-	sysop openat_33 SYNC {
+	sysop openat_42 SYNC {
 		53, newfd AT_FDCWD "QualityMetrics.d" 3
 		53, hpath AT_FDCWD "QualityMetrics.d" produced
 	}
-	sysop close_37 SYNC {
+	sysop close_46 SYNC {
 		53, delfd 3
 	}
 }
 newTask Makefile_qmcalc.o W 1
 consumes Makefile_qmcalc.o "/home/user/fsracer/builds/make-plugin/playground/include/qmcalc.cpp"
 execTask Makefile_qmcalc.o {
-	sysop dup2_40 SYNC {
+	sysop dup2_49 SYNC {
 		55, dupfd 11 1
 	}
-	sysop openat_41 SYNC {
+	sysop openat_50 SYNC {
 		57, newfd AT_FDCWD "qmcalc.d" 3
 		57, hpath AT_FDCWD "qmcalc.d" produced
 	}
-	sysop close_45 SYNC {
+	sysop close_54 SYNC {
 		57, delfd 3
 	}
-	consumes Makefile_qmcalc.o "/home/user/fsracer/builds/make-plugin/playground/include/qmcalc.cpp"
-	consumes Makefile_qmcalc.o "/home/user/fsracer/builds/make-plugin/playground/include/CMetricsCalculator.h"
-	consumes Makefile_qmcalc.o "/home/user/fsracer/builds/make-plugin/playground/include/CharSource.h"
-	consumes Makefile_qmcalc.o "/home/user/fsracer/builds/make-plugin/playground/include/BolState.h"
-	consumes Makefile_qmcalc.o "/home/user/fsracer/builds/make-plugin/playground/include/CKeyword.h"
-	consumes Makefile_qmcalc.o "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.h"
-	consumes Makefile_qmcalc.o "/home/user/fsracer/builds/make-plugin/playground/include/Cyclomatic.h"
-	consumes Makefile_qmcalc.o "/home/user/fsracer/builds/make-plugin/playground/include/Descriptive.h"
-	consumes Makefile_qmcalc.o "/home/user/fsracer/builds/make-plugin/playground/include/Halstead.h"
-	consumes Makefile_qmcalc.o "/home/user/fsracer/builds/make-plugin/playground/include/NestingLevel.h"
 }
 newTask Makefile_qmcalc W 1
 consumes Makefile_qmcalc "/home/user/fsracer/builds/make-plugin/playground/include/CMetricsCalculator.o"
 consumes Makefile_qmcalc "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.o"
 consumes Makefile_qmcalc "/home/user/fsracer/builds/make-plugin/playground/include/qmcalc.o"
 execTask Makefile_qmcalc {
-	sysop stat_48 SYNC {
+	sysop stat_57 SYNC {
 		43, hpath AT_FDCWD "qmcalc" touched
 	}
 }
@@ -116,10 +133,10 @@ consumes Makefile_../metrics.md "/home/user/fsracer/builds/make-plugin/playgroun
 consumes Makefile_../metrics.md "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.h"
 consumes Makefile_../metrics.md "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.cpp"
 execTask Makefile_../metrics.md {
-	sysop dup2_51 SYNC {
+	sysop dup2_60 SYNC {
 		63, dupfd 11 1
 	}
-	sysop close_52 SYNC {
+	sysop close_61 SYNC {
 		63, delfd 11
 	}
 }
@@ -128,7 +145,7 @@ consumes Makefile_header.tab "/home/user/fsracer/builds/make-plugin/playground/i
 consumes Makefile_header.tab "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.h"
 consumes Makefile_header.tab "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.cpp"
 execTask Makefile_header.tab {
-	sysop dup2_55 SYNC {
+	sysop dup2_64 SYNC {
 		69, dupfd 11 1
 	}
 }
@@ -137,11 +154,11 @@ consumes Makefile_header.txt "/home/user/fsracer/builds/make-plugin/playground/i
 consumes Makefile_header.txt "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.h"
 consumes Makefile_header.txt "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.cpp"
 execTask Makefile_header.txt {
-	sysop clone_58 SYNC {
+	sysop clone_67 SYNC {
 		116, newproc none 117
 	}
 }
-sysop chdir_60 SYNC {
+sysop chdir_69 SYNC {
 	43, setcwd "/root/cqmetrics/src"
 }
 dependsOn Makefile_qmcalc Makefile_CMetricsCalculator.o

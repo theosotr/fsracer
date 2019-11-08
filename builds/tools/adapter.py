@@ -748,6 +748,9 @@ class MakeHandler(Handler):
         # A structure to save info about current included file
         # {'basename': '', 'target': '', 'task_id': '', 'FD': '', 'contents': ''}
         self.current_incl = {}
+        # Include files declared into the Makefile
+        self.included = set()
+
 
     def _handle_write(self):
         message = self.trace.syscall_args[1].replace('"', '').replace('\\n', '').strip()
@@ -813,7 +816,7 @@ class MakeHandler(Handler):
             self.out,
             to_sysop(opexp, self.sys_op_id, self.nesting_counter)
         )
-        # Handle openat, open and close for include case
+        # Handle openat, open, stat, and close for include case
         if self.trace.syscall_name == 'close' and self.current_incl:
             if int(self.trace.syscall_args[0]) == int(self.current_incl['FD']):
                 temp = self.current_incl['contents']
@@ -840,18 +843,22 @@ class MakeHandler(Handler):
                 self.current_incl = {}
         elif (self.trace.syscall_name in ('open', 'openat')
               and not self.current_incl):
-            basename = remove_ext(self.trace.syscall_args[1])
-            basename = basename.replace('"', '')
+            filename = self.trace.syscall_args[1].replace('"', '')
+            basename = remove_ext(filename)
+            # Maybe we should only check only for .d files
             if (basename in self.targets
                 and int(self.trace.syscall_ret) > 0
-                and self.trace.syscall_args[1].replace('"', '') !=
-                    self.targets[basename][0]
+                and filename in self.included
                ):
                 self.current_incl['basename'] = basename
                 self.current_incl['FD'] = self.trace.syscall_ret
                 self.current_incl['task_id'] = self.targets[basename][1]
                 self.current_incl['target'] = self.targets[basename][0]
                 self.current_incl['contents'] = ""
+        elif self.trace.syscall_name == 'stat':
+            filename = self.trace.syscall_args[0].replace('"', '')
+            if filename.endswith('.d'):
+                self.included.add(filename)
 
     def _find_depends_on_relations(self):
         # Set a dependsOn relation if one of the prerequisites is a target in

@@ -8,6 +8,15 @@
 43    openat(AT_FDCWD, "/usr/local/include/QualityMetrics.d", O_RDONLY) = -1 ENOENT (No such file or directory)
 43    openat(AT_FDCWD, "/usr/include/QualityMetrics.d", O_RDONLY) = -1 ENOENT (No such file or directory)
 44    dup2(2, 1)                        = 1
+43    stat("RCS", 0x7fff83855fe0)       = -1 ENOENT (No such file or directory)
+43    stat("SCCS", 0x7fff83855fe0)      = -1 ENOENT (No such file or directory)
+43    stat("QualityMetrics.d", 0x7fff83853f20) = -1 ENOENT (No such file or directory)
+43    stat("CMetricsCalculator.d", 0x7fff83853f20) = -1 ENOENT (No such file or directory)
+43    stat("Makefile", {st_mode=S_IFREG|0664, st_size=1171, ...}) = 0
+43    stat("all", 0x7fff83853de0)       = -1 ENOENT (No such file or directory)
+43    stat("qmcalc", 0x7fff83853de0)    = -1 ENOENT (No such file or directory)
+43    stat("CMetricsCalculator.o", 0x7fff83853c70) = -1 ENOENT (No such file or directory)
+43    stat("CMetricsCalculator.cpp", {st_mode=S_IFREG|0664, st_size=22343, ...}) = 0
 44    write(1, "##BEGIN##:  Makefile ### CMetricsCalculator.o ### CMetricsCalculator.cpp\n", 73) = 73
 46    execve("/usr/lib/gcc/x86_64-linux-gnu/8/cc1plus", ["/usr/lib/gcc/x86_64-linux-gnu/8/cc1plus", "-quiet", "-imultiarch", "x86_64-linux-gnu", "-MD", "CMetricsCalculator.d", "-MQ", "CMetricsCalculator.o", "-D_GNU_SOURCE", "CMetricsCalculator.cpp", "-quiet", "-dumpbase", "CMetricsCalculator.cpp", "-mtune=generic", "-march=x86-64", "-auxbase-strip", "CMetricsCalculator.o", "-O2", "-Wall", "-Werror", "-o", "/tmp/ccBiTp6L.s"], 0x11cb4f0 /* 20 vars */ <unfinished ...>
 46    access("/etc/ld.so.preload", R_OK) = -1 ENOENT (No such file or directory)
