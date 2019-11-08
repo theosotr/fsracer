@@ -640,10 +640,13 @@ consumes        = 'consumes {} "{}"'    #  task_id string (prerequisite)
 produces        = 'produces {} {}'      #  task_id string (Gradle)
 
 
-def to_sysop(opexp, opid, tabs):
+def to_sysop(opexp, opid, tabs, return_type=''):
     ret = "{}sysop {} SYNC {{\n".format(tabs * "\t", opid)
+    is_failed = ""
+    if return_type.strip().startswith("-1"):
+        is_failed = " !failed"
     for op in opexp:
-        ret += "{}{}\n".format( (tabs+1) * "\t", op)
+        ret += "{}{}{}\n".format( (tabs+1) * "\t", op, is_failed)
     ret += (tabs * "\t") + "}"
     return ret
 
@@ -675,7 +678,7 @@ class Handler(ABC):
         opexp = [self.trace.pid + ", " + x for x in opexp]
         write_out(
             self.out,
-            to_sysop(opexp, self.sys_op_id, 0)
+            to_sysop(opexp, self.sys_op_id, 0, self.trace.syscall_ret)
         )
 
     def execute(self):
@@ -814,7 +817,10 @@ class MakeHandler(Handler):
         opexp = [self.trace.pid + ", " + x for x in opexp]
         write_out(
             self.out,
-            to_sysop(opexp, self.sys_op_id, self.nesting_counter)
+            to_sysop(
+                opexp, self.sys_op_id,
+                self.nesting_counter, self.trace.syscall_ret
+            )
         )
         # Handle openat, open, stat, and close for include case
         if self.trace.syscall_name == 'close' and self.current_incl:

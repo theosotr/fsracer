@@ -5,10 +5,10 @@ sysop execve_0 SYNC {
 	26172, hpath AT_FDCWD "/usr/bin/make" consumed
 }
 sysop access_1 SYNC {
-	26172, hpath AT_FDCWD "/etc/ld.so.nohwcap" touched
+	26172, hpath AT_FDCWD "/etc/ld.so.nohwcap" touched !failed
 }
 sysop access_2 SYNC {
-	26172, hpath AT_FDCWD "/etc/ld.so.preload" touched
+	26172, hpath AT_FDCWD "/etc/ld.so.preload" touched !failed
 }
 sysop openat_3 SYNC {
 	26172, newfd AT_FDCWD "/etc/ld.so.cache" 3
@@ -51,7 +51,7 @@ sysop stat_24 SYNC {
 	26172, hpath AT_FDCWD "s2.o" touched
 }
 sysop stat_25 SYNC {
-	26172, hpath AT_FDCWD "main.o" touched
+	26172, hpath AT_FDCWD "main.o" touched !failed
 }
 sysop stat_26 SYNC {
 	26172, hpath AT_FDCWD "main.c" touched

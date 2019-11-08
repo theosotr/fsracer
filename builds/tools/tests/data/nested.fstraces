@@ -32,7 +32,7 @@ execTask Makefile_nested {
 		26317, hpath AT_FDCWD "s1.o" touched
 	}
 	sysop stat_17 SYNC {
-		26317, hpath AT_FDCWD "s2.o" touched
+		26317, hpath AT_FDCWD "s2.o" touched !failed
 	}
 	sysop stat_18 SYNC {
 		26317, hpath AT_FDCWD "s2.h" touched

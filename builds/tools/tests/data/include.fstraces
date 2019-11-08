@@ -9,28 +9,28 @@ sysop dup2_9 SYNC {
 	44, dupfd 2 1
 }
 sysop stat_10 SYNC {
-	43, hpath AT_FDCWD "RCS" touched
+	43, hpath AT_FDCWD "RCS" touched !failed
 }
 sysop stat_11 SYNC {
-	43, hpath AT_FDCWD "SCCS" touched
+	43, hpath AT_FDCWD "SCCS" touched !failed
 }
 sysop stat_12 SYNC {
-	43, hpath AT_FDCWD "QualityMetrics.d" touched
+	43, hpath AT_FDCWD "QualityMetrics.d" touched !failed
 }
 sysop stat_13 SYNC {
-	43, hpath AT_FDCWD "CMetricsCalculator.d" touched
+	43, hpath AT_FDCWD "CMetricsCalculator.d" touched !failed
 }
 sysop stat_14 SYNC {
 	43, hpath AT_FDCWD "Makefile" touched
 }
 sysop stat_15 SYNC {
-	43, hpath AT_FDCWD "all" touched
+	43, hpath AT_FDCWD "all" touched !failed
 }
 sysop stat_16 SYNC {
-	43, hpath AT_FDCWD "qmcalc" touched
+	43, hpath AT_FDCWD "qmcalc" touched !failed
 }
 sysop stat_17 SYNC {
-	43, hpath AT_FDCWD "CMetricsCalculator.o" touched
+	43, hpath AT_FDCWD "CMetricsCalculator.o" touched !failed
 }
 sysop stat_18 SYNC {
 	43, hpath AT_FDCWD "CMetricsCalculator.cpp" touched
@@ -39,7 +39,7 @@ newTask Makefile_CMetricsCalculator.o W 1
 consumes Makefile_CMetricsCalculator.o "/home/user/fsracer/builds/make-plugin/playground/include/CMetricsCalculator.cpp"
 execTask Makefile_CMetricsCalculator.o {
 	sysop access_21 SYNC {
-		46, hpath AT_FDCWD "/etc/ld.so.preload" touched
+		46, hpath AT_FDCWD "/etc/ld.so.preload" touched !failed
 	}
 	sysop openat_22 SYNC {
 		46, newfd AT_FDCWD "/etc/ld.so.cache" 3
@@ -67,10 +67,10 @@ execTask Makefile_CMetricsCalculator.o {
 	consumes Makefile_CMetricsCalculator.o "/home/user/fsracer/builds/make-plugin/playground/include/CMetricsCalculator.h"
 	consumes Makefile_CMetricsCalculator.o "/home/user/fsracer/builds/make-plugin/playground/include/NestingLevel.h"
 	sysop stat_30 SYNC {
-		47, hpath AT_FDCWD "CMetricsCalculator.o" touched
+		47, hpath AT_FDCWD "CMetricsCalculator.o" touched !failed
 	}
 	sysop stat_31 SYNC {
-		47, hpath AT_FDCWD "CMetricsCalculator.o" touched
+		47, hpath AT_FDCWD "CMetricsCalculator.o" touched !failed
 	}
 	sysop openat_32 SYNC {
 		47, newfd AT_FDCWD "CMetricsCalculator.o" 3
