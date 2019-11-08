@@ -1,10 +1,15 @@
 #!/bin/bash
 
-cd $1
+NAME_T="$(cat $1 | grep 'Source: ' | cut -d ':' -f2)"
+NAME="$(echo -e "${NAME_T}" | tr -d '[:space:]')"
 
-debian/rules clean 2> /straces/temp/conferr && \
-    dh_testdir 2> /straces/temp/conferr && \
-    dh_auto_configure 2> /straces/temp/conferr && \
+cd $2
+
+echo "$(pwd)" > /straces/$NAME/$NAME.path
+
+debian/rules clean 2> /straces/$NAME/$NAME.conferr && \
+    dh_testdir 2> /straces/$NAME/$NAME.conferr && \
+    dh_auto_configure 2> /straces/$NAME/$NAME.conferr && \
     strace -s 4096 -f -e "$(tr -s '\r\n' ',' < /root/syscalls.txt | \
-    sed -e 's/,$/\n/')" -o /straces/temp/straces make -- \
-    SHELL='fsmake-shell '\''$(MAKEFILE_LIST)'\'' '\''$@'\'' '\''$^'\''' 2> /straces/temp/strerr
+    sed -e 's/,$/\n/')" -o /straces/$NAME/$NAME.straces make -- \
+    SHELL='fsmake-shell '\''$(MAKEFILE_LIST)'\'' '\''$@'\'' '\''$^'\''' 2> /straces/$NAME/$NAME.strerr
