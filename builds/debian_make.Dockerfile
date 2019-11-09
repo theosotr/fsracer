@@ -21,6 +21,7 @@ COPY ./config/sbuildrc /root/.sbuildrc
 COPY ./config/fstab /etc/schroot/sbuild/fstab
 
 COPY ./tools/fsmake-shell /usr/local/bin/fsmake-shell
+COPY ./tools/fsmake-make /usr/local/bin/fsmake-make
 COPY ./syscalls.txt /root/syscalls.txt
 COPY ./tools/fsmake-analyzer /usr/local/bin/analyzer
 COPY ./tools/debian-entrypoint.sh /usr/local/bin/entrypoint.sh
