@@ -9,6 +9,9 @@ from multiprocessing import Lock, Process, Queue, current_process
 DEBIAN_DOCKER_IMAGE = ""
 ADAPTER = ""
 FSRACER_DOCKER_IMAGE = ""
+DEBIAN_TIMEOUT = 0
+FSRACER_TIMEOUT = 0
+
 printlock = Lock()
 
 def file_exists(path):
@@ -36,8 +39,10 @@ def fsmake(source_name, volume):
         'sbuild_fsmake',
         source_name
     ]
-    cmd = sp.Popen(docker_options, stdout=sp.PIPE, stderr=sp.PIPE)
-    cmd.communicate()
+    sp.run(
+        docker_options, stdout=sp.PIPE, stderr=sp.PIPE, timeout=DEBIAN_TIMEOUT
+    )
+    #  cmd.communicate()
     path = '{}/{}/{}'.format(volume, source_name, source_name)
     if file_exists(path + '.straces') and file_exists(path + '.path'):
         mprint("fsmake", current_process().name, "success", source_name)
@@ -87,8 +92,10 @@ def fsracer(source_name, volume):
         'run_fsracer.sh',
         source_name
     ]
-    cmd = sp.Popen(docker_options, stdout=sp.PIPE, stderr=sp.PIPE)
-    cmd.communicate()
+    sp.run(
+        docker_options, stdout=sp.PIPE, stderr=sp.PIPE, timeout=FSRACER_TIMEOUT
+    )
+    #  cmd.communicate()
     path = '{}/{}/{}'.format(volume, source_name, source_name)
     if file_exists(path + '.faults'):
         mprint("fsracer", current_process().name, "success", source_name)
@@ -172,6 +179,8 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--debian-docker-image', default='sbuild_fsmake')
     parser.add_argument('-a', '--adapter', default='adapter.py')
     parser.add_argument('-f', '--fsracer-docker-image', default='fsracer')
+    parser.add_argument('-t', '--debian-timeout', type=int, default=1800)
+    parser.add_argument('-T', '--fsracer-timeout', type=int, default=1800)
     parser.add_argument('volume_dir')
     parser.add_argument('make_processes', type=int)
     parser.add_argument('adapter_processes', type=int)
@@ -180,6 +189,8 @@ if __name__ == '__main__':
     DEBIAN_DOCKER_IMAGE = args.debian_docker_image
     ADAPTER = args.adapter
     FSRACER_DOCKER_IMAGE = args.fsracer_docker_image
+    DEBIAN_TIMEOUT = args.debian_timeout
+    FSRACER_TIMEOUT = args.fsracer_timeout
     inp = sys.stdin
     if args.input:
         with open(args.input, 'r') as f:
