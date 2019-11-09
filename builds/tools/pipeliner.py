@@ -107,16 +107,17 @@ def fsracer(source_name, volume):
 def do_work(in_queue, out_queue, volume, task, prev_pool):
     while True:
         val = in_queue.get()
+        # TODO kill processes when done
         # If we read -1 it means there aren't other packages in the queue
-        if val == "-1":
+        #  if val == "-1":
             # If prev_pool is empty it means there won't be new packages in
             # in_queue
-            if len(prev_pool) == 0:
+            #  if len(prev_pool) == 0:
                 # To stop processes from the next poll
-                out_queue.put("-1")
+                #  out_queue.put("-1")
             # To stop next process
-            in_queue.put("-1")
-            break
+            #  in_queue.put("-1")
+            #  break
         res = task(val, volume)
         if res is not None:
             out_queue.put(res)
