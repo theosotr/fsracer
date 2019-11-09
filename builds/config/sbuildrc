@@ -15,7 +15,7 @@ $external_commands = {
                         'post-build-commands' => [],
                         'chroot-setup-commands' => [],
                         'starting-build-commands' => [
-                            'timeout 30m analyzer %d %p 2> /straces/timeout',
+                            'analyzer %d %p 2> /straces/analyzer_err',
                             # '%SBUILD_SHELL'
                         ],
                       };
