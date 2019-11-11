@@ -7,3 +7,4 @@ groocss,b0eb9ba3f618e0a935d018bf6d6e3feca2369517,gradle,mis,https://github.com/a
 junit-reporter,2494ce8436e8875125d0e8eb2370ee9072ee82ed,gradle,ov:mis:mos,https://github.com/kncept/junit-reporter,fixed
 jmonkeyengine,d8a42d0817ba7a4c895768b508b0af4b8194541f,gradle,mos,https://github.com/jMonkeyEngine/jmonkeyengine,fixed
 muwire,a549ad3d8df9a2719f874b691bb8bd33f337a5ab,gradle,ov,https://github.com/zlatinb/muwire,fixed
+xtext-gradle-plugin,d4ed9d769ddbc2d130dd5c967c89a9b317d27aa9,gradle,ov,https://github.com/xtext/xtext-gradle-plugin,fixed
