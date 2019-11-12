@@ -268,7 +268,7 @@ void FSFaultDetector::DetectOrderingViolation(
     faults_t &faults,
     fs::path p,
     const std::vector<fs_access_t> &accesses) const {
-  if (IgnorePath(filter_mos, p)) {
+  if (IgnorePath(filter_ov, p)) {
     return;
   }
   // Get all combinations of file accesses.
