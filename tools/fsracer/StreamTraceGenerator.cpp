@@ -425,12 +425,11 @@ fstrace::TraceNode *StreamTraceGenerator::ParseOperation(
   }
   const std::string op_expr = tokens[1];
   size_t pid = std::stoi(pid_str);
-  std::vector<std::string> new_tokens;
-  if (tokens.back() == "!failed")
-      new_tokens = std::vector<std::string>(tokens.begin(),
-                                                 tokens.end() -1);
-  else
-      new_tokens = tokens;
+  auto new_tokens = tokens;
+  if (tokens.back() == "!failed") {
+    new_tokens = std::vector<std::string>(tokens.cbegin(),
+                                          tokens.cend() -1);
+  }
   fstrace::Operation *op;
   if (op_expr == "newfd") {
     op = EmitNewFd(new_tokens, pid);
@@ -458,9 +457,9 @@ fstrace::TraceNode *StreamTraceGenerator::ParseOperation(
     AddError(utils::err::TRACE_ERROR, "Uknown sysop operation", location);
     return nullptr;
   }
-  // TODO if failed change pointer
-  if (tokens.back() == "!failed")
-      op->MarkFailed();
+  if (tokens.back() == "!failed") {
+    op->MarkFailed();
+  }
   return op;
 }
 
