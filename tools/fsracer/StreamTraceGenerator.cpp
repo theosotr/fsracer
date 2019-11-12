@@ -5,6 +5,7 @@
 #include <regex>
 #include <stdio.h>
 #include <sstream>
+#include <system_error>
 
 #include "Debug.h"
 #include "StreamTraceGenerator.h"
@@ -36,7 +37,12 @@ namespace trace_generator {
 static std::string CanonicalizePath(const std::string &str) {
   if (utils::StartsWith(str, "\"")) {
     fs::path p = std::string(str.begin() + 1, str.end() - 1);
-    p = fs::weakly_canonical(p);
+    std::error_code err;
+    p = fs::weakly_canonical(p, err);
+    // Checks e.g., that the file name is not too long.
+    if (err) {
+      return "";
+    }
     return p.native();
   }
   return str;
@@ -46,14 +52,22 @@ static std::string CanonicalizePath(const std::string &str) {
 fstrace::Consumes *
 StreamTraceGenerator::EmitConsumes(const std::vector<std::string> &tokens) {
   CHECK_TOKENS(3, "consumes");
-  return new fstrace::Consumes(tokens[1], CanonicalizePath(tokens[2]));
+  std::string p = CanonicalizePath(tokens[2]);
+  if (p == "") {
+    return nullptr;
+  }
+  return new fstrace::Consumes(tokens[1], p);
 }
 
 
 fstrace::Produces *
 StreamTraceGenerator::EmitProduces(const std::vector<std::string> &tokens) {
   CHECK_TOKENS(3, "produces");
-  return new fstrace::Produces(tokens[1], CanonicalizePath(tokens[2]));
+  std::string p = CanonicalizePath(tokens[2]);
+  if (p == "") {
+    return nullptr;
+  }
+  return new fstrace::Produces(tokens[1], p);
 }
 
 
@@ -160,8 +174,11 @@ StreamTraceGenerator::EmitNewFd(const std::vector<std::string> &tokens,
     return nullptr;
   }
   int fd = std::stoi(tokens[4]);
-  fstrace::NewFd *newfd = new fstrace::NewFd(
-      pid, dirfd, CanonicalizePath(tokens[3]), fd);
+  std::string p = CanonicalizePath(tokens[3]);
+  if (p == "") {
+    return nullptr;
+  }
+  fstrace::NewFd *newfd = new fstrace::NewFd(pid, dirfd, p, fd);
   assert(sysop_name.has_value());
   newfd->SetActualOpName(sysop_name.value());
   if (fd < 0) {
@@ -230,12 +247,14 @@ StreamTraceGenerator::EmitHpath(const std::vector<std::string> &tokens,
     return nullptr;
   }
   fstrace::Hpath *hpath = nullptr;
+  std::string p = CanonicalizePath(tokens[3]);
+  if (p == "") {
+    return nullptr;
+  }
   if (hpathsym) {
-    hpath = new fstrace::HpathSym(pid, dirfd, CanonicalizePath(tokens[3]),
-                                 access_type);
+    hpath = new fstrace::HpathSym(pid, dirfd, p, access_type);
   } else {
-    hpath = new fstrace::Hpath(pid, dirfd, CanonicalizePath(tokens[3]),
-                               access_type);
+    hpath = new fstrace::Hpath(pid, dirfd, p, access_type);
   }
   assert(sysop_name.has_value());
   hpath->SetActualOpName(sysop_name.value());
@@ -253,12 +272,15 @@ StreamTraceGenerator::EmitLinkOrRename(const std::vector<std::string> &tokens,
   size_t new_dirfd = ParseDirFd(tokens[4]);
   CHECK_DIRFD(new_dirfd);
   fstrace::Link *link = nullptr;
-  if (is_link) {
-    link = new fstrace::Link(pid, old_dirfd, CanonicalizePath(tokens[3]),
-                             new_dirfd, CanonicalizePath(tokens[5]));
+  std::string p1 = CanonicalizePath(tokens[3]);
+  std::string p2 = CanonicalizePath(tokens[5]);
+  if (p1 == "" || p2 == "") {
+    return nullptr;
   }
-  link = new fstrace::Rename(pid, old_dirfd, CanonicalizePath(tokens[3]),
-                             new_dirfd, CanonicalizePath(tokens[5]));
+  if (is_link) {
+    link = new fstrace::Link(pid, old_dirfd, p1, new_dirfd, p2);
+  }
+  link = new fstrace::Rename(pid, old_dirfd, p1, new_dirfd, p2);
   assert(sysop_name.has_value());
   link->SetActualOpName(sysop_name.value());
   return link;
@@ -301,8 +323,11 @@ fstrace::SetCwd *
 StreamTraceGenerator::EmitSetCwd(const std::vector<std::string> &tokens,
                                  size_t pid) {
   CHECK_TOKENS(3, "setcwd");
-  fstrace::SetCwd *setcwd = new fstrace::SetCwd(
-      pid, CanonicalizePath(tokens[2]));
+  std::string p = CanonicalizePath(tokens[2]);
+  if (p == "") {
+    return nullptr;
+  }
+  fstrace::SetCwd *setcwd = new fstrace::SetCwd(pid, p);
   assert(sysop_name.has_value());
   setcwd->SetActualOpName(sysop_name.value());
   return setcwd;
@@ -332,8 +357,12 @@ StreamTraceGenerator::EmitSymlink(const std::vector<std::string> &tokens,
   CHECK_TOKENS(5, "symlink");
   size_t dirfd = ParseDirFd(tokens[2]);
   CHECK_DIRFD(dirfd);
-  fstrace::Symlink *symlink = new fstrace::Symlink(
-      pid, dirfd, CanonicalizePath(tokens[3]), CanonicalizePath(tokens[4]));
+  std::string p1 = CanonicalizePath(tokens[3]);
+  std::string p2 = CanonicalizePath(tokens[4]);
+  if (p1 == "" || p2 == "") {
+    return nullptr;
+  }
+  fstrace::Symlink *symlink = new fstrace::Symlink(pid, dirfd, p1, p2);
   assert(sysop_name.has_value());
   symlink->SetActualOpName(sysop_name.value());
   return symlink;
@@ -458,7 +487,7 @@ fstrace::TraceNode *StreamTraceGenerator::ParseOperation(
     AddError(utils::err::TRACE_ERROR, "Uknown sysop operation", location);
     return nullptr;
   }
-  if (tokens.back() == "!failed") {
+  if (op && tokens.back() == "!failed") {
     op->MarkFailed();
   }
   return op;
