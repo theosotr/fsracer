@@ -14,6 +14,9 @@ modeoption "analyzer" - "The analyzer used to operate on traces"
 modeoption "fault-detector" - "The component used to locate faults"
   values="fs" optional mode="fault"
 
+option "ignore-files-conf" - "Path to file that includes files to be ignored by the fault detector"
+  string optional dependon="fault-detector"
+
 option "dump-dep-graph" - "Dump dependency graph to standard output"
   flag off
 option "output-dep-graph" - "File to store generated dependency graph"

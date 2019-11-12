@@ -21,6 +21,7 @@ struct CLIArgs {
   table::Table<std::string, std::string> cli_options;
   bool dump_trace;
   std::optional<std::string> output_trace;
+  std::optional<std::string> ignore_files_conf;
 };
 
 

@@ -1,8 +1,13 @@
 #include <algorithm>
 #include <filesystem>
+#include <fnmatch.h>
+#include <fstream>
 #include <map>
 #include <unordered_map>
+#include <sstream>
 #include <string>
+
+#include "json.hpp"
 
 #include "Debug.h"
 #include "FSFaultDetector.h"
@@ -10,10 +15,60 @@
 #include "FStrace.h"
 
 
+using json = nlohmann::json;
 namespace fs = std::filesystem;
 
-
 namespace detector {
+
+
+FSFaultDetector::FSFaultDetector(fs_accesses_table_t fs_accesses_,
+                                 dep_graph_t dep_graph_,
+                                 std::string working_dir_,
+                                 std::set<fs::path> dirs_,
+                                 std::optional<std::string> ignore_files_conf):
+  fs_accesses(fs_accesses_),
+  dep_graph(dep_graph_),
+  working_dir(working_dir_),
+  dirs(dirs_) {
+    if (ignore_files_conf.has_value()) {
+      LoadFilters(ignore_files_conf.value());
+    }
+  }
+
+void FSFaultDetector::LoadFilters(const std::string &filter_file) {
+  std::ifstream conf_file (filter_file);
+  if (!conf_file.good()) {
+    std::stringstream ss;
+    ss << strerror(errno);
+    debug::warn(GetName()) << "Error while opening configuration file "
+      << filter_file << ": " << ss.str();
+    return;
+  }
+  json j;
+  try {
+    conf_file >> j;
+    conf_file.close();
+  } catch (std::invalid_argument &e) {
+    debug::warn(GetName()) << "Unable to parse configuration file "
+      << filter_file;
+    conf_file.close();
+    return;
+  }
+  for (std::string key : { "ov", "mis", "mos" }) {
+    auto filters = j[key];
+    if (filters.is_array()) {
+      for (auto const &ov_filter : filters) {
+        if (key == "ov") {
+          filter_ov.insert(ov_filter.get<std::string>());
+        } else if (key == "mis") {
+          filter_mis.insert(ov_filter.get<std::string>());
+        } else {
+          filter_mos.insert(ov_filter.get<std::string>());
+        }
+      }
+    }
+  }
+}
 
 
 void FSFaultDetector::Detect() {
@@ -132,10 +187,25 @@ void FSFaultDetector::DetectMissingInOrOut(
 }
 
 
+static inline bool IgnorePath(const std::set<std::string> &patterns,
+                              const std::string &p) {
+  return std::any_of(
+      patterns.cbegin(),
+      patterns.cend(),
+      [p](auto pattern) {
+        return fnmatch(pattern.c_str(), p.c_str(), 0) == 0;
+      }
+  );
+}
+
+
 void FSFaultDetector::DetectMissingInput(
     faults_t &faults,
     fs::path p,
     const std::vector<fs_access_t>& accesses) const {
+  if (IgnorePath(filter_mis, p)) {
+    return;
+  }
   auto &dgraph = dep_graph;
   // Here, we check whether this file is declared as output by another task.
   // If this is the case, we should not report a missing input here, because
@@ -175,6 +245,9 @@ void FSFaultDetector::DetectMissingOutput(
     faults_t &faults,
     fs::path p,
     const std::vector<fs_access_t> &accesses) const {
+  if (IgnorePath(filter_mos, p)) {
+    return;
+  }
   // First we check whether this file is consumed by another task.
   // If this is the case, any task that produces it should reproduce the file
   // whenever the file is updated.
@@ -195,6 +268,9 @@ void FSFaultDetector::DetectOrderingViolation(
     faults_t &faults,
     fs::path p,
     const std::vector<fs_access_t> &accesses) const {
+  if (IgnorePath(filter_mos, p)) {
+    return;
+  }
   // Get all combinations of file accesses.
   auto acc_combs = utils::Get2Combinations(accesses); 
   for (auto const &access : acc_combs) {

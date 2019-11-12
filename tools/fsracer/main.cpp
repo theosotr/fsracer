@@ -50,6 +50,9 @@ process_args(gengetopt_args_info &args_info,
   if (args_info.fault_detector_given) {
     args.fault_detector = args_info.fault_detector_arg;
     std::string fault_detector = args_info.fault_detector_arg;
+    if (args_info.ignore_files_conf_given) {
+      args.ignore_files_conf = args_info.ignore_files_conf_arg;
+    }
 
     if (fault_detector == "fs") {
       // The race detector uses two analyzers:

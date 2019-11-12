@@ -88,7 +88,6 @@ void TraceProcessor::Setup(std::optional<size_t> pid) {
 }
 
 
-
 void TraceProcessor::InitAnalyzers(std::optional<size_t> pid) {
 
   analyzer::Analyzer *analyzer_ptr = nullptr;
@@ -146,7 +145,9 @@ void TraceProcessor::InitFaultDetector() {
           fs_analyzer->GetFSAccesses(),
           dep_analyzer->GetDependencyGraph(),
           fs_analyzer->GetWorkingDir(),
-          fs_analyzer->GetDirectories());
+          fs_analyzer->GetDirectories(),
+          cli_args.ignore_files_conf
+          );
     }
   }
 }

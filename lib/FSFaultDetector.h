@@ -84,11 +84,8 @@ public:
   FSFaultDetector(fs_accesses_table_t fs_accesses_,
                  dep_graph_t dep_graph_,
                  std::string working_dir_,
-                 std::set<fs::path> dirs_):
-    fs_accesses(fs_accesses_),
-    dep_graph(dep_graph_),
-    working_dir(working_dir_),
-    dirs(dirs_) {  }
+                 std::set<fs::path> dirs_,
+                 std::optional<std::string> ignore_files_conf);
 
   /** Gets the pretty name of this fault detector. */
   std::string GetName() const {
@@ -121,29 +118,27 @@ private:
 
   mutable std::unordered_map<std::string, std::set<std::string>> cache_dfs;
 
+  std::set<std::string> filter_ov;
+  std::set<std::string> filter_mis;
+  std::set<std::string> filter_mos;
+
+  void LoadFilters(const std::string &filter_file);
+
   /**
    * Gets the list of faults by exploiting the dependency graph
    * and the table of file accesses per block.
    */
   faults_t GetFaults() const;
 
-  void DetectMissingInOrOut(
-      faults_t &faults,
-      fs::path p,
-      const std::vector<fs_access_t> &accesses,
-      bool is_output) const;
-  void DetectOrderingViolation(
-      faults_t &faults,
-      fs::path p,
-      const std::vector<fs_access_t> &accesses) const;
-  void DetectMissingInput(
-      faults_t &faults,
-      fs::path p,
-      const std::vector<fs_access_t> &accesses) const;
-  void DetectMissingOutput(
-      faults_t &faults,
-      fs::path p,
-      const std::vector<fs_access_t> &accesses) const;
+  void DetectMissingInOrOut(faults_t &faults, fs::path p,
+                            const std::vector<fs_access_t> &accesses,
+                            bool is_output) const;
+  void DetectOrderingViolation(faults_t &faults, fs::path p,
+                               const std::vector<fs_access_t> &accesses) const;
+  void DetectMissingInput(faults_t &faults, fs::path p,
+                          const std::vector<fs_access_t> &accesses) const;
+  void DetectMissingOutput(faults_t &faults, fs::path p,
+                           const std::vector<fs_access_t> &accesses) const;
   
   /** Dumps reported faults to the standard output. */
   void DumpFaults(const faults_t &faults) const;
