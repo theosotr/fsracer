@@ -1,3 +1,6 @@
+#ifndef TRACE_PROCESSOR_H
+#define TRACE_PROCESSOR_H
+
 #include <optional>
 #include <string>
 #include <vector>
@@ -55,3 +58,5 @@ private:
 
 } // namespace processor
 
+
+#endif
