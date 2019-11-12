@@ -31,7 +31,8 @@ public:
     fp(nullptr),
     trace_line(nullptr),
     trace_line_len(0),
-    has_next(false) {  }
+    has_next(false),
+    loc_line(0) {  }
 
   std::string GetName() const;
   void Start();
