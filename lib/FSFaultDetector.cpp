@@ -7,7 +7,7 @@
 #include <sstream>
 #include <string>
 
-#include "json.hpp"
+#include <nlohmann/json.hpp>
 
 #include "Debug.h"
 #include "FSFaultDetector.h"

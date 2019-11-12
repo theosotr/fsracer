@@ -11,6 +11,15 @@ RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /u
 USER root
 WORKDIR /root
 
+# Install nlohmann/json library.
+ENV json_version=3.7.2
+RUN wget https://github.com/nlohmann/json/archive/v${json_version}.tar.gz && \
+  tar -xf v${json_version}.tar.gz
+WORKDIR /root/json-${json_version}
+RUN mkdir build && cd build && cmake .. && make && make install
+WORKDIR /root
+RUN rm -rf v${json_version}.tar.gz json-${json_version}
+
 # Install the Node patch
 RUN git clone $NODE_REPO
 RUN cd node && ./configure && make -j4 && make install
