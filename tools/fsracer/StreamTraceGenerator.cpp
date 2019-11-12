@@ -233,9 +233,10 @@ StreamTraceGenerator::EmitHpath(const std::vector<std::string> &tokens,
   if (hpathsym) {
     hpath = new fstrace::HpathSym(pid, dirfd, CanonicalizePath(tokens[3]),
                                  access_type);
+  } else {
+    hpath = new fstrace::Hpath(pid, dirfd, CanonicalizePath(tokens[3]),
+                               access_type);
   }
-  hpath = new fstrace::Hpath(pid, dirfd, CanonicalizePath(tokens[3]),
-                             access_type);
   assert(sysop_name.has_value());
   hpath->SetActualOpName(sysop_name.value());
   return hpath;
