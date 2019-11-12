@@ -119,7 +119,7 @@ private:
   /// Useful for fault reporting.
   mutable table::Table<std::string, fstrace::DebugInfo> event_info;
 
-  mutable unordered_map<string, set<string>> cache_dfs;
+  mutable std::unordered_map<std::string, std::set<std::string>> cache_dfs;
 
   /**
    * Gets the list of faults by exploiting the dependency graph
@@ -148,7 +148,7 @@ private:
   /** Dumps reported faults to the standard output. */
   void DumpFaults(const faults_t &faults) const;
 
-  bool HappensBefore(string source, string target) const;
+  bool HappensBefore(std::string source, std::string target) const;
 
   /**
    * Checks whether there is a conflict between the first file access

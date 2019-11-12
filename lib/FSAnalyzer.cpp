@@ -444,39 +444,39 @@ void FSAnalyzer::DumpOutput(writer::OutWriter *out) const {
 }
 
 
-void FSAnalyzer::DumpJSON(ostream &os) const {
-  os << "{" << endl;
+void FSAnalyzer::DumpJSON(std::ostream &os) const {
+  os << "{" << std::endl;
   for (auto map_it = effect_table.begin(); map_it != effect_table.end(); map_it++) {
     auto entry = *map_it;
-    os << "  \"" << entry.first.native() << "\": [" << endl;
+    os << "  \"" << entry.first.native() << "\": [" << std::endl;
     for (auto it = entry.second.begin(); it != entry.second.end(); it++) {
       os << "    {" << std::endl;
       os << "      \"block\": " << "\"" << (*it).task_name
-        << "\"," << endl;
+        << "\"," << std::endl;
       os << "      \"effect\": " << "\""
         << fstrace::Hpath::AccToString((*it).access_type) << "\"" << std::endl;
       if (it != entry.second.end() - 1) {
-        os << "    }," << endl;
+        os << "    }," << std::endl;
       } else {
-        os << "    }" << endl;
+        os << "    }" << std::endl;
       }
     }
     if (map_it != --effect_table.end()) {
-      os << "  ]," << endl;
+      os << "  ]," << std::endl;
     } else {
-      os << "  ]" << endl;
+      os << "  ]" << std::endl;
     }
   }
-  os << "}" << endl;
+  os << "}" << std::endl;
 }
 
 
-void FSAnalyzer::DumpCSV(ostream &os) const {
+void FSAnalyzer::DumpCSV(std::ostream &os) const {
   for (auto const &entry : effect_table) {
     for (auto const &fs_access : entry.second) {
       os << entry.first.native() << ","
         << fs_access.task_name << ","
-        << fstrace::Hpath::AccToString(fs_access.access_type) << "\n";
+        << fstrace::Hpath::AccToString(fs_access.access_type) << std::endl;
     }
   }
 }

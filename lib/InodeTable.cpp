@@ -7,18 +7,19 @@
 namespace table {
 
 
-void InodeTable::AddEntry(inode_t inode_p, string basename, string p) {
+void InodeTable::AddEntry(inode_t inode_p, std::string basename,
+                          std::string p) {
   AddEntry(inode_p, basename, p, next_inode);
   next_inode++;
 }
 
 
-void InodeTable::AddEntry(inode_t inode_p, string basename,
-                          string p, inode_t inode) {
+void InodeTable::AddEntry(inode_t inode_p, std::string basename,
+                          std::string p, inode_t inode) {
   // Add the given entry to the underlying inode table
   // and the reversed inode table.
-  set<fs::path> path_set;
-  pair<inode_t, string> entry = { inode_p, basename };
+  std::set<fs::path> path_set;
+  std::pair<inode_t, std::string> entry = { inode_p, basename };
   path_set = ToPaths(inode);
   path_set.insert(p);
   rev_table[inode] = path_set;
@@ -26,8 +27,8 @@ void InodeTable::AddEntry(inode_t inode_p, string basename,
 }
 
 
-void InodeTable::RemoveEntry(inode_t inode_p, const string &basename) {
-  optional<fs::path> path_p = ToPath(inode_p);
+void InodeTable::RemoveEntry(inode_t inode_p, const std::string &basename) {
+  std::optional<fs::path> path_p = ToPath(inode_p);
   if (!path_p.has_value()) {
     return;
   }
@@ -41,13 +42,14 @@ void InodeTable::RemoveEntry(inode_t inode_p, const string &basename) {
   if (!val.has_value()) {
     // The inode is not open, so we just remove it from the corresponding
     // inode table.
-    optional<inode_t> inode_opt = Table<inode_key_t, inode_t>::PopEntry(key);
+    std::optional<inode_t> inode_opt = Table<inode_key_t, inode_t>::PopEntry(
+        key);
     if (!inode_opt.has_value()) {
       return;
     }
     assert(inode_opt.has_value());
     inode_t inode = inode_opt.value();
-    map<inode_t, set<fs::path>>::iterator it = rev_table.find(inode);
+    std::map<inode_t, std::set<fs::path>>::iterator it = rev_table.find(inode);
     if (it != rev_table.end()) {
       // Now remove the entry from the reversed inode table.
       // In other words, the inode will not be pointed to by
@@ -73,13 +75,13 @@ void InodeTable::RemoveEntry(inode_t inode_p, const string &basename) {
 }
 
 
-optional<inode_t> InodeTable::GetInode(inode_t inode_p,
-                                       const string &basename) const {
+std::optional<inode_t> InodeTable::GetInode(inode_t inode_p,
+                                            const std::string &basename) const {
   return GetValue({ inode_p, basename });
 }
 
 
-void InodeTable::OpenInode(inode_t inode_p, const string &basename) {
+void InodeTable::OpenInode(inode_t inode_p, const std::string &basename) {
   inode_key_t key = { inode_p, basename };
   auto val = open_inodes.GetValue(key);
   if (!val.has_value()) {
@@ -93,7 +95,7 @@ void InodeTable::OpenInode(inode_t inode_p, const string &basename) {
 }
 
 
-void InodeTable::CloseInode(inode_t inode_p, const string &basename) {
+void InodeTable::CloseInode(inode_t inode_p, const std::string &basename) {
   inode_key_t key = { inode_p, basename };
   auto val = open_inodes.GetValue(key);
   if (!val.has_value()) {
@@ -146,7 +148,7 @@ inode_t InodeTable::ToInode(const fs::path &path_val) {
   fs::path dirname = path_val.parent_path();
   fs::path basename = path_val.filename();
   inode_t inode_p = ToInode(dirname);
-  optional<inode_t> i = GetInode(inode_p, basename.native());
+  std::optional<inode_t> i = GetInode(inode_p, basename.native());
   if (i.has_value()) {
     // The entry has been found in the inode table,
     // so return the retrieved inode.
@@ -160,9 +162,9 @@ inode_t InodeTable::ToInode(const fs::path &path_val) {
 }
 
 
-optional<fs::path> InodeTable::ToPath(inode_t inode) const {
-  optional<fs::path> filename;
-  set<fs::path> paths = ToPaths(inode);
+std::optional<fs::path> InodeTable::ToPath(inode_t inode) const {
+  std::optional<fs::path> filename;
+  auto paths = ToPaths(inode);
   if (paths.size() == 1) {
     return *paths.begin();
   }
@@ -179,9 +181,9 @@ optional<fs::path> InodeTable::ToPath(inode_t inode) const {
 }
 
 
-set<fs::path> InodeTable::ToPaths(inode_t inode) const {
-  set<fs::path> paths;
-  map<inode_t, set<fs::path>>::const_iterator it = rev_table.find(inode);
+std::set<fs::path> InodeTable::ToPaths(inode_t inode) const {
+  std::set<fs::path> paths;
+  auto it = rev_table.find(inode);
   if (it != rev_table.end()) {
     return it->second;
   }

@@ -59,7 +59,8 @@ template<>
 struct GraphPrinter<TaskDir, enum EdgeLabel> : public GraphPrinterDefault {
 public:
   using NodeInfo = Node<TaskDir, enum EdgeLabel>;
-  static string PrintNodeDot(string node_id, const NodeInfo &node_info) {
+  static std::string PrintNodeDot(std::string node_id,
+                                  const NodeInfo &node_info) {
     // If the given node (i.e., event) has not been executed,
     // then omit printing it.
     const TaskDir &task_dir = node_info.node_obj;
@@ -74,7 +75,8 @@ public:
     return "\"" + node_id + "\"" + "[label=\"" + label + "\"]";
   }
 
-  static string PrintNodeCSV(string node_id, const NodeInfo &node_info) {
+  static std::string PrintNodeCSV(std::string node_id,
+                                  const NodeInfo &node_info) {
     // If the given node (i.e., event) has not been executed,
     // then omit printing it.
     if (!node_info.HasAttribute(EXECUTED_ATTR)) {
@@ -83,7 +85,7 @@ public:
     return node_info.node_id;
   }
 
-  static string PrintEdgeLabel(enum EdgeLabel label) {
+  static std::string PrintEdgeLabel(enum EdgeLabel label) {
     // Convert edge labels of the dependency graph into a string.
     switch (label) {
       case CREATES:
@@ -97,14 +99,16 @@ public:
     }
   }
 
-  static string PrintEdgeDot(const NodeInfo &source, const NodeInfo &target) {
+  static std::string PrintEdgeDot(const NodeInfo &source,
+                                  const NodeInfo &target) {
     if (IgnoreEdge(source, target)) {
       return ""; // The edge is not printed.
     }
     return GraphPrinterDefault::PrintEdgeDot(source, target);
   }
 
-  static string PrintEdgeCSV(const NodeInfo &source, const NodeInfo &target) {
+  static std::string PrintEdgeCSV(const NodeInfo &source,
+                                  const NodeInfo &target) {
     if (IgnoreEdge(source, target)) {
       return ""; // The edge is not printed.
     }

@@ -15,14 +15,12 @@
 
 
 namespace fs = std::filesystem;
-using namespace std;
-
 
 namespace table {
 
 using inode_t = size_t;
-using inode_key_t = pair<inode_t, string>;
-using inode_table_t = map<pair<inode_t, string>, inode_t>;
+using inode_key_t = std::pair<inode_t, std::string>;
+using inode_table_t = std::map<std::pair<inode_t, std::string>, inode_t>;
 
 
 class InodeTable : public Table<inode_key_t, inode_t> {
@@ -32,15 +30,17 @@ class InodeTable : public Table<inode_key_t, inode_t> {
         InodeTable::AddEntry(ROOT_INODE, "/", "/");
     };
 
-    void AddEntry(inode_t inode_p, string basename, string p);
-    void AddEntry(inode_t inode_p, string basename, string p, inode_t inode);
-    void RemoveEntry(inode_t inode, const string &basename);
-    optional<inode_t> GetInode(inode_t inode_p, const string &basename) const;
-    void OpenInode(inode_t inode_p, const string &basename);
-    void CloseInode(inode_t inode_p, const string &basename);
+    void AddEntry(inode_t inode_p, std::string basename, std::string p);
+    void AddEntry(inode_t inode_p, std::string basename, std::string p,
+                  inode_t inode);
+    void RemoveEntry(inode_t inode, const std::string &basename);
+    std::optional<inode_t> GetInode(inode_t inode_p,
+                                    const std::string &basename) const;
+    void OpenInode(inode_t inode_p, const std::string &basename);
+    void CloseInode(inode_t inode_p, const std::string &basename);
     inode_t ToInode(const fs::path &path_val);
-    optional<fs::path> ToPath(inode_t inode) const;
-    set<fs::path> ToPaths(inode_t inode) const;
+    std::optional<fs::path> ToPath(inode_t inode) const;
+    std::set<fs::path> ToPaths(inode_t inode) const;
 
   private:
     enum INodeType {
@@ -48,12 +48,12 @@ class InodeTable : public Table<inode_key_t, inode_t> {
       UNLINKED
     };
 
-    map<inode_t, set<fs::path>> rev_table;
-    Table<inode_key_t, pair<enum INodeType, size_t>> open_inodes;
+    std::map<inode_t, std::set<fs::path>> rev_table;
+    Table<inode_key_t, std::pair<enum INodeType, size_t>> open_inodes;
 
     size_t next_inode;
 
-    void RemoveInode(inode_t inode, string basename);
+    void RemoveInode(inode_t inode, std::string basename);
 };
 
 

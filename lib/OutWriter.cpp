@@ -24,17 +24,17 @@ void OutWriter::ClearOutStream() {
 }
 
 
-ostream &OutWriter::OutStream() {
+std::ostream &OutWriter::OutStream() {
   switch (write_option) {
     case WRITE_FILE:
       return of;
     default:
-      return cout;
+      return std::cout;
   }
 }
 
 
-string OutWriter::ToString() {
+std::string OutWriter::ToString() {
   switch (write_option) {
     case WRITE_STDOUT:
       return "STDOUT";

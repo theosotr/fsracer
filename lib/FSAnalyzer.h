@@ -107,8 +107,8 @@ private:
                                           size_t pid) const;
   void UnlinkResource(inode_t inode_p, std::string basename);
 
-  void DumpJSON(ostream &os) const;
-  void DumpCSV(ostream &os) const;
+  void DumpJSON(std::ostream &os) const;
+  void DumpCSV(std::ostream &os) const;
   void AddPathEffect(const fs::path &p, FSAccess fs_access);
   void UpdateAccessTable() const;
 };

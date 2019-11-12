@@ -11,9 +11,6 @@
 #include <utility>
 
 
-using namespace std;
-
-
 namespace graph {
 
 /**
@@ -26,17 +23,17 @@ namespace graph {
 template<typename T, typename L>
 struct Node {
   /// The ID of the current node.
-  string node_id;
+  std::string node_id;
   /// Type information of the node.
   T node_obj;
   /// The set of nodes that are dependent on the current one.
-  set<pair<string, L>> dependents;
+  std::set<std::pair<std::string, L>> dependents;
   /// Set of nodes executed before the current one.
-  set<string> before;
+  std::set<std::string> before;
   /// Set of nodes executed after the current one.
-  set<string> after;
+  std::set<std::string> after;
   /// Set of node attributes.
-  set<string> attributes;
+  std::set<std::string> attributes;
 
   Node() {  }
 
@@ -44,23 +41,23 @@ struct Node {
    * Constructs a new node with the specified ID.
    * This node is described by the given `node_obj`.
    */
-  Node(string node_id_, T node_obj_):
+  Node(std::string node_id_, T node_obj_):
     node_id(node_id_),
     node_obj(node_obj_)
   {  }
 
   /** Checks whether this node has the given attribute. */
-  bool HasAttribute(const string &attr) const {
+  bool HasAttribute(const std::string &attr) const {
     return attributes.find(attr) != attributes.end();
   }
 
   /** Adds a new attribute to the current node. */
-  void AddAttribute(string attr) {
+  void AddAttribute(std::string attr) {
     attributes.insert(attr);
   }
 
   /** Removes the given attribute from the current node. */
-  void RemoveAttribute(const string &attr) {
+  void RemoveAttribute(const std::string &attr) {
     attributes.erase(attr);
   }
 
@@ -79,31 +76,31 @@ struct GraphPrinterDefault {
   public:
     /** Prints the given node in DOT format. */
     template<typename T>
-    static string PrintNodeDot(string node_id, const T &node_obj) {
+    static std::string PrintNodeDot(std::string node_id, const T &node_obj) {
       return "\"" + node_id + "\"";
     }
 
     /** Prints the given node in CSV format. */
     template<typename T>
-    static string PrintNodeCSV(string node_id, const T &node_obj) {
+    static std::string PrintNodeCSV(std::string node_id, const T &node_obj) {
       return node_id;
     }
 
     /** Prints the given edge label. */
     template<typename L>
-    static string PrintEdgeLabel(L label) {
+    static std::string PrintEdgeLabel(L label) {
       return "";
     }
 
     /** Prints the given edge in CSV format. */
     template<typename T>
-    static string PrintEdgeCSV(const T &source, const T &target) {
+    static std::string PrintEdgeCSV(const T &source, const T &target) {
       return source.node_id + "," + target.node_id;
     }
 
     /** Prints the given edge in DOT format. */
     template<typename T>
-    static string PrintEdgeDot(const T &source, const T &target) {
+    static std::string PrintEdgeDot(const T &source, const T &target) {
       return "\"" + source.node_id + "\"->\"" + target.node_id + "\"";
     }
 };
@@ -151,17 +148,17 @@ class Graph {
      */
     using NodeInfo = Node<T, L>;
     /// Representation of the underlying graph.
-    using graph_t = unordered_map<string, NodeInfo>;
+    using graph_t = std::unordered_map<std::string, NodeInfo>;
 
     /** Adds a new node to the graph. */
-    void AddNode(string node_id, T node_obj) {
+    void AddNode(std::string node_id, T node_obj) {
       NodeInfo node_info = NodeInfo(node_id, node_obj);
       graph.emplace(node_id, node_info);
 
     }
 
     /** Adds a new attribute to the given node. */
-    void AddNodeAttr(string node_id, string attr) {
+    void AddNodeAttr(std::string node_id, std::string attr) {
       typename graph_t::iterator it = graph.find(node_id);
       if (it != graph.end()) {
         it->second.AddAttribute(attr);
@@ -169,7 +166,7 @@ class Graph {
     }
 
     /** Checks whether the given node has the given attribute. */
-    bool HasNodeAttr(string node_id, const string &attr) const {
+    bool HasNodeAttr(std::string node_id, const std::string &attr) const {
       typename graph_t::iterator it = graph.find(node_id);
       if (it != graph.end()) {
         return it->second.HasAttribute(attr);
@@ -178,7 +175,7 @@ class Graph {
     }
 
     /** Remove the specified attribute from the given node. */
-    void RemoveNodeAttr(string node_id, const string &attr) {
+    void RemoveNodeAttr(std::string node_id, const std::string &attr) {
       typename graph_t::iterator it = graph.find(node_id);
       if (it != graph.end()) {
         it->second.RemoveAttribute(attr);
@@ -186,8 +183,8 @@ class Graph {
     }
 
     /** Gets the information associated with the given node. */
-    optional<NodeInfo> GetNodeInfo(string node_id) const {
-      optional<NodeInfo> node_info;
+    std::optional<NodeInfo> GetNodeInfo(std::string node_id) const {
+      std::optional<NodeInfo> node_info;
       typename graph_t::const_iterator it = graph.find(node_id);
       if (it != graph.end()) {
         return it->second;
@@ -201,7 +198,7 @@ class Graph {
      * The edge is described by the source node, the target node, and
      * a label.
      */
-    void AddEdge(string source, string target, L label) {
+    void AddEdge(std::string source, std::string target, L label) {
       if (source == target) {
         return;
       }
@@ -218,7 +215,7 @@ class Graph {
     }
 
     /** Remove an edge from the graph. */
-    void RemoveEdge(string source, string target, L label) {
+    void RemoveEdge(std::string source, std::string target, L label) {
       typename graph_t::iterator it = graph.find(source);
       if (it != graph.end()) {
         it->second.dependents.erase({ target, label });
@@ -229,7 +226,7 @@ class Graph {
      * Print the current graph using the given output stream,
      * and in the specified format.
      */
-    void PrintGraph(enum GraphFormat graph_format, ostream &os) const {
+    void PrintGraph(enum GraphFormat graph_format, std::ostream &os) const {
       switch (graph_format) {
         case DOT:
           PrintDot(os);
@@ -243,21 +240,21 @@ class Graph {
      * Checks whether there is at least one path from source node to
      * target.
      */
-    bool HasPath(string source, string target) const {
-      set<string> visited = DFS(source);
+    bool HasPath(std::string source, std::string target) const {
+      std::set<std::string> visited = DFS(source);
       return visited.find(target) != visited.end();
     }
 
     /**
      * Gets the set of nodes that are reachable from the given node.
      */
-    set<string> DFS(string source) const {
-      set<string> visited;
-      stack<string> pool;
+    std::set<std::string> DFS(std::string source) const {
+      std::set<std::string> visited;
+      std::stack<std::string> pool;
       pool.push(source);
 
       while (!pool.empty()) {
-        string node = pool.top();
+        std::string node = pool.top();
         pool.pop();
         if (visited.find(node) != visited.end()) {
           // We have already visited this node.
@@ -265,7 +262,7 @@ class Graph {
         }
 
         visited.insert(node);
-        optional<NodeInfo> node_info_opt = GetNodeInfo(node);
+        std::optional<NodeInfo> node_info_opt = GetNodeInfo(node);
         assert(node_info_opt.has_value());
         NodeInfo node_info = node_info_opt.value();
         for (auto &n : node_info.dependents) {
@@ -284,8 +281,8 @@ class Graph {
       return graph.empty(); 
     }
 
-    set<string> GetSinks() const {
-      set<string> sinks;
+    std::set<std::string> GetSinks() const {
+      std::set<std::string> sinks;
       for (auto const &elem : graph) {
         if (elem.second.dependents.empty()) {
           sinks.insert(elem.first);
@@ -303,22 +300,24 @@ class Graph {
     GPrinter printer;
 
     /** Prints the current graph in DOT format. */
-    void PrintDot(ostream &os) const {
+    void PrintDot(std::ostream &os) const {
       os << "digraph {\n";
       for (auto const &entry : graph) {
         NodeInfo node_info = entry.second;
-        string node_str = printer.PrintNodeDot(node_info.node_id, node_info);
+        std::string node_str = printer.PrintNodeDot(node_info.node_id,
+                                                    node_info);
         // if node str is empty, then we omit printing this node.
         if (node_str != "") {
-          os << node_str << ";" << endl;
+          os << node_str << ";" << std::endl;
         }
         for (auto const &dependent : node_info.dependents) {
-          optional<NodeInfo> target_info_opt = GetNodeInfo(dependent.first);
+          std::optional<NodeInfo> target_info_opt = GetNodeInfo(
+              dependent.first);
           if (!target_info_opt.has_value()) {
             continue;
           }
           NodeInfo target_info = target_info_opt.value();
-          string edge_str = printer.PrintEdgeDot(node_info, target_info);
+          std::string edge_str = printer.PrintEdgeDot(node_info, target_info);
           // if this edge string is empty, we omit printing this edge.
           if (edge_str == "") {
             continue;
@@ -327,38 +326,40 @@ class Graph {
           os << edge_str << "[label=\""
             << printer.PrintEdgeLabel(dependent.second)
             << "\"];"
-            << endl;
+            << std::endl;
         }
       }
-      os << "}" << endl;
+      os << "}" << std::endl;
     }
 
     /** Prints the current graph in CSV format. */
-    void PrintCSV(ostream &os) const {
+    void PrintCSV(std::ostream &os) const {
       // We store the graph in uniform form,
       // the edge list is sorted by on the value of
       // each source and target.
       //
       // The order is ascending.
-      set<tuple<NodeInfo, NodeInfo, L>> edges;
+      std::set<std::tuple<NodeInfo, NodeInfo, L>> edges;
       for (auto const &entry : graph) {
         NodeInfo node_info = entry.second;
         for (auto const &dependent: node_info.dependents) {
-          optional<NodeInfo> target_info_opt = GetNodeInfo(dependent.first);
+          std::optional<NodeInfo> target_info_opt = GetNodeInfo(
+              dependent.first);
           if (!target_info_opt.has_value()) {
             continue;
           }
           NodeInfo target_info = target_info_opt.value();
-          edges.insert(make_tuple(node_info, target_info,
-                                  dependent.second));
+          edges.insert(std::make_tuple(node_info, target_info,
+                                       dependent.second));
         }
       }
       for (auto const &edge : edges) {
-        string edge_str = printer.PrintEdgeCSV(get<0>(edge), get<1>(edge));
+        std::string edge_str = printer.PrintEdgeCSV(
+            std::get<0>(edge), std::get<1>(edge));
         // If edge string is empty, we omit printing this edge.
         if (edge_str != "") {
-          os << edge_str << "," << printer.PrintEdgeLabel(get<2>(edge))
-            << endl;
+          os << edge_str << "," << printer.PrintEdgeLabel(std::get<2>(edge))
+            << std::endl;
         }
       }
     }

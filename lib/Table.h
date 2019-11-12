@@ -8,8 +8,6 @@
 #include <set>
 
 
-using namespace std;
-
 
 namespace table {
 
@@ -17,14 +15,14 @@ template<class T1, class T2>
 class Table {
 
   public:
-    using table_t = map<T1, T2>;
+    using table_t = std::map<T1, T2>;
 
     void AddEntry(T1 key, T2 value) {
       table[key] = value;
     }
 
-    optional<T2> PopEntry(const T1 &key) {
-      optional<T2> val;
+    std::optional<T2> PopEntry(const T1 &key) {
+      std::optional<T2> val;
       typename table_t::iterator it = table.find(key);
       if (it != table.end()) {
         val = it->second;
@@ -38,8 +36,8 @@ class Table {
       PopEntry(key);
     }
 
-    optional<T2> GetValue(const T1 &key) const {
-      optional<T2> val;
+    std::optional<T2> GetValue(const T1 &key) const {
+      std::optional<T2> val;
       typename table_t::const_iterator it = table.find(key);
       if (it != table.end()) {
         val = it->second;
@@ -70,7 +68,7 @@ class Table {
     }
 
   protected:
-    map<T1, T2> table;
+    std::map<T1, T2> table;
 };
 
 
