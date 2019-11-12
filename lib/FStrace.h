@@ -1,7 +1,6 @@
 #ifndef FSTRACE_H
 #define FSTRACE_H
 
-#include "json.hpp"
 #include <optional>
 #include <string>
 #include <vector>

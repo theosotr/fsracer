@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
 
-find_package(nlohmann_json REQUIRED)
-
 file(GLOB src_files *.cpp)
 
 add_library(fsracer-lib STATIC ${src_files})
