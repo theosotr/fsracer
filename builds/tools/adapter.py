@@ -808,7 +808,10 @@ class MakeHandler(Handler):
         self.included = set()
         # Dictionary with debug info about rules (Makefile, line number)
         self.rules_info = parse_make_p(make_db_lines)
-        self.skip_next_end = False  # Use it for shell functions (e.g. $(shell ....))
+        # Use it for shell functions (e.g. $(shell ....))
+        # or for ghost rules, which are not exist in dbmake nor
+        # in sterr
+        self.skip_next_end = False  
 
     def _handle_write(self):
         message = self.trace.syscall_args[1].replace('"', '').replace('\\n', '').strip()
@@ -827,7 +830,12 @@ class MakeHandler(Handler):
             prereqs = re.split(' |,', prereq)
             # Get more info about recipe
             recipe = "{}: {}".format(target, prereq).strip()
-            path, makefile, line_number = self.rules_info[recipe]
+            try:
+                path, makefile, line_number = self.rules_info[recipe]
+            except KeyError:
+                print_warning("recipe '{}' does not exist in dbmake".format(recipe))
+                self.skip_next_end = True
+                return
             # In case of nested we should have the current_path
             cwd = self.cwd_queue[-1]
             cwd = cwd + "/" if cwd != '' else cwd
