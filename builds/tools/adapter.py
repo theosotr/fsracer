@@ -480,8 +480,8 @@ def translate_link(trace):
         link.format(
             'AT_FDCWD', trace.syscall_args[0],'AT_FDCWD', trace.syscall_args[1]
         ),
-        hpath.format('AT_FDCWD', trace.syscall_args[0], CONSUMED),
-        hpath.format('AT_FDCWD', trace.syscall_args[1], PRODUCED)
+        hpathsym.format('AT_FDCWD', trace.syscall_args[0], CONSUMED),
+        hpathsym.format('AT_FDCWD', trace.syscall_args[1], PRODUCED)
     ]
 
 
@@ -494,20 +494,20 @@ def translate_linkat(trace):
             trace.syscall_args[0], trace.syscall_args[1],
             trace.syscall_args[2], trace.syscall_args[3]
         ),
-        hpath.format(trace.syscall_args[0], trace.syscall_args[1], CONSUMED),
-        hpath.format(trace.syscall_args[2], trace.syscall_args[3], PRODUCED)
+        hpathsym.format(trace.syscall_args[0], trace.syscall_args[1], CONSUMED),
+        hpathsym.format(trace.syscall_args[2], trace.syscall_args[3], PRODUCED)
     ]
 
 
 @check_paths([0])
 def translate_mkdir(trace):
-    return [hpath.format('AT_FDCWD', trace.syscall_args[0], PRODUCED)]
+    return [hpathsym.format('AT_FDCWD', trace.syscall_args[0], PRODUCED)]
 
 
 @check_paths([1])
 def translate_mkdirat(trace):
     return [
-        hpath.format(
+        hpathsym.format(
             trace.syscall_args[0], trace.syscall_args[1], PRODUCED
         )
     ]
@@ -515,7 +515,7 @@ def translate_mkdirat(trace):
 
 @check_paths([0])
 def translate_mknod(trace):
-    return [hpath.format('AT_FDCWD', trace.syscall_args[0], PRODUCED)]
+    return [hpathsym.format('AT_FDCWD', trace.syscall_args[0], PRODUCED)]
 
 
 @check_paths([0])
@@ -574,8 +574,8 @@ def translate_rename(trace):
         rename.format(
             'AT_FDCWD', trace.syscall_args[0], 'AT_FDCWD', trace.syscall_args[1]
         ),
-        hpath.format('AT_FDCWD', trace.syscall_args[0], EXPUNGED),
-        hpath.format('AT_FDCWD', trace.syscall_args[1], PRODUCED)
+        hpathsym.format('AT_FDCWD', trace.syscall_args[0], EXPUNGED),
+        hpathsym.format('AT_FDCWD', trace.syscall_args[1], PRODUCED)
     ]
 
 
@@ -589,8 +589,8 @@ def translate_renameat(trace):
             trace.syscall_args[0], trace.syscall_args[1],
             trace.syscall_args[2], trace.syscall_args[3]
         ),
-        hpath.format(trace.syscall_args[0], trace.syscall_args[1], EXPUNGED),
-        hpath.format(trace.syscall_args[2], trace.syscall_args[3], PRODUCED)
+        hpathsym.format(trace.syscall_args[0], trace.syscall_args[1], EXPUNGED),
+        hpathsym.format(trace.syscall_args[2], trace.syscall_args[3], PRODUCED)
     ]
 
 
@@ -617,7 +617,7 @@ def translate_symlink(trace):
         symlink.format(
             'AT_FDCWD', trace.syscall_args[1], trace.syscall_args[0]
         ),
-        hpath.format('AT_FDCWD', trace.syscall_args[1], PRODUCED)
+        hpathsym.format('AT_FDCWD', trace.syscall_args[1], PRODUCED)
 
     ]
 
@@ -632,7 +632,7 @@ def translate_symlinkat(trace):
             trace.syscall_args[2],
             trace.syscall_args[0]
         ),
-        hpath.format(trace.syscall_args[1], trace.syscall_args[2], PRODUCED)
+        hpathsym.format(trace.syscall_args[1], trace.syscall_args[2], PRODUCED)
     ]
 
 
