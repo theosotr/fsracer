@@ -1,11 +1,10 @@
 #! /bin/sh
 
-makefile="$1"
-target="$2"
-prereqs="$3"
+target="$1"
+prereqs="$2"
 # separated by ' ### '
-echo "##BEGIN##: $makefile ### $target ### $prereqs" 1>&2
-shift 3
+echo "##BEGIN##: $target ### $prereqs" 1>&2
+shift 2
 cmd="$@"
 echo "exec: $@" 1>&2
 /bin/bash "$@"

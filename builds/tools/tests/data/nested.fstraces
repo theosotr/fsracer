@@ -1,9 +1,9 @@
 sysop init SYNC {
 	26312, setcwd "/home/user/fsracer/builds/make-plugin/playground/nested_example"
 }
-newTask Makefile_main.o W 1
-consumes Makefile_main.o "/home/user/fsracer/builds/make-plugin/playground/nested_example/main.c"
-execTask Makefile_main.o {
+newTask Makefile_main.o_8 W 1
+consumes Makefile_main.o_8 "/home/user/fsracer/builds/make-plugin/playground/nested_example/main.c"
+execTask Makefile_main.o_8 {
 	sysop clone_1 SYNC {
 		26312, newproc none 26313
 	}
@@ -11,19 +11,19 @@ execTask Makefile_main.o {
 sysop stat_5 SYNC {
 	26311, hpath AT_FDCWD "main.o" touched
 }
-newTask Makefile_nested W 1
-consumes Makefile_nested "/home/user/fsracer/builds/make-plugin/playground/nested_example/"
-execTask Makefile_nested {
+newTask Makefile_nested_11 W 1
+consumes Makefile_nested_11 "/home/user/fsracer/builds/make-plugin/playground/nested_example/"
+execTask Makefile_nested_11 {
 	sysop clone_8 SYNC {
 		26316, newproc none 26317
 	}
 	sysop clone_10 SYNC {
 		26317, newproc none 26318
 	}
-	newTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_s1.o W 1
-	consumes /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_s1.o "/home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/s1.c"
-	consumes /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_s1.o "/home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/s1.h"
-	execTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_s1.o {
+	newTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/nes.mk_s1.o_6 W 1
+	consumes /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/nes.mk_s1.o_6 "/home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/s1.c"
+	consumes /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/nes.mk_s1.o_6 "/home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/s1.h"
+	execTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/nes.mk_s1.o_6 {
 		sysop clone_12 SYNC {
 			26318, newproc none 26319
 		}
@@ -37,9 +37,9 @@ execTask Makefile_nested {
 	sysop stat_18 SYNC {
 		26317, hpath AT_FDCWD "s2.h" touched
 	}
-	newTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_s2.o W 1
-	consumes /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_s2.o "/home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/s2.h"
-	execTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/Makefile_s2.o {
+	newTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/nes.mk_s2.o_10 W 1
+	consumes /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/nes.mk_s2.o_10 "/home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/s2.h"
+	execTask /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir/nes.mk_s2.o_10 {
 		sysop clone_21 SYNC {
 			26322, newproc none 26323
 		}
@@ -57,10 +57,10 @@ execTask Makefile_nested {
 sysop stat_32 SYNC {
 	26326, hpath AT_FDCWD "/home/user/fsracer/builds/make-plugin/playground/nested_example" touched
 }
-newTask Makefile_main W 1
-consumes Makefile_main "/home/user/fsracer/builds/make-plugin/playground/nested_example/main.o"
-consumes Makefile_main "/home/user/fsracer/builds/make-plugin/playground/nested_example/nested"
-execTask Makefile_main {
+newTask Makefile_main_14 W 1
+consumes Makefile_main_14 "/home/user/fsracer/builds/make-plugin/playground/nested_example/main.o"
+consumes Makefile_main_14 "/home/user/fsracer/builds/make-plugin/playground/nested_example/nested"
+execTask Makefile_main_14 {
 	sysop clone_34 SYNC {
 		26326, newproc none 26327
 	}
@@ -74,5 +74,5 @@ sysop chdir_39 SYNC {
 sysop close_40 SYNC {
 	26311, delfd 1
 }
-dependsOn Makefile_main Makefile_main.o
-dependsOn Makefile_main Makefile_nested
+dependsOn Makefile_main_14 Makefile_main.o_8
+dependsOn Makefile_main_14 Makefile_nested_11

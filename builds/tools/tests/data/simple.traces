@@ -2,7 +2,7 @@
 17793 access("/etc/ld.so.nohwcap", F_OK) = -1 ENOENT (No such file or directory)
 17793 openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
 17793 close(3)                          = 0
-17794 write(1, "##BEGIN##:  Makefile ### s1.o ### s1.c s1.h\n", 44) = 44
+17794 write(1, "##BEGIN##:  s1.o ### s1.c s1.h\n", 44) = 44
 17794 write(1, "exec: -c cc -c s1.c -I.\n", 24) = 24
 17795 execve("/bin/bash", ["/bin/bash", "-c", "cc -c s1.c -I."], 0x56183dba8c48 /* 34 vars */) = 0
 17796 openat(AT_FDCWD, "/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/stdc-predef.h", O_RDONLY|O_NOCTTY) = -1 ENOENT (No such file or directory)
@@ -12,7 +12,7 @@
 17793 stat("s1.o", {st_mode=S_IFREG|0664, st_size=1536, ...}) = 0
 17793 stat("s2.o", 0x7ffddd848d00)      = -1 ENOENT (No such file or directory)
 17793 stat("s2.h", {st_mode=S_IFREG|0664, st_size=19, ...}) = 0
-17798 write(1, "##BEGIN##:  Makefile ### s2.o ### s2.h\n", 39) = 39
+17798 write(1, "##BEGIN##:  s2.o ### s2.h\n", 39) = 39
 17798 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f70d2bae810) = 17799
 17799 execve("/bin/bash", ["/bin/bash", "-c", "cc -c s2.c -I."], 0x559530726c48 /* 34 vars */) = 0
 17798 write(1, "##END##\n", 8)          = 8

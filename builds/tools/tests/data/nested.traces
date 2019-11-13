@@ -1,15 +1,15 @@
-26312 write(1, "##BEGIN##:  Makefile ### main.o ### main.c\n", 43) = 43
+26312 write(1, "##BEGIN##:  main.o ### main.c\n", 43) = 43
 26312 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f4b11e3b810) = 26313
 26312 write(1, "##END##\n", 8)          = 8
 26312 +++ exited with 0 +++
 26311 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=26312, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
 26311 stat("main.o", {st_mode=S_IFREG|0664, st_size=1472, ...}) = 0
-26316 write(1, "##BEGIN##:  Makefile ### nested ### \n", 37) = 37
+26316 write(1, "##BEGIN##:  nested ### \n", 37) = 37
 26316 write(1, "exec: -c make -C nested_dir\n", 28) = 28
 26316 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f8f32f9e810) = 26317
 26317 write(1, "make[1]: Entering directory '/home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir'\n", 105) = 105
 26317 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fa29e2fea10) = 26318
-26318 write(1, "##BEGIN##:  Makefile ### s1.o ### s1.c s1.h\n", 44) = 44
+26318 write(1, "##BEGIN##:  s1.o ### s1.c s1.h\n", 44) = 44
 26318 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f6fa0caa810) = 26319
 26318 write(1, "##END##\n", 8)          = 8
 26318 +++ exited with 0 +++
@@ -17,7 +17,7 @@
 26317 stat("s1.o", {st_mode=S_IFREG|0664, st_size=1536, ...}) = 0
 26317 stat("s2.o", 0x7fffc7e4fe30)      = -1 ENOENT (No such file or directory)
 26317 stat("s2.h", {st_mode=S_IFREG|0664, st_size=19, ...}) = 0
-26322 write(1, "##BEGIN##:  Makefile ### s2.o ### s2.h\n", 39) = 39
+26322 write(1, "##BEGIN##:  s2.o ### s2.h\n", 39) = 39
 26322 write(1, "exec: -c cc -c s2.c \n", 21) = 21
 26322 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fa46aa04810) = 26323
 26322 write(1, "##END##\n", 8)          = 8
@@ -31,7 +31,7 @@
 26316 +++ exited with 0 +++
 26311 --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=26316, si_uid=1000, si_status=0, si_utime=0, si_stime=0} ---
 26326 stat("/home/user/fsracer/builds/make-plugin/playground/nested_example", {st_mode=S_IFDIR|0775, st_size=4096, ...}) = 0
-26326 write(1, "##BEGIN##:  Makefile ### main ### main.o nested\n", 48) = 48
+26326 write(1, "##BEGIN##:  main ### main.o nested\n", 48) = 48
 26326 clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fbdb453d810) = 26327
 26326 write(1, "##END##\n", 8)          = 8
 26326 +++ exited with 0 +++

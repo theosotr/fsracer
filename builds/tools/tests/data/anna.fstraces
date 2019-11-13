@@ -8,12 +8,12 @@ sysop openat_0 SYNC {
 sysop close_1 SYNC {
 	14100, delfd 3
 }
-newTask Makefile_retriever.o W 1
-consumes Makefile_retriever.o "/home/user/fsracer/builds/make-plugin/playground/anna/retriever.c"
-consumes Makefile_retriever.o "/home/user/fsracer/builds/make-plugin/playground/anna/anna.h"
-consumes Makefile_retriever.o "/home/user/fsracer/builds/make-plugin/playground/anna/util.h"
-consumes Makefile_retriever.o "/home/user/fsracer/builds/make-plugin/playground/anna/retriever.h"
-execTask Makefile_retriever.o {
+newTask Makefile_retriever.o_ W 1
+consumes Makefile_retriever.o_ "/home/user/fsracer/builds/make-plugin/playground/anna/retriever.c"
+consumes Makefile_retriever.o_ "/home/user/fsracer/builds/make-plugin/playground/anna/anna.h"
+consumes Makefile_retriever.o_ "/home/user/fsracer/builds/make-plugin/playground/anna/util.h"
+consumes Makefile_retriever.o_ "/home/user/fsracer/builds/make-plugin/playground/anna/retriever.h"
+execTask Makefile_retriever.o_ {
 	sysop stat_3 SYNC {
 		14107, hpath AT_FDCWD "/root/anna-1.71" touched
 	}
@@ -24,12 +24,12 @@ sysop dup2_5 SYNC {
 sysop close_6 SYNC {
 	14106, delfd 11
 }
-newTask Makefile_anna.o W 1
-consumes Makefile_anna.o "/home/user/fsracer/builds/make-plugin/playground/anna/anna.c"
-consumes Makefile_anna.o "/home/user/fsracer/builds/make-plugin/playground/anna/anna.h"
-consumes Makefile_anna.o "/home/user/fsracer/builds/make-plugin/playground/anna/util.h"
-consumes Makefile_anna.o "/home/user/fsracer/builds/make-plugin/playground/anna/retriever.h"
-execTask Makefile_anna.o {
+newTask Makefile_anna.o_ W 1
+consumes Makefile_anna.o_ "/home/user/fsracer/builds/make-plugin/playground/anna/anna.c"
+consumes Makefile_anna.o_ "/home/user/fsracer/builds/make-plugin/playground/anna/anna.h"
+consumes Makefile_anna.o_ "/home/user/fsracer/builds/make-plugin/playground/anna/util.h"
+consumes Makefile_anna.o_ "/home/user/fsracer/builds/make-plugin/playground/anna/retriever.h"
+execTask Makefile_anna.o_ {
 	sysop dup2_8 SYNC {
 		14110, dupfd 11 1
 	}
@@ -43,10 +43,10 @@ sysop dup2_11 SYNC {
 sysop close_12 SYNC {
 	14110, delfd 11
 }
-newTask Makefile_util.o W 1
-consumes Makefile_util.o "/home/user/fsracer/builds/make-plugin/playground/anna/util.c"
-consumes Makefile_util.o "/home/user/fsracer/builds/make-plugin/playground/anna/anna.h"
-execTask Makefile_util.o {
+newTask Makefile_util.o_ W 1
+consumes Makefile_util.o_ "/home/user/fsracer/builds/make-plugin/playground/anna/util.c"
+consumes Makefile_util.o_ "/home/user/fsracer/builds/make-plugin/playground/anna/anna.h"
+execTask Makefile_util.o_ {
 	sysop dup2_14 SYNC {
 		14114, dupfd 11 1
 	}
@@ -60,11 +60,11 @@ sysop dup2_17 SYNC {
 sysop close_18 SYNC {
 	14114, delfd 11
 }
-newTask Makefile_anna W 1
-consumes Makefile_anna "/home/user/fsracer/builds/make-plugin/playground/anna/retriever.o"
-consumes Makefile_anna "/home/user/fsracer/builds/make-plugin/playground/anna/anna.o"
-consumes Makefile_anna "/home/user/fsracer/builds/make-plugin/playground/anna/util.o"
-execTask Makefile_anna {
+newTask Makefile_anna_16 W 1
+consumes Makefile_anna_16 "/home/user/fsracer/builds/make-plugin/playground/anna/retriever.o"
+consumes Makefile_anna_16 "/home/user/fsracer/builds/make-plugin/playground/anna/anna.o"
+consumes Makefile_anna_16 "/home/user/fsracer/builds/make-plugin/playground/anna/util.o"
+execTask Makefile_anna_16 {
 	sysop dup2_20 SYNC {
 		14118, dupfd 11 1
 	}
@@ -76,6 +76,6 @@ sysop openat_23 SYNC {
 	14100, newfd AT_FDCWD "debian/anna.debhelper.log" 3
 	14100, hpath AT_FDCWD "debian/anna.debhelper.log" produced
 }
-dependsOn Makefile_anna Makefile_retriever.o
-dependsOn Makefile_anna Makefile_anna.o
-dependsOn Makefile_anna Makefile_util.o
+dependsOn Makefile_anna_16 Makefile_retriever.o_
+dependsOn Makefile_anna_16 Makefile_anna.o_
+dependsOn Makefile_anna_16 Makefile_util.o_

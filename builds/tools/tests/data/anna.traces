@@ -1,23 +1,23 @@
 14100 openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
 14100 close(3)                          = 0
-14106 write(1, "##BEGIN##:  Makefile ### retriever.o ### retriever.c anna.h util.h retriever.h\n", 79) = 79
+14106 write(1, "##BEGIN##:  retriever.o ### retriever.c anna.h util.h retriever.h\n", 79) = 79
 14107 stat("/root/anna-1.71", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
 14106 write(1, "##END##\n", 8)          = 8
 14106 dup2(11, 1)                       = 1
 14106 close(11)                         = 0
-14110 write(1, "##BEGIN##:  Makefile ### anna.o ### anna.c anna.h util.h retriever.h\n", 69) = 69
+14110 write(1, "##BEGIN##:  anna.o ### anna.c anna.h util.h retriever.h\n", 69) = 69
 14110 dup2(11, 1)                       = 1
 14110 close(11)                         = 0
 14110 write(1, "##END##\n", 8)          = 8
 14110 dup2(11, 1)                       = 1
 14110 close(11)                         = 0
-14114 write(1, "##BEGIN##:  Makefile ### util.o ### util.c anna.h\n", 50) = 50
+14114 write(1, "##BEGIN##:  util.o ### util.c anna.h\n", 50) = 50
 14114 dup2(11, 1)                       = 1
 14114 close(11)                         = 0
 14114 write(1, "##END##\n", 8)          = 8
 14114 dup2(11, 1)                       = 1
 14114 close(11)                         = 0
-14118 write(1, "##BEGIN##:  Makefile ### anna ### retriever.o anna.o util.o\n", 60) = 60
+14118 write(1, "##BEGIN##:  anna ### retriever.o anna.o util.o\n", 60) = 60
 14118 dup2(11, 1)                       = 1
 14118 close(11)                         = 0
 14118 write(1, "##END##\n", 8)          = 8

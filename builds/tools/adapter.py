@@ -80,6 +80,51 @@ def safe_split(string):
     res.append(string[index:len(string)].strip())  # Add last element
     return res
 
+########################### PARSING Make data base ############################
+
+def parse_make_p(make_db):
+    """Parse the output of 'make -p'.
+
+    Args:
+        make_db: list of lines.
+
+    Returns:
+        dict: containing recipes as keys, and tuples with Makefile name and
+            line number as values.
+    """
+    start = False
+    skip_next = False
+    inside = False
+    res = {}
+    for line in make_db:
+        if start == False and not line.startswith('# Files'):
+            continue
+        elif line.startswith('# Files'):
+            start = True
+        if not line.strip():
+            if inside:
+                inside = False
+            continue
+        if line.startswith('# Not a target'):
+            skip_next = True
+            continue
+        r = re.match(r'^(?!#|[ ]+|\t+.*$).*', line)
+        if r and not skip_next:
+            inside = line
+            continue
+        elif r:
+            skip_next = False
+            continue
+        if inside:
+            r = re.match(
+                r"^#  recipe to execute \(from '(.*)', line (.*)\).*", line
+            )
+            if r:
+                res[inside.strip()] = (r.groups()[0], r.groups()[1])
+            elif line.startswith('#  recipe to execute (built-in)'):
+                res[inside.strip()] = ('Makefile', '')
+    return res
+
 ############################## PARSING FUNCTIONS ##############################
 
 def split_line(line):
@@ -736,7 +781,7 @@ class GradleHandler(Handler):
 
 
 class MakeHandler(Handler):
-    def __init__(self, inp, out, working_dir):
+    def __init__(self, inp, out, working_dir, make_db_lines):
         super(MakeHandler, self).__init__(inp, out, working_dir)
         self.nesting_counter = 0  # Count how many tabs to put
         self.cwd_queue = deque()  # Save the history of cwd
@@ -753,24 +798,27 @@ class MakeHandler(Handler):
         self.current_incl = {}
         # Include files declared into the Makefile
         self.included = set()
-
+        # Dictionary with debug info about rules (Makefile, line number)
+        self.rules_info = parse_make_p(make_db_lines)
 
     def _handle_write(self):
         message = self.trace.syscall_args[1].replace('"', '').replace('\\n', '').strip()
         # TODO: Add tests
-        begin = re.search("^##BEGIN##: +(.*)###(.*)###(.*)", message)
+        begin = re.search("^##BEGIN##: +(.*)###(.*)", message)
         if begin:
             # target: the name of whichever target caused the rule’s recipe
             #         to be run or rule name
-            makefile, target, prereq = begin.groups()
-            makefile = makefile.strip()
+            target, prereq = begin.groups()
             target = target.strip()
             prereq = prereq.strip()
             prereqs = re.split(' |,', prereq)
+            # Get more info about recipe
+            recipe = "{}: {}".format(target, prereq).strip()
+            makefile, line_number = self.rules_info[recipe]
             # In case of nested we should have the current_path
             cwd = self.cwd_queue[-1]
             cwd = cwd + "/" if cwd != '' else cwd
-            task_id = "{}{}_{}".format(cwd, makefile, target)
+            task_id = "{}{}_{}_{}".format(cwd, makefile, target, line_number)
             tabs = self.nesting_counter * '\t'
             self.current_task_id = task_id
             if task_id not in self.task_ids:
@@ -904,9 +952,18 @@ class MakeHandler(Handler):
             )
 
 
-def main(inp, out, program, working_dir):
+def main(inp, out, program, working_dir, make_db):
     if program == "make":
-        handler = MakeHandler(inp, out, working_dir)
+        if not make_db:
+            print("You should use -m option with make")
+            sys.exit(-1)
+        try:
+            with open(make_db, 'r') as f:
+                make_db_lines = f.readlines()
+        except FileNotFoundError:
+            print("File {} does not exist".format(make_db))
+            sys.exit(-1)
+        handler = MakeHandler(inp, out, working_dir, make_db_lines)
     elif program == "gradle":
         handler = GradleHandler(inp, out, working_dir)
     handler.execute()
@@ -921,6 +978,7 @@ if __name__ == "__main__":
                         default='make'
                        )
     parser.add_argument('-i', '--input')
+    parser.add_argument('-m', '--make-db', help='The output of make -p')
     # TODO
     #  parser.add_argument('-o', '--output')
     args = parser.parse_args()
@@ -929,4 +987,4 @@ if __name__ == "__main__":
     if args.input:
         with open(args.input, 'r') as f:
             inp = f.readlines()
-    main(inp, sys.stdout, args.context, args.working_dir)
+    main(inp, sys.stdout, args.context, args.working_dir, args.make_db)
