@@ -808,6 +808,7 @@ class MakeHandler(Handler):
         self.included = set()
         # Dictionary with debug info about rules (Makefile, line number)
         self.rules_info = parse_make_p(make_db_lines)
+        self.skip_next_end = False  # Use it for shell functions (e.g. $(shell ....))
 
     def _handle_write(self):
         message = self.trace.syscall_args[1].replace('"', '').replace('\\n', '').strip()
@@ -819,6 +820,10 @@ class MakeHandler(Handler):
             target, prereq = begin.groups()
             target = target.strip()
             prereq = prereq.strip()
+            # Skip shell functions
+            if target == '':
+                self.skip_next_end = True
+                return
             prereqs = re.split(' |,', prereq)
             # Get more info about recipe
             recipe = "{}: {}".format(target, prereq).strip()
@@ -849,6 +854,9 @@ class MakeHandler(Handler):
             self.nesting_counter += 1
             return
         if message.startswith("##END##"):
+            if self.skip_next_end:
+                self.skip_next_end = False
+                return
             self.nesting_counter -= 1
             write_out(
                 self.out,
