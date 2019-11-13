@@ -1,4 +1,4 @@
 #!/bin/sh
 
 # Hope they don't use --
-make "$@" -- SHELL='fsmake-shell '\''$(MAKEFILE_LIST)'\'' '\''$@'\'' '\''$^'\'''
+make -p "$@" -- SHELL='fsmake-shell '\''$@'\'' '\''$+'\'''

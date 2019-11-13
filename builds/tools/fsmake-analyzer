@@ -10,4 +10,4 @@ echo "$(pwd)" > /straces/$NAME/$NAME.path
 # A more random approach, we can't build project depending on cmake and more.
 debian/rules clean 2> /straces/$NAME/$NAME.conferr
 MAKE="fsmake-make" strace -s 4096 -f -e "$(tr -s '\r\n' ',' < /root/syscalls.txt | \
-sed -e 's/,$/\n/')" -o /straces/$NAME/$NAME.straces debian/rules build 2> /straces/$NAME/$NAME.strerr
+sed -e 's/,$/\n/')" -o /straces/$NAME/$NAME.straces debian/rules build 2> /straces/$NAME/$NAME.strerr > /straces/$NAME/$NAME.makedb
