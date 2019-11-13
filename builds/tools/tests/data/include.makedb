@@ -35,7 +35,7 @@ CWEAVE = cweave
 # default
 MAKE_VERSION := 4.1
 # makefile
-CURDIR := /home/user/cqmetrics/src
+CURDIR := /home/user/fsracer/builds/make-plugin/playground/include
 # command line
 SHELL = fsmake-shell '$@' '$^'
 # default
@@ -59,7 +59,7 @@ COMPILE.cpp = $(COMPILE.cc)
 # makefile (from 'Makefile', line 1)
 MAKEFILE_LIST :=  Makefile
 # 'override' directive
-GNUMAKEFLAGS := 
+GNUMAKEFLAGS :=
 # default
 LINK.p = $(PC) $(PFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 # makefile (from 'Makefile', line 8)
@@ -189,7 +189,7 @@ F77 = $(FC)
 # environment
 OLDPWD = /home/user/cqmetrics
 # default
-.VARIABLES := 
+.VARIABLES :=
 # default
 PC = pc
 # automatic
@@ -225,7 +225,7 @@ COMPILE.r = $(FC) $(FFLAGS) $(RFLAGS) $(TARGET_ARCH) -c
 # default
 M2C = m2c
 # default
-MAKEFILES := 
+MAKEFILES :=
 # default
 COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 # automatic
@@ -233,7 +233,7 @@ COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 # default
 CXX = g++
 # default
-COFLAGS = 
+COFLAGS =
 # environment
 LC_ALL = en_US.UTF-8
 # default
@@ -255,7 +255,7 @@ COMPILE.s = $(AS) $(ASFLAGS) $(TARGET_MACH)
 # default
 .INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
 # default
-.RECIPEPREFIX := 
+.RECIPEPREFIX :=
 # default
 MAKEINFO = makeinfo
 # default
@@ -407,13 +407,13 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %.ln: %.y
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
-	 $(LINT.c) -C$* y.tab.c 
+	$(YACC.y) $<
+	 $(LINT.c) -C$* y.tab.c
 	 $(RM) y.tab.c
 
 %.c: %.y
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
+	$(YACC.y) $<
 	 mv -f y.tab.c $@
 
 %.l:
@@ -427,19 +427,19 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %.c: %.l
 #  recipe to execute (built-in):
-	@$(RM) $@ 
+	@$(RM) $@
 	 $(LEX.l) $< > $@
 
 %.r: %.l
 #  recipe to execute (built-in):
-	$(LEX.l) $< > $@ 
+	$(LEX.l) $< > $@
 	 mv -f lex.yy.r $@
 
 %.ym:
 
 %.m: %.ym
 #  recipe to execute (built-in):
-	$(YACC.m) $< 
+	$(YACC.m) $<
 	 mv -f y.tab.c $@
 
 %.yl:
@@ -554,7 +554,7 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %: %.sh
 #  recipe to execute (built-in):
-	cat $< >$@ 
+	cat $< >$@
 	 chmod a+x $@
 
 %.elc:
@@ -567,7 +567,7 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %.out: %
 #  recipe to execute (built-in):
-	@rm -f $@ 
+	@rm -f $@
 	 cp $< $@
 
 %.c: %.w %.ch
@@ -625,7 +625,7 @@ QualityMetrics.h:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(LEX.l) $< > $@ 
+	$(LEX.l) $< > $@
 	 mv -f lex.yy.r $@
 
 # Not a target:
@@ -742,13 +742,13 @@ header.txt: make-header.sh QualityMetrics.h QualityMetrics.cpp
 # automatic
 # @ := header.txt
 # automatic
-# % := 
+# % :=
 # automatic
-# * := 
+# * :=
 # automatic
 # + := make-header.sh QualityMetrics.h QualityMetrics.cpp
 # automatic
-# | := 
+# | :=
 # automatic
 # < := make-header.sh
 # automatic
@@ -885,13 +885,13 @@ CMetricsCalculator.o: CMetricsCalculator.cpp
 # automatic
 # @ := CMetricsCalculator.o
 # automatic
-# % := 
+# % :=
 # automatic
 # * := CMetricsCalculator
 # automatic
 # + := CMetricsCalculator.cpp
 # automatic
-# | := 
+# | :=
 # automatic
 # < := CMetricsCalculator.cpp
 # automatic
@@ -958,7 +958,7 @@ test: UnitTests
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(YACC.m) $< 
+	$(YACC.m) $<
 	 mv -f y.tab.c $@
 
 # Not a target:
@@ -968,8 +968,8 @@ test: UnitTests
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
-	 $(LINT.c) -C$* y.tab.c 
+	$(YACC.y) $<
+	 $(LINT.c) -C$* y.tab.c
 	 $(RM) y.tab.c
 
 # Not a target:
@@ -993,7 +993,7 @@ QualityMetrics.cpp:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	@$(RM) $@ 
+	@$(RM) $@
 	 $(LEX.l) $< > $@
 
 QualityMetrics.o: QualityMetrics.cpp QualityMetricNames.h
@@ -1005,13 +1005,13 @@ QualityMetrics.o: QualityMetrics.cpp QualityMetricNames.h
 # automatic
 # @ := QualityMetrics.o
 # automatic
-# % := 
+# % :=
 # automatic
 # * := QualityMetrics
 # automatic
 # + := QualityMetrics.cpp QualityMetricNames.h
 # automatic
-# | := 
+# | :=
 # automatic
 # < := QualityMetrics.cpp
 # automatic
@@ -1156,7 +1156,7 @@ make-header.sh:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	@$(RM) $@ 
+	@$(RM) $@
 	 $(LEX.m) $< > $@
 
 # Not a target:
@@ -1173,7 +1173,7 @@ qmcalc.cpp:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
+	$(YACC.y) $<
 	 mv -f y.tab.c $@
 
 # Not a target:
@@ -1222,13 +1222,13 @@ QualityMetricNames.h: QualityMetrics.h metric-names.sed
 # automatic
 # @ := QualityMetricNames.h
 # automatic
-# % := 
+# % :=
 # automatic
 # * := QualityMetricNames
 # automatic
 # + := QualityMetrics.h metric-names.sed
 # automatic
-# | := 
+# | :=
 # automatic
 # < := QualityMetrics.h
 # automatic
@@ -1334,7 +1334,7 @@ UnitTests: UnitTests.o CMetricsCalculator.o QualityMetrics.o
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	cat $< >$@ 
+	cat $< >$@
 	 chmod a+x $@
 
 # Not a target:
@@ -1405,13 +1405,13 @@ header.tab: make-header.sh QualityMetrics.h QualityMetrics.cpp
 # automatic
 # @ := header.tab
 # automatic
-# % := 
+# % :=
 # automatic
-# * := 
+# * :=
 # automatic
 # + := make-header.sh QualityMetrics.h QualityMetrics.cpp
 # automatic
-# | := 
+# | :=
 # automatic
 # < := make-header.sh
 # automatic
@@ -1471,13 +1471,13 @@ qmcalc: CMetricsCalculator.o QualityMetrics.o qmcalc.o
 # automatic
 # @ := qmcalc
 # automatic
-# % := 
+# % :=
 # automatic
-# * := 
+# * :=
 # automatic
 # + := CMetricsCalculator.o QualityMetrics.o qmcalc.o
 # automatic
-# | := 
+# | :=
 # automatic
 # < := CMetricsCalculator.o
 # automatic
@@ -1498,13 +1498,13 @@ qmcalc.o: qmcalc.cpp
 # automatic
 # @ := qmcalc.o
 # automatic
-# % := 
+# % :=
 # automatic
 # * := qmcalc
 # automatic
 # + := qmcalc.cpp
 # automatic
-# | := 
+# | :=
 # automatic
 # < := qmcalc.cpp
 # automatic

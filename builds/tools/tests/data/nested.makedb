@@ -1,8 +1,8 @@
-cc -c main.c 
+cc -c main.c
 make -C nested_dir -f nes.mk
 # make[1]: Entering directory '/home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir'
-cc -c s1.c 
-cc -c s2.c 
+cc -c s1.c
+cc -c s2.c
 # GNU Make 4.1
 # Built for x86_64-pc-linux-gnu
 # Copyright (C) 1988-2014 Free Software Foundation, Inc.
@@ -33,7 +33,7 @@ CWEAVE = cweave
 # default
 MAKE_VERSION := 4.1
 # makefile
-CURDIR := /home/user/fsracer/builds/make-plugin/playground/nested_example/nested_dir
+CURDIR := /home/user/fsracer/builds/make-plugin/playground/nested/nested_dir
 # command line
 SHELL = fsmake-shell '$@' '$^'
 # default
@@ -57,7 +57,7 @@ COMPILE.cpp = $(COMPILE.cc)
 # makefile (from 'nes.mk', line 1)
 MAKEFILE_LIST :=  nes.mk
 # 'override' directive
-GNUMAKEFLAGS := 
+GNUMAKEFLAGS :=
 # default
 LINK.p = $(PC) $(PFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 # environment
@@ -181,7 +181,7 @@ F77 = $(FC)
 # environment
 OLDPWD = /home/user/fsracer/builds/tools
 # default
-.VARIABLES := 
+.VARIABLES :=
 # default
 PC = pc
 # automatic
@@ -217,7 +217,7 @@ COMPILE.r = $(FC) $(FFLAGS) $(RFLAGS) $(TARGET_ARCH) -c
 # default
 M2C = m2c
 # default
-MAKEFILES := 
+MAKEFILES :=
 # default
 COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 # automatic
@@ -225,7 +225,7 @@ COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 # default
 CXX = g++
 # default
-COFLAGS = 
+COFLAGS =
 # environment
 LC_ALL = en_US.UTF-8
 # default
@@ -247,7 +247,7 @@ COMPILE.s = $(AS) $(ASFLAGS) $(TARGET_MACH)
 # default
 .INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
 # default
-.RECIPEPREFIX := 
+.RECIPEPREFIX :=
 # default
 MAKEINFO = makeinfo
 # default
@@ -399,13 +399,13 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %.ln: %.y
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
-	 $(LINT.c) -C$* y.tab.c 
+	$(YACC.y) $<
+	 $(LINT.c) -C$* y.tab.c
 	 $(RM) y.tab.c
 
 %.c: %.y
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
+	$(YACC.y) $<
 	 mv -f y.tab.c $@
 
 %.l:
@@ -419,19 +419,19 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %.c: %.l
 #  recipe to execute (built-in):
-	@$(RM) $@ 
+	@$(RM) $@
 	 $(LEX.l) $< > $@
 
 %.r: %.l
 #  recipe to execute (built-in):
-	$(LEX.l) $< > $@ 
+	$(LEX.l) $< > $@
 	 mv -f lex.yy.r $@
 
 %.ym:
 
 %.m: %.ym
 #  recipe to execute (built-in):
-	$(YACC.m) $< 
+	$(YACC.m) $<
 	 mv -f y.tab.c $@
 
 %.yl:
@@ -546,7 +546,7 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %: %.sh
 #  recipe to execute (built-in):
-	cat $< >$@ 
+	cat $< >$@
 	 chmod a+x $@
 
 %.elc:
@@ -559,7 +559,7 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %.out: %
 #  recipe to execute (built-in):
-	@rm -f $@ 
+	@rm -f $@
 	 cp $< $@
 
 %.c: %.w %.ch
@@ -617,7 +617,7 @@ s2.h:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(LEX.l) $< > $@ 
+	$(LEX.l) $< > $@
 	 mv -f lex.yy.r $@
 
 # Not a target:
@@ -875,13 +875,13 @@ s1.o: s1.c s1.h
 # automatic
 # @ := s1.o
 # automatic
-# % := 
+# % :=
 # automatic
 # * := s1
 # automatic
 # + := s1.c s1.h
 # automatic
-# | := 
+# | :=
 # automatic
 # < := s1.c
 # automatic
@@ -891,7 +891,7 @@ s1.o: s1.c s1.h
 # variable set hash-table stats:
 # Load=8/32=25%, Rehash=0, Collisions=1/16=6%
 #  recipe to execute (from 'nes.mk', line 6):
-	$(CC) -c s1.c 
+	$(CC) -c s1.c
 
 # Not a target:
 .ym.m:
@@ -900,7 +900,7 @@ s1.o: s1.c s1.h
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(YACC.m) $< 
+	$(YACC.m) $<
 	 mv -f y.tab.c $@
 
 # Not a target:
@@ -910,8 +910,8 @@ s1.o: s1.c s1.h
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
-	 $(LINT.c) -C$* y.tab.c 
+	$(YACC.y) $<
+	 $(LINT.c) -C$* y.tab.c
 	 $(RM) y.tab.c
 
 # Not a target:
@@ -928,7 +928,7 @@ s1.o: s1.c s1.h
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	@$(RM) $@ 
+	@$(RM) $@
 	 $(LEX.l) $< > $@
 
 # Not a target:
@@ -1051,7 +1051,7 @@ all: s1.o s2.o
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	@$(RM) $@ 
+	@$(RM) $@
 	 $(LEX.m) $< > $@
 
 s2.o: s2.h
@@ -1063,13 +1063,13 @@ s2.o: s2.h
 # automatic
 # @ := s2.o
 # automatic
-# % := 
+# % :=
 # automatic
 # * := s2
 # automatic
 # + := s2.h
 # automatic
-# | := 
+# | :=
 # automatic
 # < := s2.h
 # automatic
@@ -1079,7 +1079,7 @@ s2.o: s2.h
 # variable set hash-table stats:
 # Load=8/32=25%, Rehash=0, Collisions=1/16=6%
 #  recipe to execute (from 'nes.mk', line 10):
-	$(CC) -c s2.c 
+	$(CC) -c s2.c
 
 # Not a target:
 .y.c:
@@ -1088,7 +1088,7 @@ s2.o: s2.h
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
+	$(YACC.y) $<
 	 mv -f y.tab.c $@
 
 # Not a target:
@@ -1208,7 +1208,7 @@ s1.c:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	cat $< >$@ 
+	cat $< >$@
 	 chmod a+x $@
 
 # Not a target:
@@ -1359,7 +1359,7 @@ C = gcc
 # default
 MAKE_VERSION := 4.1
 # makefile
-CURDIR := /home/user/fsracer/builds/make-plugin/playground/nested_example
+CURDIR := /home/user/fsracer/builds/make-plugin/playground/nested
 # command line
 SHELL = fsmake-shell '$@' '$^'
 # default
@@ -1383,7 +1383,7 @@ COMPILE.cpp = $(COMPILE.cc)
 # makefile (from 'Makefile', line 1)
 MAKEFILE_LIST :=  Makefile
 # 'override' directive
-GNUMAKEFLAGS := 
+GNUMAKEFLAGS :=
 # default
 LINK.p = $(PC) $(PFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 # environment
@@ -1507,7 +1507,7 @@ F77 = $(FC)
 # environment
 OLDPWD = /home/user/fsracer/builds/tools
 # default
-.VARIABLES := 
+.VARIABLES :=
 # default
 PC = pc
 # automatic
@@ -1543,7 +1543,7 @@ COMPILE.r = $(FC) $(FFLAGS) $(RFLAGS) $(TARGET_ARCH) -c
 # default
 M2C = m2c
 # default
-MAKEFILES := 
+MAKEFILES :=
 # default
 COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 # automatic
@@ -1551,7 +1551,7 @@ COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 # default
 CXX = g++
 # default
-COFLAGS = 
+COFLAGS =
 # environment
 LC_ALL = en_US.UTF-8
 # default
@@ -1573,7 +1573,7 @@ COMPILE.s = $(AS) $(ASFLAGS) $(TARGET_MACH)
 # default
 .INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
 # default
-.RECIPEPREFIX := 
+.RECIPEPREFIX :=
 # default
 MAKEINFO = makeinfo
 # default
@@ -1725,13 +1725,13 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %.ln: %.y
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
-	 $(LINT.c) -C$* y.tab.c 
+	$(YACC.y) $<
+	 $(LINT.c) -C$* y.tab.c
 	 $(RM) y.tab.c
 
 %.c: %.y
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
+	$(YACC.y) $<
 	 mv -f y.tab.c $@
 
 %.l:
@@ -1745,19 +1745,19 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %.c: %.l
 #  recipe to execute (built-in):
-	@$(RM) $@ 
+	@$(RM) $@
 	 $(LEX.l) $< > $@
 
 %.r: %.l
 #  recipe to execute (built-in):
-	$(LEX.l) $< > $@ 
+	$(LEX.l) $< > $@
 	 mv -f lex.yy.r $@
 
 %.ym:
 
 %.m: %.ym
 #  recipe to execute (built-in):
-	$(YACC.m) $< 
+	$(YACC.m) $<
 	 mv -f y.tab.c $@
 
 %.yl:
@@ -1872,7 +1872,7 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %: %.sh
 #  recipe to execute (built-in):
-	cat $< >$@ 
+	cat $< >$@
 	 chmod a+x $@
 
 %.elc:
@@ -1885,7 +1885,7 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %.out: %
 #  recipe to execute (built-in):
-	@rm -f $@ 
+	@rm -f $@
 	 cp $< $@
 
 %.c: %.w %.ch
@@ -1936,7 +1936,7 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(LEX.l) $< > $@ 
+	$(LEX.l) $< > $@
 	 mv -f lex.yy.r $@
 
 # Not a target:
@@ -2202,19 +2202,19 @@ nested:
 # automatic
 # @ := nested
 # automatic
-# % := 
+# % :=
 # automatic
-# * := 
+# * :=
 # automatic
-# + := 
+# + :=
 # automatic
-# | := 
+# | :=
 # automatic
-# < := 
+# < :=
 # automatic
-# ^ := 
+# ^ :=
 # automatic
-# ? := 
+# ? :=
 # variable set hash-table stats:
 # Load=8/32=25%, Rehash=0, Collisions=2/17=12%
 #  recipe to execute (from 'Makefile', line 11):
@@ -2227,7 +2227,7 @@ nested:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(YACC.m) $< 
+	$(YACC.m) $<
 	 mv -f y.tab.c $@
 
 # Not a target:
@@ -2237,8 +2237,8 @@ nested:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
-	 $(LINT.c) -C$* y.tab.c 
+	$(YACC.y) $<
+	 $(LINT.c) -C$* y.tab.c
 	 $(RM) y.tab.c
 
 # Not a target:
@@ -2255,7 +2255,7 @@ nested:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	@$(RM) $@ 
+	@$(RM) $@
 	 $(LEX.l) $< > $@
 
 # Not a target:
@@ -2378,7 +2378,7 @@ all: main
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	@$(RM) $@ 
+	@$(RM) $@
 	 $(LEX.m) $< > $@
 
 # Not a target:
@@ -2388,7 +2388,7 @@ all: main
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
+	$(YACC.y) $<
 	 mv -f y.tab.c $@
 
 # Not a target:
@@ -2502,7 +2502,7 @@ clean:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	cat $< >$@ 
+	cat $< >$@
 	 chmod a+x $@
 
 main: main.o nested
@@ -2514,13 +2514,13 @@ main: main.o nested
 # automatic
 # @ := main
 # automatic
-# % := 
+# % :=
 # automatic
-# * := 
+# * :=
 # automatic
 # + := main.o nested
 # automatic
-# | := 
+# | :=
 # automatic
 # < := main.o
 # automatic
@@ -2541,13 +2541,13 @@ main.o: main.c
 # automatic
 # @ := main.o
 # automatic
-# % := 
+# % :=
 # automatic
 # * := main
 # automatic
 # + := main.c
 # automatic
-# | := 
+# | :=
 # automatic
 # < := main.c
 # automatic

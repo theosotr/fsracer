@@ -32,7 +32,7 @@ CWEAVE = cweave
 # default
 MAKE_VERSION := 4.1
 # makefile
-CURDIR := /home/user/anna/anna-1.54ubuntu1
+CURDIR := /home/user/fsracer/builds/make-plugin/playground/anna
 # command line
 SHELL = fsmake-shell '$@' '$^'
 # default
@@ -58,7 +58,7 @@ COMPILE.cpp = $(COMPILE.cc)
 # makefile (from 'Makefile', line 1)
 MAKEFILE_LIST :=  Makefile
 # 'override' directive
-GNUMAKEFLAGS := 
+GNUMAKEFLAGS :=
 # default
 LINK.p = $(PC) $(PFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 # environment
@@ -108,7 +108,7 @@ YACC.y = $(YACC) $(YFLAGS)
 # default
 AR = ar
 # makefile (from 'Makefile', line 2)
-LDFLAGS = 
+LDFLAGS =
 # default
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
 # default
@@ -188,7 +188,7 @@ F77 = $(FC)
 # environment
 OLDPWD = /home/user/anna
 # default
-.VARIABLES := 
+.VARIABLES :=
 # default
 PC = pc
 # automatic
@@ -226,7 +226,7 @@ M2C = m2c
 # makefile (from 'Makefile', line 6)
 STRIP = strip
 # default
-MAKEFILES := 
+MAKEFILES :=
 # default
 COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 # automatic
@@ -234,7 +234,7 @@ COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 # default
 CXX = g++
 # default
-COFLAGS = 
+COFLAGS =
 # environment
 LC_ALL = en_US.UTF-8
 # default
@@ -258,7 +258,7 @@ COMPILE.s = $(AS) $(ASFLAGS) $(TARGET_MACH)
 # default
 .INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
 # default
-.RECIPEPREFIX := 
+.RECIPEPREFIX :=
 # default
 MAKEINFO = makeinfo
 # default
@@ -410,13 +410,13 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %.ln: %.y
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
-	 $(LINT.c) -C$* y.tab.c 
+	$(YACC.y) $<
+	 $(LINT.c) -C$* y.tab.c
 	 $(RM) y.tab.c
 
 %.c: %.y
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
+	$(YACC.y) $<
 	 mv -f y.tab.c $@
 
 %.l:
@@ -430,19 +430,19 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %.c: %.l
 #  recipe to execute (built-in):
-	@$(RM) $@ 
+	@$(RM) $@
 	 $(LEX.l) $< > $@
 
 %.r: %.l
 #  recipe to execute (built-in):
-	$(LEX.l) $< > $@ 
+	$(LEX.l) $< > $@
 	 mv -f lex.yy.r $@
 
 %.ym:
 
 %.m: %.ym
 #  recipe to execute (built-in):
-	$(YACC.m) $< 
+	$(YACC.m) $<
 	 mv -f y.tab.c $@
 
 %.yl:
@@ -557,7 +557,7 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %: %.sh
 #  recipe to execute (built-in):
-	cat $< >$@ 
+	cat $< >$@
 	 chmod a+x $@
 
 %.elc:
@@ -570,7 +570,7 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %.out: %
 #  recipe to execute (built-in):
-	@rm -f $@ 
+	@rm -f $@
 	 cp $< $@
 
 %.c: %.w %.ch
@@ -621,7 +621,7 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(LEX.l) $< > $@ 
+	$(LEX.l) $< > $@
 	 mv -f lex.yy.r $@
 
 # Not a target:
@@ -881,13 +881,13 @@ anna: retriever.o anna.o util.o
 # automatic
 # @ := anna
 # automatic
-# % := 
+# % :=
 # automatic
-# * := 
+# * :=
 # automatic
 # + := retriever.o anna.o util.o
 # automatic
-# | := 
+# | :=
 # automatic
 # < := retriever.o
 # automatic
@@ -920,13 +920,13 @@ anna.o: anna.c anna.h util.h retriever.h
 # automatic
 # @ := anna.o
 # automatic
-# % := 
+# % :=
 # automatic
 # * := anna
 # automatic
 # + := anna.c anna.h util.h retriever.h
 # automatic
-# | := 
+# | :=
 # automatic
 # < := anna.c
 # automatic
@@ -945,7 +945,7 @@ anna.o: anna.c anna.h util.h retriever.h
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(YACC.m) $< 
+	$(YACC.m) $<
 	 mv -f y.tab.c $@
 
 # Not a target:
@@ -955,8 +955,8 @@ anna.o: anna.c anna.h util.h retriever.h
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
-	 $(LINT.c) -C$* y.tab.c 
+	$(YACC.y) $<
+	 $(LINT.c) -C$* y.tab.c
 	 $(RM) y.tab.c
 
 # Not a target:
@@ -973,7 +973,7 @@ anna.o: anna.c anna.h util.h retriever.h
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	@$(RM) $@ 
+	@$(RM) $@
 	 $(LEX.l) $< > $@
 
 # Not a target:
@@ -1102,7 +1102,7 @@ util.h:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	@$(RM) $@ 
+	@$(RM) $@
 	 $(LEX.m) $< > $@
 
 # Not a target:
@@ -1112,7 +1112,7 @@ util.h:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
+	$(YACC.y) $<
 	 mv -f y.tab.c $@
 
 # Not a target:
@@ -1238,7 +1238,7 @@ retriever.c:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	cat $< >$@ 
+	cat $< >$@
 	 chmod a+x $@
 
 # Not a target:
@@ -1293,13 +1293,13 @@ retriever.o: retriever.c anna.h util.h retriever.h
 # automatic
 # @ := retriever.o
 # automatic
-# % := 
+# % :=
 # automatic
 # * := retriever
 # automatic
 # + := retriever.c anna.h util.h retriever.h
 # automatic
-# | := 
+# | :=
 # automatic
 # < := retriever.c
 # automatic
@@ -1343,13 +1343,13 @@ util.o: util.c anna.h
 # automatic
 # @ := util.o
 # automatic
-# % := 
+# % :=
 # automatic
 # * := util
 # automatic
 # + := util.c anna.h
 # automatic
-# | := 
+# | :=
 # automatic
 # < := util.c
 # automatic

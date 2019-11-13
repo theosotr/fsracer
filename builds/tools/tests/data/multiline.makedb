@@ -34,7 +34,7 @@ C = gcc
 # default
 MAKE_VERSION := 4.1
 # makefile
-CURDIR := /home/user/fsracer/builds/make-plugin/playground/multiple_lines
+CURDIR := /home/user/fsracer/builds/make-plugin/playground/multiline
 # command line
 SHELL = fsmake-shell '$@' '$^'
 # default
@@ -58,7 +58,7 @@ COMPILE.cpp = $(COMPILE.cc)
 # makefile (from 'Makefile', line 1)
 MAKEFILE_LIST :=  Makefile
 # 'override' directive
-GNUMAKEFLAGS := 
+GNUMAKEFLAGS :=
 # default
 LINK.p = $(PC) $(PFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 # environment
@@ -184,7 +184,7 @@ F77 = $(FC)
 # environment
 OLDPWD = /home/user/fsracer/builds/tools/tests/data
 # default
-.VARIABLES := 
+.VARIABLES :=
 # default
 PC = pc
 # automatic
@@ -220,7 +220,7 @@ COMPILE.r = $(FC) $(FFLAGS) $(RFLAGS) $(TARGET_ARCH) -c
 # default
 M2C = m2c
 # default
-MAKEFILES := 
+MAKEFILES :=
 # default
 COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 # automatic
@@ -228,7 +228,7 @@ COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c
 # default
 CXX = g++
 # default
-COFLAGS = 
+COFLAGS =
 # environment
 LC_ALL = en_US.UTF-8
 # default
@@ -250,7 +250,7 @@ COMPILE.s = $(AS) $(ASFLAGS) $(TARGET_MACH)
 # default
 .INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
 # default
-.RECIPEPREFIX := 
+.RECIPEPREFIX :=
 # makefile (from 'Makefile', line 3)
 OBJECTS = s1.o s2.o
 # default
@@ -404,13 +404,13 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %.ln: %.y
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
-	 $(LINT.c) -C$* y.tab.c 
+	$(YACC.y) $<
+	 $(LINT.c) -C$* y.tab.c
 	 $(RM) y.tab.c
 
 %.c: %.y
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
+	$(YACC.y) $<
 	 mv -f y.tab.c $@
 
 %.l:
@@ -424,19 +424,19 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %.c: %.l
 #  recipe to execute (built-in):
-	@$(RM) $@ 
+	@$(RM) $@
 	 $(LEX.l) $< > $@
 
 %.r: %.l
 #  recipe to execute (built-in):
-	$(LEX.l) $< > $@ 
+	$(LEX.l) $< > $@
 	 mv -f lex.yy.r $@
 
 %.ym:
 
 %.m: %.ym
 #  recipe to execute (built-in):
-	$(YACC.m) $< 
+	$(YACC.m) $<
 	 mv -f y.tab.c $@
 
 %.yl:
@@ -551,7 +551,7 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %: %.sh
 #  recipe to execute (built-in):
-	cat $< >$@ 
+	cat $< >$@
 	 chmod a+x $@
 
 %.elc:
@@ -564,7 +564,7 @@ LINK.f = $(FC) $(FFLAGS) $(LDFLAGS) $(TARGET_ARCH)
 
 %.out: %
 #  recipe to execute (built-in):
-	@rm -f $@ 
+	@rm -f $@
 	 cp $< $@
 
 %.c: %.w %.ch
@@ -622,7 +622,7 @@ s2.h:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(LEX.l) $< > $@ 
+	$(LEX.l) $< > $@
 	 mv -f lex.yy.r $@
 
 # Not a target:
@@ -887,13 +887,13 @@ s1.o: s1.c s1.h s2.h
 # automatic
 # @ := s1.o
 # automatic
-# % := 
+# % :=
 # automatic
 # * := s1
 # automatic
 # + := s1.c s1.h s2.h
 # automatic
-# | := 
+# | :=
 # automatic
 # < := s1.c
 # automatic
@@ -913,7 +913,7 @@ s1.o: s1.c s1.h s2.h
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(YACC.m) $< 
+	$(YACC.m) $<
 	 mv -f y.tab.c $@
 
 # Not a target:
@@ -923,8 +923,8 @@ s1.o: s1.c s1.h s2.h
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
-	 $(LINT.c) -C$* y.tab.c 
+	$(YACC.y) $<
+	 $(LINT.c) -C$* y.tab.c
 	 $(RM) y.tab.c
 
 # Not a target:
@@ -941,7 +941,7 @@ s1.o: s1.c s1.h s2.h
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	@$(RM) $@ 
+	@$(RM) $@
 	 $(LEX.l) $< > $@
 
 # Not a target:
@@ -1070,7 +1070,7 @@ obj:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	@$(RM) $@ 
+	@$(RM) $@
 	 $(LEX.m) $< > $@
 
 s2.o: s1.c s1.h s2.h
@@ -1089,7 +1089,7 @@ s2.o: s1.c s1.h s2.h
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	$(YACC.y) $< 
+	$(YACC.y) $<
 	 mv -f y.tab.c $@
 
 # Not a target:
@@ -1209,7 +1209,7 @@ s1.c:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (built-in):
-	cat $< >$@ 
+	cat $< >$@
 	 chmod a+x $@
 
 main: s1.o s2.o main.o
@@ -1221,13 +1221,13 @@ main: s1.o s2.o main.o
 # automatic
 # @ := main
 # automatic
-# % := 
+# % :=
 # automatic
-# * := 
+# * :=
 # automatic
 # + := s1.o s2.o main.o
 # automatic
-# | := 
+# | :=
 # automatic
 # < := s1.o
 # automatic
@@ -1248,13 +1248,13 @@ main.o: main.c
 # automatic
 # @ := main.o
 # automatic
-# % := 
+# % :=
 # automatic
 # * := main
 # automatic
 # + := main.c
 # automatic
-# | := 
+# | :=
 # automatic
 # < := main.c
 # automatic
