@@ -35,9 +35,9 @@ sysop stat_17 SYNC {
 sysop stat_18 SYNC {
 	43, hpath AT_FDCWD "CMetricsCalculator.cpp" touched
 }
-newTask Makefile_CMetricsCalculator.o_ W 1
-consumes Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/CMetricsCalculator.cpp"
-execTask Makefile_CMetricsCalculator.o_ {
+newTask /home/user/fsracer/builds/make-plugin/playground/include/Makefile_CMetricsCalculator.o_ W 1
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/CMetricsCalculator.cpp"
+execTask /home/user/fsracer/builds/make-plugin/playground/include/Makefile_CMetricsCalculator.o_ {
 	sysop access_21 SYNC {
 		46, hpath AT_FDCWD "/etc/ld.so.preload" touched !failed
 	}
@@ -55,17 +55,17 @@ execTask Makefile_CMetricsCalculator.o_ {
 	sysop close_29 SYNC {
 		46, delfd 3
 	}
-	consumes Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/CMetricsCalculator.cpp"
-	consumes Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/Boilerplate.h"
-	consumes Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/BolState.h"
-	consumes Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/CKeyword.h"
-	consumes Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/CharSource.h"
-	consumes Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.h"
-	consumes Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/Cyclomatic.h"
-	consumes Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/Descriptive.h"
-	consumes Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/Halstead.h"
-	consumes Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/CMetricsCalculator.h"
-	consumes Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/NestingLevel.h"
+	consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/CMetricsCalculator.cpp"
+	consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/Boilerplate.h"
+	consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/BolState.h"
+	consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/CKeyword.h"
+	consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/CharSource.h"
+	consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.h"
+	consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/Cyclomatic.h"
+	consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/Descriptive.h"
+	consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/Halstead.h"
+	consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/CMetricsCalculator.h"
+	consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_CMetricsCalculator.o_ "/home/user/fsracer/builds/make-plugin/playground/include/NestingLevel.h"
 	sysop stat_30 SYNC {
 		47, hpath AT_FDCWD "CMetricsCalculator.o" touched !failed
 	}
@@ -90,10 +90,10 @@ execTask Makefile_CMetricsCalculator.o_ {
 sysop dup2_39 SYNC {
 	48, dupfd 2 1
 }
-newTask Makefile_QualityMetricNames.h_28 W 1
-consumes Makefile_QualityMetricNames.h_28 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.h"
-consumes Makefile_QualityMetricNames.h_28 "/home/user/fsracer/builds/make-plugin/playground/include/metric-names.sed"
-execTask Makefile_QualityMetricNames.h_28 {
+newTask /home/user/fsracer/builds/make-plugin/playground/include/Makefile_QualityMetricNames.h_28 W 1
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_QualityMetricNames.h_28 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.h"
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_QualityMetricNames.h_28 "/home/user/fsracer/builds/make-plugin/playground/include/metric-names.sed"
+execTask /home/user/fsracer/builds/make-plugin/playground/include/Makefile_QualityMetricNames.h_28 {
 	sysop clone_41 SYNC {
 		48, newproc none 49
 	}
@@ -105,9 +105,9 @@ execTask Makefile_QualityMetricNames.h_28 {
 		53, delfd 3
 	}
 }
-newTask Makefile_qmcalc.o_ W 1
-consumes Makefile_qmcalc.o_ "/home/user/fsracer/builds/make-plugin/playground/include/qmcalc.cpp"
-execTask Makefile_qmcalc.o_ {
+newTask /home/user/fsracer/builds/make-plugin/playground/include/Makefile_qmcalc.o_ W 1
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_qmcalc.o_ "/home/user/fsracer/builds/make-plugin/playground/include/qmcalc.cpp"
+execTask /home/user/fsracer/builds/make-plugin/playground/include/Makefile_qmcalc.o_ {
 	sysop dup2_49 SYNC {
 		55, dupfd 11 1
 	}
@@ -119,20 +119,20 @@ execTask Makefile_qmcalc.o_ {
 		57, delfd 3
 	}
 }
-newTask Makefile_qmcalc_23 W 1
-consumes Makefile_qmcalc_23 "/home/user/fsracer/builds/make-plugin/playground/include/CMetricsCalculator.o"
-consumes Makefile_qmcalc_23 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.o"
-consumes Makefile_qmcalc_23 "/home/user/fsracer/builds/make-plugin/playground/include/qmcalc.o"
-execTask Makefile_qmcalc_23 {
+newTask /home/user/fsracer/builds/make-plugin/playground/include/Makefile_qmcalc_23 W 1
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_qmcalc_23 "/home/user/fsracer/builds/make-plugin/playground/include/CMetricsCalculator.o"
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_qmcalc_23 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.o"
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_qmcalc_23 "/home/user/fsracer/builds/make-plugin/playground/include/qmcalc.o"
+execTask /home/user/fsracer/builds/make-plugin/playground/include/Makefile_qmcalc_23 {
 	sysop stat_57 SYNC {
 		43, hpath AT_FDCWD "qmcalc" touched
 	}
 }
-newTask Makefile_../metrics.md_31 W 1
-consumes Makefile_../metrics.md_31 "/home/user/fsracer/builds/make-plugin/playground/include/make-metrics-list.sh"
-consumes Makefile_../metrics.md_31 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.h"
-consumes Makefile_../metrics.md_31 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.cpp"
-execTask Makefile_../metrics.md_31 {
+newTask /home/user/fsracer/builds/make-plugin/playground/include/Makefile_../metrics.md_31 W 1
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_../metrics.md_31 "/home/user/fsracer/builds/make-plugin/playground/include/make-metrics-list.sh"
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_../metrics.md_31 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.h"
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_../metrics.md_31 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.cpp"
+execTask /home/user/fsracer/builds/make-plugin/playground/include/Makefile_../metrics.md_31 {
 	sysop dup2_60 SYNC {
 		63, dupfd 11 1
 	}
@@ -140,20 +140,20 @@ execTask Makefile_../metrics.md_31 {
 		63, delfd 11
 	}
 }
-newTask Makefile_header.tab_35 W 1
-consumes Makefile_header.tab_35 "/home/user/fsracer/builds/make-plugin/playground/include/make-header.sh"
-consumes Makefile_header.tab_35 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.h"
-consumes Makefile_header.tab_35 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.cpp"
-execTask Makefile_header.tab_35 {
+newTask /home/user/fsracer/builds/make-plugin/playground/include/Makefile_header.tab_35 W 1
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_header.tab_35 "/home/user/fsracer/builds/make-plugin/playground/include/make-header.sh"
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_header.tab_35 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.h"
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_header.tab_35 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.cpp"
+execTask /home/user/fsracer/builds/make-plugin/playground/include/Makefile_header.tab_35 {
 	sysop dup2_64 SYNC {
 		69, dupfd 11 1
 	}
 }
-newTask Makefile_header.txt_39 W 1
-consumes Makefile_header.txt_39 "/home/user/fsracer/builds/make-plugin/playground/include/make-header.sh"
-consumes Makefile_header.txt_39 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.h"
-consumes Makefile_header.txt_39 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.cpp"
-execTask Makefile_header.txt_39 {
+newTask /home/user/fsracer/builds/make-plugin/playground/include/Makefile_header.txt_39 W 1
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_header.txt_39 "/home/user/fsracer/builds/make-plugin/playground/include/make-header.sh"
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_header.txt_39 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.h"
+consumes /home/user/fsracer/builds/make-plugin/playground/include/Makefile_header.txt_39 "/home/user/fsracer/builds/make-plugin/playground/include/QualityMetrics.cpp"
+execTask /home/user/fsracer/builds/make-plugin/playground/include/Makefile_header.txt_39 {
 	sysop clone_67 SYNC {
 		116, newproc none 117
 	}
@@ -161,5 +161,5 @@ execTask Makefile_header.txt_39 {
 sysop chdir_69 SYNC {
 	43, setcwd "/root/cqmetrics/src"
 }
-dependsOn Makefile_qmcalc_23 Makefile_CMetricsCalculator.o_
-dependsOn Makefile_qmcalc_23 Makefile_qmcalc.o_
+dependsOn /home/user/fsracer/builds/make-plugin/playground/include/Makefile_qmcalc_23 /home/user/fsracer/builds/make-plugin/playground/include/Makefile_CMetricsCalculator.o_
+dependsOn /home/user/fsracer/builds/make-plugin/playground/include/Makefile_qmcalc_23 /home/user/fsracer/builds/make-plugin/playground/include/Makefile_qmcalc.o_

@@ -1,5 +1,5 @@
 sysop init SYNC {
-	26172, setcwd "/home/user/fsracer/builds/make-plugin/playground/multiple_lines"
+	26172, setcwd "/home/user/fsracer/builds/make-plugin/playground/multiline"
 }
 sysop execve_0 SYNC {
 	26172, hpath AT_FDCWD "/usr/bin/make" consumed
@@ -23,11 +23,11 @@ sysop getcwd_5 SYNC {
 sysop readlink_6 SYNC {
 	26172, hpathsym AT_FDCWD "/proc/self/fd/1" consumed
 }
-newTask Makefile_s1.o_14 W 1
-consumes Makefile_s1.o_14 "/home/user/fsracer/builds/make-plugin/playground/multiple_lines/s1.c"
-consumes Makefile_s1.o_14 "/home/user/fsracer/builds/make-plugin/playground/multiple_lines/s1.h"
-consumes Makefile_s1.o_14 "/home/user/fsracer/builds/make-plugin/playground/multiple_lines/s2.h"
-execTask Makefile_s1.o_14 {
+newTask /home/user/fsracer/builds/make-plugin/playground/multiline/Makefile_s1.o_14 W 1
+consumes /home/user/fsracer/builds/make-plugin/playground/multiline/Makefile_s1.o_14 "/home/user/fsracer/builds/make-plugin/playground/multiline/s1.c"
+consumes /home/user/fsracer/builds/make-plugin/playground/multiline/Makefile_s1.o_14 "/home/user/fsracer/builds/make-plugin/playground/multiline/s1.h"
+consumes /home/user/fsracer/builds/make-plugin/playground/multiline/Makefile_s1.o_14 "/home/user/fsracer/builds/make-plugin/playground/multiline/s2.h"
+execTask /home/user/fsracer/builds/make-plugin/playground/multiline/Makefile_s1.o_14 {
 	sysop dup2_9 SYNC {
 		26173, dupfd 11 1
 	}
@@ -35,7 +35,7 @@ execTask Makefile_s1.o_14 {
 		26173, dupfd 1 11
 	}
 }
-execTask Makefile_s1.o_14 {
+execTask /home/user/fsracer/builds/make-plugin/playground/multiline/Makefile_s1.o_14 {
 	sysop openat_16 SYNC {
 		26178, newfd AT_FDCWD "/etc/ld.so.cache" 3
 		26178, hpath AT_FDCWD "/etc/ld.so.cache" consumed
@@ -56,9 +56,9 @@ sysop stat_25 SYNC {
 sysop stat_26 SYNC {
 	26172, hpath AT_FDCWD "main.c" touched
 }
-newTask Makefile_main.o_10 W 1
-consumes Makefile_main.o_10 "/home/user/fsracer/builds/make-plugin/playground/multiple_lines/main.c"
-execTask Makefile_main.o_10 {
+newTask /home/user/fsracer/builds/make-plugin/playground/multiline/Makefile_main.o_10 W 1
+consumes /home/user/fsracer/builds/make-plugin/playground/multiline/Makefile_main.o_10 "/home/user/fsracer/builds/make-plugin/playground/multiline/main.c"
+execTask /home/user/fsracer/builds/make-plugin/playground/multiline/Makefile_main.o_10 {
 	sysop clone_29 SYNC {
 		26181, newproc none 26182
 	}

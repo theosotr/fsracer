@@ -1,5 +1,5 @@
 sysop init SYNC {
-	17793, setcwd "/home/user/fsracer/builds/make-plugin/playground/simple_example"
+	17793, setcwd "/home/user/fsracer/builds/make-plugin/playground/simple"
 }
 sysop execve_0 SYNC {
 	17793, hpath AT_FDCWD "/usr/bin/make" consumed
@@ -14,10 +14,10 @@ sysop openat_2 SYNC {
 sysop close_3 SYNC {
 	17793, delfd 3
 }
-newTask Makefile_s1.o_13 W 1
-consumes Makefile_s1.o_13 "/home/user/fsracer/builds/make-plugin/playground/simple_example/s1.c"
-consumes Makefile_s1.o_13 "/home/user/fsracer/builds/make-plugin/playground/simple_example/s1.h"
-execTask Makefile_s1.o_13 {
+newTask /home/user/fsracer/builds/make-plugin/playground/simple/Makefile_s1.o_13 W 1
+consumes /home/user/fsracer/builds/make-plugin/playground/simple/Makefile_s1.o_13 "/home/user/fsracer/builds/make-plugin/playground/simple/s1.c"
+consumes /home/user/fsracer/builds/make-plugin/playground/simple/Makefile_s1.o_13 "/home/user/fsracer/builds/make-plugin/playground/simple/s1.h"
+execTask /home/user/fsracer/builds/make-plugin/playground/simple/Makefile_s1.o_13 {
 	sysop execve_6 SYNC {
 		17795, hpath AT_FDCWD "/bin/bash" consumed
 	}
@@ -31,9 +31,9 @@ sysop stat_12 SYNC {
 sysop stat_13 SYNC {
 	17793, hpath AT_FDCWD "s2.h" touched
 }
-newTask Makefile_s2.o_17 W 1
-consumes Makefile_s2.o_17 "/home/user/fsracer/builds/make-plugin/playground/simple_example/s2.h"
-execTask Makefile_s2.o_17 {
+newTask /home/user/fsracer/builds/make-plugin/playground/simple/Makefile_s2.o_17 W 1
+consumes /home/user/fsracer/builds/make-plugin/playground/simple/Makefile_s2.o_17 "/home/user/fsracer/builds/make-plugin/playground/simple/s2.h"
+execTask /home/user/fsracer/builds/make-plugin/playground/simple/Makefile_s2.o_17 {
 	sysop clone_15 SYNC {
 		17798, newproc none 17799
 	}

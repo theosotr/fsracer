@@ -22,28 +22,28 @@ def helper_fun(in_traces, fstraces, makedb, example):
 
 def test_simple_make():
     helper_fun(
-        'tests/data/simple.traces', 
-        'tests/data/simple.fstraces', 
-        'tests/data/simple.makedb', 
-        'simple_example'
+        'tests/data/simple.straces',
+        'tests/data/simple.fstraces',
+        'tests/data/simple.makedb',
+        'simple'
     )
 
 
 def test_multiline_make():
     helper_fun(
-        'tests/data/multiline.traces',
+        'tests/data/multiline.straces',
         'tests/data/multiline.fstraces',
         'tests/data/multiline.makedb',
-        'multiple_lines'
+        'multiline'
     )
 
 
 def test_nested_make():
     helper_fun(
-        'tests/data/nested.traces',
+        'tests/data/nested.straces',
         'tests/data/nested.fstraces',
         'tests/data/nested.makedb',
-        'nested_example'
+        'nested'
     )
 
 
@@ -56,7 +56,7 @@ def test_nested_make():
 
 def test_anna():
     helper_fun(
-        'tests/data/anna.traces',
+        'tests/data/anna.straces',
         'tests/data/anna.fstraces',
         'tests/data/anna.makedb',
         'anna'
@@ -64,7 +64,7 @@ def test_anna():
 
 def test_include():
     helper_fun(
-        'tests/data/include.traces',
+        'tests/data/include.straces',
         'tests/data/include.fstraces',
         'tests/data/include.makedb',
         'include'

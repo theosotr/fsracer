@@ -89,18 +89,26 @@ def parse_make_p(make_db):
         make_db: list of lines.
 
     Returns:
-        dict: containing recipes as keys, and tuples with Makefile name and
-            line number as values.
+        dict: containing recipes as keys, and tuples with path, Makefile name,
+            and line number as values.
     """
     start = False
     skip_next = False
     inside = False
+    curdir = ''
+    mafefile = ''
     res = {}
     for line in make_db:
-        if start == False and not line.startswith('# Files'):
-            continue
-        elif line.startswith('# Files'):
+        if line.startswith('# Files'):
             start = True
+            continue
+        if line.startswith('CURDIR :='):
+            curdir = line.split(':= ')[1].strip() + '/'
+            continue
+        if line.startswith('MAKEFILE_LIST'):
+            makefile = line.split(':=')[1].strip().split(' ')[0]
+        if start == False:
+            continue
         if not line.strip():
             if inside:
                 inside = False
@@ -120,9 +128,9 @@ def parse_make_p(make_db):
                 r"^#  recipe to execute \(from '(.*)', line (.*)\).*", line
             )
             if r:
-                res[inside.strip()] = (r.groups()[0], r.groups()[1])
+                res[inside.strip()] = (curdir, r.groups()[0], r.groups()[1])
             elif line.startswith('#  recipe to execute (built-in)'):
-                res[inside.strip()] = ('Makefile', '')
+                res[inside.strip()] = (curdir, makefile, '')
     return res
 
 ############################## PARSING FUNCTIONS ##############################
@@ -814,11 +822,11 @@ class MakeHandler(Handler):
             prereqs = re.split(' |,', prereq)
             # Get more info about recipe
             recipe = "{}: {}".format(target, prereq).strip()
-            makefile, line_number = self.rules_info[recipe]
+            path, makefile, line_number = self.rules_info[recipe]
             # In case of nested we should have the current_path
             cwd = self.cwd_queue[-1]
             cwd = cwd + "/" if cwd != '' else cwd
-            task_id = "{}{}_{}_{}".format(cwd, makefile, target, line_number)
+            task_id = "{}{}_{}_{}".format(path, makefile, target, line_number)
             tabs = self.nesting_counter * '\t'
             self.current_task_id = task_id
             if task_id not in self.task_ids:
