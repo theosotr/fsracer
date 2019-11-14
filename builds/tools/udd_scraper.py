@@ -19,6 +19,7 @@ def query_udd(limit):
              "FROM all_packages "
              "INNER JOIN sources ON all_packages.source = sources.source "
              "INNER JOIN popcon ON all_packages.package = popcon.package WHERE "
+             "all_packages.release = 'buster' "
              "tag LIKE '%implemented-in::c%' "
              "ORDER BY popcon.vote DESC LIMIT {}"
             ).format(limit)
