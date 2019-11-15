@@ -26,7 +26,7 @@ class FSFaultDetector : public FaultDetector {
 public:
   // Some type aliases.
   using dep_graph_t = analyzer::DependencyInferenceAnalyzer::dep_graph_t;
-  using fs_accesses_table_t = analyzer::FSAnalyzer::fs_accesses_table_t;
+  using file_info_t = analyzer::FSAnalyzer::file_info_t;
   using fs_access_t = analyzer::FSAnalyzer::FSAccess;
   using DepGNodeInfo = analyzer::DependencyInferenceAnalyzer::DepGNodeInfo;
 
@@ -81,10 +81,9 @@ public:
    * The arguments are const references of the outputs of
    * the analyzers utilized by this fault detector.
    */
-  FSFaultDetector(fs_accesses_table_t fs_accesses_,
+  FSFaultDetector(file_info_t file_info_,
                  dep_graph_t dep_graph_,
                  std::string working_dir_,
-                 std::set<fs::path> dirs_,
                  std::optional<std::string> ignore_files_conf);
 
   /** Gets the pretty name of this fault detector. */
@@ -103,14 +102,12 @@ public:
   void Detect(std::map<std::string, void*> gen_store);
 
 private:
-  /// File accesses per block.
-  fs_accesses_table_t fs_accesses;
+  /// File info.
+  file_info_t file_info;
   /// The dependency graph of events.
   dep_graph_t dep_graph;
   /// This the directory where we collected traces from.
   std::string working_dir;
-  /// This set keeps all paths that are directories.
-  std::set<fs::path> dirs;
 
   /// Table that tracks debug information of each event.
   /// Useful for fault reporting.

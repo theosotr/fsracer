@@ -19,6 +19,10 @@ namespace fs = std::filesystem;
 namespace analyzer {
 
 
+/**
+ * Computes information about every file, including file type (directory,
+ * or regular file), and which tasks access every file and how.
+ */
 class FSAnalyzer : public analyzer::Analyzer {
 
 using proc_t = size_t;
@@ -33,10 +37,20 @@ public:
     CSV
   };
 
+  /**
+   * Describes a single file access.
+   */
   struct FSAccess {
+    /// Name of the task that accesses that file.
     std::string task_name;
+    /// The type of file access (e.g., consumed, produced, expunged)
     enum fstrace::Hpath::AccessType access_type;
+    /// An array of debug information
     fstrace::DebugInfo debug_info;
+    /**
+     * The name of the actual operation (e.g., the name of system call).
+     * This is used for debugging purposes.
+     */
     std::string operation_name;
 
     FSAccess() {  }
@@ -50,7 +64,35 @@ public:
       operation_name(operation_name_) {  }
   };
 
-  using fs_accesses_table_t = table::Table<fs::path, std::vector<FSAccess>>;
+  enum FileType {
+    DIRECTORY,
+    REGULAR_FILE,
+  };
+
+  /**
+   * Contains information about a single file including its type,
+   * and a vector of all its accesses.
+   */
+  struct FileInfo {
+    /// Path to file.
+    fs::path p;
+    /// File type (i.e., directory or regular file).
+    enum FileType file_type;
+    /// It contains which tasks access this file and how.
+    std::vector<FSAccess> file_accesses;
+
+    FileInfo() {  }
+    FileInfo(fs::path p_, enum FileType file_type_):
+      p(p_),
+      file_type(file_type_) {  }
+
+    /** True if this file is a directory. */
+    bool IsDir() const;
+    /** Adds a new file access to the vector of accesses. */
+    void AddFileAccess(FSAccess file_access);
+  };
+
+  using file_info_t = table::Table<fs::path, FileInfo>;
 
   FSAnalyzer(enum OutFormat out_format_):
     working_dir(""),
@@ -81,9 +123,8 @@ public:
   void AnalyzeSetCwdFd(const fstrace::SetCwdFd *set_cwdfd);
 
   void DumpOutput(writer::OutWriter *out) const;
-  fs_accesses_table_t GetFSAccesses() const;
+  file_info_t GetFileInfo() const;
   std::string GetWorkingDir() const;
-  std::set<fs::path> GetDirectories() const;
 
 private:
   table::Table<proc_t, inode_t> cwd_table;
@@ -91,7 +132,7 @@ private:
   table::Table<inode_t, fs::path> symlink_table;
   table::Table<proc_t, std::pair<addr_t, addr_t>> proc_table;
   table::InodeTable inode_table;
-  mutable fs_accesses_table_t effect_table;
+  mutable file_info_t file_info;
   table::Table<std::pair<fs::path, std::string>, FSAccess> task_accesses;
   std::set<fs::path> dirs;
 

@@ -45,6 +45,10 @@ class Table {
       return val;
     }
 
+    typename table_t::iterator GetValueIt(const T1 &key) {
+      return table.find(key);
+    }
+
     table_t GetTable() const {
       return table;
     }

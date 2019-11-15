@@ -21,15 +21,13 @@ namespace fs = std::filesystem;
 namespace detector {
 
 
-FSFaultDetector::FSFaultDetector(fs_accesses_table_t fs_accesses_,
+FSFaultDetector::FSFaultDetector(file_info_t file_info_,
                                  dep_graph_t dep_graph_,
                                  std::string working_dir_,
-                                 std::set<fs::path> dirs_,
                                  std::optional<std::string> ignore_files_conf):
-  fs_accesses(fs_accesses_),
+  file_info(file_info_),
   dep_graph(dep_graph_),
-  working_dir(working_dir_),
-  dirs(dirs_) {
+  working_dir(working_dir_) {
     if (ignore_files_conf.has_value()) {
       LoadFilters(ignore_files_conf.value());
     }
@@ -315,17 +313,18 @@ void FSFaultDetector::DetectOrderingViolation(
 
 FSFaultDetector::faults_t FSFaultDetector::GetFaults() const {
   faults_t faults;
-  fs_accesses_table_t::table_t table = fs_accesses.GetTable();
+  file_info_t::table_t table = file_info.GetTable();
   for (auto it = table.begin(); it != table.end(); it++) {
-    auto fs_access = *it;
-    fs::path p = fs_access.first;
+    fs::path p = (*it).first;
+    analyzer::FSAnalyzer::FileInfo file_info_val = (*it).second;
+
     bool min_mon = utils::StartsWith(p.native(), working_dir) &&
-      dirs.find(p) == dirs.end();
+      !file_info_val.IsDir();
     if (min_mon) {
-      DetectMissingInput(faults, p, fs_access.second);
-      DetectMissingOutput(faults, p, fs_access.second);
+      DetectMissingInput(faults, p, file_info_val.file_accesses);
+      DetectMissingOutput(faults, p, file_info_val.file_accesses);
     }
-    DetectOrderingViolation(faults, p, fs_access.second);
+    DetectOrderingViolation(faults, p, file_info_val.file_accesses);
   } 
   return faults;
 }

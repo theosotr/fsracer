@@ -142,10 +142,9 @@ void TraceProcessor::InitFaultDetector() {
       analyzer::FSAnalyzer *fs_analyzer =
         static_cast<analyzer::FSAnalyzer*>(analyzers[offset + 1].first);
       fault_detector = new detector::FSFaultDetector(
-          fs_analyzer->GetFSAccesses(),
+          fs_analyzer->GetFileInfo(),
           dep_analyzer->GetDependencyGraph(),
           fs_analyzer->GetWorkingDir(),
-          fs_analyzer->GetDirectories(),
           cli_args.ignore_files_conf
           );
     }

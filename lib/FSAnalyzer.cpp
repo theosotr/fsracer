@@ -3,6 +3,20 @@
 
 namespace analyzer {
 
+bool FSAnalyzer::FileInfo::IsDir() const {
+  switch (file_type) {
+    case DIRECTORY:
+      return true;
+    default:
+      return false;
+  }
+}
+
+
+void FSAnalyzer::FileInfo::AddFileAccess(FSAnalyzer::FSAccess file_access) {
+  file_accesses.push_back(file_access);
+}
+
 
 std::string FSAnalyzer::GetName() const {
   return "FSAnalyzer";
@@ -414,15 +428,16 @@ void FSAnalyzer::UpdateAccessTable() const {
     auto p = elem.first.first;
     auto fs_access = elem.second;
 
-    std::optional<std::vector<FSAccess>> fs_accesses = effect_table.GetValue(p);
-    std::vector<FSAccess> v_fs_acc;
-    if (fs_accesses.has_value()) {
-      v_fs_acc = fs_accesses.value();
-      v_fs_acc.push_back(fs_access);
+    auto it = file_info.GetValueIt(p);
+    if (it == file_info.end()) {
+      enum FileType file_type = REGULAR_FILE;
+      if (dirs.find(p) != dirs.end()) {
+        file_type = DIRECTORY;
+      }
+      file_info.AddEntry(p, FileInfo(p, file_type));
     } else {
-      v_fs_acc.push_back(fs_access);
+      it->second.AddFileAccess(fs_access);
     }
-    effect_table.AddEntry(p, v_fs_acc);
   }
 }
 
@@ -446,22 +461,23 @@ void FSAnalyzer::DumpOutput(writer::OutWriter *out) const {
 
 void FSAnalyzer::DumpJSON(std::ostream &os) const {
   os << "{" << std::endl;
-  for (auto map_it = effect_table.begin(); map_it != effect_table.end(); map_it++) {
+  for (auto map_it = file_info.begin(); map_it != file_info.end(); map_it++) {
     auto entry = *map_it;
     os << "  \"" << entry.first.native() << "\": [" << std::endl;
-    for (auto it = entry.second.begin(); it != entry.second.end(); it++) {
+    auto file_accesses = entry.second.file_accesses;
+    for (auto it = file_accesses.begin(); it != file_accesses.end(); it++) {
       os << "    {" << std::endl;
       os << "      \"block\": " << "\"" << (*it).task_name
         << "\"," << std::endl;
       os << "      \"effect\": " << "\""
         << fstrace::Hpath::AccToString((*it).access_type) << "\"" << std::endl;
-      if (it != entry.second.end() - 1) {
+      if (it != file_accesses.end() - 1) {
         os << "    }," << std::endl;
       } else {
         os << "    }" << std::endl;
       }
     }
-    if (map_it != --effect_table.end()) {
+    if (map_it != --file_info.end()) {
       os << "  ]," << std::endl;
     } else {
       os << "  ]" << std::endl;
@@ -472,8 +488,8 @@ void FSAnalyzer::DumpJSON(std::ostream &os) const {
 
 
 void FSAnalyzer::DumpCSV(std::ostream &os) const {
-  for (auto const &entry : effect_table) {
-    for (auto const &fs_access : entry.second) {
+  for (auto const &entry : file_info) {
+    for (auto const &fs_access : entry.second.file_accesses) {
       os << entry.first.native() << ","
         << fs_access.task_name << ","
         << fstrace::Hpath::AccToString(fs_access.access_type) << std::endl;
@@ -482,19 +498,14 @@ void FSAnalyzer::DumpCSV(std::ostream &os) const {
 }
 
 
-FSAnalyzer::fs_accesses_table_t FSAnalyzer::GetFSAccesses() const {
+FSAnalyzer::file_info_t FSAnalyzer::GetFileInfo() const {
   UpdateAccessTable();
-  return effect_table;
+  return file_info;
 }
 
 
 std::string FSAnalyzer::GetWorkingDir() const {
   return working_dir;
-}
-
-
-std::set<fs::path> FSAnalyzer::GetDirectories() const {
-  return dirs;
 }
 
 
