@@ -1,1 +1,21 @@
-project,project_url,project_version,build_system,ov_count,mis_count,mos_count,ov_fp,mis_fp,mos_fp,pr_status,comment
+project,project_repo,project_version,build_system,ov_count,mis_count,mos_count,ov_fp,mis_fp,mos_fp,pr_status,comment
+p2rank,https://github.com/rdk/p2rank,de39f853314ab4bb70d9b1e2c4afbebfa9790d1f,gradle,0,12,0,0,0,0,fixed,test resources
+grooss,https://github.com/adamldavis/groocss,b0eb9ba3f618e0a935d018bf6d6e3feca2369517,gradle,0,2,0,0,0,0,fixed,test resources
+rest.li,https://github.com/linkedin/rest.li,10b38e03d93525ac201ce911111e825c33cbcc7b,gradle,0,10,27,0,0,0,not-opened,the fix makes the task incremental
+jmonkeyengine,https://github.com/jMonkeyEngine/jmonkeyengine,d8a42d0817ba7a4c895768b508b0af4b8194541f,gradle,0,0,12,0,0,0,fixed,2.2k stars repo
+webdriver-binaries-gradle-plugin,https://github.com/erdi/webdriver-binaries-gradle-plugin,4c0f733ff8f8e227a2d56d72b79c8f8949ff17ce,gradle,0,0,0,0,12,0,not-opened,codenarcMain task
+nf-tower,https://github.com/seqeralabs/nf-tower,7ac0fcbfe7d5705aabae318aa668435ce20588a8,4,0,0,0,0,0,open,
+helios,https://github.com/47deg/helios,1a0fee60e3380c016cfe2aebd0fd93e5aa67545d,gradle,0,0,62,0,0,0,open,the fix makes the task incremental
+junit-reporter,https://github.com/kncept/junit-reporter,2494ce8436e8875125d0e8eb2370ee9072ee82ed5,gradle,6,1625,2,0,0,0,fixed,Check again the number of faults
+gradle-aws-ecr-plugin,https://bitbucket.org/double16/gradle-aws-ecr-plugin/src/master/,52c235a,gradle,0,0,0,1,4,39,not-opened,I think they can be easily fixed (codenarcMain)
+jenkins-job-builders,https://github.com/hmrc/jenkins-job-builders,fe0128e44362a43051d220237f8d6dc0f62caf1e,gradle,0,0,1,0,0,0,open,
+conductor,https://github.com/Netflix/conductor,bfe300778fbcc90e21c8966de3af1fb898e8759f,gradle,3,0,19,0,0,0,open,
+muwire,https://github.com/zlatinb/muwire,a549ad3d8df9a2719f874b691bb8bd33f337a5ab,gradle,10,0,0,5,0,0,0,fixed,
+jenkins,https://github.com/CloudPipelines/jenkins,c718d2ea1c37c5ab7f0177fb743c8294c65b398f,gradle,0,0,0,1,0,0,not-opened,The task buildImage reads all the files in project dir
+gradle-plugin-starter,https://github.com/int128/gradle-plugin-starter,692aae4e111d81ce2fc2565d8d547549c9d41285,gradle,0,1,0,0,0,0,open,test resources
+grails-facebook-plugin,https://github.com/agorapulse/grails-facebook-sdk,9029fae1dc290471bdc25d28e9331a996f78b29b,gradle,2,1,0,0,0,0,open,
+RxAndroidBle,https://github.com/Polidea/RxAndroidBle,bf6ae6356c9a9f37bcbd2e2d521f14126a8c2a4d,gradle,1,0,0,0,0,0,open,
+gradleRIO,https://github.com/wpilibsuite/GradleRIO,1b6337a06727c9739caa8a8ce0c90dc00e073711,gradle,3,0,0,0,0,0,fixed,
+gradle-scripts,https://github.com/tomasbjerre/gradle-scripts,35cd7dff32fd1c27e54bc00e457017cc54222006,gradle,1,0,0,0,0,0,fixed,
+gradle-sora-plugin,https://github.com/soramitsu/gradle-sora-plugin,3bb981ff4fa9c0815cb6314821ef902642ebd4f1,gradle,0,26,0,0,0,0,open,
+xtext-gradle-plugin,https://github.com/xtext/xtext-gradle-plugin,d4ed9d769ddbc2d130dd5c967c89a9b317d27aa9,gradle,4,0,0,0,0,0,fixed
