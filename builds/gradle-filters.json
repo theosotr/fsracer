@@ -1,0 +1,11 @@
+{
+    "all": [
+        "*/.gradle/*",
+        "/tmp/*",
+        "*/kotlin-compiler-*.salive",
+        "*/.git/*"
+    ],
+    "mis": [
+        "*/build/tmp/*"
+    ]
+}
