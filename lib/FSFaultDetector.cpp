@@ -54,16 +54,21 @@ void FSFaultDetector::LoadFilters(const std::string &filter_file) {
     conf_file.close();
     return;
   }
-  for (std::string key : { "ov", "mis", "mos" }) {
+  for (std::string key : { "ov", "mis", "mos", "all" }) {
     auto filters = j[key];
     if (filters.is_array()) {
-      for (auto const &ov_filter : filters) {
+      for (auto const &filter : filters) {
         if (key == "ov") {
-          filter_ov.insert(ov_filter.get<std::string>());
+          filter_ov.insert(filter.get<std::string>());
         } else if (key == "mis") {
-          filter_mis.insert(ov_filter.get<std::string>());
+          filter_mis.insert(filter.get<std::string>());
+        } else if (key == "mos") {
+          filter_mos.insert(filter.get<std::string>());
         } else {
-          filter_mos.insert(ov_filter.get<std::string>());
+          std::string val = filter.get<std::string>();
+          filter_ov.insert(val);
+          filter_mis.insert(val);
+          filter_mos.insert(val);
         }
       }
     }
