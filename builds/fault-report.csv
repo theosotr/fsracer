@@ -14,7 +14,7 @@ muwire,https://github.com/zlatinb/muwire,a549ad3d8df9a2719f874b691bb8bd33f337a5a
 jenkins,https://github.com/CloudPipelines/jenkins,c718d2ea1c37c5ab7f0177fb743c8294c65b398f,gradle,0,0,0,1,0,0,not-opened,The task buildImage reads all the files in project dir
 gradle-plugin-starter,https://github.com/int128/gradle-plugin-starter,692aae4e111d81ce2fc2565d8d547549c9d41285,gradle,0,1,0,0,0,0,open,test resources
 grails-facebook-plugin,https://github.com/agorapulse/grails-facebook-sdk,9029fae1dc290471bdc25d28e9331a996f78b29b,gradle,2,1,0,0,0,0,open,
-RxAndroidBle,https://github.com/Polidea/RxAndroidBle,bf6ae6356c9a9f37bcbd2e2d521f14126a8c2a4d,gradle,1,0,0,0,0,0,open,
+RxAndroidBle,https://github.com/Polidea/RxAndroidBle,bf6ae6356c9a9f37bcbd2e2d521f14126a8c2a4d,gradle,2,0,0,0,0,0,fixed,2.5k stars repo
 gradleRIO,https://github.com/wpilibsuite/GradleRIO,1b6337a06727c9739caa8a8ce0c90dc00e073711,gradle,3,0,0,0,0,0,fixed,
 gradle-scripts,https://github.com/tomasbjerre/gradle-scripts,35cd7dff32fd1c27e54bc00e457017cc54222006,gradle,1,0,0,0,0,0,fixed,
 gradle-sora-plugin,https://github.com/soramitsu/gradle-sora-plugin,3bb981ff4fa9c0815cb6314821ef902642ebd4f1,gradle,0,26,0,0,0,0,open,
