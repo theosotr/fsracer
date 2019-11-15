@@ -343,6 +343,7 @@ FSFaultDetector::faults_t FSFaultDetector::GetFaults() const {
 
 void FSFaultDetector::DumpFaults(const faults_t &faults) const {
   if (faults.empty()) {
+    debug::msg() << "No detected faults";
     return;
   }
   size_t ov_count = 0;
