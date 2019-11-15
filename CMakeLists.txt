@@ -4,6 +4,7 @@ option(ENABLE_TESTS "Enable tests for the client" ON)
 add_subdirectory(lib)
 add_subdirectory(tools)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if (ENABLE_TESTS)
     enable_testing()
     add_subdirectory(tests)
