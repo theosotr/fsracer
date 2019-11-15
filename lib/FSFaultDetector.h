@@ -84,6 +84,7 @@ public:
   FSFaultDetector(file_info_t file_info_,
                  dep_graph_t dep_graph_,
                  std::string working_dir_,
+                 bool ignore_dirs_ov_,
                  std::optional<std::string> ignore_files_conf);
 
   /** Gets the pretty name of this fault detector. */
@@ -115,6 +116,7 @@ private:
 
   mutable std::unordered_map<std::string, std::set<std::string>> cache_dfs;
 
+  bool ignore_dirs_ov;
   std::set<std::string> filter_ov;
   std::set<std::string> filter_mis;
   std::set<std::string> filter_mos;

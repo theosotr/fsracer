@@ -16,6 +16,9 @@
 namespace processor {
 
 struct CLIArgs {
+  CLIArgs():
+    dump_trace(false) {  }
+
   std::vector<std::string> analyzers;
   std::optional<std::string> fault_detector;
   table::Table<std::string, std::string> cli_options;

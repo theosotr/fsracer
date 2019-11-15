@@ -141,10 +141,13 @@ void TraceProcessor::InitFaultDetector() {
             analyzers[offset + 0].first);
       analyzer::FSAnalyzer *fs_analyzer =
         static_cast<analyzer::FSAnalyzer*>(analyzers[offset + 1].first);
+      bool ignore_dirs_ov = cli_args.cli_options.GetValue(
+          "ignore-dirs-ov").has_value();
       fault_detector = new detector::FSFaultDetector(
           fs_analyzer->GetFileInfo(),
           dep_analyzer->GetDependencyGraph(),
           fs_analyzer->GetWorkingDir(),
+          ignore_dirs_ov,
           cli_args.ignore_files_conf
           );
     }

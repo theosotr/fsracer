@@ -91,6 +91,10 @@ process_args(gengetopt_args_info &args_info,
     args.cli_options.AddEntry("output-fs_accesses",
                               args_info.output_fs_accesses_arg);
   }
+
+  if (args_info.ignore_dirs_ov_given) {
+    args.cli_options.AddEntry("ignore-dirs-ov", "true");
+  }
   trace_proc.SetCLIArgs(args);
 }
 

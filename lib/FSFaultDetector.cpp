@@ -24,10 +24,12 @@ namespace detector {
 FSFaultDetector::FSFaultDetector(file_info_t file_info_,
                                  dep_graph_t dep_graph_,
                                  std::string working_dir_,
+                                 bool ignore_dirs_ov_,
                                  std::optional<std::string> ignore_files_conf):
   file_info(file_info_),
   dep_graph(dep_graph_),
-  working_dir(working_dir_) {
+  working_dir(working_dir_),
+  ignore_dirs_ov(ignore_dirs_ov_) {
     if (ignore_files_conf.has_value()) {
       LoadFilters(ignore_files_conf.value());
     }
@@ -324,7 +326,11 @@ FSFaultDetector::faults_t FSFaultDetector::GetFaults() const {
       DetectMissingInput(faults, p, file_info_val.file_accesses);
       DetectMissingOutput(faults, p, file_info_val.file_accesses);
     }
-    DetectOrderingViolation(faults, p, file_info_val.file_accesses);
+    // Ignore ordering violations associated with directories.
+    bool ignore_ov = ignore_dirs_ov && file_info_val.IsDir();
+    if (!ignore_ov) {
+      DetectOrderingViolation(faults, p, file_info_val.file_accesses);
+    }
   } 
   return faults;
 }

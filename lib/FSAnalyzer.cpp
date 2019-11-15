@@ -434,7 +434,9 @@ void FSAnalyzer::UpdateAccessTable() const {
       if (dirs.find(p) != dirs.end()) {
         file_type = DIRECTORY;
       }
-      file_info.AddEntry(p, FileInfo(p, file_type));
+      FileInfo file_info_entry = FileInfo(p, file_type);
+      file_info_entry.AddFileAccess(fs_access);
+      file_info.AddEntry(p, file_info_entry);
     } else {
       it->second.AddFileAccess(fs_access);
     }
