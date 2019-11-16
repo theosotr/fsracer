@@ -117,5 +117,7 @@ fi
 
 $HOME/fsracer/build/tools/fsracer/fsracer \
   -i $project_out/$project.fstrace \
-  --fault-detector fs > $project_out/$project.faults 2> $project_out/$project.fserr
+  --fault-detector fs \
+  --ignore-dirs-ov \
+  --ignore-files-conf $HOME/gradle-filters.json > $project_out/$project.faults 2> $project_out/$project.fserr
 exit 0

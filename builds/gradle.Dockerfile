@@ -35,6 +35,7 @@ ENV ANDROID_HOME=/usr/lib/android-sdk
 COPY ./syscalls.txt $HOME/syscalls.txt
 COPY ./gradle-plugin/build.gradle $HOME/plugin
 COPY ./gradle-plugin/src $HOME/plugin/src
+COPY ./gradle-filters.json $HOME/gradle-filters.json
 
 # Build gradle plugin
 WORKDIR $HOME/plugin
