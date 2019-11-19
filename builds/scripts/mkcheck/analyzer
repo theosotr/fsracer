@@ -1,0 +1,29 @@
+#!/bin/bash
+
+NAME_T="$(cat $1 | grep 'Source: ' | cut -d ':' -f2)"
+NAME="$(echo -e "${NAME_T}" | tr -d '[:space:]')"
+
+cd $2
+
+START_TIME=$SECONDS
+mkcheck --output=foo.json -- debian/rules build 2> /results/$NAME/$NAME.mkerr
+ELAPSED_TIME=$(($SECONDS - $START_TIME))
+echo "mkcheck: $ELAPSED_TIME" > /results/$NAME/$NAME.time
+cp foo.json /results/$NAME/$NAME.json
+echo "
+filter_in:
+        - /usr/.*
+        - /etc/.*
+        - //.*
+        - /lib/.*
+        - /bin/.*
+        - /.*/debian/.*
+" > filter.yaml
+START_TIME=$SECONDS
+fuzz_test --graph-path=foo.json --rule-path filter.yaml fuzz > /results/$NAME/$NAME.fuzz 2> /results/$NAME/$NAME.fuzzerr
+ELAPSED_TIME=$(($SECONDS - $START_TIME))
+echo "fuzz: $ELAPSED_TIME" >> /results/$NAME/$NAME.time
+START_TIME=$SECONDS
+fuzz_test --graph-path=foo.json --rule-path filter.yaml race > /results/$NAME/$NAME.race 2> /results/$NAME/$NAME.raceerr
+ELAPSED_TIME=$(($SECONDS - $START_TIME))
+echo "fuzz: $ELAPSED_TIME" >> /results/$NAME/$NAME.time

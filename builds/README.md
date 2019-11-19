@@ -33,3 +33,10 @@ docker run -it -v $(pwd)/straces:/var/log/sbuild/straces --cap-add SYS_ADMIN sbu
 
 * Possible Results
     - `straces/PACKAGE/PACKAGE.[anerr,conferr,strerr,straces]`
+
+mkcheck
+-------
+
+```bash
+docker run -it --privileged -v $(pwd)/results:/results mkcheck PACKAGE
+```

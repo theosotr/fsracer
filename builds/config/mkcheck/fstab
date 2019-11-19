@@ -10,6 +10,6 @@ tmpfs           /dev/shm        tmpfs   defaults        0       0
 # Mount a large scratch space for the build, so we don't use up
 # space on an LVM snapshot of the chroot itself.
 /var/lib/sbuild/build         /build          none    rw,bind         0       0
-/var/log/sbuild/results       /results        none    rw,bind         0       0
+/results                      /results        none    rw,bind         0       0
 /usr/local                    /usr/local      none    rw,bind         0       0
 /root                         /root           none    rw,bind         0       0

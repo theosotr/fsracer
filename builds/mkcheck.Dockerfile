@@ -12,6 +12,7 @@ RUN apt -yqq update && apt -yqq upgrade && apt install -yqq $dev
 # INSTALL mkcheck
 RUN git clone https://github.com/nandor/mkcheck
 WORKDIR mkcheck
+COPY ./patches/mkcheck/syscall.cpp mkcheck/syscall.cpp
 RUN mkdir Release && cd Release && \
     cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ && \
     make
@@ -25,19 +26,21 @@ COPY ./config/mkcheck/sbuildrc /root/.sbuildrc
 COPY ./config/mkcheck/sbuildrc /home/builder/.sbuildrc
 COPY ./config/mkcheck/fstab /etc/schroot/sbuild/fstab
 COPY ./scripts/mkcheck/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY ./scripts/mkcheck/analyzer /usr/local/bin/analyzer
 
 # DIRECTORY TO SAVE STATS
 RUN mkdir -p /var/log/sbuild/stats
-RUN mkdir -p /var/log/sbuild/results
-RUN mkdir -p /var/log/sbuild/temp
 RUN chown -R builder /var/log/sbuild/stats
-RUN chown -R builder /var/log/sbuild/results
-RUN chown -R builder /var/log/sbuild/temp
-
+run mkdir -p /results
+RUN chown -R builder /results
+RUN chmod o+w /results/
 
 # COPY ./tools/fsmake-shell /usr/local/bin/fsmake-shell
 # COPY ./tools/fsmake-make /usr/local/bin/fsmake-make
 # COPY ./tools/fsmake-analyzer /usr/local/bin/analyzer
 # COPY ./tools/debian-entrypoint.sh /usr/local/bin/entrypoint.sh
+
+USER builder
+WORKDIR /home/builder
 
 ENTRYPOINT ["entrypoint.sh"]

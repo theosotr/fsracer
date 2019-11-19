@@ -8,7 +8,7 @@ fi
 
 source=$1
 
-mkdir -p /var/log/sbuild/results/$source
+mkdir -p /results/$source
 sbuild --apt-update --no-apt-upgrade --no-apt-distupgrade --batch \
     --stats-dir=/var/log/sbuild/stats --dist=stable --arch=amd64 $source
 # for f in $(ls /var/log/sbuild/straces/$source/); do
