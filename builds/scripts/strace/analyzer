@@ -1,0 +1,13 @@
+#!/bin/bash
+
+NAME_T="$(cat $1 | grep 'Source: ' | cut -d ':' -f2)"
+NAME="$(echo -e "${NAME_T}" | tr -d '[:space:]')"
+
+cd $2
+
+echo "$(pwd)" > /results/$NAME/$NAME.path
+
+# A more random approach, we can't build project depending on cmake and more.
+debian/rules clean 2> /results/$NAME/$NAME.conferr
+MAKE="fsmake-make" strace -s 4096 -f -e "$(tr -s '\r\n' ',' < /build/syscalls.txt | \
+sed -e 's/,$/\n/')" -o /results/$NAME/$NAME.straces debian/rules build 2> /results/$NAME/$NAME.strerr > /results/$NAME/$NAME.makedb

@@ -33,12 +33,7 @@ RUN mkdir -p /var/log/sbuild/stats
 RUN chown -R builder /var/log/sbuild/stats
 run mkdir -p /results
 RUN chown -R builder /results
-RUN chmod o+w /results/
-
-# COPY ./tools/fsmake-shell /usr/local/bin/fsmake-shell
-# COPY ./tools/fsmake-make /usr/local/bin/fsmake-make
-# COPY ./tools/fsmake-analyzer /usr/local/bin/analyzer
-# COPY ./tools/debian-entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod o+w /results
 
 USER builder
 WORKDIR /home/builder
