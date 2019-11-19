@@ -9,7 +9,7 @@ helios,https://github.com/47deg/helios,1a0fee60e3380c016cfe2aebd0fd93e5aa67545d,
 junit-reporter,https://github.com/kncept/junit-reporter,2494ce8436e8875125d0e8eb2370ee9072ee82ed5,gradle,6,1625,2,0,0,0,fixed,Check again the number of faults
 gradle-aws-ecr-plugin,https://bitbucket.org/double16/gradle-aws-ecr-plugin/src/master/,52c235a,gradle,0,0,0,1,4,39,not-opened,I think they can be easily fixed (codenarcMain)
 jenkins-job-builders,https://github.com/hmrc/jenkins-job-builders,fe0128e44362a43051d220237f8d6dc0f62caf1e,gradle,0,0,1,0,0,0,open,
-conductor,https://github.com/Netflix/conductor,bfe300778fbcc90e21c8966de3af1fb898e8759f,gradle,3,0,19,0,0,0,open,
+conductor,https://github.com/Netflix/conductor,bfe300778fbcc90e21c8966de3af1fb898e8759f,gradle,3,0,19,0,0,0,fixed,2.2k stars repo
 muwire,https://github.com/zlatinb/muwire,a549ad3d8df9a2719f874b691bb8bd33f337a5ab,gradle,10,0,0,5,0,0,fixed,
 jenkins,https://github.com/CloudPipelines/jenkins,c718d2ea1c37c5ab7f0177fb743c8294c65b398f,gradle,0,0,0,1,0,0,not-opened,The task buildImage reads all the files in project dir
 gradle-plugin-starter,https://github.com/int128/gradle-plugin-starter,692aae4e111d81ce2fc2565d8d547549c9d41285,gradle,0,1,0,0,0,0,open,test resources
