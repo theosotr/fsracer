@@ -20,3 +20,4 @@ gradle-scripts,https://github.com/tomasbjerre/gradle-scripts,35cd7dff32fd1c27e54
 gradle-sora-plugin,https://github.com/soramitsu/gradle-sora-plugin,3bb981ff4fa9c0815cb6314821ef902642ebd4f1,gradle,0,26,0,0,0,0,open,
 xtext-gradle-plugin,https://github.com/xtext/xtext-gradle-plugin,d4ed9d769ddbc2d130dd5c967c89a9b317d27aa9,gradle,4,0,0,0,0,0,fixed,
 apina,https://github.com/EvidentSolutions/apina,5f098961fb8830e28388f1eb3c5f2f06ed1b3209,gradle,5,0,0,0,0,0,open,shadow jar
+alfresco-gradle-plugin,https://github.com/xenit-eu/alfresco-gradle-sdk,d4ecabfc61bbeac493007bfed4d9ba42bcc3c0df,gradle,0,47,0,0,0,0,open,test resources
