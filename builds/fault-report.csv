@@ -5,7 +5,7 @@ rest.li,https://github.com/linkedin/rest.li,10b38e03d93525ac201ce911111e825c33cb
 jmonkeyengine,https://github.com/jMonkeyEngine/jmonkeyengine,d8a42d0817ba7a4c895768b508b0af4b8194541f,gradle,0,0,12,0,0,0,fixed,2.2k stars repo
 webdriver-binaries-gradle-plugin,https://github.com/erdi/webdriver-binaries-gradle-plugin,4c0f733ff8f8e227a2d56d72b79c8f8949ff17ce,gradle,0,0,0,0,12,0,not-opened,codenarcMain task
 nf-tower,https://github.com/seqeralabs/nf-tower,7ac0fcbfe7d5705aabae318aa668435ce20588a8,gradle,4,0,0,0,0,0,open,
-helios,https://github.com/47deg/helios,1a0fee60e3380c016cfe2aebd0fd93e5aa67545d,gradle,0,0,62,0,0,0,open,the fix makes the task incremental
+helios,https://github.com/47deg/helios,1a0fee60e3380c016cfe2aebd0fd93e5aa67545d,gradle,0,0,62,0,0,0,fixed,the fix makes the task incremental
 junit-reporter,https://github.com/kncept/junit-reporter,2494ce8436e8875125d0e8eb2370ee9072ee82ed5,gradle,6,1625,2,0,0,0,fixed,Check again the number of faults
 gradle-aws-ecr-plugin,https://bitbucket.org/double16/gradle-aws-ecr-plugin/src/master/,52c235a,gradle,0,0,0,1,4,39,not-opened,I think they can be easily fixed (codenarcMain)
 jenkins-job-builders,https://github.com/hmrc/jenkins-job-builders,fe0128e44362a43051d220237f8d6dc0f62caf1e,gradle,0,0,1,0,0,0,open,
