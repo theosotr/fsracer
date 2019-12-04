@@ -37,5 +37,3 @@ RUN chmod o+w /results
 
 USER builder
 WORKDIR /home/builder
-
-ENTRYPOINT ["entrypoint.sh"]
