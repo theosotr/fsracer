@@ -16,23 +16,37 @@ Run
 docker run -it -v $(pwd)/traces:/root/traces --cap-add SYS_ADMIN fsmake PACKAGE
 ```
 
-Debian Docker Make
-------------------
+Debian Docker sbuild fsmake
+---------------------------
 
 * Build
 
 ```bash
-docker build -f debian_make.Dockerfile -t sbuild_fsmake .
+docker build -f strace.Dockerfile -t sbuild_fsmake .
 ```
 
 * Run
 
 ```bash
-docker run -it -v $(pwd)/straces:/var/log/sbuild/straces --cap-add SYS_ADMIN sbuild_fsmake PACKAGE
+docker run -it -v $(pwd)/out:/results --privileged sbuild_fsmake PACKAGE
 ```
 
 * Possible Results
     - `straces/PACKAGE/PACKAGE.[anerr,conferr,strerr,straces]`
+    
+Adapter
+-------
+
+```bash
+adapter.py -c make -m out/PACKAGE/PACKAGE.makedb /build/PACKAGE-XMBMdq/PACKAGE-1.71 < out/PACKAGE/PACKAGE.straces > out/PACKAGE/PACKAGE.fstraces
+```
+
+fsracer
+-------
+
+```bash
+docker run --rm -v $(pwd)/out/PACKAGE:/home/fsracer/PACKAGE fsracer run_fsracer.sh PACKAGE
+```
 
 mkcheck
 -------
