@@ -32,6 +32,8 @@ RUN mkdir plugin
 ENV ANDROID_SDK_ROOT=/usr/lib/android-sdk
 ENV ANDROID_HOME=/usr/lib/android-sdk
 
+RUN sudo chown -R fsracer:fsracer ${ANDROID_SDK_ROOT}
+
 COPY ./syscalls.txt $HOME/syscalls.txt
 COPY ./gradle-plugin/build.gradle $HOME/plugin
 COPY ./gradle-plugin/src $HOME/plugin/src
