@@ -23,7 +23,7 @@ apina,https://github.com/EvidentSolutions/apina,5f098961fb8830e28388f1eb3c5f2f06
 alfresco-gradle-plugin,https://github.com/xenit-eu/alfresco-gradle-sdk,d4ecabfc61bbeac493007bfed4d9ba42bcc3c0df,gradle,0,47,0,0,0,0,fixed,test resources
 aeron,https://github.com/real-logic/aeron,30c92f5ebbe81e16f6022fe3e34f771e9a9b8112,gradle,5,6,220,0,0,0,fixed,shadow jar 4.7k stars repo
 goomph,https://github.com/diffplug/goomph,4ac5b997f805b020b80d1d5db092238ec8833f82,gradle,0,5,0,0,0,open,
-anna,https://salsa.debian.org/installer-team/anna,50758d8bf2ff07421fcf3ea99e6ee3db41e57f3b,make,0,1,0,0,0,0,opened,
+anna,https://salsa.debian.org/installer-team/anna,50758d8bf2ff07421fcf3ea99e6ee3db41e57f3b,make,0,1,0,0,0,0,fixed,
 tofrodos,,,make,,,,,,,
 fuseiso,https://sourceforge.net/projects/fuseiso/,,make,,,,,,,
 policycoreutils,https://salsa.debian.org/selinux-team/policycoreutils,,make,,,,,,,
