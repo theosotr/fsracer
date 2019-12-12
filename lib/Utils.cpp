@@ -49,7 +49,9 @@ size_t Split(const std::string &str, std::vector<std::string> &tokens) {
   size_t count = 0;
   std::string::const_iterator p1 = str.cbegin();
   std::string::const_iterator p2 = p1;
+  bool quotes;
   while (true) {
+    quotes = false;
     // Handle the case when a whitespace is included inside quotes.
     // In this case we do not split string, but we treat the quoted string
     // a separate token.
@@ -57,11 +59,14 @@ size_t Split(const std::string &str, std::vector<std::string> &tokens) {
       p2 = std::find(p1 + 1, str.cend(), '"');
       if (p2 != str.cend()) {
         p2++;
+        // Ignore double quotes.
+        p1++;
+        quotes = true;
       }
     } else {
       p2 = std::find(p1, str.cend(), ' ');
     }
-    tokens.push_back(std::string(p1, p2));
+    tokens.push_back(std::string(p1, quotes ? p2 - 1 : p2));
     count++;
 
     if (p2 != str.cend()) {

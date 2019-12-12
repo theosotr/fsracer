@@ -36,7 +36,7 @@ namespace trace_generator {
 
 static std::string CanonicalizePath(const std::string &str) {
   if (utils::StartsWith(str, "\"")) {
-    fs::path p = std::string(str.begin() + 1, str.end() - 1);
+    fs::path p = str;
     std::error_code err;
     p = fs::weakly_canonical(p, err);
     // Checks e.g., that the file name is not too long.
