@@ -27,29 +27,28 @@ ShellExec,https://github.com/phatblat/ShellExec,d41afa8619bdb065cd2c9e2ef90c14b5
 fulibGradle,https://github.com/fujaba/fulibGradle,57864a8b4d4434fd179480bdc77254aacc1e729e,gradle,6,0,0,0,0,0,fixed,
 anacron,https://salsa.debian.org/debian/anacron,07837bb5741a5e3bccf8ad3bf577218568a3fb45,make,0,10,0,0,10,0,,generates header file dependencies auto
 dwww,https://salsa.debian.org/debian/dwww,,make,,,,,,,,fsracer did not detect any faults (@theosot maybe you run mkcheck?)
+libapt-pkg-perl,https://salsa.debian.org/bod/libapt-pkg-perl,,make,0,1,,,,,,They use a Makefile.PL I don't know how to fix it
+libconvert-uulib-perl,https://salsa.debian.org/perl-team/modules/packages/libconvert-uulib-perl,,make,,,,,,,,Makefile.PL
+libcrypt-openssl-random-perl,https://salsa.debian.org/perl-team/modules/packages/libcrypt-openssl-random-perl,,make,,,,,,,,Makefile.PL
+libdate-simple-perl,https://salsa.debian.org/perl-team/modules/packages/libdate-simple-perl,,make,,,,,,,,Makefile.PL
+libfilesys-df-perl.faults,https://salsa.debian.org/perl-team/modules/packages/libfilesys-df-perl,,make,,,,,,,,Makefile.PL
+crda,https://salsa.debian.org/kernel-team/crda,,make,,,,,,,,open here https://github.com/mcgrof/crda; unable to rebuild -- https://github.com/mcgrof/crda/blob/master/CONTRIBUTING
+keyutils,https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git,,make,,,,,,,,Not PRs interface
+evolution,https://github.com/GNOME/evolution,,make,,,,,,,,cmake
 anna,https://salsa.debian.org/installer-team/anna,50758d8bf2ff07421fcf3ea99e6ee3db41e57f3b,make,0,1,0,0,0,0,fixed,
-tofrodos,https://salsa.debian.org/debian/tofrodos/,b34010e00c44c0c74bbd91b2f549c282099eb48f,make,0,1,0,0,0,0,open,
-policycoreutils,https://salsa.debian.org/selinux-team/policycoreutils,a5b1de29512d4cb5483cd94bf149822d99b0129c,make,0,5,0,0,0,0,open,I didn't fix one of the faults because it was ambiguous (hashtab.o: hashtab.h).
-fdupes,https://salsa.debian.org/morph/fdupes,2a3f67918c79bc43baa5e64a2a344cd3818fa0bd,make,0,2,0,0,0,0,open,
-cron,https://salsa.debian.org/debian/cron,52bacc70b592d354efff8231375bf2d51bd4ef52,make,0,11,0,0,0,0,open,There are two more open PRs for a long time (without any comments)
-amb-plugins,https://salsa.debian.org/multimedia-team/amb-plugins,ef31ae1c8b2ee90290a76671eb68d38f3a7782e8,make,0,16,0,0,0,0,open,
-cdra,https://github.com/mcgrof/crda,,,,,,,,,,
-libapt-pkg-perl,https://salsa.debian.org/bod/libapt-pkg-perl,,,,,,,,,,
-libconvert-uulib-perl,https://salsa.debian.org/perl-team/modules/packages/libconvert-uulib-perl,,,,,,,,,,
-libcrypt-openssl-random-perl,https://salsa.debian.org/perl-team/modules/packages/libcrypt-openssl-random-perl,,,,,,,,,,
-libdate-simple-perl,https://salsa.debian.org/perl-team/modules/packages/libdate-simple-perl,,,,,,,,,,
-libfilesys-df-perl.faults,https://salsa.debian.org/perl-team/modules/packages/libfilesys-df-perl,,,,,,,,,,
-sysvinit,https://salsa.debian.org/debian/sysvinit,,,,,,,,,,
-autofs,https://salsa.debian.org/debian/autofs/,,,,,,,,,,
-autossh,https://salsa.debian.org/debian/autossh,,,,,,,,,,
-evolution,https://github.com/GNOME/evolution,,,,,,,,,,cmake
-hdparm,https://salsa.debian.org/debian/hdparm/,,,,,,,,,,
-i3status,https://github.com/i3/i3status,,,,,,,,,,
-iputils,https://github.com/iputils/iputils,,,,,,,,,,
-joystick,https://salsa.debian.org/debian/joystick/,,,,,,,,,,
-keyutils,https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git,,,,,,,,,,Not PRs interface
-libgsm,https://github.com/timothytylee/libgsm,,,,,,,,,,
-libogg,https://github.com/gcp/libogg,,,,,,,,,,
-lynx,https://salsa.debian.org/lynx-team/lynx,,,,,,,,,,
-mutt,https://salsa.debian.org/mutt-team/mutt,,,,,,,,,,open here https://gitlab.com/muttmua/mutt
-xsel,https://salsa.debian.org/debian/xsel,,,,,,,,,,open here https://github.com/kfish/xsel
+tofrodos,https://salsa.debian.org/debian/tofrodos/,b34010e00c44c0c74bbd91b2f549c282099eb48f,make,0,1,0,0,0,0,opened,
+policycoreutils,https://salsa.debian.org/selinux-team/policycoreutils,a5b1de29512d4cb5483cd94bf149822d99b0129c,make,0,5,0,0,0,0,opened,I didn't fix one of the faults because it was ambiguous (hashtab.o: hashtab.h).
+fdupes,https://salsa.debian.org/morph/fdupes,2a3f67918c79bc43baa5e64a2a344cd3818fa0bd,make,0,2,0,0,0,0,opened,
+cron,https://salsa.debian.org/debian/cron,52bacc70b592d354efff8231375bf2d51bd4ef52,make,0,11,0,0,0,0,opened,There are two more open PRs for a long time (without any comments)
+amb-plugins,https://salsa.debian.org/multimedia-team/amb-plugins,ef31ae1c8b2ee90290a76671eb68d38f3a7782e8,make,0,16,0,0,0,0,opened,
+sysvinit,https://salsa.debian.org/debian/sysvinit,a23b92601a7964be3873605cd0cf147b8e300288,make,0,7,0,0,0,0,opened,
+autofs,https://salsa.debian.org/debian/autofs/,,make,0,6,1,0,0,0,,I don't know how to submit a patch https://kernel.googlesource.com/pub/scm/linux/storage/autofs/autofs/; ambiguous rebuilds
+autossh,https://salsa.debian.org/debian/autossh,0c1bb008e790307b87c7533c4d9df936cc8cca2f,make,0,1,0,0,1,0,-,False positive because config.h created by configure
+hdparm,https://salsa.debian.org/debian/hdparm/,3eee94f3bff659f5789ef84b1976960f5ce30e59,make,0,9,0,0,0,0,opened,
+i3status,https://salsa.debian.org/i3-team/i3status/tree/master/debian,02705f8792c5fded19e180f5733f86ca23f707e7,make,0,2,0,0,2,0,-,open here https://github.com/i3/i3status; false positives (configure;Makefile.am) task print_volume.o doesn't seem to exist (i3status-print_volume.o exist)
+iputils,https://github.com/iputils/iputils,,make,,,,,,,,ambiguous build system (ninja)
+joystick,https://salsa.debian.org/debian/joystick/,54b161299df2deb9ea7f843fbf1be10ca5ac1a84,make,0,3,0,0,0,0,open,
+libgsm,https://github.com/timothytylee/libgsm,,make,0,1,1,0,1,1,-,it seems like a false positive because it link the static library and it has a dependency in the static library
+libogg,https://github.com/gcp/libogg,,make,,,,,,,,todo
+mutt,https://salsa.debian.org/mutt-team/mutt,,make,,,,,,,,false positives; config.h generated automatically and manual.xml is a doc file (automatically generated); maybe we should check fo config.h.i when config.h is a missing input
+xsel,https://salsa.debian.org/debian/xsel,7764c7f8a700051fa23666c8a229b75e20d9a36d,make,0,3,0,0,2,0,,open here https://github.com/kfish/xsel; 1 error but the use Makefile.am etc; false positives; config.h and Makefile
