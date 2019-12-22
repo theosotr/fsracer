@@ -33,3 +33,23 @@ dwww,https://salsa.debian.org/debian/dwww,,make,,,,,,,,fsracer did not detect an
 cron,https://salsa.debian.org/debian/cron,52bacc70b592d354efff8231375bf2d51bd4ef52,make,0,11,0,0,0,0,open,There are two more open PRs for a long time (without any comments)
 anacron,https://salsa.debian.org/debian/anacron,07837bb5741a5e3bccf8ad3bf577218568a3fb45,make,0,10,0,0,10,0,,generates header file dependencies auto
 amb-plugins,https://salsa.debian.org/multimedia-team/amb-plugins,ef31ae1c8b2ee90290a76671eb68d38f3a7782e8,make,0,16,0,0,0,0,open,
+cdra,https://github.com/mcgrof/crda,,,,,,,,,,
+libapt-pkg-perl,https://salsa.debian.org/bod/libapt-pkg-perl,,,,,,,,,,
+libconvert-uulib-perl,https://salsa.debian.org/perl-team/modules/packages/libconvert-uulib-perl,,,,,,,,,,
+libcrypt-openssl-random-perl,https://salsa.debian.org/perl-team/modules/packages/libcrypt-openssl-random-perl,,,,,,,,,,
+libdate-simple-perl,https://salsa.debian.org/perl-team/modules/packages/libdate-simple-perl,,,,,,,,,,
+libfilesys-df-perl.faults,https://salsa.debian.org/perl-team/modules/packages/libfilesys-df-perl,,,,,,,,,,
+sysvinit,https://salsa.debian.org/debian/sysvinit,,,,,,,,,,
+autofs,https://salsa.debian.org/debian/autofs/,,,,,,,,,,
+autossh,https://salsa.debian.org/debian/autossh,,,,,,,,,,
+evolution,https://github.com/GNOME/evolution,,,,,,,,,,cmake
+hdparm,https://salsa.debian.org/debian/hdparm/,,,,,,,,,,
+i3status,https://github.com/i3/i3status,,,,,,,,,,
+iputils,https://github.com/iputils/iputils,,,,,,,,,,
+joystick,https://salsa.debian.org/debian/joystick/,,,,,,,,,,
+keyutils,https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git,,,,,,,,,,Not PRs interface
+libgsm,https://github.com/timothytylee/libgsm,,,,,,,,,,
+libogg,https://github.com/gcp/libogg,,,,,,,,,,
+lynx,https://salsa.debian.org/lynx-team/lynx,,,,,,,,,,
+mutt,https://salsa.debian.org/mutt-team/mutt,,,,,,,,,,open here https://gitlab.com/muttmua/mutt
+xsel,https://salsa.debian.org/debian/xsel,,,,,,,,,,open here https://github.com/kfish/xsel
