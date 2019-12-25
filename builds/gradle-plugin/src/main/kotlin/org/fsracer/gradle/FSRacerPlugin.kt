@@ -37,10 +37,10 @@ class FSRacerPlugin : Plugin<Project> {
         state.addNode(taskName)
         println("${GRADLE_PREFIX} newTask ${taskName} W 1")
         task.inputs.files.forEach { input ->
-            println("${GRADLE_PREFIX} consumes ${taskName} \"${input.absolutePath}\"")
+            println("${GRADLE_PREFIX} consumes ${taskName} ${input.absolutePath}")
         }
         task.outputs.files.forEach { output ->
-            println("${GRADLE_PREFIX} produces ${taskName} \"${output.absolutePath}\"")
+            println("${GRADLE_PREFIX} produces ${taskName} ${output.absolutePath}")
         }
         processTaskDependencies(taskName, task, task.getTaskDependencies())
         processTaskDependencies(taskName, task, task.getMustRunAfter())
@@ -56,6 +56,10 @@ class FSRacerPlugin : Plugin<Project> {
         project.gradle.buildFinished {buildResult ->
             // When the build finishes, store the result of the build
             // in the `build-result.txt` file
+            when (buildResult.failure) {
+                null -> println("${GRADLE_PREFIX} BUILD ENDED 0")
+                else -> println("${GRADLE_PREFIX} BUILD ENDED 1")
+            }
             File("build-result.txt").printWriter().use {out ->
                 when (buildResult.failure) {
                     null -> out.println("success")

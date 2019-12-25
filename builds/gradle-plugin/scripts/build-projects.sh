@@ -1,6 +1,6 @@
 #! /bin/bash
 
-HOME=/home/fsracer
+HOME=/home/fsmove
 
 while getopts "p:o:" opt; do
   case "$opt" in

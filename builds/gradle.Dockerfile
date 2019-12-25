@@ -25,14 +25,14 @@ RUN yes | /root/tools/bin/sdkmanager --licenses && \
   cp -r /root/licenses /usr/lib/android-sdk
 
 # Copy necessary files
-USER fsracer
+USER fsmove
 WORKDIR $HOME
 
 RUN mkdir plugin
 ENV ANDROID_SDK_ROOT=/usr/lib/android-sdk
 ENV ANDROID_HOME=/usr/lib/android-sdk
 
-RUN sudo chown -R fsracer:fsracer ${ANDROID_SDK_ROOT}
+RUN sudo chown -R fsmove:fsmove ${ANDROID_SDK_ROOT}
 
 COPY ./syscalls.txt $HOME/syscalls.txt
 COPY ./gradle-plugin/build.gradle $HOME/plugin

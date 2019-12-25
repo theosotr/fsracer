@@ -7,7 +7,8 @@
 # Add plugin
 # Execute
 
-sudo chown -R fsracer:fsracer $HOME
+eval `opam config env`
+#sudo chown -R fsmove:fsmove $HOME
 
 modify_build_script()
 {
@@ -107,16 +108,12 @@ pid=$!
 timeout 30m $dir/polling.sh
 sudo -S kill -s KILL $pid
 
-adapter.py -c gradle $HOME/$project < $project_out/$project.strace \
-  > $project_out/$project.fstrace 2> $project_out/$project.aderr
+# Remove the last line.
+sed -i '$ d' $project_out/$project.strace
 
-if [ $? -ne 0 ]; then
-  exit 1
-fi
-
-$HOME/fsracer/build/tools/fsracer/fsracer \
-  -i $project_out/$project.fstrace \
-  --fault-detector fs \
-  --ignore-dirs-ov \
-  --ignore-files-conf $HOME/gradle-filters.json > $project_out/$project.faults 2> $project_out/$project.fserr
+fsmove gradle-tool \
+  -mode offline \
+  -trace-file $project_out/$project.strace \
+  -print-stats \
+  -build-dir "$(pwd)" > $project_out/$project.faults 2> $project_out/$project.fserr
 exit 0
