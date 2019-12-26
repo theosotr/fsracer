@@ -5,13 +5,9 @@ NAME="$(echo -e "${NAME_T}" | tr -d '[:space:]')"
 
 cd $2
 
-START_TIME=$SECONDS
-mkcheck --output=foo.json -- debian/rules build 2> /results/$NAME/$NAME.mkerr
-ELAPSED_TIME=$(($SECONDS - $START_TIME))
-echo "mkcheck: $ELAPSED_TIME" > /results/$NAME/$NAME.time
-cp foo.json /results/$NAME/$NAME.json
 echo "
 filter_in:
+        - Makefile.*
         - /usr/.*
         - /etc/.*
         - //.*
@@ -19,11 +15,44 @@ filter_in:
         - /bin/.*
         - /.*/debian/.*
 " > filter.yaml
-START_TIME=$SECONDS
-fuzz_test --graph-path=foo.json --rule-path filter.yaml fuzz > /results/$NAME/$NAME.fuzz 2> /results/$NAME/$NAME.fuzzerr
-ELAPSED_TIME=$(($SECONDS - $START_TIME))
-echo "fuzz: $ELAPSED_TIME" >> /results/$NAME/$NAME.time
-START_TIME=$SECONDS
-fuzz_test --graph-path=foo.json --rule-path filter.yaml race > /results/$NAME/$NAME.race 2> /results/$NAME/$NAME.raceerr
-ELAPSED_TIME=$(($SECONDS - $START_TIME))
-echo "fuzz: $ELAPSED_TIME" >> /results/$NAME/$NAME.time
+
+if ls | grep -q configure; then
+  set -e
+  aclocal
+  automake --add-missing --foreign
+  ./configure
+  set +e
+fi
+
+START_TIME=$(date +%s.%N)
+fuzz_test --graph-path=foo.json build 2> /results/$NAME/$NAME.mkerr
+if [ $? -ne 0 ]; then
+  echo "Build failed" >> /results/$NAME/$NAME.mkerr
+  exit 1
+fi
+ELAPSED_TIME=$(echo "$(date +%s.%N) - $START_TIME" | bc)
+printf "%.2f\n" $ELAPSED_TIME > /results/$NAME/$NAME.time
+
+cp foo.json /results/$NAME/$NAME.json
+START_TIME=$(date +%s.%N)
+fuzz_test --graph-path=foo.json \
+  --rule-path filter.yaml fuzz \
+  > /results/$NAME/$NAME.fuzz 2> /results/$NAME/$NAME.fuzzerr
+if [ $? -ne 0 ]; then
+  echo "Fuzz testing failed" >> /results/$NAME/$NAME.fuzzerr
+  exit 1
+fi
+ELAPSED_TIME=$(echo "$(date +%s.%N) - $START_TIME" | bc)
+printf "%.2f\n" $ELAPSED_TIME >> /results/$NAME/$NAME.time
+
+START_TIME=$(date +%s.%N)
+fuzz_test --graph-path=foo.json \
+  --rule-path filter.yaml race \
+  > /results/$NAME/$NAME.race 2> /results/$NAME/$NAME.raceerr
+
+if [ $? -ne 0 ]; then
+  echo "Race testing failed" >> /results/$NAME/$NAME.raceerr
+  exit 1
+fi
+ELAPSED_TIME=$(echo "$(date +%s.%N) - $START_TIME" | bc)
+printf "%.2f\n" $ELAPSED_TIME >> /results/$NAME/$NAME.time
