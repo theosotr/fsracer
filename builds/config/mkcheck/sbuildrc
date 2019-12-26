@@ -17,7 +17,7 @@ $external_commands = {
                         'post-build-commands' => [],
                         'chroot-setup-commands' => [],
                         'starting-build-commands' => [
-                            'analyzer %d %p 2> /results/analyzer_err',
+                            'analyzer %d %p',
                             #'%SBUILD_SHELL'
                         ],
                       };

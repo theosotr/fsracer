@@ -16,14 +16,20 @@ filter_in:
         - /.*/debian/.*
 " > filter.yaml
 
-if ls | grep -q configure; then
-  set -e
-  aclocal
-  automake --add-missing --foreign
-  ./configure
-  set +e
+debian/rules clean
+debian/rules build
+
+
+mkdir -p /results/$NAME
+
+if [ ! -f Makefile ]; then
+  echo "Couldn't find Makefile" > /results/$NAME/$NAME.warning
+  exit 0
 fi
 
+make clean
+
+echo "Building project with mkcheck..."
 START_TIME=$(date +%s.%N)
 fuzz_test --graph-path=foo.json build 2> /results/$NAME/$NAME.mkerr
 if [ $? -ne 0 ]; then
@@ -34,6 +40,8 @@ ELAPSED_TIME=$(echo "$(date +%s.%N) - $START_TIME" | bc)
 printf "%.2f\n" $ELAPSED_TIME > /results/$NAME/$NAME.time
 
 cp foo.json /results/$NAME/$NAME.json
+
+echo "Fuzz testing..."
 START_TIME=$(date +%s.%N)
 fuzz_test --graph-path=foo.json \
   --rule-path filter.yaml fuzz \
@@ -45,6 +53,7 @@ fi
 ELAPSED_TIME=$(echo "$(date +%s.%N) - $START_TIME" | bc)
 printf "%.2f\n" $ELAPSED_TIME >> /results/$NAME/$NAME.time
 
+echo "Race testing..."
 START_TIME=$(date +%s.%N)
 fuzz_test --graph-path=foo.json \
   --rule-path filter.yaml race \
