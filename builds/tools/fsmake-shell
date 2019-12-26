@@ -3,9 +3,9 @@
 target="$1"
 prereqs="$2"
 # separated by ' ### '
-echo "##BEGIN##: $target ### $prereqs" 1>&2
+echo "##MAKE## Begin $(pwd):$target" 1>&2
 shift 2
 cmd="$@"
 echo "exec: $@" 1>&2
 /bin/bash "$@"
-echo "##END##" 1>&2
+echo "##MAKE## End" 1>&2
