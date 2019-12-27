@@ -22,14 +22,19 @@ class FSRacerPlugin : Plugin<Project> {
     }
 
     fun processTaskDependencies(taskName: String, task: Task,
-                                taskDependencies: TaskDependency) =
+                                taskDependencies: TaskDependency,
+                                reverse: Boolean) =
         taskDependencies
           .getDependencies(task)
           .forEach { d ->
               val depTask = constructTaskName(d)
               state.addNode(depTask)
               state.addEdge(depTask, taskName)
-              println("${GRADLE_PREFIX} dependsOn ${taskName} ${depTask}")
+              if (reverse) {
+                  println("${GRADLE_PREFIX} dependsOn ${depTask} ${taskName}")
+              } else {
+                  println("${GRADLE_PREFIX} dependsOn ${taskName} ${depTask}")
+              }
         }
 
     fun processTaskBegin(task: Task) {
@@ -42,8 +47,9 @@ class FSRacerPlugin : Plugin<Project> {
         task.outputs.files.forEach { output ->
             println("${GRADLE_PREFIX} produces ${taskName} ${output.absolutePath}")
         }
-        processTaskDependencies(taskName, task, task.getTaskDependencies())
-        processTaskDependencies(taskName, task, task.getMustRunAfter())
+        processTaskDependencies(taskName, task, task.getTaskDependencies(), false)
+        processTaskDependencies(taskName, task, task.getMustRunAfter(), false)
+        processTaskDependencies(taskName, task, task.getFinalizedBy(), true)
         println("${GRADLE_PREFIX} Begin ${taskName}")
     }
 
