@@ -16,10 +16,6 @@ const val GRADLE_PREFIX = "##GRADLE##"
 
 
 class FSRacerPlugin : Plugin<Project> {
-    companion object {
-        // This object is used to keep the state of instrumentation.
-        var state = State()
-    }
 
     fun processTaskDependencies(taskName: String, task: Task,
                                 taskDependencies: TaskDependency,
@@ -28,8 +24,6 @@ class FSRacerPlugin : Plugin<Project> {
           .getDependencies(task)
           .forEach { d ->
               val depTask = constructTaskName(d)
-              state.addNode(depTask)
-              state.addEdge(depTask, taskName)
               if (reverse) {
                   println("${GRADLE_PREFIX} dependsOn ${depTask} ${taskName}")
               } else {
@@ -39,7 +33,6 @@ class FSRacerPlugin : Plugin<Project> {
 
     fun processTaskBegin(task: Task) {
         val taskName = constructTaskName(task)
-        state.addNode(taskName)
         println("${GRADLE_PREFIX} newTask ${taskName} W 1")
         task.inputs.files.forEach { input ->
             println("${GRADLE_PREFIX} consumes ${taskName} ${input.absolutePath}")
@@ -74,7 +67,6 @@ class FSRacerPlugin : Plugin<Project> {
             }
         }
         project.gradle.taskGraph.whenReady { taskGraph ->
-            state.addNode("${project.name}:")
             taskGraph.allTasks.forEach { task ->
                 task.doFirst {
                     processTaskBegin(task)
@@ -83,7 +75,6 @@ class FSRacerPlugin : Plugin<Project> {
                     processTaskEnd(task)
                 }
            }
-           state.toDot()
         }
     }
 }
