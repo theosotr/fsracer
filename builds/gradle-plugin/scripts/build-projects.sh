@@ -2,11 +2,14 @@
 
 HOME=/home/fsmove
 
-while getopts "p:o:" opt; do
+with_strace=0
+while getopts "p:o:s" opt; do
   case "$opt" in
     p)  projects=$(realpath $OPTARG)
         ;;
     o)  output_dir=$(realpath $OPTARG)
+        ;;
+    s)  with_strace=1
         ;;
   esac
 done
@@ -26,7 +29,7 @@ for project in $(cat $projects); do
   else
     pname=$project
   fi
-  docker_cmd="$HOME/plugin/scripts/build-project.sh $project $HOME/out"
+  docker_cmd="$HOME/plugin/scripts/build-project.sh $project $HOME/out $with_strace"
   sudo docker run --name $pname \
     -v $output_dir/tmp:$HOME/out \
     --cap-add=SYS_PTRACE \

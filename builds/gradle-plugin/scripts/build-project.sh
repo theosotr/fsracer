@@ -34,6 +34,7 @@ modify_build_script()
 
 project=$1
 output_dir=$(realpath $2)
+strace=$3
 
 if echo $project | grep -q -oP '^https://'; then
   project_repo=$project
@@ -62,13 +63,16 @@ cd $project
 find . -name 'gradle.properties' |
 xargs -i sed -i 's/org\.gradle\.parallel=true/org\.gradle\.parallel=false/g' {}
 
-modify_build_script "groovy"
-ret_groovy=$?
-modify_build_script "kotlin"
-ret_kotlin=$?
+if [ $strace -eq 1 ]; then
+  modify_build_script "groovy"
+  ret_groovy=$?
+  modify_build_script "kotlin"
+  ret_kotlin=$?
 
-if [[ $ret_groovy -ne 0 && $ret_kotlin -ne 0 ]]; then
-  echo "Unable to find build.gradle file" > $project_out/err
+
+  if [[ $ret_groovy -ne 0 && $ret_kotlin -ne 0 ]]; then
+    echo "Unable to find build.gradle file" > $project_out/err
+  fi
 fi
 
 gradlew=$(find . -name 'gradlew' -type f -printf "%d %p\n" |
@@ -93,20 +97,35 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 eval "$gradlew --stop"
-rm build-result.txt
+rm -f build-result.txt
 
 # When we trace gradle builds, strace might hang because it's waiting for
 # the gradle daemon to exit which is spanwed by the gradlew script.
 # So we run the build script in the background and we do some kind of polling
 # in order to know when the build actually finishes.
-strace -s 300 \
-  -o $project_out/$project.strace \
-  -e "$(tr -s '\r\n' ',' < $HOME/syscalls.txt | sed -e 's/,$/\n/')" \
-  -f $gradlew build --no-build-cache --no-parallel&
-pid=$!
+if [ $strace -eq 1 ]; then
+  echo "Building project with strace..."
+  strace -s 300 \
+    -o $project_out/$project.strace \
+    -e "$(tr -s '\r\n' ',' < $HOME/syscalls.txt | sed -e 's/,$/\n/')" \
+    -f $gradlew build --no-build-cache --no-parallel 2>&1 > out&
+  pid=$!
+  timeout 60m $dir/polling.sh
+  sudo -S kill -s KILL $pid
+else
+  echo "Building project without strace..."
+  eval "$gradlew build --no-build-cache --no-parallel 2>&1 >out"
+fi
 
-timeout 30m $dir/polling.sh
-sudo -S kill -s KILL $pid
+grep -oP "BUILD ((FAILED)|(SUCCESSFUL)) in (.+)" out |
+tail -1 |
+sed -r 's/.*in (.+)/\1/g' > $project_out/build_time
+rm out
+
+
+if [ $strace -eq 0 ]; then
+  exit 0
+fi
 
 # Remove the last line.
 sed -i '$ d' $project_out/$project.strace
