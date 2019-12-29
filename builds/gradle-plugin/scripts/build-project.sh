@@ -114,13 +114,13 @@ if [ $strace -eq 1 ]; then
   sudo -S kill -s KILL $pid
 else
   echo "Building project without strace..."
-  eval "$gradlew build --no-build-cache --no-parallel 2>&1 >out"
+  bash -c  "./gradlew build --no-build-cache --no-parallel >out 2>&1"
 fi
 
 grep -oP "BUILD ((FAILED)|(SUCCESSFUL)) in (.+)" out |
 tail -1 |
 sed -r 's/.*in (.+)/\1/g' > $project_out/build_time
-rm out
+mv out $project_out/out
 
 
 if [ $strace -eq 0 ]; then
