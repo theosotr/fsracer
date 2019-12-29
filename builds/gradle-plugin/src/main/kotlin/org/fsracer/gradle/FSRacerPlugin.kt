@@ -12,6 +12,10 @@ fun constructTaskName(task : Task) : String =
     "${task.project.name}:${task.name}"
 
 
+fun constrctResourceName(resource: String) : String =
+    resource.replace(" ", "@@")
+
+
 const val GRADLE_PREFIX = "##GRADLE##"
 
 
@@ -35,10 +39,12 @@ class FSRacerPlugin : Plugin<Project> {
         val taskName = constructTaskName(task)
         println("${GRADLE_PREFIX} newTask ${taskName} W 1")
         task.inputs.files.forEach { input ->
-            println("${GRADLE_PREFIX} consumes ${taskName} ${input.absolutePath}")
+            val res = constrctResourceName(input.absolutePath)
+            println("${GRADLE_PREFIX} consumes ${taskName} ${res}")
         }
         task.outputs.files.forEach { output ->
-            println("${GRADLE_PREFIX} produces ${taskName} ${output.absolutePath}")
+            val res = constrctResourceName(output.absolutePath)
+            println("${GRADLE_PREFIX} produces ${taskName} ${res}")
         }
         processTaskDependencies(taskName, task, task.getTaskDependencies(), false)
         processTaskDependencies(taskName, task, task.getMustRunAfter(), false)
