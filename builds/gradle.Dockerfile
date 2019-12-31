@@ -45,7 +45,6 @@ RUN gradle build
 
 ENV PLUGIN_JAR_DIR=$HOME/plugin/build/libs/
 
-COPY ./gradle-plugin/scripts $HOME/plugin/scripts
-COPY ./tools/adapter.py /usr/local/bin/adapter.py
+COPY ./gradle-plugin/scripts/build-project.sh /usr/local/bin/build-project
 
 WORKDIR $HOME
