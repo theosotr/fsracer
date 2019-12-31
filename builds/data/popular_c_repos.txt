@@ -1,7 +1,4 @@
-https://github.com/torvalds/linux.git
 https://github.com/antirez/redis.git
-https://github.com/git/git.git
-https://github.com/wg/wrk.git
 https://github.com/FFmpeg/FFmpeg.git
 https://github.com/pjreddie/darknet.git
 https://github.com/radareorg/radare2.git
@@ -16,7 +13,6 @@ https://github.com/antirez/disque.git
 https://github.com/hashcat/hashcat.git
 https://github.com/jarun/nnn.git
 https://github.com/vk-com/kphp-kdb.git
-https://github.com/raspberrypi/linux.git
 https://github.com/coolsnowwolf/lede.git
 https://github.com/postgres/postgres.git
 https://github.com/systemd/systemd.git
@@ -81,7 +77,6 @@ https://github.com/kornelski/pngquant.git
 https://github.com/marcobambini/gravity.git
 https://github.com/unicorn-engine/unicorn.git
 https://github.com/RIOT-OS/RIOT.git
-https://github.com/microsoft/WSL2-Linux-Kernel.git
 https://github.com/cloudius-systems/osv.git
 https://github.com/antirez/sds.git
 https://github.com/P-H-C/phc-winner-argon2.git
