@@ -32,7 +32,7 @@ libconvert-uulib-perl,https://salsa.debian.org/perl-team/modules/packages/libcon
 libcrypt-openssl-random-perl,https://salsa.debian.org/perl-team/modules/packages/libcrypt-openssl-random-perl,,make,,,,,,,,Makefile.PL
 libdate-simple-perl,https://salsa.debian.org/perl-team/modules/packages/libdate-simple-perl,,make,,,,,,,,Makefile.PL
 libfilesys-df-perl.faults,https://salsa.debian.org/perl-team/modules/packages/libfilesys-df-perl,,make,,,,,,,,Makefile.PL
-crda,https://salsa.debian.org/kernel-team/crda,,make,,,,,,,,open here https://github.com/mcgrof/crda; unable to rebuild -- https://github.com/mcgrof/crda/blob/master/CONTRIBUTING
+crda,https://github.com/mcgrof/crda,,make,0,8,0,0,5,0,0,opened,
 keyutils,https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git,,make,,,,,,,,Not PRs interface
 evolution,https://github.com/GNOME/evolution,,make,,,,,,,,cmake
 anna,https://salsa.debian.org/installer-team/anna,50758d8bf2ff07421fcf3ea99e6ee3db41e57f3b,make,0,1,0,0,0,0,fixed,
