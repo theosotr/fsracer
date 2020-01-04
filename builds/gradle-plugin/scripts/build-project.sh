@@ -108,9 +108,9 @@ if [ $strace -eq 1 ]; then
   strace -s 300 \
     -o $project_out/$project.strace \
     -e "$(tr -s '\r\n' ',' < $HOME/syscalls.txt | sed -e 's/,$/\n/')" \
-    -f $gradlew build --no-build-cache --no-parallel 2>&1 > out&
+    -f bash -c "./gradlew build --no-build-cache --no-parallel > out 2>&1" &
   pid=$!
-  timeout 60m $dir/polling.sh
+  timeout 90m $dir/polling.sh
   sudo -S kill -s KILL $pid
 else
   echo "Building project without strace..."
