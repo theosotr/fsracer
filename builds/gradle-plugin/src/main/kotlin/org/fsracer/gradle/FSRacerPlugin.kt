@@ -20,6 +20,9 @@ const val GRADLE_PREFIX = "##GRADLE##"
 
 
 class FSRacerPlugin : Plugin<Project> {
+    companion object {
+        val outputs : MutableMap<String, MutableSet<String>> = mutableMapOf()
+    }
 
     fun processTaskDependencies(taskName: String, task: Task,
                                 taskDependencies: TaskDependency,
@@ -40,14 +43,27 @@ class FSRacerPlugin : Plugin<Project> {
         println("${GRADLE_PREFIX} newTask ${taskName} W 1")
         task.inputs.files.forEach { input ->
             val res = constrctResourceName(input.absolutePath)
+            val tasks = outputs.get(res)
+            if (tasks != null) {
+                tasks
+                .forEach { d ->
+                    println("${GRADLE_PREFIX} dependsOn ${taskName} ${d}")
+                }
+            }
             println("${GRADLE_PREFIX} consumes ${taskName} ${res}")
         }
         task.outputs.files.forEach { output ->
             val res = constrctResourceName(output.absolutePath)
+            if (!outputs.contains(res)) {
+                outputs.put(res, mutableSetOf(taskName))
+            } else {
+                outputs.get(res)?.add(taskName)
+            }
             println("${GRADLE_PREFIX} produces ${taskName} ${res}")
         }
         processTaskDependencies(taskName, task, task.getTaskDependencies(), false)
         processTaskDependencies(taskName, task, task.getMustRunAfter(), false)
+        processTaskDependencies(taskName, task, task.getShouldRunAfter(), false)
         processTaskDependencies(taskName, task, task.getFinalizedBy(), true)
         println("${GRADLE_PREFIX} Begin ${taskName}")
     }

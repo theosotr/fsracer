@@ -46,5 +46,6 @@ RUN gradle build
 ENV PLUGIN_JAR_DIR=$HOME/plugin/build/libs/
 
 COPY ./gradle-plugin/scripts/build-project.sh /usr/local/bin/build-project
+COPY ./gradle-plugin/scripts/polling.sh /usr/local/bin/polling.sh
 
 WORKDIR $HOME
