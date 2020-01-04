@@ -1,0 +1,18 @@
+23,25d22
+< /build/lldpd/lldpd-1.0.3/src/compat/empty.c
+< /build/lldpd/lldpd-1.0.3/src/compat/empty.lo
+< /build/lldpd/lldpd-1.0.3/src/ctl.c
+27d23
+< /build/lldpd/lldpd-1.0.3/src/ctl.lo
+41d36
+< /build/lldpd/lldpd-1.0.3/src/lldpd-structs.c
+43,44d37
+< /build/lldpd/lldpd-1.0.3/src/lldpd-structs.lo
+< /build/lldpd/lldpd-1.0.3/src/log.c
+46,47d38
+< /build/lldpd/lldpd-1.0.3/src/log.lo
+< /build/lldpd/lldpd-1.0.3/src/marshal.c
+49,51d39
+< /build/lldpd/lldpd-1.0.3/src/marshal.lo
+< /build/lldpd/lldpd-1.0.3/src/version.c
+< /build/lldpd/lldpd-1.0.3/src/version.lo

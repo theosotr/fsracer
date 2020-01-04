@@ -1,0 +1,41 @@
+20a21,52
+> /build/synaptic/synaptic-0.84.6/doc/html/C/figures/synaptic-categories.png
+> /build/synaptic/synaptic-0.84.6/doc/html/C/figures/synaptic-filter.png
+> /build/synaptic/synaptic-0.84.6/doc/html/C/figures/synaptic-packagedetails.png
+> /build/synaptic/synaptic-0.84.6/doc/html/C/figures/synaptic-packagelist.png
+> /build/synaptic/synaptic-0.84.6/doc/html/C/figures/synaptic-repositories.png
+> /build/synaptic/synaptic-0.84.6/doc/html/C/figures/synaptic-start.png
+> /build/synaptic/synaptic-0.84.6/doc/html/C/figures/synaptic-toolbar.png
+> /build/synaptic/synaptic-0.84.6/doc/html/C/synaptic.proc
+> /build/synaptic/synaptic-0.84.6/doc/html/es/figures/synaptic-categories.png
+> /build/synaptic/synaptic-0.84.6/doc/html/es/figures/synaptic-filter.png
+> /build/synaptic/synaptic-0.84.6/doc/html/es/figures/synaptic-packagedetails.png
+> /build/synaptic/synaptic-0.84.6/doc/html/es/figures/synaptic-packagelist.png
+> /build/synaptic/synaptic-0.84.6/doc/html/es/figures/synaptic-repositories.png
+> /build/synaptic/synaptic-0.84.6/doc/html/es/figures/synaptic-start.png
+> /build/synaptic/synaptic-0.84.6/doc/html/es/figures/synaptic-toolbar.png
+> /build/synaptic/synaptic-0.84.6/doc/html/es/synaptic.proc
+> /build/synaptic/synaptic-0.84.6/doc/html/hr/figures/synaptic-categories.png
+> /build/synaptic/synaptic-0.84.6/doc/html/hr/figures/synaptic-filter.png
+> /build/synaptic/synaptic-0.84.6/doc/html/hr/figures/synaptic-packagedetails.png
+> /build/synaptic/synaptic-0.84.6/doc/html/hr/figures/synaptic-packagelist.png
+> /build/synaptic/synaptic-0.84.6/doc/html/hr/figures/synaptic-repositories.png
+> /build/synaptic/synaptic-0.84.6/doc/html/hr/figures/synaptic-start.png
+> /build/synaptic/synaptic-0.84.6/doc/html/hr/figures/synaptic-toolbar.png
+> /build/synaptic/synaptic-0.84.6/doc/html/hr/synaptic.proc
+> /build/synaptic/synaptic-0.84.6/doc/html/sv/figures/synaptic-categories.png
+> /build/synaptic/synaptic-0.84.6/doc/html/sv/figures/synaptic-filter.png
+> /build/synaptic/synaptic-0.84.6/doc/html/sv/figures/synaptic-packagedetails.png
+> /build/synaptic/synaptic-0.84.6/doc/html/sv/figures/synaptic-packagelist.png
+> /build/synaptic/synaptic-0.84.6/doc/html/sv/figures/synaptic-repositories.png
+> /build/synaptic/synaptic-0.84.6/doc/html/sv/figures/synaptic-start.png
+> /build/synaptic/synaptic-0.84.6/doc/html/sv/figures/synaptic-toolbar.png
+> /build/synaptic/synaptic-0.84.6/doc/html/sv/synaptic.proc
+61d92
+< /build/synaptic/synaptic-0.84.6/help/C/gpl.xml
+69d99
+< /build/synaptic/synaptic-0.84.6/help/es/gpl.xml
+77d106
+< /build/synaptic/synaptic-0.84.6/help/hr/gpl.xml
+85d113
+< /build/synaptic/synaptic-0.84.6/help/sv/gpl.xml

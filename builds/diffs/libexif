@@ -1,0 +1,35 @@
+1,4d0
+< /build/libexif/libexif-0.6.21/doc/Doxyfile
+< /build/libexif/libexif-0.6.21/libexif/Makefile
+< /build/libexif/libexif-0.6.21/libexif/Makefile.am
+< /build/libexif/libexif-0.6.21/libexif/Makefile.in
+6d1
+< /build/libexif/libexif-0.6.21/libexif/canon/exif-mnote-data-canon.c
+8d2
+< /build/libexif/libexif-0.6.21/libexif/canon/mnote-canon-entry.c
+10d3
+< /build/libexif/libexif-0.6.21/libexif/canon/mnote-canon-tag.c
+56d48
+< /build/libexif/libexif-0.6.21/libexif/fuji/exif-mnote-data-fuji.c
+58d49
+< /build/libexif/libexif-0.6.21/libexif/fuji/mnote-fuji-entry.c
+60d50
+< /build/libexif/libexif-0.6.21/libexif/fuji/mnote-fuji-tag.c
+72d61
+< /build/libexif/libexif-0.6.21/libexif/olympus/exif-mnote-data-olympus.c
+74d62
+< /build/libexif/libexif-0.6.21/libexif/olympus/mnote-olympus-entry.c
+76d63
+< /build/libexif/libexif-0.6.21/libexif/olympus/mnote-olympus-tag.c
+78d64
+< /build/libexif/libexif-0.6.21/libexif/pentax/exif-mnote-data-pentax.c
+80d65
+< /build/libexif/libexif-0.6.21/libexif/pentax/mnote-pentax-entry.c
+82d66
+< /build/libexif/libexif-0.6.21/libexif/pentax/mnote-pentax-tag.c
+84,88d67
+< /sys/devices/system/cpu/online
+< /var/cache/fontconfig/48e59cc7-6c6f-4d00-903e-a8d2b5f65238-le64.cache-7
+< /var/cache/fontconfig/85054d34-c43a-44d4-9d9d-8b5d62723b85-le64.cache-7
+< /var/cache/fontconfig/a46a2ab6-a1a1-4908-9211-0fdf61e42bb4-le64.cache-7
+< /var/cache/fontconfig/ae579ffb-26e8-4afe-9cc3-7bc63684d65d-le64.cache-7

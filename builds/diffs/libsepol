@@ -1,0 +1,102 @@
+2,3d1
+< /build/libsepol/libsepol-2.8/cil/src/cil.c
+< /build/libsepol/libsepol-2.8/cil/src/cil_binary.c
+5d2
+< /build/libsepol/libsepol-2.8/cil/src/cil_build_ast.c
+7d3
+< /build/libsepol/libsepol-2.8/cil/src/cil_copy_ast.c
+9d4
+< /build/libsepol/libsepol-2.8/cil/src/cil_find.c
+12d6
+< /build/libsepol/libsepol-2.8/cil/src/cil_fqn.c
+16,17d9
+< /build/libsepol/libsepol-2.8/cil/src/cil_lexer.l
+< /build/libsepol/libsepol-2.8/cil/src/cil_list.c
+19d10
+< /build/libsepol/libsepol-2.8/cil/src/cil_log.c
+21d11
+< /build/libsepol/libsepol-2.8/cil/src/cil_mem.c
+23d12
+< /build/libsepol/libsepol-2.8/cil/src/cil_parser.c
+25d13
+< /build/libsepol/libsepol-2.8/cil/src/cil_policy.c
+27d14
+< /build/libsepol/libsepol-2.8/cil/src/cil_post.c
+29d15
+< /build/libsepol/libsepol-2.8/cil/src/cil_reset_ast.c
+31d16
+< /build/libsepol/libsepol-2.8/cil/src/cil_resolve_ast.c
+33d17
+< /build/libsepol/libsepol-2.8/cil/src/cil_stack.c
+35d18
+< /build/libsepol/libsepol-2.8/cil/src/cil_strpool.c
+37d19
+< /build/libsepol/libsepol-2.8/cil/src/cil_symtab.c
+39d20
+< /build/libsepol/libsepol-2.8/cil/src/cil_tree.c
+41d21
+< /build/libsepol/libsepol-2.8/cil/src/cil_verify.c
+87d66
+< /build/libsepol/libsepol-2.8/src/assertion.c
+89,90d67
+< /build/libsepol/libsepol-2.8/src/avrule_block.c
+< /build/libsepol/libsepol-2.8/src/avtab.c
+92,96d68
+< /build/libsepol/libsepol-2.8/src/boolean_record.c
+< /build/libsepol/libsepol-2.8/src/booleans.c
+< /build/libsepol/libsepol-2.8/src/conditional.c
+< /build/libsepol/libsepol-2.8/src/constraint.c
+< /build/libsepol/libsepol-2.8/src/context.c
+99,100d70
+< /build/libsepol/libsepol-2.8/src/context_record.c
+< /build/libsepol/libsepol-2.8/src/debug.c
+103,107d72
+< /build/libsepol/libsepol-2.8/src/ebitmap.c
+< /build/libsepol/libsepol-2.8/src/expand.c
+< /build/libsepol/libsepol-2.8/src/genbools.c
+< /build/libsepol/libsepol-2.8/src/genusers.c
+< /build/libsepol/libsepol-2.8/src/handle.c
+109,110d73
+< /build/libsepol/libsepol-2.8/src/hashtab.c
+< /build/libsepol/libsepol-2.8/src/hierarchy.c
+112,113d74
+< /build/libsepol/libsepol-2.8/src/ibendport_record.c
+< /build/libsepol/libsepol-2.8/src/ibendports.c
+115,116d75
+< /build/libsepol/libsepol-2.8/src/ibpkey_record.c
+< /build/libsepol/libsepol-2.8/src/ibpkeys.c
+118,121d76
+< /build/libsepol/libsepol-2.8/src/iface_record.c
+< /build/libsepol/libsepol-2.8/src/interfaces.c
+< /build/libsepol/libsepol-2.8/src/kernel_to_cil.c
+< /build/libsepol/libsepol-2.8/src/kernel_to_common.c
+123,126d77
+< /build/libsepol/libsepol-2.8/src/kernel_to_conf.c
+< /build/libsepol/libsepol-2.8/src/libsepol.map.in
+< /build/libsepol/libsepol-2.8/src/link.c
+< /build/libsepol/libsepol-2.8/src/mls.c
+128d78
+< /build/libsepol/libsepol-2.8/src/module.c
+130d79
+< /build/libsepol/libsepol-2.8/src/module_to_cil.c
+132,136d80
+< /build/libsepol/libsepol-2.8/src/node_record.c
+< /build/libsepol/libsepol-2.8/src/nodes.c
+< /build/libsepol/libsepol-2.8/src/polcaps.c
+< /build/libsepol/libsepol-2.8/src/policydb.c
+< /build/libsepol/libsepol-2.8/src/policydb_convert.c
+138d81
+< /build/libsepol/libsepol-2.8/src/policydb_public.c
+140,141d82
+< /build/libsepol/libsepol-2.8/src/port_record.c
+< /build/libsepol/libsepol-2.8/src/ports.c
+143,146d83
+< /build/libsepol/libsepol-2.8/src/roles.c
+< /build/libsepol/libsepol-2.8/src/services.c
+< /build/libsepol/libsepol-2.8/src/sidtab.c
+< /build/libsepol/libsepol-2.8/src/symtab.c
+148,151d84
+< /build/libsepol/libsepol-2.8/src/user_record.c
+< /build/libsepol/libsepol-2.8/src/users.c
+< /build/libsepol/libsepol-2.8/src/util.c
+< /build/libsepol/libsepol-2.8/src/write.c

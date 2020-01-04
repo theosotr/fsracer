@@ -1,0 +1,51 @@
+1,20c1,25
+< /build/procmail/procmail-3.22/Makefile
+< /build/procmail/procmail-3.22/patchlevel.h
+< /build/procmail/procmail-3.22/src/Makefile
+< /build/procmail/procmail-3.22/src/Makefile.0
+< /build/procmail/procmail-3.22/src/acommon.h
+< /build/procmail/procmail-3.22/src/autoconf
+< /build/procmail/procmail-3.22/src/common.h
+< /build/procmail/procmail-3.22/src/cstdio.h
+< /build/procmail/procmail-3.22/src/foldinfo.h
+< /build/procmail/procmail-3.22/src/goodies.h
+< /build/procmail/procmail-3.22/src/includes.h
+< /build/procmail/procmail-3.22/src/lastdirsep.h
+< /build/procmail/procmail-3.22/src/lmtp.h
+< /build/procmail/procmail-3.22/src/locking.h
+< /build/procmail/procmail-3.22/src/manconf.c
+< /build/procmail/procmail-3.22/src/misc.h
+< /build/procmail/procmail-3.22/src/network.h
+< /build/procmail/procmail-3.22/src/procmail.h
+< /build/procmail/procmail-3.22/src/robust.h
+< /build/procmail/procmail-3.22/src/shell.h
+---
+> /build/procmail/procmail-3.22/man/mansed
+> /build/procmail/procmail-3.22/src/acommon.c
+> /build/procmail/procmail-3.22/src/common.c
+> /build/procmail/procmail-3.22/src/comsat.c
+> /build/procmail/procmail-3.22/src/cstdio.c
+> /build/procmail/procmail-3.22/src/ecommon.c
+> /build/procmail/procmail-3.22/src/exopen.c
+> /build/procmail/procmail-3.22/src/fields.c
+> /build/procmail/procmail-3.22/src/foldinfo.c
+> /build/procmail/procmail-3.22/src/formail.c
+> /build/procmail/procmail-3.22/src/formisc.c
+> /build/procmail/procmail-3.22/src/from.c
+> /build/procmail/procmail-3.22/src/goodies.c
+> /build/procmail/procmail-3.22/src/lastdirsep.c
+> /build/procmail/procmail-3.22/src/lmtp.c
+> /build/procmail/procmail-3.22/src/lockfile.c
+> /build/procmail/procmail-3.22/src/locking.c
+> /build/procmail/procmail-3.22/src/mailfold.c
+> /build/procmail/procmail-3.22/src/mcommon.c
+> /build/procmail/procmail-3.22/src/memblk.c
+> /build/procmail/procmail-3.22/src/misc.c
+> /build/procmail/procmail-3.22/src/pipes.c
+> /build/procmail/procmail-3.22/src/procmail.c
+> /build/procmail/procmail-3.22/src/regexp.c
+> /build/procmail/procmail-3.22/src/robust.c
+22c27
+< /build/procmail/procmail-3.22/src/sublib.h
+---
+> /build/procmail/procmail-3.22/src/variables.c

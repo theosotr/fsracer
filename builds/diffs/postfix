@@ -1,0 +1,772 @@
+1c1,5
+< /build/postfix/postfix-3.4.7/conf/master.cf
+---
+> /build/postfix/postfix-3.4.7/include/abounce.h
+> /build/postfix/postfix-3.4.7/include/addr_match_list.h
+> /build/postfix/postfix-3.4.7/include/anvil_clnt.h
+> /build/postfix/postfix-3.4.7/include/argv.h
+> /build/postfix/postfix-3.4.7/include/argv_attr.h
+3a8
+> /build/postfix/postfix-3.4.7/include/attr_override.h
+4a10,12
+> /build/postfix/postfix-3.4.7/include/base32_code.h
+> /build/postfix/postfix-3.4.7/include/base64_code.h
+> /build/postfix/postfix-3.4.7/include/been_here.h
+5a14,17
+> /build/postfix/postfix-3.4.7/include/bounce.h
+> /build/postfix/postfix-3.4.7/include/bounce_log.h
+> /build/postfix/postfix-3.4.7/include/canon_addr.h
+> /build/postfix/postfix-3.4.7/include/cfg_parser.h
+7a20
+> /build/postfix/postfix-3.4.7/include/cidr_match.h
+8a22,23
+> /build/postfix/postfix-3.4.7/include/cleanup_user.h
+> /build/postfix/postfix-3.4.7/include/clnt_stream.h
+9a25
+> /build/postfix/postfix-3.4.7/include/config.h
+10a27,40
+> /build/postfix/postfix-3.4.7/include/conv_time.h
+> /build/postfix/postfix-3.4.7/include/ctable.h
+> /build/postfix/postfix-3.4.7/include/data_redirect.h
+> /build/postfix/postfix-3.4.7/include/db_common.h
+> /build/postfix/postfix-3.4.7/include/debug_peer.h
+> /build/postfix/postfix-3.4.7/include/debug_process.h
+> /build/postfix/postfix-3.4.7/include/defer.h
+> /build/postfix/postfix-3.4.7/include/deliver_completed.h
+> /build/postfix/postfix-3.4.7/include/deliver_flock.h
+> /build/postfix/postfix-3.4.7/include/deliver_pass.h
+> /build/postfix/postfix-3.4.7/include/deliver_request.h
+> /build/postfix/postfix-3.4.7/include/delivered_hdr.h
+> /build/postfix/postfix-3.4.7/include/dict.h
+> /build/postfix/postfix-3.4.7/include/dict_cache.h
+11a42
+> /build/postfix/postfix-3.4.7/include/dict_cidr.h
+13a45
+> /build/postfix/postfix-3.4.7/include/dict_env.h
+14a47,49
+> /build/postfix/postfix-3.4.7/include/dict_ht.h
+> /build/postfix/postfix-3.4.7/include/dict_inline.h
+> /build/postfix/postfix-3.4.7/include/dict_ldap.h
+15a51,61
+> /build/postfix/postfix-3.4.7/include/dict_memcache.h
+> /build/postfix/postfix-3.4.7/include/dict_mysql.h
+> /build/postfix/postfix-3.4.7/include/dict_ni.h
+> /build/postfix/postfix-3.4.7/include/dict_nis.h
+> /build/postfix/postfix-3.4.7/include/dict_nisplus.h
+> /build/postfix/postfix-3.4.7/include/dict_pcre.h
+> /build/postfix/postfix-3.4.7/include/dict_pgsql.h
+> /build/postfix/postfix-3.4.7/include/dict_pipe.h
+> /build/postfix/postfix-3.4.7/include/dict_proxy.h
+> /build/postfix/postfix-3.4.7/include/dict_random.h
+> /build/postfix/postfix-3.4.7/include/dict_regexp.h
+16a63,64
+> /build/postfix/postfix-3.4.7/include/dict_sockmap.h
+> /build/postfix/postfix-3.4.7/include/dict_sqlite.h
+17a66,69
+> /build/postfix/postfix-3.4.7/include/dict_tcp.h
+> /build/postfix/postfix-3.4.7/include/dict_thash.h
+> /build/postfix/postfix-3.4.7/include/dict_union.h
+> /build/postfix/postfix-3.4.7/include/dict_unix.h
+18a71,84
+> /build/postfix/postfix-3.4.7/include/dns.h
+> /build/postfix/postfix-3.4.7/include/domain_list.h
+> /build/postfix/postfix-3.4.7/include/dot_lockfile.h
+> /build/postfix/postfix-3.4.7/include/dot_lockfile_as.h
+> /build/postfix/postfix-3.4.7/include/dsb_scan.h
+> /build/postfix/postfix-3.4.7/include/dsn.h
+> /build/postfix/postfix-3.4.7/include/dsn_buf.h
+> /build/postfix/postfix-3.4.7/include/dsn_filter.h
+> /build/postfix/postfix-3.4.7/include/dsn_mask.h
+> /build/postfix/postfix-3.4.7/include/dsn_print.h
+> /build/postfix/postfix-3.4.7/include/dsn_util.h
+> /build/postfix/postfix-3.4.7/include/dynamicmaps.h
+> /build/postfix/postfix-3.4.7/include/edit_file.h
+> /build/postfix/postfix-3.4.7/include/ehlo_mask.h
+20a87,91
+> /build/postfix/postfix-3.4.7/include/ext_prop.h
+> /build/postfix/postfix-3.4.7/include/file_id.h
+> /build/postfix/postfix-3.4.7/include/find_inet.h
+> /build/postfix/postfix-3.4.7/include/flush_clnt.h
+> /build/postfix/postfix-3.4.7/include/fold_addr.h
+21a93,95
+> /build/postfix/postfix-3.4.7/include/fsspace.h
+> /build/postfix/postfix-3.4.7/include/fullname.h
+> /build/postfix/postfix-3.4.7/include/get_domainname.h
+22a97,103
+> /build/postfix/postfix-3.4.7/include/haproxy_srvr.h
+> /build/postfix/postfix-3.4.7/include/header_body_checks.h
+> /build/postfix/postfix-3.4.7/include/header_opts.h
+> /build/postfix/postfix-3.4.7/include/header_token.h
+> /build/postfix/postfix-3.4.7/include/hex_code.h
+> /build/postfix/postfix-3.4.7/include/hex_quote.h
+> /build/postfix/postfix-3.4.7/include/host_port.h
+27a109,110
+> /build/postfix/postfix-3.4.7/include/input_transp.h
+> /build/postfix/postfix-3.4.7/include/int_filt.h
+28a112,119
+> /build/postfix/postfix-3.4.7/include/ip_match.h
+> /build/postfix/postfix-3.4.7/include/is_header.h
+> /build/postfix/postfix-3.4.7/include/killme_after.h
+> /build/postfix/postfix-3.4.7/include/lex_822.h
+> /build/postfix/postfix-3.4.7/include/line_number.h
+> /build/postfix/postfix-3.4.7/include/line_wrap.h
+> /build/postfix/postfix-3.4.7/include/listen.h
+> /build/postfix/postfix-3.4.7/include/load_file.h
+29a121
+> /build/postfix/postfix-3.4.7/include/log_adhoc.h
+30a123
+> /build/postfix/postfix-3.4.7/include/lstat_as.h
+32a126,138
+> /build/postfix/postfix-3.4.7/include/mail_addr.h
+> /build/postfix/postfix-3.4.7/include/mail_addr_crunch.h
+> /build/postfix/postfix-3.4.7/include/mail_addr_find.h
+> /build/postfix/postfix-3.4.7/include/mail_addr_form.h
+> /build/postfix/postfix-3.4.7/include/mail_addr_map.h
+> /build/postfix/postfix-3.4.7/include/mail_conf.h
+> /build/postfix/postfix-3.4.7/include/mail_copy.h
+> /build/postfix/postfix-3.4.7/include/mail_date.h
+> /build/postfix/postfix-3.4.7/include/mail_dict.h
+> /build/postfix/postfix-3.4.7/include/mail_error.h
+> /build/postfix/postfix-3.4.7/include/mail_flow.h
+> /build/postfix/postfix-3.4.7/include/mail_flush.h
+> /build/postfix/postfix-3.4.7/include/mail_open_ok.h
+33a140,146
+> /build/postfix/postfix-3.4.7/include/mail_parm_split.h
+> /build/postfix/postfix-3.4.7/include/mail_proto.h
+> /build/postfix/postfix-3.4.7/include/mail_queue.h
+> /build/postfix/postfix-3.4.7/include/mail_run.h
+> /build/postfix/postfix-3.4.7/include/mail_scan_dir.h
+> /build/postfix/postfix-3.4.7/include/mail_server.h
+> /build/postfix/postfix-3.4.7/include/mail_stream.h
+34a148
+> /build/postfix/postfix-3.4.7/include/mail_version.h
+36a151,152
+> /build/postfix/postfix-3.4.7/include/maps.h
+> /build/postfix/postfix-3.4.7/include/mark_corrupt.h
+37a154
+> /build/postfix/postfix-3.4.7/include/master_proto.h
+38a156,161
+> /build/postfix/postfix-3.4.7/include/match_parent_style.h
+> /build/postfix/postfix-3.4.7/include/match_service.h
+> /build/postfix/postfix-3.4.7/include/mbox_conf.h
+> /build/postfix/postfix-3.4.7/include/mbox_open.h
+> /build/postfix/postfix-3.4.7/include/memcache_proto.h
+> /build/postfix/postfix-3.4.7/include/midna_adomain.h
+39a163,166
+> /build/postfix/postfix-3.4.7/include/milter.h
+> /build/postfix/postfix-3.4.7/include/mime_state.h
+> /build/postfix/postfix-3.4.7/include/mkmap.h
+> /build/postfix/postfix-3.4.7/include/msg.h
+40a168,169
+> /build/postfix/postfix-3.4.7/include/msg_output.h
+> /build/postfix/postfix-3.4.7/include/msg_stats.h
+42a172
+> /build/postfix/postfix-3.4.7/include/mvect.h
+43a174,177
+> /build/postfix/postfix-3.4.7/include/myflock.h
+> /build/postfix/postfix-3.4.7/include/mymalloc.h
+> /build/postfix/postfix-3.4.7/include/mynetworks.h
+> /build/postfix/postfix-3.4.7/include/mypwd.h
+44a179
+> /build/postfix/postfix-3.4.7/include/namadr_list.h
+46a182,183
+> /build/postfix/postfix-3.4.7/include/nbbio.h
+> /build/postfix/postfix-3.4.7/include/netstring.h
+47a185,200
+> /build/postfix/postfix-3.4.7/include/off_cvt.h
+> /build/postfix/postfix-3.4.7/include/open_as.h
+> /build/postfix/postfix-3.4.7/include/open_lock.h
+> /build/postfix/postfix-3.4.7/include/opened.h
+> /build/postfix/postfix-3.4.7/include/own_inet_addr.h
+> /build/postfix/postfix-3.4.7/include/percentm.h
+> /build/postfix/postfix-3.4.7/include/pipe_command.h
+> /build/postfix/postfix-3.4.7/include/posix_signals.h
+> /build/postfix/postfix-3.4.7/include/post_mail.h
+> /build/postfix/postfix-3.4.7/include/qmgr_user.h
+> /build/postfix/postfix-3.4.7/include/qmqp_proto.h
+> /build/postfix/postfix-3.4.7/include/quote_821_local.h
+> /build/postfix/postfix-3.4.7/include/quote_822_local.h
+> /build/postfix/postfix-3.4.7/include/quote_flags.h
+> /build/postfix/postfix-3.4.7/include/rcpt_buf.h
+> /build/postfix/postfix-3.4.7/include/rcpt_print.h
+48a202,209
+> /build/postfix/postfix-3.4.7/include/rec_attr_map.h
+> /build/postfix/postfix-3.4.7/include/rec_streamlf.h
+> /build/postfix/postfix-3.4.7/include/rec_type.h
+> /build/postfix/postfix-3.4.7/include/recipient_list.h
+> /build/postfix/postfix-3.4.7/include/record.h
+> /build/postfix/postfix-3.4.7/include/resolve_clnt.h
+> /build/postfix/postfix-3.4.7/include/resolve_local.h
+> /build/postfix/postfix-3.4.7/include/rewrite_clnt.h
+51a213,215
+> /build/postfix/postfix-3.4.7/include/safe_ultostr.h
+> /build/postfix/postfix-3.4.7/include/sane_accept.h
+> /build/postfix/postfix-3.4.7/include/sane_connect.h
+52a217,219
+> /build/postfix/postfix-3.4.7/include/sane_socketpair.h
+> /build/postfix/postfix-3.4.7/include/sane_time.h
+> /build/postfix/postfix-3.4.7/include/scache.h
+53a221,222
+> /build/postfix/postfix-3.4.7/include/sent.h
+> /build/postfix/postfix-3.4.7/include/server_acl.h
+56a226,229
+> /build/postfix/postfix-3.4.7/include/slmdb.h
+> /build/postfix/postfix-3.4.7/include/smtp_reply_footer.h
+> /build/postfix/postfix-3.4.7/include/smtp_stream.h
+> /build/postfix/postfix-3.4.7/include/smtputf8.h
+57a231,232
+> /build/postfix/postfix-3.4.7/include/spawn_command.h
+> /build/postfix/postfix-3.4.7/include/split_addr.h
+58a234,235
+> /build/postfix/postfix-3.4.7/include/stat_as.h
+> /build/postfix/postfix-3.4.7/include/string_list.h
+59a237,242
+> /build/postfix/postfix-3.4.7/include/strip_addr.h
+> /build/postfix/postfix-3.4.7/include/sys_defs.h
+> /build/postfix/postfix-3.4.7/include/sys_exits.h
+> /build/postfix/postfix-3.4.7/include/timecmp.h
+> /build/postfix/postfix-3.4.7/include/timed_connect.h
+> /build/postfix/postfix-3.4.7/include/timed_ipc.h
+60a244,250
+> /build/postfix/postfix-3.4.7/include/tls.h
+> /build/postfix/postfix-3.4.7/include/tls_mgr.h
+> /build/postfix/postfix-3.4.7/include/tls_prng.h
+> /build/postfix/postfix-3.4.7/include/tls_proxy.h
+> /build/postfix/postfix-3.4.7/include/tls_scache.h
+> /build/postfix/postfix-3.4.7/include/tok822.h
+> /build/postfix/postfix-3.4.7/include/trace.h
+61a252,254
+> /build/postfix/postfix-3.4.7/include/user_acl.h
+> /build/postfix/postfix-3.4.7/include/username.h
+> /build/postfix/postfix-3.4.7/include/uxtext.h
+62a256,257
+> /build/postfix/postfix-3.4.7/include/valid_mailhost_addr.h
+> /build/postfix/postfix-3.4.7/include/valid_utf8_hostname.h
+63a259,264
+> /build/postfix/postfix-3.4.7/include/vbuf_print.h
+> /build/postfix/postfix-3.4.7/include/verify.h
+> /build/postfix/postfix-3.4.7/include/verify_clnt.h
+> /build/postfix/postfix-3.4.7/include/verify_sender_addr.h
+> /build/postfix/postfix-3.4.7/include/verp_sender.h
+> /build/postfix/postfix-3.4.7/include/vstream.h
+66a268,282
+> /build/postfix/postfix-3.4.7/include/watchdog.h
+> /build/postfix/postfix-3.4.7/include/wildcard_inet_addr.h
+> /build/postfix/postfix-3.4.7/include/xsasl.h
+> /build/postfix/postfix-3.4.7/include/xtext.h
+> /build/postfix/postfix-3.4.7/lib/dict_cdb.o
+> /build/postfix/postfix-3.4.7/lib/dict_lmdb.o
+> /build/postfix/postfix-3.4.7/lib/dict_sdbm.o
+> /build/postfix/postfix-3.4.7/lib/postfix-cdb.so
+> /build/postfix/postfix-3.4.7/lib/postfix-ldap.so
+> /build/postfix/postfix-3.4.7/lib/postfix-lmdb.so
+> /build/postfix/postfix-3.4.7/lib/postfix-mysql.so
+> /build/postfix/postfix-3.4.7/lib/postfix-pcre.so
+> /build/postfix/postfix-3.4.7/lib/postfix-pgsql.so
+> /build/postfix/postfix-3.4.7/lib/postfix-sqlite.so
+> /build/postfix/postfix-3.4.7/lib/slmdb.o
+99d314
+< /build/postfix/postfix-3.4.7/src/dns/dns.h
+117d331
+< /build/postfix/postfix-3.4.7/src/global/abounce.h
+119d332
+< /build/postfix/postfix-3.4.7/src/global/addr_match_list.h
+121d333
+< /build/postfix/postfix-3.4.7/src/global/anvil_clnt.h
+123d334
+< /build/postfix/postfix-3.4.7/src/global/attr_override.h
+125d335
+< /build/postfix/postfix-3.4.7/src/global/been_here.h
+127d336
+< /build/postfix/postfix-3.4.7/src/global/bounce.h
+129d337
+< /build/postfix/postfix-3.4.7/src/global/bounce_log.h
+131d338
+< /build/postfix/postfix-3.4.7/src/global/canon_addr.h
+133d339
+< /build/postfix/postfix-3.4.7/src/global/cfg_parser.h
+136d341
+< /build/postfix/postfix-3.4.7/src/global/cleanup_user.h
+138d342
+< /build/postfix/postfix-3.4.7/src/global/clnt_stream.h
+140d343
+< /build/postfix/postfix-3.4.7/src/global/conv_time.h
+142d344
+< /build/postfix/postfix-3.4.7/src/global/data_redirect.h
+144d345
+< /build/postfix/postfix-3.4.7/src/global/db_common.h
+146d346
+< /build/postfix/postfix-3.4.7/src/global/debug_peer.h
+148d347
+< /build/postfix/postfix-3.4.7/src/global/debug_process.h
+150d348
+< /build/postfix/postfix-3.4.7/src/global/defer.h
+152d349
+< /build/postfix/postfix-3.4.7/src/global/deliver_completed.h
+154d350
+< /build/postfix/postfix-3.4.7/src/global/deliver_flock.h
+156d351
+< /build/postfix/postfix-3.4.7/src/global/deliver_pass.h
+158d352
+< /build/postfix/postfix-3.4.7/src/global/deliver_request.h
+160d353
+< /build/postfix/postfix-3.4.7/src/global/delivered_hdr.h
+162d354
+< /build/postfix/postfix-3.4.7/src/global/dict_ldap.h
+164d355
+< /build/postfix/postfix-3.4.7/src/global/dict_memcache.h
+166d356
+< /build/postfix/postfix-3.4.7/src/global/dict_mysql.h
+168d357
+< /build/postfix/postfix-3.4.7/src/global/dict_pgsql.h
+170d358
+< /build/postfix/postfix-3.4.7/src/global/dict_proxy.h
+172d359
+< /build/postfix/postfix-3.4.7/src/global/dict_sqlite.h
+174d360
+< /build/postfix/postfix-3.4.7/src/global/domain_list.h
+176d361
+< /build/postfix/postfix-3.4.7/src/global/dot_lockfile.h
+178d362
+< /build/postfix/postfix-3.4.7/src/global/dot_lockfile_as.h
+180d363
+< /build/postfix/postfix-3.4.7/src/global/dsb_scan.h
+182d364
+< /build/postfix/postfix-3.4.7/src/global/dsn.h
+184d365
+< /build/postfix/postfix-3.4.7/src/global/dsn_buf.h
+186d366
+< /build/postfix/postfix-3.4.7/src/global/dsn_filter.h
+188d367
+< /build/postfix/postfix-3.4.7/src/global/dsn_mask.h
+190d368
+< /build/postfix/postfix-3.4.7/src/global/dsn_print.h
+192d369
+< /build/postfix/postfix-3.4.7/src/global/dsn_util.h
+194d370
+< /build/postfix/postfix-3.4.7/src/global/dynamicmaps.h
+196d371
+< /build/postfix/postfix-3.4.7/src/global/ehlo_mask.h
+198d372
+< /build/postfix/postfix-3.4.7/src/global/ext_prop.h
+200d373
+< /build/postfix/postfix-3.4.7/src/global/file_id.h
+202d374
+< /build/postfix/postfix-3.4.7/src/global/flush_clnt.h
+204d375
+< /build/postfix/postfix-3.4.7/src/global/fold_addr.h
+206d376
+< /build/postfix/postfix-3.4.7/src/global/haproxy_srvr.h
+208d377
+< /build/postfix/postfix-3.4.7/src/global/header_body_checks.h
+210d378
+< /build/postfix/postfix-3.4.7/src/global/header_opts.h
+212d379
+< /build/postfix/postfix-3.4.7/src/global/header_token.h
+214d380
+< /build/postfix/postfix-3.4.7/src/global/input_transp.h
+216d381
+< /build/postfix/postfix-3.4.7/src/global/int_filt.h
+218,219d382
+< /build/postfix/postfix-3.4.7/src/global/is_header.h
+< /build/postfix/postfix-3.4.7/src/global/lex_822.h
+221d383
+< /build/postfix/postfix-3.4.7/src/global/log_adhoc.h
+223d384
+< /build/postfix/postfix-3.4.7/src/global/mail_addr.h
+225d385
+< /build/postfix/postfix-3.4.7/src/global/mail_addr_crunch.h
+227d386
+< /build/postfix/postfix-3.4.7/src/global/mail_addr_find.h
+229d387
+< /build/postfix/postfix-3.4.7/src/global/mail_addr_form.h
+231d388
+< /build/postfix/postfix-3.4.7/src/global/mail_addr_map.h
+235d391
+< /build/postfix/postfix-3.4.7/src/global/mail_conf.h
+246d401
+< /build/postfix/postfix-3.4.7/src/global/mail_copy.h
+248d402
+< /build/postfix/postfix-3.4.7/src/global/mail_date.h
+250d403
+< /build/postfix/postfix-3.4.7/src/global/mail_dict.h
+252d404
+< /build/postfix/postfix-3.4.7/src/global/mail_error.h
+254d405
+< /build/postfix/postfix-3.4.7/src/global/mail_flush.h
+256,258d406
+< /build/postfix/postfix-3.4.7/src/global/mail_open_ok.h
+< /build/postfix/postfix-3.4.7/src/global/mail_params.c
+< /build/postfix/postfix-3.4.7/src/global/mail_params.h
+260d407
+< /build/postfix/postfix-3.4.7/src/global/mail_parm_split.h
+262d408
+< /build/postfix/postfix-3.4.7/src/global/mail_proto.h
+264d409
+< /build/postfix/postfix-3.4.7/src/global/mail_queue.h
+266d410
+< /build/postfix/postfix-3.4.7/src/global/mail_run.h
+268d411
+< /build/postfix/postfix-3.4.7/src/global/mail_scan_dir.h
+270d412
+< /build/postfix/postfix-3.4.7/src/global/mail_stream.h
+272d413
+< /build/postfix/postfix-3.4.7/src/global/mail_task.h
+275d415
+< /build/postfix/postfix-3.4.7/src/global/mail_version.h
+277d416
+< /build/postfix/postfix-3.4.7/src/global/maillog_client.h
+279d417
+< /build/postfix/postfix-3.4.7/src/global/maps.h
+281d418
+< /build/postfix/postfix-3.4.7/src/global/mark_corrupt.h
+283d419
+< /build/postfix/postfix-3.4.7/src/global/match_parent_style.h
+285d420
+< /build/postfix/postfix-3.4.7/src/global/match_service.h
+287d421
+< /build/postfix/postfix-3.4.7/src/global/mbox_conf.h
+289d422
+< /build/postfix/postfix-3.4.7/src/global/mbox_open.h
+291d423
+< /build/postfix/postfix-3.4.7/src/global/memcache_proto.h
+293d424
+< /build/postfix/postfix-3.4.7/src/global/midna_adomain.h
+295,296d425
+< /build/postfix/postfix-3.4.7/src/global/mime_state.h
+< /build/postfix/postfix-3.4.7/src/global/mkmap.h
+305d433
+< /build/postfix/postfix-3.4.7/src/global/msg_stats.h
+309d436
+< /build/postfix/postfix-3.4.7/src/global/mynetworks.h
+311d437
+< /build/postfix/postfix-3.4.7/src/global/mypwd.h
+313d438
+< /build/postfix/postfix-3.4.7/src/global/namadr_list.h
+315d439
+< /build/postfix/postfix-3.4.7/src/global/off_cvt.h
+317d440
+< /build/postfix/postfix-3.4.7/src/global/opened.h
+319d441
+< /build/postfix/postfix-3.4.7/src/global/own_inet_addr.h
+321d442
+< /build/postfix/postfix-3.4.7/src/global/pipe_command.h
+323d443
+< /build/postfix/postfix-3.4.7/src/global/post_mail.h
+325d444
+< /build/postfix/postfix-3.4.7/src/global/quote_821_local.h
+327d445
+< /build/postfix/postfix-3.4.7/src/global/quote_822_local.h
+329d446
+< /build/postfix/postfix-3.4.7/src/global/quote_flags.h
+331d447
+< /build/postfix/postfix-3.4.7/src/global/rcpt_buf.h
+333d448
+< /build/postfix/postfix-3.4.7/src/global/rcpt_print.h
+336d450
+< /build/postfix/postfix-3.4.7/src/global/rec_attr_map.h
+338d451
+< /build/postfix/postfix-3.4.7/src/global/rec_streamlf.h
+340d452
+< /build/postfix/postfix-3.4.7/src/global/rec_type.h
+343d454
+< /build/postfix/postfix-3.4.7/src/global/recipient_list.h
+345d455
+< /build/postfix/postfix-3.4.7/src/global/record.h
+348d457
+< /build/postfix/postfix-3.4.7/src/global/resolve_clnt.h
+350d458
+< /build/postfix/postfix-3.4.7/src/global/resolve_local.h
+352d459
+< /build/postfix/postfix-3.4.7/src/global/rewrite_clnt.h
+354d460
+< /build/postfix/postfix-3.4.7/src/global/safe_ultostr.h
+356d461
+< /build/postfix/postfix-3.4.7/src/global/scache.h
+361d465
+< /build/postfix/postfix-3.4.7/src/global/sent.h
+363d466
+< /build/postfix/postfix-3.4.7/src/global/server_acl.h
+365d467
+< /build/postfix/postfix-3.4.7/src/global/smtp_reply_footer.h
+367d468
+< /build/postfix/postfix-3.4.7/src/global/smtp_stream.h
+369d469
+< /build/postfix/postfix-3.4.7/src/global/smtputf8.h
+371d470
+< /build/postfix/postfix-3.4.7/src/global/split_addr.h
+374d472
+< /build/postfix/postfix-3.4.7/src/global/string_list.h
+376d473
+< /build/postfix/postfix-3.4.7/src/global/strip_addr.h
+378d474
+< /build/postfix/postfix-3.4.7/src/global/sys_exits.h
+380,381d475
+< /build/postfix/postfix-3.4.7/src/global/timed_ipc.h
+< /build/postfix/postfix-3.4.7/src/global/tok822.h
+389d482
+< /build/postfix/postfix-3.4.7/src/global/trace.h
+391d483
+< /build/postfix/postfix-3.4.7/src/global/user_acl.h
+393d484
+< /build/postfix/postfix-3.4.7/src/global/uxtext.h
+395d485
+< /build/postfix/postfix-3.4.7/src/global/valid_mailhost_addr.h
+397d486
+< /build/postfix/postfix-3.4.7/src/global/verify.h
+399d487
+< /build/postfix/postfix-3.4.7/src/global/verify_clnt.h
+401d488
+< /build/postfix/postfix-3.4.7/src/global/verify_sender_addr.h
+403d489
+< /build/postfix/postfix-3.4.7/src/global/verp_sender.h
+405d490
+< /build/postfix/postfix-3.4.7/src/global/wildcard_inet_addr.h
+407d491
+< /build/postfix/postfix-3.4.7/src/global/xtext.h
+613,614d696
+< /build/postfix/postfix-3.4.7/src/util/argv.h
+< /build/postfix/postfix-3.4.7/src/util/argv_attr.h
+619d700
+< /build/postfix/postfix-3.4.7/src/util/attr.h
+621d701
+< /build/postfix/postfix-3.4.7/src/util/attr_clnt.h
+629d708
+< /build/postfix/postfix-3.4.7/src/util/auto_clnt.h
+632d710
+< /build/postfix/postfix-3.4.7/src/util/base32_code.h
+634d711
+< /build/postfix/postfix-3.4.7/src/util/base64_code.h
+637d713
+< /build/postfix/postfix-3.4.7/src/util/binhash.h
+639d714
+< /build/postfix/postfix-3.4.7/src/util/check_arg.h
+641d715
+< /build/postfix/postfix-3.4.7/src/util/chroot_uid.h
+643d716
+< /build/postfix/postfix-3.4.7/src/util/cidr_match.h
+645d717
+< /build/postfix/postfix-3.4.7/src/util/clean_env.h
+647d718
+< /build/postfix/postfix-3.4.7/src/util/compat_va_copy.h
+649d719
+< /build/postfix/postfix-3.4.7/src/util/connect.h
+651d720
+< /build/postfix/postfix-3.4.7/src/util/ctable.h
+653d721
+< /build/postfix/postfix-3.4.7/src/util/dict.h
+656d723
+< /build/postfix/postfix-3.4.7/src/util/dict_cache.h
+658d724
+< /build/postfix/postfix-3.4.7/src/util/dict_cdb.h
+660d725
+< /build/postfix/postfix-3.4.7/src/util/dict_cidr.h
+662d726
+< /build/postfix/postfix-3.4.7/src/util/dict_db.h
+664d727
+< /build/postfix/postfix-3.4.7/src/util/dict_dbm.h
+667d729
+< /build/postfix/postfix-3.4.7/src/util/dict_env.h
+669d730
+< /build/postfix/postfix-3.4.7/src/util/dict_fail.h
+672d732
+< /build/postfix/postfix-3.4.7/src/util/dict_ht.h
+674d733
+< /build/postfix/postfix-3.4.7/src/util/dict_inline.h
+676d734
+< /build/postfix/postfix-3.4.7/src/util/dict_lmdb.h
+678d735
+< /build/postfix/postfix-3.4.7/src/util/dict_ni.h
+680d736
+< /build/postfix/postfix-3.4.7/src/util/dict_nis.h
+682d737
+< /build/postfix/postfix-3.4.7/src/util/dict_nisplus.h
+685d739
+< /build/postfix/postfix-3.4.7/src/util/dict_pcre.h
+687d740
+< /build/postfix/postfix-3.4.7/src/util/dict_pipe.h
+689d741
+< /build/postfix/postfix-3.4.7/src/util/dict_random.h
+691d742
+< /build/postfix/postfix-3.4.7/src/util/dict_regexp.h
+693d743
+< /build/postfix/postfix-3.4.7/src/util/dict_sdbm.h
+695d744
+< /build/postfix/postfix-3.4.7/src/util/dict_sockmap.h
+697d745
+< /build/postfix/postfix-3.4.7/src/util/dict_static.h
+700d747
+< /build/postfix/postfix-3.4.7/src/util/dict_tcp.h
+703d749
+< /build/postfix/postfix-3.4.7/src/util/dict_thash.h
+705d750
+< /build/postfix/postfix-3.4.7/src/util/dict_union.h
+707d751
+< /build/postfix/postfix-3.4.7/src/util/dict_unix.h
+710d753
+< /build/postfix/postfix-3.4.7/src/util/dir_forest.h
+717d759
+< /build/postfix/postfix-3.4.7/src/util/edit_file.h
+720d761
+< /build/postfix/postfix-3.4.7/src/util/events.h
+722d762
+< /build/postfix/postfix-3.4.7/src/util/exec_command.h
+731d770
+< /build/postfix/postfix-3.4.7/src/util/find_inet.h
+733d771
+< /build/postfix/postfix-3.4.7/src/util/format_tv.h
+735d772
+< /build/postfix/postfix-3.4.7/src/util/fsspace.h
+737d773
+< /build/postfix/postfix-3.4.7/src/util/fullname.h
+740d775
+< /build/postfix/postfix-3.4.7/src/util/get_domainname.h
+742d776
+< /build/postfix/postfix-3.4.7/src/util/get_hostname.h
+744d777
+< /build/postfix/postfix-3.4.7/src/util/hex_code.h
+746d778
+< /build/postfix/postfix-3.4.7/src/util/hex_quote.h
+748d779
+< /build/postfix/postfix-3.4.7/src/util/host_port.h
+750d780
+< /build/postfix/postfix-3.4.7/src/util/htable.h
+752d781
+< /build/postfix/postfix-3.4.7/src/util/inet_addr_host.h
+754d782
+< /build/postfix/postfix-3.4.7/src/util/inet_addr_list.h
+756d783
+< /build/postfix/postfix-3.4.7/src/util/inet_addr_local.h
+760d786
+< /build/postfix/postfix-3.4.7/src/util/inet_proto.h
+765d790
+< /build/postfix/postfix-3.4.7/src/util/ip_match.h
+767d791
+< /build/postfix/postfix-3.4.7/src/util/killme_after.h
+769d792
+< /build/postfix/postfix-3.4.7/src/util/line_number.h
+771,772d793
+< /build/postfix/postfix-3.4.7/src/util/line_wrap.h
+< /build/postfix/postfix-3.4.7/src/util/listen.h
+774d794
+< /build/postfix/postfix-3.4.7/src/util/load_file.h
+776d795
+< /build/postfix/postfix-3.4.7/src/util/load_lib.h
+778d796
+< /build/postfix/postfix-3.4.7/src/util/logwriter.h
+781d798
+< /build/postfix/postfix-3.4.7/src/util/lstat_as.h
+783d799
+< /build/postfix/postfix-3.4.7/src/util/mac_expand.h
+785d800
+< /build/postfix/postfix-3.4.7/src/util/mac_parse.h
+787d801
+< /build/postfix/postfix-3.4.7/src/util/make_dirs.h
+789d802
+< /build/postfix/postfix-3.4.7/src/util/mask_addr.h
+791d803
+< /build/postfix/postfix-3.4.7/src/util/match_list.h
+794d805
+< /build/postfix/postfix-3.4.7/src/util/midna_domain.h
+796d806
+< /build/postfix/postfix-3.4.7/src/util/msg.h
+798d807
+< /build/postfix/postfix-3.4.7/src/util/msg_logger.h
+800d808
+< /build/postfix/postfix-3.4.7/src/util/msg_output.h
+803d810
+< /build/postfix/postfix-3.4.7/src/util/msg_syslog.h
+805d811
+< /build/postfix/postfix-3.4.7/src/util/msg_vstream.h
+807d812
+< /build/postfix/postfix-3.4.7/src/util/mvect.h
+809d813
+< /build/postfix/postfix-3.4.7/src/util/myaddrinfo.h
+811d814
+< /build/postfix/postfix-3.4.7/src/util/myflock.h
+813d815
+< /build/postfix/postfix-3.4.7/src/util/mymalloc.h
+815d816
+< /build/postfix/postfix-3.4.7/src/util/myrand.h
+818d818
+< /build/postfix/postfix-3.4.7/src/util/name_code.h
+820d819
+< /build/postfix/postfix-3.4.7/src/util/name_mask.h
+822d820
+< /build/postfix/postfix-3.4.7/src/util/nbbio.h
+824d821
+< /build/postfix/postfix-3.4.7/src/util/netstring.h
+828d824
+< /build/postfix/postfix-3.4.7/src/util/nvtable.h
+830d825
+< /build/postfix/postfix-3.4.7/src/util/open_as.h
+833d827
+< /build/postfix/postfix-3.4.7/src/util/open_lock.h
+838d831
+< /build/postfix/postfix-3.4.7/src/util/percentm.h
+841d833
+< /build/postfix/postfix-3.4.7/src/util/posix_signals.h
+845d836
+< /build/postfix/postfix-3.4.7/src/util/readlline.h
+848,849d838
+< /build/postfix/postfix-3.4.7/src/util/ring.h
+< /build/postfix/postfix-3.4.7/src/util/safe.h
+852d840
+< /build/postfix/postfix-3.4.7/src/util/safe_open.h
+854d841
+< /build/postfix/postfix-3.4.7/src/util/sane_accept.h
+857,858d843
+< /build/postfix/postfix-3.4.7/src/util/sane_connect.h
+< /build/postfix/postfix-3.4.7/src/util/sane_fsops.h
+862d846
+< /build/postfix/postfix-3.4.7/src/util/sane_socketpair.h
+864d847
+< /build/postfix/postfix-3.4.7/src/util/sane_time.h
+866d848
+< /build/postfix/postfix-3.4.7/src/util/scan_dir.h
+869d850
+< /build/postfix/postfix-3.4.7/src/util/set_eugid.h
+871d851
+< /build/postfix/postfix-3.4.7/src/util/set_ugid.h
+873d852
+< /build/postfix/postfix-3.4.7/src/util/sigdelay.h
+877d855
+< /build/postfix/postfix-3.4.7/src/util/sock_addr.h
+879d856
+< /build/postfix/postfix-3.4.7/src/util/spawn_command.h
+881d857
+< /build/postfix/postfix-3.4.7/src/util/split_at.h
+885d860
+< /build/postfix/postfix-3.4.7/src/util/stat_as.h
+894d868
+< /build/postfix/postfix-3.4.7/src/util/stringops.h
+896d869
+< /build/postfix/postfix-3.4.7/src/util/sys_defs.h
+898d870
+< /build/postfix/postfix-3.4.7/src/util/timecmp.h
+900d871
+< /build/postfix/postfix-3.4.7/src/util/timed_connect.h
+903d873
+< /build/postfix/postfix-3.4.7/src/util/timed_wait.h
+906d875
+< /build/postfix/postfix-3.4.7/src/util/trigger.h
+920d888
+< /build/postfix/postfix-3.4.7/src/util/username.h
+922d889
+< /build/postfix/postfix-3.4.7/src/util/valid_hostname.h
+924d890
+< /build/postfix/postfix-3.4.7/src/util/valid_utf8_hostname.h
+927d892
+< /build/postfix/postfix-3.4.7/src/util/vbuf.h
+929d893
+< /build/postfix/postfix-3.4.7/src/util/vbuf_print.h
+931d894
+< /build/postfix/postfix-3.4.7/src/util/vstream.h
+935d897
+< /build/postfix/postfix-3.4.7/src/util/vstring.h
+937d898
+< /build/postfix/postfix-3.4.7/src/util/vstring_vstream.h
+939d899
+< /build/postfix/postfix-3.4.7/src/util/warn_stat.h
+941d900
+< /build/postfix/postfix-3.4.7/src/util/watchdog.h

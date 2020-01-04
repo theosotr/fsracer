@@ -1,0 +1,13 @@
+3d2
+< /build/aria2/aria2-1.34.0/deps/wslay/lib/wslay_event.c
+5,6d3
+< /build/aria2/aria2-1.34.0/deps/wslay/lib/wslay_event.lo
+< /build/aria2/aria2-1.34.0/deps/wslay/lib/wslay_frame.c
+8,9d4
+< /build/aria2/aria2-1.34.0/deps/wslay/lib/wslay_frame.lo
+< /build/aria2/aria2-1.34.0/deps/wslay/lib/wslay_net.c
+11,12d5
+< /build/aria2/aria2-1.34.0/deps/wslay/lib/wslay_net.lo
+< /build/aria2/aria2-1.34.0/deps/wslay/lib/wslay_queue.c
+14d6
+< /build/aria2/aria2-1.34.0/deps/wslay/lib/wslay_queue.lo

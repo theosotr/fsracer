@@ -1,0 +1,10 @@
+0a1,4
+> /build/hdparm/hdparm-9.58+ds/fallocate.c
+> /build/hdparm/hdparm-9.58+ds/fibmap.c
+> /build/hdparm/hdparm-9.58+ds/geom.c
+> /build/hdparm/hdparm-9.58+ds/hdparm.c
+1a6
+> /build/hdparm/hdparm-9.58+ds/identify.c
+2a8,9
+> /build/hdparm/hdparm-9.58+ds/sysfs.c
+> /build/hdparm/hdparm-9.58+ds/wdidle3.c

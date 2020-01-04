@@ -1,0 +1,61 @@
+30,36d29
+< /build/bluez/bluez-5.50/lib/bluetooth.h
+< /build/bluez/bluez-5.50/lib/bnep.h
+< /build/bluez/bluez-5.50/lib/cmtp.h
+< /build/bluez/bluez-5.50/lib/hci.h
+< /build/bluez/bluez-5.50/lib/hci_lib.h
+< /build/bluez/bluez-5.50/lib/hidp.h
+< /build/bluez/bluez-5.50/lib/l2cap.h
+38,41d30
+< /build/bluez/bluez-5.50/lib/rfcomm.h
+< /build/bluez/bluez-5.50/lib/sco.h
+< /build/bluez/bluez-5.50/lib/sdp.h
+< /build/bluez/bluez-5.50/lib/sdp_lib.h
+70d58
+< /build/bluez/bluez-5.50/obexd/client/map-event.h
+78,83d65
+< /build/bluez/bluez-5.50/obexd/plugins/filesystem.h
+< /build/bluez/bluez-5.50/obexd/plugins/ftp.h
+< /build/bluez/bluez-5.50/obexd/plugins/messages.h
+< /build/bluez/bluez-5.50/obexd/plugins/phonebook.h
+< /build/bluez/bluez-5.50/obexd/plugins/vcard.h
+< /build/bluez/bluez-5.50/obexd/src/genbuiltin
+86d67
+< /build/bluez/bluez-5.50/obexd/src/map_ap.h
+100,111d80
+< /build/bluez/bluez-5.50/profiles/audio/a2dp-codecs.h
+< /build/bluez/bluez-5.50/profiles/audio/a2dp.h
+< /build/bluez/bluez-5.50/profiles/audio/avctp.h
+< /build/bluez/bluez-5.50/profiles/audio/avdtp.h
+< /build/bluez/bluez-5.50/profiles/audio/avrcp.h
+< /build/bluez/bluez-5.50/profiles/audio/control.h
+< /build/bluez/bluez-5.50/profiles/audio/media.h
+< /build/bluez/bluez-5.50/profiles/audio/player.h
+< /build/bluez/bluez-5.50/profiles/audio/sink.h
+< /build/bluez/bluez-5.50/profiles/audio/source.h
+< /build/bluez/bluez-5.50/profiles/audio/transport.h
+< /build/bluez/bluez-5.50/profiles/battery/bas.h
+113,133d81
+< /build/bluez/bluez-5.50/profiles/deviceinfo/dis.h
+< /build/bluez/bluez-5.50/profiles/health/hdp.h
+< /build/bluez/bluez-5.50/profiles/health/hdp_manager.h
+< /build/bluez/bluez-5.50/profiles/health/hdp_types.h
+< /build/bluez/bluez-5.50/profiles/health/hdp_util.h
+< /build/bluez/bluez-5.50/profiles/health/mcap.h
+< /build/bluez/bluez-5.50/profiles/input/device.h
+< /build/bluez/bluez-5.50/profiles/input/hidp_defs.h
+< /build/bluez/bluez-5.50/profiles/input/hog-lib.h
+< /build/bluez/bluez-5.50/profiles/input/server.h
+< /build/bluez/bluez-5.50/profiles/input/sixaxis.h
+< /build/bluez/bluez-5.50/profiles/input/suspend.h
+< /build/bluez/bluez-5.50/profiles/input/uhid_copy.h
+< /build/bluez/bluez-5.50/profiles/midi/libmidi.h
+< /build/bluez/bluez-5.50/profiles/network/bnep.h
+< /build/bluez/bluez-5.50/profiles/network/connection.h
+< /build/bluez/bluez-5.50/profiles/network/server.h
+< /build/bluez/bluez-5.50/profiles/sap/manager.h
+< /build/bluez/bluez-5.50/profiles/sap/sap.h
+< /build/bluez/bluez-5.50/profiles/sap/server.h
+< /build/bluez/bluez-5.50/profiles/scanparam/scpp.h
+146d93
+< /build/bluez/bluez-5.50/src/genbuiltin

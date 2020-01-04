@@ -1,0 +1,35 @@
+1,7d0
+< /build/pycurl/pycurl-7.43.0.2/AUTHORS
+< /build/pycurl/pycurl-7.43.0.2/COPYING-LGPL
+< /build/pycurl/pycurl-7.43.0.2/COPYING-MIT
+< /build/pycurl/pycurl-7.43.0.2/ChangeLog
+< /build/pycurl/pycurl-7.43.0.2/INSTALL.rst
+< /build/pycurl/pycurl-7.43.0.2/README.rst
+< /build/pycurl/pycurl-7.43.0.2/RELEASE-NOTES.rst
+11,36d3
+< /build/pycurl/pycurl-7.43.0.2/examples/basicfirst.py
+< /build/pycurl/pycurl-7.43.0.2/examples/file_upload.py
+< /build/pycurl/pycurl-7.43.0.2/examples/linksys.py
+< /build/pycurl/pycurl-7.43.0.2/examples/opensocketexception.py
+< /build/pycurl/pycurl-7.43.0.2/examples/quickstart/file_upload_buffer.py
+< /build/pycurl/pycurl-7.43.0.2/examples/quickstart/file_upload_real.py
+< /build/pycurl/pycurl-7.43.0.2/examples/quickstart/file_upload_real_fancy.py
+< /build/pycurl/pycurl-7.43.0.2/examples/quickstart/follow_redirect.py
+< /build/pycurl/pycurl-7.43.0.2/examples/quickstart/form_post.py
+< /build/pycurl/pycurl-7.43.0.2/examples/quickstart/get.py
+< /build/pycurl/pycurl-7.43.0.2/examples/quickstart/get_python2.py
+< /build/pycurl/pycurl-7.43.0.2/examples/quickstart/get_python2_https.py
+< /build/pycurl/pycurl-7.43.0.2/examples/quickstart/get_python3.py
+< /build/pycurl/pycurl-7.43.0.2/examples/quickstart/get_python3_https.py
+< /build/pycurl/pycurl-7.43.0.2/examples/quickstart/put_buffer.py
+< /build/pycurl/pycurl-7.43.0.2/examples/quickstart/put_file.py
+< /build/pycurl/pycurl-7.43.0.2/examples/quickstart/response_headers.py
+< /build/pycurl/pycurl-7.43.0.2/examples/quickstart/response_info.py
+< /build/pycurl/pycurl-7.43.0.2/examples/quickstart/write_file.py
+< /build/pycurl/pycurl-7.43.0.2/examples/retriever-multi.py
+< /build/pycurl/pycurl-7.43.0.2/examples/retriever.py
+< /build/pycurl/pycurl-7.43.0.2/examples/sfquery.py
+< /build/pycurl/pycurl-7.43.0.2/examples/smtp.py
+< /build/pycurl/pycurl-7.43.0.2/examples/ssh_keyfunction.py
+< /build/pycurl/pycurl-7.43.0.2/examples/xmlrpc_curl.py
+< /build/pycurl/pycurl-7.43.0.2/setup.cfg

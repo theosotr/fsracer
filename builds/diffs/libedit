@@ -1,0 +1,8 @@
+3d2
+< /build/libedit/libedit-3.1-20181209/src/common.c
+6d4
+< /build/libedit/libedit-3.1-20181209/src/emacs.c
+12a11
+> /build/libedit/libedit-3.1-20181209/src/makelist
+24d22
+< /build/libedit/libedit-3.1-20181209/src/vi.c

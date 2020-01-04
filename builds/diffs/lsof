@@ -1,0 +1,9 @@
+0a1,6
+> /build/lsof/lsof-4.91+dfsg/dialects/linux/dfile.c
+> /build/lsof/lsof-4.91+dfsg/dialects/linux/dmnt.c
+> /build/lsof/lsof-4.91+dfsg/dialects/linux/dnode.c
+> /build/lsof/lsof-4.91+dfsg/dialects/linux/dproc.c
+> /build/lsof/lsof-4.91+dfsg/dialects/linux/dsock.c
+> /build/lsof/lsof-4.91+dfsg/dialects/linux/dstore.c
+1a8
+> /build/lsof/lsof-4.91+dfsg/version

@@ -1,0 +1,12 @@
+1,7c1
+< /build/libcap2/libcap2-2.25/libcap/_makenames.c
+< /build/libcap2/libcap2-2.25/libcap/cap_alloc.c
+< /build/libcap2/libcap2-2.25/libcap/cap_extint.c
+< /build/libcap2/libcap2-2.25/libcap/cap_file.c
+< /build/libcap2/libcap2-2.25/libcap/cap_flag.c
+< /build/libcap2/libcap2-2.25/libcap/cap_proc.c
+< /build/libcap2/libcap2-2.25/libcap/cap_text.c
+---
+> /build/libcap2/libcap2-2.25/Make.Rules
+13d6
+< /build/libcap2/libcap2-2.25/libcap/libcap.h

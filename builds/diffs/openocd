@@ -1,0 +1,12 @@
+37d36
+< /build/openocd/openocd-0.10.0/src/flash/startup.tcl
+51d49
+< /build/openocd/openocd-0.10.0/src/helper/startup.tcl
+68d65
+< /build/openocd/openocd-0.10.0/src/jtag/drivers/minidriver_imp.h
+89d85
+< /build/openocd/openocd-0.10.0/src/jtag/startup.tcl
+106d101
+< /build/openocd/openocd-0.10.0/src/server/startup.tcl
+177d171
+< /build/openocd/openocd-0.10.0/src/target/startup.tcl

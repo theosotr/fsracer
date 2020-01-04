@@ -1,0 +1,95 @@
+0a1,10
+> /build/gnome-applets/gnome-applets-3.30.0/accessx-status/help/C/figures/accessx-status-applet.png
+> /build/gnome-applets/gnome-applets-3.30.0/accessx-status/help/C/figures/accessx-status-disabled.png
+> /build/gnome-applets/gnome-applets-3.30.0/accessx-status/help/C/figures/accessx_bounce-keys.png
+> /build/gnome-applets/gnome-applets-3.30.0/accessx-status/help/C/figures/accessx_mouse-keys.png
+> /build/gnome-applets/gnome-applets-3.30.0/accessx-status/help/C/figures/accessx_slow-keys.png
+> /build/gnome-applets/gnome-applets-3.30.0/accessx-status/help/C/figures/accessx_sticky-altGr-key.png
+> /build/gnome-applets/gnome-applets-3.30.0/accessx-status/help/C/figures/accessx_sticky-keys.png
+> /build/gnome-applets/gnome-applets-3.30.0/accessx-status/help/C/figures/accessx_sticky-meta-key.png
+> /build/gnome-applets/gnome-applets-3.30.0/accessx-status/help/C/figures/accessx_sticky-shift-key.png
+> /build/gnome-applets/gnome-applets-3.30.0/accessx-status/help/C/figures/accessx_sticky-windows-key.png
+1a12,16
+> /build/gnome-applets/gnome-applets-3.30.0/battstat/help/C/figures/battstat-applet-expanded.png
+> /build/gnome-applets/gnome-applets-3.30.0/battstat/help/C/figures/battstat-applet.png
+> /build/gnome-applets/gnome-applets-3.30.0/battstat/help/C/figures/battstat-credits-hal.png
+> /build/gnome-applets/gnome-applets-3.30.0/battstat/help/C/figures/battstat-preferences.png
+> /build/gnome-applets/gnome-applets-3.30.0/battstat/help/C/figures/context-menu.png
+7,8c22,24
+< /build/gnome-applets/gnome-applets-3.30.0/brightness/src/org.gnome.SettingsDaemon.Power.Screen.xml
+< /build/gnome-applets/gnome-applets-3.30.0/charpick/org.gnome.applets.CharpickerApplet.panel-applet.in.in
+---
+> /build/gnome-applets/gnome-applets-3.30.0/charpick/help/C/figures/charpalette_applet.png
+> /build/gnome-applets/gnome-applets-3.30.0/charpick/help/C/figures/charpick-preferences.png
+> /build/gnome-applets/gnome-applets-3.30.0/charpick/help/C/figures/charpick_characters.png
+9a26,34
+> /build/gnome-applets/gnome-applets-3.30.0/cpufreq/help/C/figures/cpufreq-100.png
+> /build/gnome-applets/gnome-applets-3.30.0/cpufreq/help/C/figures/cpufreq-25.png
+> /build/gnome-applets/gnome-applets-3.30.0/cpufreq/help/C/figures/cpufreq-50.png
+> /build/gnome-applets/gnome-applets-3.30.0/cpufreq/help/C/figures/cpufreq-75.png
+> /build/gnome-applets/gnome-applets-3.30.0/cpufreq/help/C/figures/cpufreq-applet-preferences-smp.png
+> /build/gnome-applets/gnome-applets-3.30.0/cpufreq/help/C/figures/cpufreq-applet-preferences.png
+> /build/gnome-applets/gnome-applets-3.30.0/cpufreq/help/C/figures/cpufreq-applet-selector-both.png
+> /build/gnome-applets/gnome-applets-3.30.0/cpufreq/help/C/figures/cpufreq-applet-selector.png
+> /build/gnome-applets/gnome-applets-3.30.0/cpufreq/help/C/figures/cpufreq-applet.png
+16d40
+< /build/gnome-applets/gnome-applets-3.30.0/cpufreq/src/cpufreq-selector/cpufreq-selector-service.xml
+18a43,47
+> /build/gnome-applets/gnome-applets-3.30.0/drivemount/help/C/figures/drivemount-applet_eject.png
+> /build/gnome-applets/gnome-applets-3.30.0/drivemount/help/C/figures/drivemount-applet_example.png
+> /build/gnome-applets/gnome-applets-3.30.0/drivemount/help/C/figures/drivemount-applet_mount.png
+> /build/gnome-applets/gnome-applets-3.30.0/drivemount/help/C/figures/drivemount-applet_open.png
+> /build/gnome-applets/gnome-applets-3.30.0/drivemount/help/C/figures/drivemount-applet_status.png
+20a50
+> /build/gnome-applets/gnome-applets-3.30.0/geyes/help/C/figures/geyes_applet.png
+21a52,65
+> /build/gnome-applets/gnome-applets-3.30.0/gweather/help/C/figures/gweather-details.png
+> /build/gnome-applets/gnome-applets-3.30.0/gweather/help/C/figures/gweather-menu-prefs.png
+> /build/gnome-applets/gnome-applets-3.30.0/gweather/help/C/figures/gweather-prefs-general.png
+> /build/gnome-applets/gnome-applets-3.30.0/gweather/help/C/figures/gweather-prefs-locations.png
+> /build/gnome-applets/gnome-applets-3.30.0/gweather/help/C/figures/gweather_applet.png
+> /build/gnome-applets/gnome-applets-3.30.0/gweather/help/C/figures/stock_weather-cloudy.png
+> /build/gnome-applets/gnome-applets-3.30.0/gweather/help/C/figures/stock_weather-few-clouds.png
+> /build/gnome-applets/gnome-applets-3.30.0/gweather/help/C/figures/stock_weather-fog.png
+> /build/gnome-applets/gnome-applets-3.30.0/gweather/help/C/figures/stock_weather-night-clear.png
+> /build/gnome-applets/gnome-applets-3.30.0/gweather/help/C/figures/stock_weather-night-few-clouds.png
+> /build/gnome-applets/gnome-applets-3.30.0/gweather/help/C/figures/stock_weather-showers.png
+> /build/gnome-applets/gnome-applets-3.30.0/gweather/help/C/figures/stock_weather-snow.png
+> /build/gnome-applets/gnome-applets-3.30.0/gweather/help/C/figures/stock_weather-storm.png
+> /build/gnome-applets/gnome-applets-3.30.0/gweather/help/C/figures/stock_weather-sunny.png
+26d69
+< /build/gnome-applets/gnome-applets-3.30.0/inhibit/src/org.gnome.SessionManager.xml
+27a71,72
+> /build/gnome-applets/gnome-applets-3.30.0/multiload/help/C/figures/multiload-preferences.png
+> /build/gnome-applets/gnome-applets-3.30.0/multiload/help/C/figures/system-monitor-applet_window.png
+32a78,86
+> /build/gnome-applets/gnome-applets-3.30.0/netspeed/help/C/figures/details.png
+> /build/gnome-applets/gnome-applets-3.30.0/netspeed/help/C/figures/eth_sum_48.png
+> /build/gnome-applets/gnome-applets-3.30.0/netspeed/help/C/figures/ethernet.png
+> /build/gnome-applets/gnome-applets-3.30.0/netspeed/help/C/figures/loopback.png
+> /build/gnome-applets/gnome-applets-3.30.0/netspeed/help/C/figures/netspeed_applet.png
+> /build/gnome-applets/gnome-applets-3.30.0/netspeed/help/C/figures/plip.png
+> /build/gnome-applets/gnome-applets-3.30.0/netspeed/help/C/figures/ppp.png
+> /build/gnome-applets/gnome-applets-3.30.0/netspeed/help/C/figures/settings.png
+> /build/gnome-applets/gnome-applets-3.30.0/netspeed/help/C/figures/wavelan.png
+37a92,96
+> /build/gnome-applets/gnome-applets-3.30.0/sticky-notes/help/C/figures/stickynote-right-menu-lock.png
+> /build/gnome-applets/gnome-applets-3.30.0/sticky-notes/help/C/figures/stickynote-right-menu-new.png
+> /build/gnome-applets/gnome-applets-3.30.0/sticky-notes/help/C/figures/stickynotes-note-prefs.png
+> /build/gnome-applets/gnome-applets-3.30.0/sticky-notes/help/C/figures/stickynotes-prefs.png
+> /build/gnome-applets/gnome-applets-3.30.0/sticky-notes/help/C/figures/stickynotes_applet.png
+47a107,120
+> /build/gnome-applets/gnome-applets-3.30.0/trash/help/C/figures/trash-applet.png
+> /build/gnome-applets/gnome-applets-3.30.0/trash/src/trash-empty.h
+> /build/gnome-applets/gnome-applets-3.30.0/window-buttons/external.h
+> /build/gnome-applets/gnome-applets-3.30.0/window-buttons/preferences.h
+> /build/gnome-applets/gnome-applets-3.30.0/window-buttons/theme.h
+> /build/gnome-applets/gnome-applets-3.30.0/window-buttons/windowbuttons.h
+> /build/gnome-applets/gnome-applets-3.30.0/window-title/preferences.h
+> /build/gnome-applets/gnome-applets-3.30.0/window-title/windowtitle.h
+> /build/gnome-applets/gnome-applets-3.30.0/windowpicker/src/task-item.h
+> /build/gnome-applets/gnome-applets-3.30.0/windowpicker/src/task-list.h
+> /build/gnome-applets/gnome-applets-3.30.0/windowpicker/src/wp-about-dialog.h
+> /build/gnome-applets/gnome-applets-3.30.0/windowpicker/src/wp-applet.h
+> /build/gnome-applets/gnome-applets-3.30.0/windowpicker/src/wp-preferences-dialog.h
+> /build/gnome-applets/gnome-applets-3.30.0/windowpicker/src/wp-task-title.h

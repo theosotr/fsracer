@@ -1,0 +1,118 @@
+6d5
+< /build/ghostscript/ghostscript-9.27~dfsg/base/echogs.c
+13d11
+< /build/ghostscript/ghostscript-9.27~dfsg/base/gdevflp.h
+15d12
+< /build/ghostscript/ghostscript-9.27~dfsg/base/gdevoflt.h
+20d16
+< /build/ghostscript/ghostscript-9.27~dfsg/base/genarch.c
+45d40
+< /build/ghostscript/ghostscript-9.27~dfsg/base/gscrypt1.h
+54d48
+< /build/ghostscript/ghostscript-9.27~dfsg/base/gsfcmap.h
+62,63d55
+< /build/ghostscript/ghostscript-9.27~dfsg/base/gsgcache.h
+< /build/ghostscript/ghostscript-9.27~dfsg/base/gsgdata.h
+74d65
+< /build/ghostscript/ghostscript-9.27~dfsg/base/gsipar3x.h
+76d66
+< /build/ghostscript/ghostscript-9.27~dfsg/base/gsiparm3.h
+87d76
+< /build/ghostscript/ghostscript-9.27~dfsg/base/gsnotify.h
+131d119
+< /build/ghostscript/ghostscript-9.27~dfsg/base/gxclip.h
+156d143
+< /build/ghostscript/ghostscript-9.27~dfsg/base/gxfcmap.h
+159,160d145
+< /build/ghostscript/ghostscript-9.27~dfsg/base/gxfont.h
+< /build/ghostscript/ghostscript-9.27~dfsg/base/gxfont0.h
+167d151
+< /build/ghostscript/ghostscript-9.27~dfsg/base/gxhintn.h
+179d162
+< /build/ghostscript/ghostscript-9.27~dfsg/base/gxmclip.h
+203,205d185
+< /build/ghostscript/ghostscript-9.27~dfsg/base/sa85d.h
+< /build/ghostscript/ghostscript-9.27~dfsg/base/sa85x.h
+< /build/ghostscript/ghostscript-9.27~dfsg/base/sarc4.h
+208,209d187
+< /build/ghostscript/ghostscript-9.27~dfsg/base/sdct.h
+< /build/ghostscript/ghostscript-9.27~dfsg/base/setjmp_.h
+213,214d190
+< /build/ghostscript/ghostscript-9.27~dfsg/base/sjpeg.h
+< /build/ghostscript/ghostscript-9.27~dfsg/base/slzwx.h
+217d192
+< /build/ghostscript/ghostscript-9.27~dfsg/base/spsdf.h
+226d200
+< /build/ghostscript/ghostscript-9.27~dfsg/base/stdpre.h
+231,239d204
+< /build/ghostscript/ghostscript-9.27~dfsg/base/szlibx.h
+< /build/ghostscript/ghostscript-9.27~dfsg/base/time_.h
+< /build/ghostscript/ghostscript-9.27~dfsg/base/ttcommon.h
+< /build/ghostscript/ghostscript-9.27~dfsg/base/ttconf.h
+< /build/ghostscript/ghostscript-9.27~dfsg/base/ttfoutl.h
+< /build/ghostscript/ghostscript-9.27~dfsg/base/ttobjs.h
+< /build/ghostscript/ghostscript-9.27~dfsg/base/tttables.h
+< /build/ghostscript/ghostscript-9.27~dfsg/base/tttype.h
+< /build/ghostscript/ghostscript-9.27~dfsg/base/tttypes.h
+246a212,272
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/gdevpcl.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/gdevplib.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/gdevtfax.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/gdevtifs.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/gxfcopy.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/minftrsz.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/rinkj/evenbetter-rll.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/rinkj/rinkj-byte-stream.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/rinkj/rinkj-config.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/rinkj/rinkj-device.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/rinkj/rinkj-dither.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/rinkj/rinkj-epson870.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/rinkj/rinkj-screen-eb.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/vector/gdevpdt.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/vector/gdevpdtb.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/vector/gdevpdtd.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/vector/gdevpdtf.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/vector/gdevpdti.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/vector/gdevpdts.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/vector/gdevpdtx.h
+> /build/ghostscript/ghostscript-9.27~dfsg/devices/vector/whitelst.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/dstack.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/estack.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/files.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/ghost.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/ialloc.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/iapi.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/iconf.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/icstate.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/iddict.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/iddstack.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/idict.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/idosave.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/idparam.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/idsdata.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/idstack.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/iesdata.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/iestack.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/ifont.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/ifont42.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/ifunc.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/igc.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/igstate.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/iinit.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/imain.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/imemory.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/iminst.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/iname.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/inames.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/interp.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/iosdata.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/ipacked.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/iref.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/iscannum.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/isdata.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/istruct.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/ivmspace.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/opcheck.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/opdef.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/psapi.h
+> /build/ghostscript/ghostscript-9.27~dfsg/psi/store.h

@@ -1,0 +1,9 @@
+1,2d0
+< /build/corosync/corosync-3.0.1/common_lib/error_conversion.c
+< /build/corosync/corosync-3.0.1/common_lib/error_conversion.lo
+6a5
+> /build/corosync/corosync-3.0.1/exec/logconfig.h
+13a13
+> /build/corosync/corosync-3.0.1/exec/totemconfig.h
+24a25
+> /build/corosync/corosync-3.0.1/include/corosync/config.h

@@ -1,0 +1,375 @@
+1,2d0
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/extensions/_gen/all.xml
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/extensions/extensions.c
+22d19
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-auth-handler.c
+24,25d20
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-auth-handler.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-auth-registry.c
+27,28d21
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-auth-registry.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-bare-contact.c
+30,31d22
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-bare-contact.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-c2s-porter.c
+33,34d23
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-c2s-porter.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-caps-cache.c
+36,37d24
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-caps-cache.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-caps-hash.c
+39,40d25
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-caps-hash.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-connector.c
+42,43d26
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-connector.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-contact-factory.c
+45,46d27
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-contact-factory.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-contact.c
+48,49d28
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-contact.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-data-form.c
+51d29
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-data-form.lo
+53d30
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-debug.c
+55,56d31
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-debug.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-disco-identity.c
+58,60d32
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-disco-identity.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-enumtypes.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-google-relay.c
+62,66d33
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-google-relay.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-heartbeat-source.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-heartbeat-source.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-heartbeat-source.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jabber-auth-digest.c
+68,69d34
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jabber-auth-digest.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jabber-auth-password.c
+71,72d35
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jabber-auth-password.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jabber-auth.c
+74,75d36
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jabber-auth.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-content.c
+77,78d37
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-content.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-factory.c
+80,82d38
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-factory.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-info-internal.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-info.c
+84,85d39
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-info.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-media-rtp.c
+87,88d40
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-media-rtp.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-session.c
+90,91d41
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-session.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-transport-google.c
+93,94d42
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-transport-google.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-transport-iceudp.c
+96,97d43
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-transport-iceudp.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-transport-iface.c
+99,100d44
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-transport-iface.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-transport-rawudp.c
+102d45
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-jingle-transport-rawudp.lo
+104d46
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-ll-connection-factory.c
+106,107d47
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-ll-connection-factory.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-ll-connector.c
+109,110d48
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-ll-connector.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-ll-contact.c
+112,113d49
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-ll-contact.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-loopback-stream.c
+115,116d50
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-loopback-stream.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-meta-porter.c
+118,119d51
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-meta-porter.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-muc.c
+121d52
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-muc.lo
+123,124d53
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-node-private.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-node-tree.c
+126,127d54
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-node-tree.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-node.c
+129,130d55
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-node.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-pep-service.c
+132,133d56
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-pep-service.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-ping.c
+135,136d57
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-ping.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-porter.c
+138,139d58
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-porter.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-pubsub-helpers.c
+141,142d59
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-pubsub-helpers.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-pubsub-node-internal.h
+144d60
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-pubsub-node.c
+146d61
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-pubsub-node.lo
+148d62
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-pubsub-service.c
+150,151d63
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-pubsub-service.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-resource-contact.c
+153,154d64
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-resource-contact.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-roster.c
+156,157d65
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-roster.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-sasl-auth.c
+159,160d66
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-sasl-auth.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-sasl-digest-md5.c
+162,163d67
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-sasl-digest-md5.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-sasl-plain.c
+165,166d68
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-sasl-plain.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-sasl-scram.c
+168,169d69
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-sasl-scram.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-sasl-utils.c
+171,172d70
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-sasl-utils.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-session.c
+174,177d71
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-session.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-signals-marshal.list
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-signals-marshal.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-stanza.c
+179,182d72
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-stanza.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-tls-common.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-tls-common.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-tls-connector.c
+184,185d73
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-tls-connector.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-tls-handler.c
+187,188d74
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-tls-handler.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-tls.c
+190d75
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-tls.lo
+192d76
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-utils.c
+194,195d77
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-utils.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-xep-0115-capabilities.c
+197,198d78
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-xep-0115-capabilities.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-xmpp-connection.c
+200,201d79
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-xmpp-connection.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-xmpp-error.c
+203,204d80
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-xmpp-error.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-xmpp-reader.c
+206,207d81
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-xmpp-reader.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-xmpp-writer.c
+209,210d82
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky-xmpp-writer.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky.c
+212,215d83
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/ext/wocky/wocky/wocky.lo
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/gibber/gibber-debug.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/gibber/gibber-debug.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/gibber/gibber-fd-transport.c
+217,219d84
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/gibber/gibber-linklocal-transport.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/gibber/gibber-linklocal-transport.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/gibber/gibber-listener.c
+221d85
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/gibber/gibber-signals-marshal.list
+223d86
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/gibber/gibber-sockets.c
+225d87
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/gibber/gibber-tcp-transport.c
+227d88
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/gibber/gibber-transport.c
+229d89
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/gibber/gibber-unix-transport.c
+231d90
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/lib/gibber/gibber-util.c
+236,240d94
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/addressing-util.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/addressing-util.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/auth-manager.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/auth-manager.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/base-call-channel.c
+242d95
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/bytestream-factory.c
+244d96
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/bytestream-ibb.c
+246d97
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/bytestream-iface.c
+248d98
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/bytestream-muc.c
+250d99
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/bytestream-multiple.c
+252d100
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/bytestream-socks5.c
+254,256d101
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/call-channel.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/call-channel.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/call-content.c
+258d102
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/call-member-content.c
+260d103
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/call-member.c
+262d104
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/call-muc-channel.c
+264,296d105
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/call-stream.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/call-stream.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/capabilities.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/caps-channel-manager.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/caps-hash.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/caps-hash.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-addressing.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-addressing.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-aliasing.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-aliasing.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-avatars.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-avatars.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-client-types.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-client-types.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-contact-info.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-contact-info.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-location.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-location.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-mail-notif.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-mail-notif.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-olpc.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-olpc.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-power-saving.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-power-saving.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-presence.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-presence.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-sidecars.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-sidecars.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-util.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/conn-util.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/connection-manager.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/connection-manager.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/connection.c
+298d106
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/debug.c
+300,304d107
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/disco.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/disco.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/error.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/error.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/ft-channel.c
+306d108
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/ft-manager.c
+308,309d109
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/gabble-signals-marshal.list
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/gabble.c
+311d110
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/gtalk-file-collection.c
+313,317d111
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/im-channel.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/im-channel.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/im-factory.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/im-factory.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/jingle-mint.c
+319,333d112
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/jingle-share.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/jingle-share.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/jingle-tp-util.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/jingle-tp-util.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/legacy-caps.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/legacy-caps.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/media-channel-hold.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/media-channel-internal.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/media-channel.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/media-channel.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/media-factory.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/media-factory.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/media-stream.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/media-stream.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/message-util.c
+335d113
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/muc-channel.c
+337d114
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/muc-factory.c
+339,342d115
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/muc-tube-dbus.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/muc-tube-dbus.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/muc-tube-stream.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/muc-tube-stream.h
+344,352d116
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/olpc-activity.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/olpc-activity.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/plugin-connection.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/plugin-loader.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/plugin-loader.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/plugin.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/presence-cache.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/presence-cache.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/presence.c
+354,379d117
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/private-tubes-factory.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/private-tubes-factory.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/protocol.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/request-pipeline.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/request-pipeline.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/room-config.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/roomlist-channel.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/roomlist-channel.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/roomlist-manager.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/roomlist-manager.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/roster.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/roster.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/search-channel.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/search-channel.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/search-manager.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/search-manager.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/server-sasl-channel.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/server-sasl-channel.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/server-tls-channel.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/server-tls-channel.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/server-tls-manager.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/server-tls-manager.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/sidecar.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/tls-certificate.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/tls-certificate.h
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/tube-dbus.c
+381d118
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/tube-iface.c
+383,384d119
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/tube-stream.c
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/tube-stream.h
+386d120
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/util.c
+388d121
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/src/vcard-manager.c
+391,394d123
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/tools/c-constants-gen.py
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/tools/glib-ginterface-gen.py
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/tools/glib-gtypes-generator.py
+< /build/telepathy-gabble/telepathy-gabble-0.18.4/tools/glib-interfaces-gen.py
+396a126
+> /build/telepathy-gabble/telepathy-gabble-0.18.4/tools/xincludator.py

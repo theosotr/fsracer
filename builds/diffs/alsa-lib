@@ -1,0 +1,22 @@
+1a2,18
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/asoundef.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/conf.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/control.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/error.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/global.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/hwdep.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/input.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/mixer.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/output.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/pcm.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/rawmidi.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/seq.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/seq_event.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/seq_midi_event.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/seqmid.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/timer.h
+> /build/alsa-lib/alsa-lib-1.1.8/include/alsa/version.h
+3d19
+< /build/alsa-lib/alsa-lib-1.1.8/include/asoundef.h
+6a23
+> /build/alsa-lib/alsa-lib-1.1.8/include/config.h

@@ -1,0 +1,30 @@
+0a1
+> /build/libthai/libthai-0.1.28/.pc
+5,7d5
+48a44,69
+> /build/libthai/libthai-0.1.28/debian/.debhelper
+> /build/libthai/libthai-0.1.28/debian/autoreconf.after
+> /build/libthai/libthai-0.1.28/debian/autoreconf.before
+> /build/libthai/libthai-0.1.28/debian/changelog
+> /build/libthai/libthai-0.1.28/debian/control
+> /build/libthai/libthai-0.1.28/debian/copyright
+> /build/libthai/libthai-0.1.28/debian/debhelper-build-stamp
+> /build/libthai/libthai-0.1.28/debian/gbp.conf
+> /build/libthai/libthai-0.1.28/debian/libthai-data-udeb.install
+> /build/libthai/libthai-0.1.28/debian/libthai-data.install
+> /build/libthai/libthai-0.1.28/debian/libthai-dev.debhelper.log
+> /build/libthai/libthai-0.1.28/debian/libthai-dev.install
+> /build/libthai/libthai-0.1.28/debian/libthai-dev.maintscript
+> /build/libthai/libthai-0.1.28/debian/libthai-doc.doc-base
+> /build/libthai/libthai-0.1.28/debian/libthai-doc.docs
+> /build/libthai/libthai-0.1.28/debian/libthai-doc.links
+> /build/libthai/libthai-0.1.28/debian/libthai0-udeb.debhelper.log
+> /build/libthai/libthai-0.1.28/debian/libthai0-udeb.install
+> /build/libthai/libthai-0.1.28/debian/libthai0.debhelper.log
+> /build/libthai/libthai-0.1.28/debian/libthai0.install
+> /build/libthai/libthai-0.1.28/debian/libthai0.symbols
+> /build/libthai/libthai-0.1.28/debian/rules
+> /build/libthai/libthai-0.1.28/debian/source/format
+> /build/libthai/libthai-0.1.28/debian/tests/build
+> /build/libthai/libthai-0.1.28/debian/tests/control
+> /build/libthai/libthai-0.1.28/debian/watch
