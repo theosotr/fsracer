@@ -16,8 +16,8 @@ def get_input_files(path):
                 continue
             if line.startswith('-'):
                 if not in_file.endswith('libtool'):
-                    files.add(in_file)
-    for f in files:
+                    files.add(in_file[:-1])
+    for f in sorted(files):
         print(f)
 
 
