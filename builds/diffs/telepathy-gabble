@@ -331,42 +331,41 @@
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/private-tubes-factory.c
 357d159
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/request-pipeline.c
-359,360c161
+359d160
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/room-config.c
+361d161
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/roomlist-channel.c
----
-> /build/telepathy-gabble/telepathy-gabble-0.18.4/src/room-config.h
-362d162
+363d162
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/roomlist-manager.c
-364d163
+365d163
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/roster.c
-366d164
+367d164
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/search-channel.c
-368d165
+369d165
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/search-manager.c
-370d166
+371d166
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/server-sasl-channel.c
-372d167
+373d167
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/server-tls-channel.c
-374d168
+375d168
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/server-tls-manager.c
-376,377d169
+377,378d169
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/sidecar.c
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/tls-certificate.c
-379d170
+380d170
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/tube-dbus.c
-381d171
+382d171
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/tube-iface.c
-383d172
+384d172
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/tube-stream.c
-386d174
+387d174
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/util.c
-388d175
+389d175
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/src/vcard-manager.c
-391,394d177
+392,395d177
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/tools/c-constants-gen.py
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/tools/glib-ginterface-gen.py
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/tools/glib-gtypes-generator.py
 < /build/telepathy-gabble/telepathy-gabble-0.18.4/tools/glib-interfaces-gen.py
-396a180
+397a180
 > /build/telepathy-gabble/telepathy-gabble-0.18.4/tools/xincludator.py

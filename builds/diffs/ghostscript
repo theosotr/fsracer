@@ -44,17 +44,18 @@
 < /build/ghostscript/ghostscript-9.27~dfsg/base/spsdf.h
 226d200
 < /build/ghostscript/ghostscript-9.27~dfsg/base/stdpre.h
-231,239d204
+231,240d204
 < /build/ghostscript/ghostscript-9.27~dfsg/base/szlibx.h
 < /build/ghostscript/ghostscript-9.27~dfsg/base/time_.h
 < /build/ghostscript/ghostscript-9.27~dfsg/base/ttcommon.h
 < /build/ghostscript/ghostscript-9.27~dfsg/base/ttconf.h
+< /build/ghostscript/ghostscript-9.27~dfsg/base/ttconfig.h
 < /build/ghostscript/ghostscript-9.27~dfsg/base/ttfoutl.h
 < /build/ghostscript/ghostscript-9.27~dfsg/base/ttobjs.h
 < /build/ghostscript/ghostscript-9.27~dfsg/base/tttables.h
 < /build/ghostscript/ghostscript-9.27~dfsg/base/tttype.h
 < /build/ghostscript/ghostscript-9.27~dfsg/base/tttypes.h
-246a212,272
+247a212,272
 > /build/ghostscript/ghostscript-9.27~dfsg/devices/gdevpcl.h
 > /build/ghostscript/ghostscript-9.27~dfsg/devices/gdevplib.h
 > /build/ghostscript/ghostscript-9.27~dfsg/devices/gdevtfax.h

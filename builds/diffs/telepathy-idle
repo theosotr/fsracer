@@ -1,9 +1,7 @@
 1,2d0
 < /build/telepathy-idle/telepathy-idle-0.2.0/extensions/Connection_Interface_Renaming.xml
 < /build/telepathy-idle/telepathy-idle-0.2.0/extensions/all.xml
-19a18
-> /build/telepathy-idle/telepathy-idle-0.2.0/src/room-config.h
-23,25d21
+24,26d21
 < /build/telepathy-idle/telepathy-idle-0.2.0/tools/c-constants-generator.xsl
 < /build/telepathy-idle/telepathy-idle-0.2.0/tools/c-interfaces-generator.xsl
 < /build/telepathy-idle/telepathy-idle-0.2.0/tools/glib-ginterface-gen.py
