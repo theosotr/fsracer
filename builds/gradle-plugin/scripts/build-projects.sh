@@ -29,7 +29,7 @@ for project in $(cat $projects); do
   else
     pname=$project
   fi
-  docker_cmd="$HOME/plugin/scripts/build-project.sh $project $HOME/out $with_strace"
+  docker_cmd="build-project $project $HOME/out $with_strace"
   sudo docker run --name $pname \
     -v $output_dir/tmp:$HOME/out \
     --cap-add=SYS_PTRACE \
