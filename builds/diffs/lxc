@@ -1,6 +1,6 @@
 1d0
 < /build/lxc/lxc-3.1.0+really3.0.3/doc/api/Doxyfile
-8,17c7
+8,17d6
 < /build/lxc/lxc-3.1.0+really3.0.3/src/include/getgrgid_r.c
 < /build/lxc/lxc-3.1.0+really3.0.3/src/include/getgrgid_r.h
 < /build/lxc/lxc-3.1.0+really3.0.3/src/include/getline.c
@@ -11,9 +11,7 @@
 < /build/lxc/lxc-3.1.0+really3.0.3/src/include/lxcmntent.c
 < /build/lxc/lxc-3.1.0+really3.0.3/src/include/lxcmntent.h
 < /build/lxc/lxc-3.1.0+really3.0.3/src/include/netns_ifaddrs.c
----
-> /build/lxc/lxc-3.1.0+really3.0.3/src/config.h
-19,25d8
+19,25d7
 < /build/lxc/lxc-3.1.0+really3.0.3/src/include/openpty.c
 < /build/lxc/lxc-3.1.0+really3.0.3/src/include/openpty.h
 < /build/lxc/lxc-3.1.0+really3.0.3/src/include/pam_cgfs_la-strlcat.lo
@@ -21,47 +19,47 @@
 < /build/lxc/lxc-3.1.0+really3.0.3/src/include/prlimit.c
 < /build/lxc/lxc-3.1.0+really3.0.3/src/include/prlimit.h
 < /build/lxc/lxc-3.1.0+really3.0.3/src/include/strlcat.c
-27d9
+27d8
 < /build/lxc/lxc-3.1.0+really3.0.3/src/include/strlcpy.c
-29,32d10
+29,32d9
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/Makefile
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/Makefile.am
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/Makefile.in
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/af_unix.c
-34d11
+34d10
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/attach.c
-37d13
+37d12
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/caps.c
-39,40d14
+39,40d13
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/cgroups/cgfsng.c
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/cgroups/cgroup.c
-42d15
+42d14
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/cgroups/cgroup_utils.c
-44,48d16
+44,48d15
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/cgroups/liblxc_la-cgfsng.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/cgroups/liblxc_la-cgroup.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/cgroups/liblxc_la-cgroup_utils.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/cmd/lxc_init.c
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/commands.c
-50d17
+50d16
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/commands_utils.c
-53d19
+53d18
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/conf.c
-55d20
+55d19
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/confile.c
-57d21
+57d20
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/confile_utils.c
-59d22
+59d21
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/criu.c
-61d23
+61d22
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/error.c
-63,64d24
+63,64d23
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/execute.c
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/file_utils.c
-66,67d25
+66,67d24
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/freezer.c
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/initutils.c
-69,102d26
+69,102d25
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/liblxc_la-af_unix.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/liblxc_la-attach.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/liblxc_la-caps.lo
@@ -96,57 +94,57 @@
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/liblxc_la-sync.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/liblxc_la-terminal.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/liblxc_la-utils.lo
-104d27
+104d26
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/log.c
-106,111d28
+106,111d27
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/lsm/apparmor.c
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/lsm/liblxc_la-apparmor.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/lsm/liblxc_la-lsm.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/lsm/liblxc_la-nop.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/lsm/liblxc_la-selinux.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/lsm/lsm.c
-113,116d29
+113,116d28
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/lsm/nop.c
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/lsm/selinux.c
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/lxc.functions
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/lxc.functions.in
-118d30
+118d29
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/lxccontainer.c
-120d31
+120d30
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/lxclock.c
-124d34
+124d33
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/mainloop.c
-126d35
+126d34
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/monitor.c
-128d36
+128d35
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/namespace.c
-130d37
+130d36
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/network.c
-132d38
+132d37
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/nl.c
-134,137d39
+134,137d38
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/pam/cgfs_la-pam_cgfs.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/pam_cgfs_la-file_utils.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/pam_cgfs_la-string_utils.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/parse.c
-139d40
+139d39
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/raw_syscalls.c
-141d41
+141d40
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/rexec.c
-143d42
+143d41
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/ringbuf.c
-145d43
+145d42
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/rtnl.c
-147,148d44
+147,148d43
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/seccomp.c
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/start.c
-150d45
+150d44
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/state.c
-152d46
+152d45
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/btrfs.c
-154d47
+154d46
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/dir.c
-156,167d48
+156,167d47
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/liblxc_la-btrfs.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/liblxc_la-dir.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/liblxc_la-loop.lo
@@ -159,33 +157,33 @@
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/liblxc_la-storage_utils.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/liblxc_la-zfs.lo
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/loop.c
-169d49
+169d48
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/lvm.c
-171d50
+171d49
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/nbd.c
-173d51
+173d50
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/overlay.c
-175d52
+175d51
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/rbd.c
-177d53
+177d52
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/rsync.c
-179d54
+179d53
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/storage.c
-181d55
+181d54
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/storage_utils.c
-183d56
+183d55
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/storage/zfs.c
-185d57
+185d56
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/string_utils.c
-187d58
+187d57
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/sync.c
-190d60
+190d59
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/terminal.c
-193d62
+193d61
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/utils.c
-196d64
+196d63
 < /build/lxc/lxc-3.1.0+really3.0.3/src/lxc/version.h.in
-198,202d65
+198,202d64
 < /sys/devices/system/cpu/online
 < /var/cache/fontconfig/1fe02763-5486-4d5d-8d0b-3b23c73e03c5-le64.cache-7
 < /var/cache/fontconfig/43ab522f-d17f-4740-8100-2f8044e86041-le64.cache-7

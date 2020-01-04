@@ -1,5 +1,4 @@
-0a1,12
-> /build/whois/whois-5.4.3/config.h
+0a1,11
 > /build/whois/whois-5.4.3/data.h
 > /build/whois/whois-5.4.3/ip_del_recovered.h
 > /build/whois/whois-5.4.3/mkpasswd.c

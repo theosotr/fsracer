@@ -1,29 +1,25 @@
-1c1,5
-< /build/postfix/postfix-3.4.7/conf/master.cf
----
+1a2,6
 > /build/postfix/postfix-3.4.7/include/abounce.h
 > /build/postfix/postfix-3.4.7/include/addr_match_list.h
 > /build/postfix/postfix-3.4.7/include/anvil_clnt.h
 > /build/postfix/postfix-3.4.7/include/argv.h
 > /build/postfix/postfix-3.4.7/include/argv_attr.h
-3a8
+3a9
 > /build/postfix/postfix-3.4.7/include/attr_override.h
-4a10,12
+4a11,13
 > /build/postfix/postfix-3.4.7/include/base32_code.h
 > /build/postfix/postfix-3.4.7/include/base64_code.h
 > /build/postfix/postfix-3.4.7/include/been_here.h
-5a14,17
+5a15,18
 > /build/postfix/postfix-3.4.7/include/bounce.h
 > /build/postfix/postfix-3.4.7/include/bounce_log.h
 > /build/postfix/postfix-3.4.7/include/canon_addr.h
 > /build/postfix/postfix-3.4.7/include/cfg_parser.h
-7a20
+7a21
 > /build/postfix/postfix-3.4.7/include/cidr_match.h
-8a22,23
+8a23,24
 > /build/postfix/postfix-3.4.7/include/cleanup_user.h
 > /build/postfix/postfix-3.4.7/include/clnt_stream.h
-9a25
-> /build/postfix/postfix-3.4.7/include/config.h
 10a27,40
 > /build/postfix/postfix-3.4.7/include/conv_time.h
 > /build/postfix/postfix-3.4.7/include/ctable.h

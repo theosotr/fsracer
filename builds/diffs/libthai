@@ -1,6 +1,13 @@
 0a1
 > /build/libthai/libthai-0.1.28/.pc
 5,7d5
+< /build/libthai/libthai-0.1.28/Makefile
+< /build/libthai/libthai-0.1.28/Makefile.am
+< /build/libthai/libthai-0.1.28/Makefile.in
+30,32d27
+< /build/libthai/libthai-0.1.28/data/Makefile
+< /build/libthai/libthai-0.1.28/data/Makefile.am
+< /build/libthai/libthai-0.1.28/data/Makefile.in
 48a44,69
 > /build/libthai/libthai-0.1.28/debian/.debhelper
 > /build/libthai/libthai-0.1.28/debian/autoreconf.after
@@ -28,3 +35,66 @@
 > /build/libthai/libthai-0.1.28/debian/tests/build
 > /build/libthai/libthai-0.1.28/debian/tests/control
 > /build/libthai/libthai-0.1.28/debian/watch
+51,60d71
+< /build/libthai/libthai-0.1.28/doc/Makefile
+< /build/libthai/libthai-0.1.28/doc/Makefile.am
+< /build/libthai/libthai-0.1.28/doc/Makefile.in
+< /build/libthai/libthai-0.1.28/filter.yaml
+< /build/libthai/libthai-0.1.28/include/Makefile
+< /build/libthai/libthai-0.1.28/include/Makefile.am
+< /build/libthai/libthai-0.1.28/include/Makefile.in
+< /build/libthai/libthai-0.1.28/include/thai/Makefile
+< /build/libthai/libthai-0.1.28/include/thai/Makefile.am
+< /build/libthai/libthai-0.1.28/include/thai/Makefile.in
+81,83d91
+< /build/libthai/libthai-0.1.28/src/Makefile
+< /build/libthai/libthai-0.1.28/src/Makefile.am
+< /build/libthai/libthai-0.1.28/src/Makefile.in
+88,90d95
+< /build/libthai/libthai-0.1.28/src/thbrk/Makefile
+< /build/libthai/libthai-0.1.28/src/thbrk/Makefile.am
+< /build/libthai/libthai-0.1.28/src/thbrk/Makefile.in
+100,102d104
+< /build/libthai/libthai-0.1.28/src/thcell/Makefile
+< /build/libthai/libthai-0.1.28/src/thcell/Makefile.am
+< /build/libthai/libthai-0.1.28/src/thcell/Makefile.in
+104,106d105
+< /build/libthai/libthai-0.1.28/src/thcoll/Makefile
+< /build/libthai/libthai-0.1.28/src/thcoll/Makefile.am
+< /build/libthai/libthai-0.1.28/src/thcoll/Makefile.in
+110,112d108
+< /build/libthai/libthai-0.1.28/src/thctype/Makefile
+< /build/libthai/libthai-0.1.28/src/thctype/Makefile.am
+< /build/libthai/libthai-0.1.28/src/thctype/Makefile.in
+115,117d110
+< /build/libthai/libthai-0.1.28/src/thinp/Makefile
+< /build/libthai/libthai-0.1.28/src/thinp/Makefile.am
+< /build/libthai/libthai-0.1.28/src/thinp/Makefile.in
+119,121d111
+< /build/libthai/libthai-0.1.28/src/thrend/Makefile
+< /build/libthai/libthai-0.1.28/src/thrend/Makefile.am
+< /build/libthai/libthai-0.1.28/src/thrend/Makefile.in
+123,125d112
+< /build/libthai/libthai-0.1.28/src/thstr/Makefile
+< /build/libthai/libthai-0.1.28/src/thstr/Makefile.am
+< /build/libthai/libthai-0.1.28/src/thstr/Makefile.in
+127,129d113
+< /build/libthai/libthai-0.1.28/src/thwbrk/Makefile
+< /build/libthai/libthai-0.1.28/src/thwbrk/Makefile.am
+< /build/libthai/libthai-0.1.28/src/thwbrk/Makefile.in
+131,133d114
+< /build/libthai/libthai-0.1.28/src/thwchar/Makefile
+< /build/libthai/libthai-0.1.28/src/thwchar/Makefile.am
+< /build/libthai/libthai-0.1.28/src/thwchar/Makefile.in
+135,137d115
+< /build/libthai/libthai-0.1.28/src/thwctype/Makefile
+< /build/libthai/libthai-0.1.28/src/thwctype/Makefile.am
+< /build/libthai/libthai-0.1.28/src/thwctype/Makefile.in
+139,141d116
+< /build/libthai/libthai-0.1.28/src/thwstr/Makefile
+< /build/libthai/libthai-0.1.28/src/thwstr/Makefile.am
+< /build/libthai/libthai-0.1.28/src/thwstr/Makefile.in
+143,145d117
+< /build/libthai/libthai-0.1.28/tests/Makefile
+< /build/libthai/libthai-0.1.28/tests/Makefile.am
+< /build/libthai/libthai-0.1.28/tests/Makefile.in

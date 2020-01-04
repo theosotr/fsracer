@@ -1,10 +1,8 @@
-1a2
-> /build/daemon/daemon-0.6.4/libslack/config.h
-7d7
+7d6
 < /build/daemon/daemon-0.6.4/libslack/hdr.h
-8a9
+8a8
 > /build/daemon/daemon-0.6.4/libslack/libslack.a
-20a22,34
+20a21,33
 > /build/daemon/daemon-0.6.4/libslack/slack/coproc.h
 > /build/daemon/daemon-0.6.4/libslack/slack/daemon.h
 > /build/daemon/daemon-0.6.4/libslack/slack/err.h

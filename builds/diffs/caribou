@@ -1,4 +1,4 @@
-8,24c8,24
+8,22c8,24
 < /build/caribou/caribou-0.4.21/libcaribou/column-model.vala
 < /build/caribou/caribou-0.4.21/libcaribou/display-adapter.vala
 < /build/caribou/caribou-0.4.21/libcaribou/group-model.vala
@@ -14,8 +14,6 @@
 < /build/caribou/caribou-0.4.21/libcaribou/scanner.vala
 < /build/caribou/caribou-0.4.21/libcaribou/xadapter.vala
 < /build/caribou/caribou-0.4.21/libcaribou/xml-deserializer.vala
-< /build/caribou/caribou-0.4.21/modules/gtk2/caribou-gtk-module.h
-< /build/caribou/caribou-0.4.21/modules/gtk3/caribou-gtk-module.h
 ---
 > /build/caribou/caribou-0.4.21/libcaribou/caribou-internals.h
 > /build/caribou/caribou-0.4.21/libcaribou/caribou.h
@@ -34,5 +32,5 @@
 > /build/caribou/caribou-0.4.21/libcaribou/scanner.c
 > /build/caribou/caribou-0.4.21/libcaribou/xadapter.c
 > /build/caribou/caribou-0.4.21/libcaribou/xml-deserializer.c
-26a27
+26a29
 > /build/caribou/caribou-0.4.21/tools/fix_gir.py

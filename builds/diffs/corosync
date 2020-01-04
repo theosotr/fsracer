@@ -5,5 +5,3 @@
 > /build/corosync/corosync-3.0.1/exec/logconfig.h
 13a13
 > /build/corosync/corosync-3.0.1/exec/totemconfig.h
-24a25
-> /build/corosync/corosync-3.0.1/include/corosync/config.h

@@ -1,8 +1,6 @@
 1d0
 < /build/nfs-utils/nfs-utils-1.3.4/support/export/mount.x
-2a2
-> /build/nfs-utils/nfs-utils-1.3.4/support/include/config.h
-24d23
+24d22
 < /build/nfs-utils/nfs-utils-1.3.4/support/nsm/sm_inter.x
-38a38
+38a37
 > /build/nfs-utils/nfs-utils-1.3.4/utils/mount/mount_config.h

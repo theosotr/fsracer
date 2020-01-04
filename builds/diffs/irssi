@@ -1,11 +1,12 @@
-1,2d0
-< /build/irssi/irssi-1.2.0/irssi-version.h
+0a1
+> /build/irssi/irssi-1.2.0/irssi-config.h
+2d2
 < /build/irssi/irssi-1.2.0/irssi.conf
-92a91
+92a93
 > /build/irssi/irssi-1.2.0/src/fe-text/statusbar-config.h
-135a135
+135a137
 > /build/irssi/irssi-1.2.0/src/lib-config/iconfig.h
-143,157d142
+143,157d144
 < /build/irssi/irssi-1.2.0/src/perl/Makefile_silent.pm
 < /build/irssi/irssi-1.2.0/src/perl/common/Channel.xs
 < /build/irssi/irssi-1.2.0/src/perl/common/Core.xs
@@ -21,7 +22,7 @@
 < /build/irssi/irssi-1.2.0/src/perl/common/Rawlog.xs
 < /build/irssi/irssi-1.2.0/src/perl/common/Server.xs
 < /build/irssi/irssi-1.2.0/src/perl/common/Settings.xs
-159,175d143
+159,175d145
 < /build/irssi/irssi-1.2.0/src/perl/common/typemap
 < /build/irssi/irssi-1.2.0/src/perl/irc/Channel.xs
 < /build/irssi/irssi-1.2.0/src/perl/irc/Client.xs
@@ -39,16 +40,16 @@
 < /build/irssi/irssi-1.2.0/src/perl/irc/module.h
 < /build/irssi/irssi-1.2.0/src/perl/irc/typemap
 < /build/irssi/irssi-1.2.0/src/perl/irssi-core.pl.h
-179d146
+179d148
 < /build/irssi/irssi-1.2.0/src/perl/perl-common.c
-181d147
+181d149
 < /build/irssi/irssi-1.2.0/src/perl/perl-core.c
-183,184d148
+183,184d150
 < /build/irssi/irssi-1.2.0/src/perl/perl-signals-list.h
 < /build/irssi/irssi-1.2.0/src/perl/perl-signals.c
-186d149
+186d151
 < /build/irssi/irssi-1.2.0/src/perl/perl-sources.c
-188,203d150
+188,203d152
 < /build/irssi/irssi-1.2.0/src/perl/textui/Makefile.PL.in
 < /build/irssi/irssi-1.2.0/src/perl/textui/Makefile.old
 < /build/irssi/irssi-1.2.0/src/perl/textui/Statusbar.xs
@@ -65,6 +66,6 @@
 < /build/irssi/irssi-1.2.0/src/perl/ui/UI.pm
 < /build/irssi/irssi-1.2.0/src/perl/ui/UI.xs
 < /build/irssi/irssi-1.2.0/src/perl/ui/Window.xs
-205,206d151
+205,206d153
 < /build/irssi/irssi-1.2.0/src/perl/ui/typemap
 < /build/irssi/irssi-1.2.0/themes/default.theme
