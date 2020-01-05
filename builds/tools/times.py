@@ -3,6 +3,7 @@
 
 import fileinput
 import statistics
+import sys
 
 times_p = []
 for line in fileinput.input():
@@ -13,4 +14,4 @@ for line in fileinput.input():
     print (p, p_time)
 
 
-print (sum(times_p) / len(times_p), statistics.median(times_p))
+print (sum(times_p) / len(times_p), statistics.median(times_p), file=sys.stderr)
