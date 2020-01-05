@@ -1,5 +1,3 @@
-module-init-tools
-wget
 openbsd-inetd
 xfce4-places-plugin
 python-ldap

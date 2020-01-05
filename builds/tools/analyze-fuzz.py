@@ -15,7 +15,7 @@ def get_input_files(path):
             if in_file is None:
                 continue
             if line.startswith('-'):
-                if not in_file.endswith('libtool'):
+                if not in_file.endswith('libtool:') and not in_file.endswith('/config.h:'):
                     files.add(in_file[:-1])
     for f in sorted(files):
         print(f)
