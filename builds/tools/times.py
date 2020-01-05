@@ -5,8 +5,9 @@ import fileinput
 
 times = []
 for line in fileinput.input():
-    _, atime, btime = line.split(',')
-    times.append(float(atime) + float(btime))
+    _, times = line.split(',')
+    times = [float(x) for x in times.split(',')]
+    times.append(sum(times))
 
 
 print (sum(times) / len(times))
