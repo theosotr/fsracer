@@ -7,5 +7,5 @@ for file in $1/*; do
       sed -r 's/Analysis time: ([0-9.]+)/\1/g')
     btime=$(grep -oP 'Bug detection time: [0-9.]+' $file/faults |
       sed -r 's/Bug detection time: ([0-9.]+)/\1/g')
-    echo "$project,$atime,$btime"
+    echo "$project,$btime"
 done

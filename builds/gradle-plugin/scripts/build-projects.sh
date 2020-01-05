@@ -34,7 +34,7 @@ for project in $(cat $projects); do
     -v $output_dir/tmp:$HOME/out \
     --cap-add=SYS_PTRACE \
     --rm \
-    --security-opt seccomp:unconfined gradle-image /bin/bash -c "$docker_cmd"
+    --security-opt seccomp:unconfined make-image /bin/bash -c "$docker_cmd"
   if [ $? -ne 0 ]; then
     sudo rm -rf $output_dir/tmp/*
     continue

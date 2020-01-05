@@ -1,4 +1,6 @@
 openbsd-inetd
+wget
+module-init-tools
 xfce4-places-plugin
 python-ldap
 kwalletmanager
