@@ -18,7 +18,9 @@ def get_input_files(path):
                     ignore = True
             if line.startswith('-') and not ignore:
                 search = re.search(regex, line)
-                files.add(search.group(1))
+                in_file = search.group(1)
+                if not in_file.endswith('/config.h'):
+                    files.add(search.group(1))
     for f in sorted(files):
         print (f)
 
