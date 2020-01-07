@@ -53,3 +53,4 @@ libogg,https://github.com/gcp/libogg,,make,,,,,,,,todo
 mutt,https://salsa.debian.org/mutt-team/mutt,,make,,,,,,,,false positives; config.h generated automatically and manual.xml is a doc file (automatically generated); maybe we should check fo config.h.i when config.h is a missing input
 xsel,https://salsa.debian.org/debian/xsel,7764c7f8a700051fa23666c8a229b75e20d9a36d,make,0,3,0,0,2,0,,open here https://github.com/kfish/xsel; 1 error but the use Makefile.am etc; false positives; config.h and Makefile
 gps-sdr-sim,https://github.com/osqzss/gps-sdr-sim,1506e5414f855159df7316b63343cc5c325bd8b0,make,0,1,0,0,0,0,fixed,
+webdis,https://github.com/nicolasff/webdis,b91f10ce7313233da353e8aef44242f47f66f2fb,make,0,99,0,0,0,0,fixed,
