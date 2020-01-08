@@ -12,6 +12,7 @@ def count_bugs(path):
         'MOR': 0
     }
     task = None
+    found = False
     with open(path) as f:
         for line in f:
             line = line.strip()
@@ -20,12 +21,11 @@ def count_bugs(path):
                 task = search.group(1)
                 continue
             if line.startswith('Fault Type'):
+                found = True
                 _, fault_type = line.split(': ')
-                assert task is not None
                 bugs[fault_type] += 1
                 task = None
-    print (bugs['MIN'])
-    print (bugs['MOUT'])
-    print (bugs['MOR'])
+    if found:
+        print (bugs['MIN'], bugs['MOUT'], bugs['MOR'])
 
 count_bugs(sys.argv[1])
