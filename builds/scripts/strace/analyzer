@@ -14,8 +14,11 @@ debian/rules clean 2> /results/$NAME/$NAME.conferr
 debian/rules build
 if [ -f Makefile ]; then
   make clean
+  START_TIME=$(date +%s.%N)
   strace -s 300 -f -e "$(tr -s '\r\n' ',' < /build/syscalls.txt | \
     sed -e 's/,$/\n/')" -o /results/$NAME/$NAME.strace fsmake-make 2> /results/$NAME/$NAME.strerr
+  ELAPSED_TIME=$(echo "$(date +%s.%N) - $START_TIME" | bc)
+  printf "%.2f\n" $ELAPSED_TIME > /results/$NAME/$NAME.time
   make -pn > /results/$NAME/$NAME.makedb
 else
   rm -rf /results/$NAME/*
