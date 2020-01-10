@@ -11,11 +11,13 @@ mkdir -p /results/$NAME
 debian/rules clean
 debian/rules build
 if [ -f Makefile ]; then
+  for i in {1..5}; do
   make clean
   START_TIME=$(date +%s.%N)
   make
   ELAPSED_TIME=$(echo "$(date +%s.%N) - $START_TIME" | bc)
-  printf "%.2f\n" $ELAPSED_TIME > /results/$NAME/$NAME.time
+  printf "%.2f\n" $ELAPSED_TIME >> /results/$NAME/$NAME.time
+  done
   make -pn > /results/$NAME/$NAME.makedb
 else
   rm -rf /results/$NAME/*
