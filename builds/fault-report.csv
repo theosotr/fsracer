@@ -47,7 +47,7 @@ autossh,https://salsa.debian.org/debian/autossh,0c1bb008e790307b87c7533c4d9df936
 hdparm,https://salsa.debian.org/debian/hdparm/,3eee94f3bff659f5789ef84b1976960f5ce30e59,make,0,9,0,0,0,0,opened,
 i3status,https://salsa.debian.org/i3-team/i3status/tree/master/debian,02705f8792c5fded19e180f5733f86ca23f707e7,make,0,2,0,0,2,0,-,open here https://github.com/i3/i3status; false positives (configure;Makefile.am) task print_volume.o doesn't seem to exist (i3status-print_volume.o exist)
 iputils,https://github.com/iputils/iputils,,make,,,,,,,,ambiguous build system (ninja)
-joystick,https://salsa.debian.org/debian/joystick/,54b161299df2deb9ea7f843fbf1be10ca5ac1a84,make,0,3,0,0,0,0,open,
+joystick,https://salsa.debian.org/debian/joystick/,54b161299df2deb9ea7f843fbf1be10ca5ac1a84,make,0,3,0,0,0,0,fixed,
 libgsm,https://github.com/timothytylee/libgsm,,make,0,1,1,0,1,1,-,it seems like a false positive because it link the static library and it has a dependency in the static library
 libogg,https://github.com/gcp/libogg,,make,,,,,,,,todo
 mutt,https://salsa.debian.org/mutt-team/mutt,,make,,,,,,,,false positives; config.h generated automatically and manual.xml is a doc file (automatically generated); maybe we should check fo config.h.i when config.h is a missing input
