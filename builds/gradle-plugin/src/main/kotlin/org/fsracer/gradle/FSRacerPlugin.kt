@@ -41,26 +41,30 @@ class FSRacerPlugin : Plugin<Project> {
     fun processTaskBegin(task: Task) {
         val taskName = constructTaskName(task)
         println("${GRADLE_PREFIX} newTask ${taskName} W 1")
-        task.inputs.files.forEach { input ->
-            val res = constrctResourceName(input.absolutePath)
-            val tasks = outputs.get(res)
-            if (tasks != null) {
-                tasks
-                .forEach { d ->
-                    println("${GRADLE_PREFIX} dependsOn ${taskName} ${d}")
+        try {
+            task.inputs.files.forEach { input ->
+                val res = constrctResourceName(input.absolutePath)
+                val tasks = outputs.get(res)
+                if (tasks != null) {
+                    tasks
+                    .forEach { d ->
+                        println("${GRADLE_PREFIX} dependsOn ${taskName} ${d}")
+                    }
                 }
+                println("${GRADLE_PREFIX} consumes ${taskName} ${res}")
             }
-            println("${GRADLE_PREFIX} consumes ${taskName} ${res}")
-        }
-        task.outputs.files.forEach { output ->
-            val res = constrctResourceName(output.absolutePath)
-            if (!outputs.contains(res)) {
-                outputs.put(res, mutableSetOf(taskName))
-            } else {
-                outputs.get(res)?.add(taskName)
+        } catch (e : Exception) {  }
+        try {
+            task.outputs.files.forEach { output ->
+                val res = constrctResourceName(output.absolutePath)
+                if (!outputs.contains(res)) {
+                    outputs.put(res, mutableSetOf(taskName))
+                } else {
+                    outputs.get(res)?.add(taskName)
+                }
+                println("${GRADLE_PREFIX} produces ${taskName} ${res}")
             }
-            println("${GRADLE_PREFIX} produces ${taskName} ${res}")
-        }
+        } catch (e : Exception) {  }
         processTaskDependencies(taskName, task, task.getTaskDependencies(), false)
         processTaskDependencies(taskName, task, task.getMustRunAfter(), false)
         processTaskDependencies(taskName, task, task.getShouldRunAfter(), false)
