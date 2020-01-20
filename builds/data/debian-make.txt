@@ -206,5 +206,5 @@ bwm-ng
 tcp-wrappers
 nagios-nrpe
 fuseiso
+kino
 anna
-joystick
