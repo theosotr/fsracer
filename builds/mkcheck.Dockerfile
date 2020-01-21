@@ -1,7 +1,7 @@
 # vim:set ft=dockerfile:
-FROM schaliasos/sbuild
+FROM ubuntu:18.04
 
-ENV dev="git make vim wget cmake clang libboost-all-dev"
+ENV dev="git make vim wget cmake clang libboost-all-dev bc python-yaml"
 
 USER root
 WORKDIR root
@@ -20,21 +20,6 @@ RUN install ./Release/mkcheck /usr/local/bin/
 COPY ./scripts/mkcheck/fuzz_test /usr/local/bin
 
 
+COPY ./tools/mkcheck-script.sh /usr/local/bin/build-project
+
 WORKDIR /root
-
-COPY ./config/mkcheck/sbuildrc /root/.sbuildrc
-COPY ./config/mkcheck/sbuildrc /home/builder/.sbuildrc
-COPY ./config/mkcheck/fstab /etc/schroot/sbuild/fstab
-COPY ./scripts/mkcheck/entrypoint.sh /usr/local/bin/entrypoint.sh
-COPY ./scripts/mkcheck/analyzer /usr/local/bin/analyzer
-
-# DIRECTORY TO SAVE STATS
-RUN mkdir -p /var/log/sbuild/stats
-RUN chown -R builder /var/log/sbuild/stats
-run mkdir -p /results
-RUN chown -R builder /results
-RUN chmod o+w /results
-
-USER builder
-WORKDIR /home/builder
-ENTRYPOINT ["entrypoint.sh"]
