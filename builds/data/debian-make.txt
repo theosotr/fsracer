@@ -207,4 +207,8 @@ tcp-wrappers
 nagios-nrpe
 fuseiso
 kino
+libvorbis
+xsel
+ufraw
+libtool
 anna
