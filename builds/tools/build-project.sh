@@ -28,10 +28,19 @@ if [ -f configure ]; then
   ./configure
 fi
 
-strace -s 300 -f -e "$(tr -s '\r\n' ',' < $HOME/syscalls.txt | \
-  sed -e 's/,$/\n/')" -o $project_out/$project.strace fsmake-make
-
-if [ $? -ne 0 ]; then
-  exit 1
-fi
+for i in {1..5}; do
+  make clean
+  START_TIME=$(date +%s.%N)
+  if [ $strace -eq 1 ]; then
+    strace -s 300 -f -e "$(tr -s '\r\n' ',' < $HOME/syscalls.txt | \
+      sed -e 's/,$/\n/')" -o $project_out/$project.strace fsmake-make
+  else
+    make
+  fi
+  ELAPSED_TIME=$(echo "$(date +%s.%N) - $START_TIME" | bc)
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+  printf "%.2f\n" $ELAPSED_TIME >> $project_out/$project.time
+done
 make -pn > $project_out/$project.makedb

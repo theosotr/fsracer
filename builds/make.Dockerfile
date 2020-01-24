@@ -2,7 +2,7 @@ ARG IMAGE_NAME=ubuntu:18.04
 FROM ${IMAGE_NAME}
 
 USER root
-ENV deps="git make vim wget python3 python3-pip strace"
+ENV deps="git make vim wget python3 python3-pip strace bc"
 
 RUN apt update -y
 
